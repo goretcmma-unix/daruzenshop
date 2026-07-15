@@ -21,7 +21,7 @@ import {
 import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion';
 import { categoryKeys, products, getCategoryLabel, localizeProducts, dedupeProducts, type LocalizedProduct, type CategoryKey, type Product } from './data';
 import { useLang, LANGS, formatPrice } from './i18n';
-import { fetchProducts } from './lib/supabase';
+import { fetchProducts, supabase } from './lib/supabase';
 
 import AppStyles from './AppStyles';
 import QtyButton from './components/QtyButton';
@@ -84,6 +84,25 @@ const App: React.FC = () => {
       .then(data => { if (active && data.length) setProductsData(dedupeProducts(data)); })
       .catch(() => {});
     return () => { active = false; };
+  }, []);
+
+  useEffect(() => {
+    if (!supabase) return;
+    let active = true;
+    const channel = supabase
+      .channel('products-changes')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'products' }, async () => {
+        if (!active) return;
+        try {
+          const data = await fetchProducts();
+          if (active && data.length) setProductsData(dedupeProducts(data));
+        } catch {}
+      })
+      .subscribe();
+    return () => {
+      active = false;
+      supabase.removeChannel(channel);
+    };
   }, []);
   const localizedProducts = useMemo(() => localizeProducts(lang, productsData), [lang, productsData]);
 

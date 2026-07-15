@@ -384,10 +384,6 @@ function getInitialLang(): Lang {
   if (typeof window === 'undefined') return 'ru';
   const stored = window.localStorage.getItem(STORAGE_KEY);
   if (stored === 'ru' || stored === 'tr' || stored === 'en' || stored === 'ar') return stored;
-  const nav = window.navigator.language.toLowerCase();
-  if (nav.startsWith('tr')) return 'tr';
-  if (nav.startsWith('en')) return 'en';
-  if (nav.startsWith('ar')) return 'ar';
   return 'ru';
 }
 

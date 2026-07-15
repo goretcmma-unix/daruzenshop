@@ -104,6 +104,19 @@ const App: React.FC = () => {
       supabase.removeChannel(channel);
     };
   }, []);
+
+  useEffect(() => {
+    if (!supabase) return;
+    let active = true;
+    const interval = setInterval(async () => {
+      if (!active) return;
+      try {
+        const data = await fetchProducts();
+        if (active && data.length) setProductsData(dedupeProducts(data));
+      } catch {}
+    }, 15000);
+    return () => { active = false; clearInterval(interval); };
+  }, []);
   const localizedProducts = useMemo(() => localizeProducts(lang, productsData), [lang, productsData]);
 
   const marqueeTrackRef = useRef<HTMLDivElement>(null);

@@ -381,9 +381,6 @@ const LanguageContext = createContext<LanguageContextValue | null>(null);
 const STORAGE_KEY = 'daruzen-lang';
 
 function getInitialLang(): Lang {
-  if (typeof window === 'undefined') return 'ru';
-  const stored = window.localStorage.getItem(STORAGE_KEY);
-  if (stored === 'ru' || stored === 'tr' || stored === 'en' || stored === 'ar') return stored;
   return 'ru';
 }
 

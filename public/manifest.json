@@ -1,0 +1,17 @@
+{
+  "short_name": "Daruzen",
+  "name": "Daruzen - Премиальные добавки",
+  "icons": [
+    {
+      "src": "/favicon.png",
+      "sizes": "any",
+      "type": "image/png"
+    }
+  ],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#5D4037",
+  "background_color": "#FDFBFA",
+  "orientation": "portrait",
+  "description": "Магазин премиальных добавок из Турции"
+}

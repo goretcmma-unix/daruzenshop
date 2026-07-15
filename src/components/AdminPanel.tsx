@@ -191,16 +191,14 @@ const AdminPanel: React.FC = () => {
     setNotice('');
     try {
       await upsertProduct(p);
-      setItems(prev => {
-        const exists = prev.find(x => x.id === p.id);
-        if (exists) return prev.map(x => x.id === p.id ? p : x);
-        return [p, ...prev];
-      });
       setNotice('Сохранено ✓');
       setTimeout(() => setNotice(''), 2000);
       setEditingId(null);
-    } catch {
-      setNotice('Ошибка сохранения');
+      const data = await fetchProducts();
+      setItems(data);
+    } catch (e: unknown) {
+      const msg = e instanceof Error ? e.message : String(e);
+      setNotice('Ошибка сохранения: ' + msg);
     } finally {
       setSavingId(null);
     }

@@ -117,6 +117,29 @@ const App: React.FC = () => {
     }, 15000);
     return () => { active = false; clearInterval(interval); };
   }, []);
+
+  useEffect(() => {
+    const onVisibility = async () => {
+      if (document.visibilityState === 'visible') {
+        try {
+          const data = await fetchProducts();
+          if (data.length) setProductsData(dedupeProducts(data));
+        } catch {}
+      }
+    };
+    const onFocus = async () => {
+      try {
+        const data = await fetchProducts();
+        if (data.length) setProductsData(dedupeProducts(data));
+      } catch {}
+    };
+    document.addEventListener('visibilitychange', onVisibility);
+    window.addEventListener('focus', onFocus);
+    return () => {
+      document.removeEventListener('visibilitychange', onVisibility);
+      window.removeEventListener('focus', onFocus);
+    };
+  }, []);
   const localizedProducts = useMemo(() => localizeProducts(lang, productsData), [lang, productsData]);
 
   const marqueeTrackRef = useRef<HTMLDivElement>(null);

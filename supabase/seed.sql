@@ -37,7 +37,7 @@ insert into public.products (id, category_key, price, image, name_ru, name_tr, n
  'Bağışıklık ve genel sağlık için siyah kimyon yağı içeren çiğneme şekerleri. Sağlığınızı destekleyen kaliteli bir ürün. Doğal içerik ve yüksek etkililik.',
  'Chewing candies with black seed oil for immunity and overall well-being. A quality product to support your health. Natural composition and high effectiveness.',
  'حلوى قابلة للمضغ بزيت الحبة السوداء لتعزيز المناعة والعافية العامة. منتج عالي الجودة لدعم صحتك. تركيبة طبيعية وفعالية عالية.',
-   '{"ru":["Масло черного тмина | 500 мг | —","Тимохинон | 5 мг | —","Витамин D3 | 10 мкг | 200%","Цинк | 10 мг | 100%"],"tr":["Siyah kimyon yağı | 500 mg | —","Timokinon | 5 mg | —","D3 vitamini | 10 mcg | 200%","Çinko | 10 mg | 100%"],"en":["Black seed oil | 500 mg | —","Thymoquinone | 5 mg | —","Vitamin D3 | 10 mcg | 200%","Zinc | 10 mg | 100%"],"ar":["زيت الحبة السوداء | 500 ملغ | —","ثيموكينون | 5 ملغ | —","فيتامين D3 | 10 مكغ | 200%","زنك | 10 ملغ | 100%"]}', 1),
+   '{"ru":["Масло черного тмина | 6666.67 мг","Тимохинон | 60.33 мг","Витамин D3 | 15.7 мкг","Цинк | 6.67 мг"],"tr":["Siyah kimyon yağı | 500 mg","Timokinon | 5 mg","D3 vitamini | 10 mcg","Çinko | 10 mg"],"en":["Black seed oil | 500 mg","Thymoquinone | 5 mg","Vitamin D3 | 10 mcg","Zinc | 10 mg"],"ar":["زيت الحبة السوداء | 500 ملغ","ثيموكينون | 5 ملغ","فيتامين D3 | 10 مكغ","زنك | 10 ملغ"]}', 1),
 
 ('prod-2', 'vitamins', 2400, '/images/omg.webp',
  'Омега 3 Премиум', 'Omega 3 Premium', 'Omega 3 Premium', 'أوميغا 3 بريميوم',

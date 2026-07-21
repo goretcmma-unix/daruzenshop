@@ -96,7 +96,7 @@ const ui = {
     professor: {
       title: 'Dr. Hasib Sheikh',
       subtitle: 'Assistant Professor, Hamdard University Bangladesh',
-      description: 'Currently working for Hamdard Gıda, İthalat, İhracat ve Dış Ticaret Ltd. Şirketi. Güneşli Bağlar Mah. Koçman Caddesi Gül Sokak.',
+      description: 'Сейчас работает в Hamdard Gıda, İthalat, İhracat ve Dış Ticaret Ltd. Şirketi. Адрес: Güneşli Bağlar Mah. Koçman Caddesi Gül Sokak.',
     },
   },
   tr: {

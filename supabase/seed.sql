@@ -37,7 +37,7 @@ insert into public.products (id, category_key, price, image, name_ru, name_tr, n
  'Bağışıklık ve genel sağlık için siyah kimyon yağı içeren çiğneme şekerleri. Sağlığınızı destekleyen kaliteli bir ürün. Doğal içerik ve yüksek etkililik.',
  'Chewing candies with black seed oil for immunity and overall well-being. A quality product to support your health. Natural composition and high effectiveness.',
  'حلوى قابلة للمضغ بزيت الحبة السوداء لتعزيز المناعة والعافية العامة. منتج عالي الجودة لدعم صحتك. تركيبة طبيعية وفعالية عالية.',
-  '{"ru":["60 жев. пастилок","500 мг масла черного тмина","10 мкг витамина D3","10 мг цинка","5 мг тимохинона"],"tr":["60 çiğn. jölesi","500 mg siyah kimyon yağı","10 mcg D3 vitamini","10 mg çinko","5 mg timokinon"],"en":["60 gummies","500 mg black seed oil","10 mcg Vitamin D3","10 mg Zinc","5 mg Thymoquinone"],"ar":["60 حلبة قابلة للمضغ","500 ملغ زيت الحبة السوداء","10 مكغ فيتامين D3","10 ملغ زنك","5 ملغ ثيموكينون"]}', 1),
+   '{"ru":["Масло черного тмина | 500 мг | —","Тимохинон | 5 мг | —","Витамин D3 | 10 мкг | 200%","Цинк | 10 мг | 100%"],"tr":["Siyah kimyon yağı | 500 mg | —","Timokinon | 5 mg | —","D3 vitamini | 10 mcg | 200%","Çinko | 10 mg | 100%"],"en":["Black seed oil | 500 mg | —","Thymoquinone | 5 mg | —","Vitamin D3 | 10 mcg | 200%","Zinc | 10 mg | 100%"],"ar":["زيت الحبة السوداء | 500 ملغ | —","ثيموكينون | 5 ملغ | —","فيتامين D3 | 10 مكغ | 200%","زنك | 10 ملغ | 100%"]}', 1),
 
 ('prod-2', 'vitamins', 2400, '/images/omg.webp',
  'Омега 3 Премиум', 'Omega 3 Premium', 'Omega 3 Premium', 'أوميغا 3 بريميوم',
@@ -45,7 +45,7 @@ insert into public.products (id, category_key, price, image, name_ru, name_tr, n
  'Kalp ve beyin sağlığı için yüksek saflıkta balık yağı kapsülleri. Sağlığınızı destekleyen kaliteli bir ürün. Doğal içerik ve yüksek etkililik.',
  'High-purity fish oil Omega-3 capsules for heart and brain health. A quality product to support your health. Natural composition and high effectiveness.',
  'كبسولات زيت السمك أوميغا 3 فائقة النقاء لصحة القلب والدماغ. منتج عالي الجودة لدعم صحتك. تركيبة طبيعية وفعالية عالية.',
-  '{"ru":["1000 мг","ЭПК 300 мг","ДГК 200 мг","Натуральный лимонный вкус"],"tr":["1000 mg","EPA 300 mg","DHA 200 mg","Doğal limon aroması"],"en":["1000 mg","EPA 300 mg","DHA 200 mg","Natural lemon flavor"],"ar":["1000 ملغ","EPA 300 ملغ","DHA 200 ملغ","نكهة الليمون الطبيعية"]}', 2),
+   '{"ru":["Омега-3 | 1000 мг | —","ЭПК | 300 мг | —","ДГК | 200 мг | —"],"tr":["Omega-3 | 1000 mg | —","EPA | 300 mg | —","DHA | 200 mg | —"],"en":["Omega-3 | 1000 mg | —","EPA | 300 mg | —","DHA | 200 mg | —"],"ar":["أوميغا 3 | 1000 ملغ | —","EPA | 300 ملغ | —","DHA | 200 ملغ | —"]}', 2),
 
 ('prod-3', 'supplements', 1500, '/images/acv.webp',
  'ACV Мармелад', 'ACV Jöle', 'ACV Gummies', 'أقراص المكمّلات ACV',
@@ -53,7 +53,7 @@ insert into public.products (id, category_key, price, image, name_ru, name_tr, n
  'Metabolizma desteği, detoks ve sağlıklı sindirim için elma sirkesi bazlı çiğneme jölesi.',
  'Apple cider vinegar-based chewing gummies to support metabolism, detox and healthy digestion.',
  'أقراص قابلة للمضغ على أساس خل التفاح لدعم الأيض وإزالة السموم والهضم الصحي.',
-  '{"ru":["60 жев. пастилок","500 мг яблочного уксуса","10 мкг витамина B12","5 мг пироксидина"],"tr":["60 çiğn. jölesi","500 mg elma sirkesi","10 mcg B12 vitamini","5 mg piridoksin"],"en":["60 gummies","500 mg apple cider vinegar","10 mcg Vitamin B12","5 mg Pyridoxine"],"ar":["60 حلبة قابلة للمضغ","500 ملغ خل التفاح","10 مكغ فيتامين B12","5 ملغ بيريدوكسين"]}', 3),
+   '{"ru":["Яблочный уксус | 500 мг | —","Витамин B12 | 10 мкг | 400%","Пиридоксин (B6) | 5 мг | 385%"],"tr":["Elma sirkesi | 500 mg | —","B12 vitamini | 10 mcg | 400%","Piridoksin (B6) | 5 mg | 385%"],"en":["Apple cider vinegar | 500 mg | —","Vitamin B12 | 10 mcg | 400%","Pyridoxine (B6) | 5 mg | 385%"],"ar":["خل التفاح | 500 ملغ | —","فيتامين B12 | 10 مكغ | 400%","بيريدوكسين (B6) | 5 ملغ | 385%"]}', 3),
 
 ('prod-4', 'minerals', 1950, '/images/magnezyum.webp',
  'Магний Комплекс', 'Magnezyum Kompleks', 'Magnesium Complex', 'مجمّع المغنيسيوم',
@@ -61,7 +61,7 @@ insert into public.products (id, category_key, price, image, name_ru, name_tr, n
  'Kas gevşemesi ve uyku kalitesi için üçlü magnezyum karışımı. Sağlığınızı destekleyen kaliteli bir ürün. Doğal içerik ve yüksek etkililik.',
  'Triple magnesium blend for muscle relaxation and better sleep. A quality product to support your health. Natural composition and high effectiveness.',
  'مزيج ثلاثي المغنيسيوم لاسترخاء العضلات وتحسين النوم. منتج عالي الجودة لدعم صحتك. تركيبة طبيعية وفعالية عالية.',
-  '{"ru":["400 мг","Глицинат 150 мг","Цитрат 150 мг","Малат 100 мг"],"tr":["400 mg","Glisinat 150 mg","Sitrat 150 mg","Malat 100 mg"],"en":["400 mg","Glycinate 150 mg","Citrate 150 mg","Malate 100 mg"],"ar":["400 ملغ","غلايسينات 150 ملغ","سترات 150 ملغ","مالات 100 ملغ"]}', 4),
+   '{"ru":["Магний | 400 мг | 95%","Глицинат магния | 150 мг | —","Цитрат магния | 150 мг | —","Малат магния | 100 мг | —"],"tr":["Magnezyum | 400 mg | %95","Glisinat magnezyum | 150 mg | —","Sitrat magnezyum | 150 mg | —","Malat magnezyum | 100 mg | —"],"en":["Magnesium | 400 mg | 95%","Magnesium Glycinate | 150 mg | —","Magnesium Citrate | 150 mg | —","Magnesium Malate | 100 mg | —"],"ar":["مغنيسيوم | 400 ملغ | 95%","غلايسينات المغنيسيوم | 150 ملغ | —","سترات المغنيسيوم | 150 ملغ | —","مالات المغنيسيوم | 100 ملغ | —"]}', 4),
 
 ('prod-5', 'supplements', 2200, '/images/dnl__.webp',
  'DNL Фитокомплекс', 'DNL Fito Kompleks', 'DNL Phyto Complex', 'المجمّع النباتي DNL',
@@ -69,7 +69,7 @@ insert into public.products (id, category_key, price, image, name_ru, name_tr, n
  'Vücudu desteklemek ve genel sağlığı güçlendirmek için doğal bitkisel kompleks. Bitkisel bileşenlere dayalı kaliteli bir ürün.',
  'Natural phyto-complex to support the body and strengthen overall health. A quality product based on plant components.',
  'مجمّع نباتي طبيعي لدعم الجسم وتعزيز الصحة العامة. منتج عالي الجودة مبني على مكونات نباتية.',
-  '{"ru":["600 мг","Экстракт расторопши 200 мг","Экстракт одуванчика 150 мг","Артишок 100 мг"],"tr":["600 mg","Devedikeni ekstresi 200 mg","Karahindiba ekstresi 150 mg","Enginar 100 mg"],"en":["600 mg","Milk thistle extract 200 mg","Dandelion extract 150 mg","Artichoke 100 mg"],"ar":["600 ملغ","مستخلص شوك الحليب 200 ملغ","مستخلص الهندباء 150 ملغ","خرشوف 100 ملغ"]}', 5),
+   '{"ru":["Экстракт расторопши | 200 мг | —","Экстракт одуванчика | 150 мг | —","Экстракт артишока | 100 мг | —"],"tr":["Devedikeni ekstresi | 200 mg | —","Karahindiba ekstresi | 150 mg | —","Enginar ekstresi | 100 mg | —"],"en":["Milk thistle extract | 200 mg | —","Dandelion extract | 150 mg | —","Artichoke extract | 100 mg | —"],"ar":["مستخلص شوك الحليب | 200 ملغ | —","مستخلص الهندباء | 150 ملغ | —","مستخلص الخرشف | 100 ملغ | —"]}', 5),
 
 ('prod-6', 'minerals', 1100, '/images/zincpng.webp',
  'Цинк Защита', 'Çinko Koruma', 'Zinc Protection', 'حماية الزنك',
@@ -77,7 +77,7 @@ insert into public.products (id, category_key, price, image, name_ru, name_tr, n
  'Mevsimsel bağışıklık için güçlü çinko takviyesi. Sağlığınızı destekleyen kaliteli bir ürün. Doğal içerik ve yüksek etkililik.',
  'Maximum-strength zinc supplement for seasonal immunity. A quality product to support your health. Natural composition and high effectiveness.',
  'مكمّل زنك بأقصى قوة للمناعة الموسمية. منتج عالي الجودة لدعم صحتك. تركيبة طبيعية وفعالية عالية.',
-  '{"ru":["50 мг","Глюконат цинка 50 мг","Витамин C 20 мг","Без ГМО","Без сахара"],"tr":["50 mg","Çinko glukonat 50 mg","C vitamini 20 mg","GDO içermez","Şekersiz"],"en":["50 mg","Zinc gluconate 50 mg","Vitamin C 20 mg","Non-GMO","Sugar-free"],"ar":["50 ملغ","غلوكونات الزنك 50 ملغ","فيتامين C 20 ملغ","خالٍ من الكائنات المعدلة جينياً","خالٍ من السكر"]}', 6),
+   '{"ru":["Цинк | 50 мг | 455%","Глюконат цинка | 50 мг | —","Витамин C | 20 мг | 22%"],"tr":["Çinko | 50 mg | 455%","Çinko glukonat | 50 mg | —","C vitamini | 20 mg | 22%"],"en":["Zinc | 50 mg | 455%","Zinc gluconate | 50 mg | —","Vitamin C | 20 mg | 22%"],"ar":["زنك | 50 ملغ | 455%","غلوكونات الزنك | 50 ملغ | —","فيتامين C | 20 ملغ | 22%"]}', 6),
 
 ('prod-7', 'supplements', 2100, '/images/enginar__.webp',
  'Экстракт расторопши и одуванчика', 'Devedikeni ve Karahindiba Ekstresi', 'Milk Thistle & Dandelion Extract', 'مستخلص شوك الحليب والهندباء',
@@ -85,7 +85,7 @@ insert into public.products (id, category_key, price, image, name_ru, name_tr, n
  'Kuş üzümü ekstresi, C vitamini ve çinko içeren doğal çiğneme şekerleri. Sağlığınızı destekleyen kaliteli bir ürün. Doğal içerik ve yüksek etkililik.',
  'Natural chewing candies with elderberry extract, vitamin C and zinc. A quality product to support your health. Natural composition and high effectiveness.',
  'حلوى طبيعية قابلة للمضغ بمستخلص البلسان وفيتامين C والزنك. منتج عالي الجودة لدعم صحتك. تركيبة طبيعية وفعالية عالية.',
-  '{"ru":["400 мг","Экстракт бузины 150 мг","Витамин C 20 мг","Цинк 10 мг","Без сахара"],"tr":["400 mg","Kuş üzümü ekstresi 150 mg","C vitamini 20 mg","Çinko 10 mg","Şekersiz"],"en":["400 mg","Elderberry extract 150 mg","Vitamin C 20 mg","Zinc 10 mg","Sugar-free"],"ar":["400 ملغ","مستخلص البلسان 150 ملغ","فيتامين C 20 ملغ","زنك 10 ملغ","خالٍ من السكر"]}', 7),
+   '{"ru":["Экстракт бузины | 150 мг | —","Витамин C | 20 мг | 22%","Цинк | 10 мг | 100%"],"tr":["Kuş üzümü ekstresi | 150 mg | —","C vitamini | 20 mg | 22%","Çinko | 10 mg | 100%"],"en":["Elderberry extract | 150 mg | —","Vitamin C | 20 mg | 22%","Zinc | 10 mg | 100%"],"ar":["مستخلص البلسان | 150 ملغ | —","فيتامين C | 20 ملغ | 22%","زنك | 10 ملغ | 100%"]}', 7),
 
 ('prod-8', 'beauty', 3500, '/images/nadh_gummy.webp',
  'Антиоксидант', 'Antioksidan', 'Antioxidant', 'مضاد الأكسدة',
@@ -93,7 +93,7 @@ insert into public.products (id, category_key, price, image, name_ru, name_tr, n
  'Cilt esnekliği ve eklem sağlığı için hidrolize kolajen peptitleri. Sağlığınızı destekleyen kaliteli bir ürün. Doğal içerik ve yüksek etkililik.',
  'Hydrolyzed collagen peptides for skin elasticity and joint health. A quality product to support your health. Natural composition and high effectiveness.',
  'ببتيدات الكولاجين المتحللة مائياً لمرونة البشرة وصحة المفاصل. منتج عالي الجودة لدعم صحتك. تركيبة طبيعية وفعالية عالية.',
-  '{"ru":["500 мг","Гидролизованный коллаген 300 мг","Гиалуроновая кислота 50 мг","Витамин C 20 мг"],"tr":["500 mg","Hidrolize kolajen 300 mg","Hiyalüronik asit 50 mg","C vitamini 20 mg"],"en":["500 mg","Hydrolyzed collagen 300 mg","Hyaluronic acid 50 mg","Vitamin C 20 mg"],"ar":["500 ملغ","كولاجين محلول مائياً 300 ملغ","حمض الهيالورونيك 50 ملغ","فيتامين C 20 ملغ"]}', 8),
+   '{"ru":["Гидролизованный коллаген | 300 мг | —","Гиалуроновая кислота | 50 мг | —","Витамин C | 20 мг | 22%"],"tr":["Hidrolize kolajen | 300 mg | —","Hiyalüronik asit | 50 mg | —","C vitamini | 20 mg | 22%"],"en":["Hydrolyzed collagen | 300 mg | —","Hyaluronic acid | 50 mg | —","Vitamin C | 20 mg | 22%"],"ar":["كولاجين محلول مائياً | 300 ملغ | —","حمض الهيالورونيك | 50 ملغ | —","فيتامين C | 20 ملغ | 22%"]}', 8),
 
 ('prod-9', 'herbs', 2800, '/images/gimne.webp',
  'Хром', 'Krom', 'Chromium', 'الكروم',
@@ -101,7 +101,7 @@ insert into public.products (id, category_key, price, image, name_ru, name_tr, n
  'Kan şekeri seviyesi ve metabolizma desteği için krom içeren bitkisel ekstre. Sağlığınızı destekleyen kaliteli bir ürün. Doğal içerik ve yüksek etkililik.',
  'Herbal extract with chromium to support blood sugar levels and metabolism. A quality product to support your health. Natural composition and high effectiveness.',
  'مستخلص عشبي بالكروم لدعم مستويات سكر الدم والأيض. منتج عالي الجودة لدعم صحتك. تركيبة طبيعية وفعالية عالية.',
-  '{"ru":["300 мг","Экстракт гимнемы 150 мг","Пиколинат хрома 100 мкг","Биотин 50 мкг"],"tr":["300 mg","Gymnema ekstresi 150 mg","Krom pikolinat 100 mcg","Biyotin 50 mcg"],"en":["300 mg","Gymnema extract 150 mg","Chromium picolinate 100 mcg","Biotin 50 mcg"],"ar":["300 ملغ","مستخلص غيمنيميا 150 ملغ","بيكولينات الكروم 100 مكغ","بيوتين 50 مكغ"]}', 9),
+   '{"ru":["Экстракт гимнемы | 150 мг | —","Хром (пиколинат) | 100 мкг | 91%","Биотин | 50 мкг | 167%"],"tr":["Gymnema ekstresi | 150 mg | —","Krom (pikolinat) | 100 mcg | 91%","Biyotin | 50 mcg | 167%"],"en":["Gymnema extract | 150 mg | —","Chromium (picolinate) | 100 mcg | 91%","Biotin | 50 mcg | 167%"],"ar":["مستخلص غيمنيميا | 150 ملغ | —","كروم (بيكولينات) | 100 مكغ | 91%","بيوتين | 50 مكغ | 167%"]}', 9),
 
 ('prod-10', 'herbs', 2300, '/images/ginko_ginseng.webp',
  'Джинко Фитокомплекс', 'Ginkgo Fito Kompleks', 'Ginkgo Phyto Complex', 'المجمّع النباتي جينكو',
@@ -109,7 +109,7 @@ insert into public.products (id, category_key, price, image, name_ru, name_tr, n
  'Beyin aktivitesi, hafıza ve konsantrasyon desteği için ginkgo biloba ve ginseng bazlı doğal bitkisel kompleks.',
  'Natural phyto-complex based on ginkgo biloba and ginseng to support brain activity, improve memory and concentration.',
  'مجمّع نباتي طبيعي على أساس الجنكو بيلوبا والجنسنغ لدعم النشاط الذهني وتحسين الذاكرة والتركيز.',
-  '{"ru":["300 мг","Экстракт гинкго билоба 150 мг","Экстракт женьшеня 100 мг","Витамин B6 5 мг"],"tr":["300 mg","Ginkgo biloba ekstresi 150 mg","Samsung ekstresi 100 mg","B6 vitamini 5 mg"],"en":["300 mg","Ginkgo biloba extract 150 mg","Ginseng extract 100 mg","Vitamin B6 5 mg"],"ar":["300 ملغ","مستخلص الجنكو بيلوبا 150 ملغ","مستخلص الجنسنغ 100 ملغ","فيتامين B6 5 ملغ"]}', 10),
+   '{"ru":["Экстракт гинкго билоба | 150 мг | —","Экстракт женьшеня | 100 мг | —","Витамин B6 | 5 мг | 385%"],"tr":["Ginkgo biloba ekstresi | 150 mg | —","Saman ekstresi | 100 mg | —","B6 vitamini | 5 mg | 385%"],"en":["Ginkgo biloba extract | 150 mg | —","Ginseng extract | 100 mg | —","Vitamin B6 | 5 mg | 385%"],"ar":["مستخلص الجنكو بيلوبا | 150 ملغ | —","مستخلص الجنسنغ | 100 ملغ | —","فيتامين B6 | 5 ملغ | 385%"]}', 10),
 
 ('prod-11', 'vitamins', 1650, '/images/optimacomplex.webp',
  'Витамин B-Комплекс', 'B Vitamini Kompleksi', 'Vitamin B-Complex', 'فيتامين B المجمّع',
@@ -117,7 +117,7 @@ insert into public.products (id, category_key, price, image, name_ru, name_tr, n
  'Enerji metabolizması ve sinir sistemi desteği için tam B vitamini kompleksi. Sağlığınızı destekleyen kaliteli bir ürün. Doğal içerik ve yüksek etkililik.',
  'Complete B-group vitamin complex for energy metabolism and nervous system support. A quality product to support your health. Natural composition and high effectiveness.',
  'مجمّع فيتامينات B الكامل لدعم الأيض والجهاز العصبي. منتج عالي الجودة لدعم صحتك. تركيبة طبيعية وفعالية عالية.',
-  '{"ru":["10 мг","B1 2 мг","B2 2 мг","B6 2 мг","B12 2 мкг","Ниацин 15 мг"],"tr":["10 mg","B1 2 mg","B2 2 mg","B6 2 mg","B12 2 mcg","Niasin 15 mg"],"en":["10 mg","B1 2 mg","B2 2 mg","B6 2 mg","B12 2 mcg","Niacin 15 mg"],"ar":["10 ملغ","B1 2 ملغ","B2 2 ملغ","B6 2 ملغ","B12 2 مكغ","نياسين 15 ملغ"]}', 11),
+   '{"ru":["Витамин B1 | 2 мг | 167%","Витамин B2 | 2 мг | 154%","Витамин B6 | 2 мг | 154%","Витамин B12 | 2 мкг | 83%","Ниацин | 15 мг | 94%"],"tr":["B1 vitamini | 2 mg | 167%","B2 vitamini | 2 mg | 154%","B6 vitamini | 2 mg | 154%","B12 vitamini | 2 mcg | 83%","Niasin | 15 mg | 94%"],"en":["Vitamin B1 | 2 mg | 167%","Vitamin B2 | 2 mg | 154%","Vitamin B6 | 2 mg | 154%","Vitamin B12 | 2 mcg | 83%","Niacin | 15 mg | 94%"],"ar":["فيتامين B1 | 2 ملغ | 167%","فيتامين B2 | 2 ملغ | 154%","فيتامين B6 | 2 ملغ | 154%","فيتامين B12 | 2 مكغ | 83%","نياسين | 15 ملغ | 94%"]}', 11),
 
 ('prod-12', 'vitamins', 2900, '/images/multigummy.webp',
  'Мультивитамин Специальный', 'Özel Multivitamin', 'Special Multivitamin', 'فيتامينات متعددة خاصة',
@@ -125,7 +125,7 @@ insert into public.products (id, category_key, price, image, name_ru, name_tr, n
  'Aktif yaşam ve bağışıklık için premium multivitamin formülü. Sağlığınızı destekleyen kaliteli bir ürün. Doğal içerik ve yüksek etkililik.',
  'Premium multivitamin formula for an active lifestyle and immunity. A quality product to support your health. Natural composition and high effectiveness.',
  'تركيبة فيتامينات متعددة متميزة لنمط حياة نشط والمناعة. منتج عالي الجودة لدعم صحتك. تركيبة طبيعية وفعالية عالية.',
-  '{"ru":["500 мг","Витамин C 60 мг","Цинк 10 мг","Селен 50 мкг","Биотин 50 мкг","Йод 100 мкг"],"tr":["500 mg","C vitamini 60 mg","Çinko 10 mg","Selen 50 mcg","Biyotin 50 mcg","İyot 100 mcg"],"en":["500 mg","Vitamin C 60 mg","Zinc 10 mg","Selenium 50 mcg","Biotin 50 mcg","Iodine 100 mcg"],"ar":["500 ملغ","فيتامين C 60 ملغ","زنك 10 ملغ","سيلينيوم 50 مكغ","بيوتين 50 مكغ","يود 100 مكغ"]}', 12)
+   '{"ru":["Витамин C | 60 мг | 67%","Цинк | 10 мг | 100%","Селен | 50 мкг | 91%","Биотин | 50 мкг | 167%","Йод | 100 мкг | 67%"],"tr":["C vitamini | 60 mg | 67%","Çinko | 10 mg | 100%","Selen | 50 mcg | 91%","Biyotin | 50 mcg | 167%","İyot | 100 mcg | 67%"],"en":["Vitamin C | 60 mg | 67%","Zinc | 10 mg | 100%","Selenium | 50 mcg | 91%","Biotin | 50 mcg | 167%","Iodine | 100 mcg | 67%"],"ar":["فيتامين C | 60 ملغ | 67%","زنك | 10 ملغ | 100%","سيلينيوم | 50 مكغ | 91%","بيوتين | 50 مكغ | 167%","يود | 100 مكغ | 67%"]}', 12)
 
 on conflict (id) do update set
   category_key = excluded.category_key,

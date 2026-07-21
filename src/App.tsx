@@ -1257,17 +1257,21 @@ const App: React.FC = () => {
                              <table className="modal-comp-table">
                                <thead>
                                  <tr>
-                                   <th style={{ textAlign: 'left', padding: '10px 8px', borderBottom: '2px solid var(--border)', fontSize: '12px', fontWeight: '700', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Действующее вещество</th>
-                                   <th style={{ textAlign: 'right', padding: '10px 8px', borderBottom: '2px solid var(--border)', fontSize: '12px', fontWeight: '700', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.08em', width: '120px' }}>Доза</th>
+                                   <th style={{ textAlign: 'left', padding: '10px 8px', borderBottom: '2px solid var(--border)', fontSize: '12px', fontWeight: '700', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Активное вещество</th>
+                                   <th style={{ textAlign: 'right', padding: '10px 8px', borderBottom: '2px solid var(--border)', fontSize: '12px', fontWeight: '700', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.08em', width: '120px' }}>Количество на порцию</th>
+                                   <th style={{ textAlign: 'right', padding: '10px 8px', borderBottom: '2px solid var(--border)', fontSize: '12px', fontWeight: '700', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.08em', width: '100px' }}>% суточной нормы</th>
                                  </tr>
                                </thead>
                                <tbody>
                                  {selectedProduct.specs?.map((spec, i) => {
-                                   const { ingredient, dosage } = parseCompositionLine(spec);
+                                   const { ingredient, dosage, daily } = parseCompositionLine(spec);
+                                   if (!ingredient || !dosage) return null;
+                                   const dailyText = daily && daily !== '—' ? daily : '—';
                                    return (
                                      <tr key={i}>
                                        <td style={{ padding: '10px 8px', borderBottom: '1px solid var(--border)', fontSize: '14px', color: 'var(--primary-dark)', lineHeight: '1.5' }}>{ingredient}</td>
                                        <td style={{ padding: '10px 8px', borderBottom: '1px solid var(--border)', fontSize: '14px', color: 'var(--accent)', fontWeight: '700', textAlign: 'right', fontVariantNumeric: 'tabular-nums' }}>{dosage}</td>
+                                       <td style={{ padding: '10px 8px', borderBottom: '1px solid var(--border)', fontSize: '14px', color: 'var(--text-muted)', textAlign: 'right', fontVariantNumeric: 'tabular-nums' }}>{dailyText}</td>
                                      </tr>
                                    );
                                  })}

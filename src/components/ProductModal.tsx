@@ -2,6 +2,7 @@ import React from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { X, ShoppingCart, Plus, Minus } from 'lucide-react';
 import { useLang, formatPrice } from './i18n';
+import { parseCompositionLine } from './data';
 import type { LocalizedProduct } from './data';
 
 interface Props {
@@ -88,11 +89,28 @@ const ProductModal: React.FC<Props> = (props) => {
                   
                   <p className="modal-desc" style={{ color: 'var(--text-muted)', lineHeight: '1.6', marginBottom: '16px', opacity: 0.9 }}>{selectedProduct.description}</p>
                   
-                  {selectedProduct.specs && (
-                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginBottom: '16px' }}>
-                       {selectedProduct.specs?.map(spec => (() => {
-                         return (<span key={spec} style={{ padding: '6px 12px', background: 'rgba(212, 175, 55, 0.08)', border: '1px solid rgba(212, 175, 55, 0.15)', borderRadius: '10px', fontSize: '12px', fontWeight: '600', color: 'var(--primary-dark)' }}>{spec}</span>);
-                       })())}
+                   {selectedProduct.specs && selectedProduct.specs.length > 0 && (
+                    <div style={{ marginBottom: '16px' }}>
+                      <div style={{ fontWeight: '700', fontSize: '13px', color: 'var(--primary-dark)', marginBottom: '10px', textTransform: 'uppercase', letterSpacing: '0.08em' }}>{t.modal.composition}</div>
+                      <table className="modal-comp-table" style={{ width: '100%', borderCollapse: 'collapse' }}>
+                        <thead>
+                          <tr>
+                            <th style={{ textAlign: 'left', padding: '8px', borderBottom: '2px solid var(--border)', fontSize: '11px', fontWeight: '700', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Действующее вещество</th>
+                            <th style={{ textAlign: 'right', padding: '8px', borderBottom: '2px solid var(--border)', fontSize: '11px', fontWeight: '700', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.08em', width: '100px' }}>Доза</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {selectedProduct.specs.map((spec, i) => {
+                            const { ingredient, dosage } = parseCompositionLine(spec);
+                            return (
+                              <tr key={i}>
+                                <td style={{ padding: '8px', borderBottom: '1px solid var(--border)', fontSize: '13px', color: 'var(--primary-dark)', lineHeight: '1.5' }}>{ingredient}</td>
+                                <td style={{ padding: '8px', borderBottom: '1px solid var(--border)', fontSize: '13px', color: 'var(--accent)', fontWeight: '700', textAlign: 'right', fontVariantNumeric: 'tabular-nums' }}>{dosage}</td>
+                              </tr>
+                            );
+                          })}
+                        </tbody>
+                      </table>
                     </div>
                   )}
                   

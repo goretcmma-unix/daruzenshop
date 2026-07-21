@@ -2,7 +2,7 @@ import React from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { ShoppingCart, Search, X, Send, MessageCircle, Plus, Minus, Trash2 } from 'lucide-react';
 import { useLang, formatPrice } from './i18n';
-import { localizeProducts, type LocalizedProduct } from './data';
+import { localizeProducts, parseCompositionLine, type LocalizedProduct } from './data';
 
 interface CartItem { productId: string; quantity: number; }
 
@@ -313,13 +313,27 @@ const Overlays: React.FC<OverlaysProps> = (props) => {
                   
                   <p className="modal-desc" style={{ color: 'var(--text-muted)', lineHeight: '1.6', marginBottom: '16px', opacity: 0.9 }}>{selectedProduct.description}</p>
                   
-                  {selectedProduct.specs && (
-                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginBottom: '16px' }}>
-                       {selectedProduct.specs?.map(spec => (() => {
-                         return (<span key={spec} style={{ padding: '6px 12px', background: 'rgba(212, 175, 55, 0.08)', border: '1px solid rgba(212, 175, 55, 0.15)', borderRadius: '10px', fontSize: '12px', fontWeight: '600', color: 'var(--primary-dark)' }}>{spec}</span>);
-                       })())}
-                    </div>
-                  )}
+                   {selectedProduct.specs && selectedProduct.specs.length > 0 && (
+                     <table className="modal-comp-table" style={{ width: '100%', borderCollapse: 'collapse', marginBottom: '16px' }}>
+                       <thead>
+                         <tr>
+                           <th style={{ textAlign: 'left', padding: '8px', borderBottom: '2px solid var(--border)', fontSize: '11px', fontWeight: '700', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Действующее вещество</th>
+                           <th style={{ textAlign: 'right', padding: '8px', borderBottom: '2px solid var(--border)', fontSize: '11px', fontWeight: '700', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.08em', width: '100px' }}>Доза</th>
+                         </tr>
+                       </thead>
+                       <tbody>
+                         {selectedProduct.specs.map((spec, i) => {
+                           const { ingredient, dosage } = parseCompositionLine(spec);
+                           return (
+                             <tr key={i}>
+                               <td style={{ padding: '8px', borderBottom: '1px solid var(--border)', fontSize: '13px', color: 'var(--primary-dark)', lineHeight: '1.5' }}>{ingredient}</td>
+                               <td style={{ padding: '8px', borderBottom: '1px solid var(--border)', fontSize: '13px', color: 'var(--accent)', fontWeight: '700', textAlign: 'right', fontVariantNumeric: 'tabular-nums' }}>{dosage}</td>
+                             </tr>
+                           );
+                         })}
+                       </tbody>
+                     </table>
+                   )}
                   
                   <div style={{ marginTop: 'auto', paddingTop: '20px', borderTop: '1px solid rgba(0,0,0,0.05)' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '16px' }}>

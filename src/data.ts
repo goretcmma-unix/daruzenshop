@@ -338,6 +338,17 @@ export const products: Product[] = [
   },
 ];
 
+export const parseCompositionLine = (line: string): { ingredient: string; dosage: string } => {
+  const m = line.match(/(\d+(?:[\s.,]\d+)?\s*(?:мкг|мг|г|%|ед|мл|л|mcg|mg|g|ml|l|IU|UI|капс|табл|штук|доз|ed|iu|ui|Ед|пастилок|tablet|capsul|drop|sachet|пак|кап))/i);
+  if (m) {
+    const dosage = m[1].trim();
+    const ingredient = line.replace(m[1], '').trim().replace(/^[\s,;:-]+|[\s,;:-]+$/g, '');
+    if (ingredient && dosage) return { ingredient, dosage };
+    return { ingredient: line, dosage: '' };
+  }
+  return { ingredient: line, dosage: '' };
+};
+
 export const dedupeProducts = (list: Product[]): Product[] => {
   const seen = new Set<string>();
   return list.filter(p => {

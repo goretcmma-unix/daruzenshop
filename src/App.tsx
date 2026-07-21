@@ -752,32 +752,26 @@ const App: React.FC = () => {
       </section>
 
       {/* Professor Section */}
-      <section className="section-padding" style={{ background: '#F9F9FB' }}>
+      <section className="section-padding" style={{ background: '#F9F9FB', position: 'relative', overflow: 'hidden' }}>
         <div className="container">
-          <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
-            <div
-              className="professor-section-inner"
-              onMouseEnter={(e) => {
-                e.currentTarget.style.boxShadow = '0 20px 50px rgba(0,0,0,0.08)';
-                e.currentTarget.style.borderColor = 'rgba(212, 175, 55, 0.4)';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.boxShadow = '0 10px 30px rgba(0,0,0,0.02)';
-                e.currentTarget.style.borderColor = 'var(--border)';
-              }}
-              style={{ background: 'white', padding: '48px', borderRadius: '32px', boxShadow: '0 10px 30px rgba(0,0,0,0.02)', border: '1px solid var(--border)', display: 'flex', alignItems: 'center', gap: '48px', flexDirection: 'row', width: '100%', transition: 'box-shadow 0.3s ease, border-color 0.3s ease' }}
-            >
-              <div style={{ flex: '0 0 auto', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px' }} className="professor-section-avatar-wrapper">
-                <div className="professor-section-avatar" style={{ width: '160px', height: '160px', borderRadius: '50%', overflow: 'hidden', background: 'linear-gradient(135deg, #e6bd63 0%, #cf9b41 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+          <div style={{ maxWidth: '1000px', margin: '0 auto', display: 'flex', alignItems: 'center', gap: '48px', flexDirection: 'row' }}>
+            <div style={{ flex: '0 0 auto', position: 'relative' }}>
+              <div style={{ width: '180px', height: '180px', borderRadius: '50%', padding: '6px', background: 'linear-gradient(135deg, #e6bd63 0%, #cf9b41 100%)', flexShrink: 0 }}>
+                <div style={{ width: '100%', height: '100%', borderRadius: '50%', overflow: 'hidden', background: '#fff' }}>
                   <img src="/images/professor.png" alt="Professor" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
                 </div>
               </div>
-              <div style={{ flex: 1, minWidth: 0 }}>
-                <h3 style={{ fontSize: '28px', fontWeight: '700', marginBottom: '8px', color: 'var(--primary-dark)' }}>{t.professor.title}</h3>
-                <p style={{ fontSize: '15px', color: 'var(--accent)', fontWeight: '600', marginBottom: '20px', textTransform: 'uppercase', letterSpacing: '0.06em' }}>{t.professor.subtitle}</p>
-                <p style={{ fontSize: '17px', color: 'var(--text-muted)', lineHeight: '1.7' }}>
-                  {t.professor.description}
-                </p>
+              <div style={{ position: 'absolute', bottom: '8px', right: '8px', width: '36px', height: '36px', borderRadius: '50%', background: 'linear-gradient(135deg, #e6bd63 0%, #cf9b41 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontSize: '18px', fontWeight: '800', border: '3px solid #F9F9FB' }}>✓</div>
+            </div>
+            <div style={{ flex: 1, minWidth: 0, borderLeft: '3px solid rgba(212, 175, 55, 0.3)', paddingLeft: '48px' }}>
+              <p style={{ fontSize: '13px', color: 'var(--accent)', fontWeight: '700', marginBottom: '12px', textTransform: 'uppercase', letterSpacing: '0.1em' }}>{t.professor.subtitle}</p>
+              <h3 style={{ fontSize: '32px', fontWeight: '800', marginBottom: '20px', color: 'var(--primary-dark)', lineHeight: '1.2' }}>{t.professor.title}</h3>
+              <p style={{ fontSize: '17px', color: 'var(--text-muted)', lineHeight: '1.8' }}>
+                {t.professor.description}
+              </p>
+              <div style={{ marginTop: '24px', display: 'flex', gap: '12px', alignItems: 'center' }}>
+                <div style={{ height: '1px', width: '40px', background: 'var(--accent)' }}></div>
+                <span style={{ fontSize: '13px', color: 'var(--accent)', fontWeight: '600', letterSpacing: '0.05em' }}>25+ ЛЕТ ОПЫТА</span>
               </div>
             </div>
           </div>
@@ -787,14 +781,15 @@ const App: React.FC = () => {
             .professor-section-inner {
               flex-direction: column !important;
               text-align: center;
-              padding: 32px 24px !important;
             }
             .professor-section-inner > div:first-child {
-              align-items: center;
+              margin-bottom: 24px;
             }
-            .professor-section-avatar {
-              width: 120px !important;
-              height: 120px !important;
+            .professor-section-inner > div:last-child {
+              border-left: none !important;
+              padding-left: 0 !important;
+              border-top: 3px solid rgba(212, 175, 55, 0.3);
+              padding-top: 24px;
             }
           }
         `}</style>

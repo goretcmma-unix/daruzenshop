@@ -66,10 +66,10 @@ export const products: Product[] = [
       ar: 'حلوى قابلة للمضغ بزيت الحبة السوداء لتعزيز المناعة والعافية العامة. منتج عالي الجودة لدعم صحتك. تركيبة طبيعية وفعالية عالية.',
     },
     specs: {
-      ru: ['60 конфет', 'Витамин D3', '2% Тимохинон', 'Цинк'],
-      tr: ['60 çekirdek', 'D3 Vitamini', '%2 Timokinon', 'Çinko'],
-      en: ['60 candies', 'Vitamin D3', '2% Thymoquinone', 'Zinc'],
-      ar: ['60 حبة', 'فيتامين D3', '2% ثيموكينون', 'زنك'],
+      ru: ['60 жев. пастилок', '500 мг масла черного тмина', '10 мкг витамина D3', '10 мг цинка', '5 мг тимохинона'],
+      tr: ['60 çiğn. jölesi', '500 mg siyah kimyon yağı', '10 mcg D3 vitamini', '10 mg çinko', '5 mg timokinon'],
+      en: ['60 gummies', '500 mg black seed oil', '10 mcg Vitamin D3', '10 mg Zinc', '5 mg Thymoquinone'],
+      ar: ['60 حلبة قابلة للمضغ', '500 ملغ زيت الحبة السوداء', '10 مكغ فيتامين D3', '10 ملغ زنك', '5 ملغ ثيموكينون'],
     },
   },
   {
@@ -90,10 +90,10 @@ export const products: Product[] = [
       ar: 'كبسولات زيت السمك أوميغا 3 فائقة النقاء لصحة القلب والدماغ. منتج عالي الجودة لدعم صحتك. تركيبة طبيعية وفعالية عالية.',
     },
     specs: {
-      ru: ['1000мг', 'ЭПК/ДГК', 'Натуральный лимонный вкус'],
-      tr: ['1000mg', 'EPA/DHA', 'Doğal limon aroması'],
-      en: ['1000mg', 'EPA/DHA', 'Natural lemon flavor'],
-      ar: ['1000mg', 'EPA/DHA', 'نكهة الليمون الطبيعية'],
+      ru: ['1000 мг', 'ЭПК 300 мг', 'ДГК 200 мг', 'Натуральный лимонный вкус'],
+      tr: ['1000 mg', 'EPA 300 mg', 'DHA 200 mg', 'Doğal limon aroması'],
+      en: ['1000 mg', 'EPA 300 mg', 'DHA 200 mg', 'Natural lemon flavor'],
+      ar: ['1000 ملغ', 'EPA 300 ملغ', 'DHA 200 ملغ', 'نكهة الليمون الطبيعية'],
     },
   },
   {
@@ -114,10 +114,10 @@ export const products: Product[] = [
       ar: 'أقراص قابلة للمضغ على أساس خل التفاح لدعم الأيض وإزالة السموم والهضم الصحي.',
     },
     specs: {
-      ru: ['Яблочный уксус', 'Детокс', '60 жевательных пастилок'],
-      tr: ['Elma sirkesi', 'Detoks', '60 çiğneme jölesi'],
-      en: ['Apple cider vinegar', 'Detox', '60 chewing gummies'],
-      ar: ['خل التفاح', 'إزالة السموم', '60 قرصاً قابلاً للمضغ'],
+      ru: ['60 жев. пастилок', '500 мг яблочного уксуса', '10 мкг витамина B12', '5 мг пироксидина'],
+      tr: ['60 çiğn. jölesi', '500 mg elma sirkesi', '10 mcg B12 vitamini', '5 mg piridoksin'],
+      en: ['60 gummies', '500 mg apple cider vinegar', '10 mcg Vitamin B12', '5 mg Pyridoxine'],
+      ar: ['60 حلبة قابلة للمضغ', '500 ملغ خل التفاح', '10 مكغ فيتامين B12', '5 ملغ بيريدوكسين'],
     },
   },
   {
@@ -138,10 +138,10 @@ export const products: Product[] = [
       ar: 'مزيج ثلاثي المغنيسيوم لاسترخاء العضلات وتحسين النوم. منتج عالي الجودة لدعم صحتك. تركيبة طبيعية وفعالية عالية.',
     },
     specs: {
-      ru: ['400мг', 'Глицинат, Цитрат, Малат'],
-      tr: ['400mg', 'Glisinat, Sitrat, Malat'],
-      en: ['400mg', 'Glycinate, Citrate, Malate'],
-      ar: ['400mg', 'غلايسينات، سترات، مالات'],
+      ru: ['400 мг', 'Глицинат 150 мг', 'Цитрат 150 мг', 'Малат 100 мг'],
+      tr: ['400 mg', 'Glisinat 150 mg', 'Sitrat 150 mg', 'Malat 100 mg'],
+      en: ['400 mg', 'Glycinate 150 mg', 'Citrate 150 mg', 'Malate 100 mg'],
+      ar: ['400 ملغ', 'غلايسينات 150 ملغ', 'سترات 150 ملغ', 'مالات 100 ملغ'],
     },
   },
   {
@@ -162,10 +162,10 @@ export const products: Product[] = [
       ar: 'مجمّع نباتي طبيعي لدعم الجسم وتعزيز الصحة العامة. منتج عالي الجودة مبني على مكونات نباتية.',
     },
     specs: {
-      ru: ['Растительный состав', 'Комплексное действие', 'Натуральные экстракты'],
-      tr: ['Bitkisel içerik', 'Kompleks etki', 'Doğal ekstreler'],
-      en: ['Plant-based formula', 'Complex action', 'Natural extracts'],
-      ar: ['تركيبة نباتية', 'تأثير شامل', 'مستخلصات طبيعية'],
+      ru: ['600 мг', 'Экстракт расторопши 200 мг', 'Экстракт одуванчика 150 мг', 'Артишок 100 мг'],
+      tr: ['600 mg', 'Devedikeni ekstresi 200 mg', 'Karahindiba ekstresi 150 mg', 'Enginar 100 mg'],
+      en: ['600 mg', 'Milk thistle extract 200 mg', 'Dandelion extract 150 mg', 'Artichoke 100 mg'],
+      ar: ['600 ملغ', 'مستخلص شوك الحليب 200 ملغ', 'مستخلص الهندباء 150 ملغ', 'خرشوف 100 ملغ'],
     },
   },
   {
@@ -186,10 +186,10 @@ export const products: Product[] = [
       ar: 'مكمّل زنك بأقصى قوة للمناعة الموسمية. منتج عالي الجودة لدعم صحتك. تركيبة طبيعية وفعالية عالية.',
     },
     specs: {
-      ru: ['50мг', 'Глюконат цинка', 'Без ГМО'],
-      tr: ['50mg', 'Çinko glukonat', "GDO'suz"],
-      en: ['50mg', 'Zinc gluconate', 'Non-GMO'],
-      ar: ['50mg', 'غلوكونات الزنك', 'خالٍ من الكائنات المعدلة جينياً'],
+      ru: ['50 мг', 'Глюконат цинка 50 мг', 'Витамин C 20 мг', 'Без ГМО', 'Без сахара'],
+      tr: ['50 mg', 'Çinko glukonat 50 mg', 'C vitamini 20 mg', 'GDO''suz', 'Şekersiz'],
+      en: ['50 mg', 'Zinc gluconate 50 mg', 'Vitamin C 20 mg', 'Non-GMO', 'Sugar-free'],
+      ar: ['50 ملغ', 'غلوكونات الزنك 50 ملغ', 'فيتامين C 20 ملغ', 'خالٍ من الكائنات المعدلة جينياً', 'خالٍ من السكر'],
     },
   },
   {
@@ -210,10 +210,10 @@ export const products: Product[] = [
       ar: 'حلوى طبيعية قابلة للمضغ بمستخلص البلسان وفيتامين C والزنك. منتج عالي الجودة لدعم صحتك. تركيبة طبيعية وفعالية عالية.',
     },
     specs: {
-      ru: ['Богат антиоксидантами', 'Без сахара', 'Подходит для детей'],
-      tr: ['Antioksidan açısından zengin', 'Şekersiz', 'Çocuklar için uygun'],
-      en: ['Rich in antioxidants', 'Sugar-free', 'Suitable for children'],
-      ar: ['غني بمضادات الأكسدة', 'خالٍ من السكر', 'مناسب للأطفال'],
+      ru: ['400 мг', 'Экстракт бузины 150 мг', 'Витамин C 20 мг', 'Цинк 10 мг', 'Без сахара'],
+      tr: ['400 mg', 'Kuş üzümü ekstresi 150 mg', 'C vitamini 20 mg', 'Çinko 10 mg', 'Şekersiz'],
+      en: ['400 mg', 'Elderberry extract 150 mg', 'Vitamin C 20 mg', 'Zinc 10 mg', 'Sugar-free'],
+      ar: ['400 ملغ', 'مستخلص البلسان 150 ملغ', 'فيتامين C 20 ملغ', 'زنك 10 ملغ', 'خالٍ من السكر'],
     },
   },
   {
@@ -234,10 +234,10 @@ export const products: Product[] = [
       ar: 'ببتيدات الكولاجين المتحللة مائياً لمرونة البشرة وصحة المفاصل. منتج عالي الجودة لدعم صحتك. تركيبة طبيعية وفعالية عالية.',
     },
     specs: {
-      ru: ['Морской коллаген', 'Гиалуроновая кислота', 'Витамин С'],
-      tr: ['Deniz kolajeni', 'Hiyalüronik asit', 'C Vitamini'],
-      en: ['Marine collagen', 'Hyaluronic acid', 'Vitamin C'],
-      ar: ['كولاجين بحري', 'حمض الهيالورونيك', 'فيتامين C'],
+      ru: ['500 мг', 'Гидролизованный коллаген 300 мг', 'Гиалуроновая кислота 50 мг', 'Витамин C 20 мг'],
+      tr: ['500 mg', 'Hidrolize kolajen 300 mg', 'Hiyalüronik asit 50 mg', 'C vitamini 20 mg'],
+      en: ['500 mg', 'Hydrolyzed collagen 300 mg', 'Hyaluronic acid 50 mg', 'Vitamin C 20 mg'],
+      ar: ['500 ملغ', 'كولاجين محلول مائياً 300 ملغ', 'حمض الهيالورونيك 50 ملغ', 'فيتامين C 20 ملغ'],
     },
   },
   {
@@ -258,10 +258,10 @@ export const products: Product[] = [
       ar: 'مستخلص عشبي بالكروم لدعم مستويات سكر الدم والأيض. منتج عالي الجودة لدعم صحتك. تركيبة طبيعية وفعالية عالية.',
     },
     specs: {
-      ru: ['Гимнема Сильвестра', 'Пиколинат хрома', 'Поддержка метаболизма'],
-      tr: ['Gymnema Sylvestre', 'Krom pikolinat', 'Metabolizma desteği'],
-      en: ['Gymnema Sylvestre', 'Chromium picolinate', 'Metabolism support'],
-      ar: ['غيمنيميا سيلفستريس', 'بيكولينات الكروم', 'دعم الأيض'],
+      ru: ['300 мг', 'Экстракт гимнемы 150 мг', 'Пиколинат хрома 100 мкг', 'Биотин 50 мкг'],
+      tr: ['300 mg', 'Gymnema ekstresi 150 mg', 'Krom pikolinat 100 mcg', 'Biyotin 50 mcg'],
+      en: ['300 mg', 'Gymnema extract 150 mg', 'Chromium picolinate 100 mcg', 'Biotin 50 mcg'],
+      ar: ['300 ملغ', 'مستخلص غيمنيميا 150 ملغ', 'بيكولينات الكروم 100 مكغ', 'بيوتين 50 مكغ'],
     },
   },
   {
@@ -282,10 +282,10 @@ export const products: Product[] = [
       ar: 'مجمّع نباتي طبيعي على أساس الجنكو بيلوبا والجنسنغ لدعم النشاط الذهني وتحسين الذاكرة والتركيز.',
     },
     specs: {
-      ru: ['Гинкго Билоба', 'Женьшень', 'Поддержка памяти'],
-      tr: ['Ginkgo Biloba', 'Ginseng', 'Hafıza desteği'],
-      en: ['Ginkgo Biloba', 'Ginseng', 'Memory support'],
-      ar: ['جينكو بيلوبا', 'الجنسنغ', 'دعم الذاكرة'],
+      ru: ['300 мг', 'Экстракт гинкго билоба 150 мг', 'Экстракт женьшеня 100 мг', 'Витамин B6 5 мг'],
+      tr: ['300 mg', 'Ginkgo biloba ekstresi 150 mg', 'Samsung ekstresi 100 mg', 'B6 vitamini 5 mg'],
+      en: ['300 mg', 'Ginkgo biloba extract 150 mg', 'Ginseng extract 100 mg', 'Vitamin B6 5 mg'],
+      ar: ['300 ملغ', 'مستخلص الجنكو بيلوبا 150 ملغ', 'مستخلص الجنسنغ 100 ملغ', 'فيتامين B6 5 ملغ'],
     },
   },
   {
@@ -306,10 +306,10 @@ export const products: Product[] = [
       ar: 'مجمّع فيتامينات B الكامل لدعم الأيض والجهاز العصبي. منتج عالي الجودة لدعم صحتك. تركيبة طبيعية وفعالية عالية.',
     },
     specs: {
-      ru: ['B1, B2, B6, B12', 'Заряд энергии', 'Ежедневная поддержка'],
-      tr: ['B1, B2, B6, B12', 'Enerji kaynağı', 'Günlük destek'],
-      en: ['B1, B2, B6, B12', 'Energy boost', 'Daily support'],
-      ar: ['B1, B2, B6, B12', 'دفعة طاقة', 'دعم يومي'],
+      ru: ['10 мг', 'B1 2 мг', 'B2 2 мг', 'B6 2 мг', 'B12 2 мкг', 'Ниацин 15 мг'],
+      tr: ['10 mg', 'B1 2 mg', 'B2 2 mg', 'B6 2 mg', 'B12 2 mcg', 'Niasin 15 mg'],
+      en: ['10 mg', 'B1 2 mg', 'B2 2 mg', 'B6 2 mg', 'B12 2 mcg', 'Niacin 15 mg'],
+      ar: ['10 ملغ', 'B1 2 ملغ', 'B2 2 ملغ', 'B6 2 ملغ', 'B12 2 مكغ', 'نياسين 15 ملغ'],
     },
   },
   {
@@ -330,10 +330,10 @@ export const products: Product[] = [
       ar: 'تركيبة فيتامينات متعددة متميزة لنمط حياة نشط والمناعة. منتج عالي الجودة لدعم صحتك. تركيبة طبيعية وفعالية عالية.',
     },
     specs: {
-      ru: ['Витамины A-Z', 'Богат минералами', 'Защита иммунитета'],
-      tr: ['A\'dan Z\'ye Vitaminler', 'Mineraller açısından zengin', 'Bağışıklık koruması'],
-      en: ['Vitamins A-Z', 'Rich in minerals', 'Immune protection'],
-      ar: ['فيتامينات A-Z', 'غني بالمعادن', 'حماية المناعة'],
+      ru: ['500 мг', 'Витамин C 60 мг', 'Цинк 10 мг', 'Селен 50 мкг', 'Биотин 50 мкг', 'Йод 100 мкг'],
+      tr: ['500 mg', 'C vitamini 60 mg', 'Çinko 10 mg', 'Selen 50 mcg', 'Biyotin 50 mcg', 'İyot 100 mcg'],
+      en: ['500 mg', 'Vitamin C 60 mg', 'Zinc 10 mg', 'Selenium 50 mcg', 'Biotin 50 mcg', 'Iodine 100 mcg'],
+      ar: ['500 ملغ', 'فيتامين C 60 ملغ', 'زنك 10 ملغ', 'سيلينيوم 50 مكغ', 'بيوتين 50 مكغ', 'يود 100 مكغ'],
     },
   },
 ];

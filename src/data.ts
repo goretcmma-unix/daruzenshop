@@ -347,11 +347,14 @@ export const parseCompositionLine = (line: string): { ingredient: string; dosage
     return { ingredient: parts[0], dosage: parts[1], daily: '' };
   }
   if (parts.length === 1) {
-    const m = parts[0].match(/^(.+?)\s+(\d+(?:[\s.,]\d+)?\s*(?:мкг|мг|г|%|ед|мл|л|mcg|mg|g|ml|l|IU|UI|капс|табл|штук|доз|ed|iu|ui|Ед|пастилок|tablet|capsul|drop|sachet|пак|кап)?)$/i);
+    const text = parts[0];
+    const m = text.match(/(\d+(?:[\s.,]\d+)?\s*(?:мкг|мг|г|%|ед|мл|л|mcg|mg|g|ml|l|IU|UI|капс|табл|штук|доз|ed|iu|ui|Ед|пастилок|tablet|capsul|drop|sachet|пак|кап))/i);
     if (m) {
-      return { ingredient: m[1].trim(), dosage: m[2].trim(), daily: '' };
+      const dosage = m[1].trim();
+      const ingredient = text.replace(m[1], '').trim().replace(/^[\s,;:-]+|[\s,;:-]+$/g, '');
+      return { ingredient: ingredient || text, dosage, daily: '' };
     }
-    return { ingredient: parts[0], dosage: '', daily: '' };
+    return { ingredient: text, dosage: '', daily: '' };
   }
   return { ingredient: line, dosage: '', daily: '' };
 };

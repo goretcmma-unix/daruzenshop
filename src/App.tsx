@@ -755,10 +755,17 @@ const App: React.FC = () => {
       <section className="section-padding" style={{ background: '#F9F9FB' }}>
         <div className="container">
           <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
-            <motion.div
+            <div
               className="professor-section-inner"
-              whileHover={{ scale: 1.01 }}
-              style={{ background: 'white', padding: '48px', borderRadius: '32px', boxShadow: '0 10px 30px rgba(0,0,0,0.02)', border: '1px solid var(--border)', display: 'flex', alignItems: 'center', gap: '48px', flexDirection: 'row', width: '100%' }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.boxShadow = '0 20px 50px rgba(0,0,0,0.08)';
+                e.currentTarget.style.borderColor = 'rgba(212, 175, 55, 0.4)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.boxShadow = '0 10px 30px rgba(0,0,0,0.02)';
+                e.currentTarget.style.borderColor = 'var(--border)';
+              }}
+              style={{ background: 'white', padding: '48px', borderRadius: '32px', boxShadow: '0 10px 30px rgba(0,0,0,0.02)', border: '1px solid var(--border)', display: 'flex', alignItems: 'center', gap: '48px', flexDirection: 'row', width: '100%', transition: 'box-shadow 0.3s ease, border-color 0.3s ease' }}
             >
               <div style={{ flex: '0 0 auto', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px' }} className="professor-section-avatar-wrapper">
                 <div className="professor-section-avatar" style={{ width: '160px', height: '160px', borderRadius: '50%', background: 'linear-gradient(135deg, #e6bd63 0%, #cf9b41 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontSize: '56px', fontWeight: '800', fontFamily: 'Outfit, sans-serif', flexShrink: 0 }}>

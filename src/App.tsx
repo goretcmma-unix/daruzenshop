@@ -768,8 +768,8 @@ const App: React.FC = () => {
               style={{ background: 'white', padding: '48px', borderRadius: '32px', boxShadow: '0 10px 30px rgba(0,0,0,0.02)', border: '1px solid var(--border)', display: 'flex', alignItems: 'center', gap: '48px', flexDirection: 'row', width: '100%', transition: 'box-shadow 0.3s ease, border-color 0.3s ease' }}
             >
               <div style={{ flex: '0 0 auto', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px' }} className="professor-section-avatar-wrapper">
-                <div className="professor-section-avatar" style={{ width: '160px', height: '160px', borderRadius: '50%', background: 'linear-gradient(135deg, #e6bd63 0%, #cf9b41 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontSize: '56px', fontWeight: '800', fontFamily: 'Outfit, sans-serif', flexShrink: 0 }}>
-                  ДО
+                <div className="professor-section-avatar" style={{ width: '160px', height: '160px', borderRadius: '50%', overflow: 'hidden', background: 'linear-gradient(135deg, #e6bd63 0%, #cf9b41 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                  <img src="/images/professor.png" alt="Professor" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
                 </div>
               </div>
               <div style={{ flex: 1, minWidth: 0 }}>
@@ -795,7 +795,6 @@ const App: React.FC = () => {
             .professor-section-avatar {
               width: 120px !important;
               height: 120px !important;
-              font-size: 44px !important;
             }
           }
         `}</style>

@@ -94,9 +94,9 @@ const ui = {
       rights: 'Все права защищены.',
     },
     professor: {
-      title: 'Dr. Hasib Sheikh',
-      subtitle: 'Ассистент-профессор, Университет Хамдард, Бангладеш',
-      description: 'Сейчас работает в Hamdard Gıda, İthalat, İhracat ve Dış Ticaret Ltd. Şirketi. Адрес: Güneşli Bağlar Mah. Koçman Caddesi Gül Sokak.',
+      title: 'Доктор Хасиб Шейх',
+      subtitle: 'доцент Университета Хамдард, Бангладеш',
+      description: 'В настоящее время работает в компании Hamdard Food, Import, Export and Foreign Trade Ltd., расположенной в районе Гюнешли Баглар, на улицах Кочман и Гюль.',
     },
   },
   tr: {

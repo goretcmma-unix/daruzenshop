@@ -779,7 +779,7 @@ const App: React.FC = () => {
                   {t.professor.description}
                 </p>
               </div>
-            </motion.div>
+            </div>
           </div>
         </div>
         <style>{`

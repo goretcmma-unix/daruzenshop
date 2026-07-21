@@ -77,7 +77,7 @@ insert into public.products (id, category_key, price, image, name_ru, name_tr, n
  'Mevsimsel bağışıklık için güçlü çinko takviyesi. Sağlığınızı destekleyen kaliteli bir ürün. Doğal içerik ve yüksek etkililik.',
  'Maximum-strength zinc supplement for seasonal immunity. A quality product to support your health. Natural composition and high effectiveness.',
  'مكمّل زنك بأقصى قوة للمناعة الموسمية. منتج عالي الجودة لدعم صحتك. تركيبة طبيعية وفعالية عالية.',
-  '{"ru":["50 мг","Глюконат цинка 50 мг","Витамин C 20 мг","Без ГМО","Без сахара"],"tr":["50 mg","Çinko glukonat 50 mg","C vitamini 20 mg","GDO''suz","Şekersiz"],"en":["50 mg","Zinc gluconate 50 mg","Vitamin C 20 mg","Non-GMO","Sugar-free"],"ar":["50 ملغ","غلوكونات الزنك 50 ملغ","فيتامين C 20 ملغ","خالٍ من الكائنات المعدلة جينياً","خالٍ من السكر"]}', 6),
+  '{"ru":["50 мг","Глюконат цинка 50 мг","Витамин C 20 мг","Без ГМО","Без сахара"],"tr":["50 mg","Çinko glukonat 50 mg","C vitamini 20 mg","GDO içermez","Şekersiz"],"en":["50 mg","Zinc gluconate 50 mg","Vitamin C 20 mg","Non-GMO","Sugar-free"],"ar":["50 ملغ","غلوكونات الزنك 50 ملغ","فيتامين C 20 ملغ","خالٍ من الكائنات المعدلة جينياً","خالٍ من السكر"]}', 6),
 
 ('prod-7', 'supplements', 2100, '/images/enginar__.webp',
  'Экстракт расторопши и одуванчика', 'Devedikeni ve Karahindiba Ekstresi', 'Milk Thistle & Dandelion Extract', 'مستخلص شوك الحليب والهندباء',

@@ -187,7 +187,7 @@ export const products: Product[] = [
     },
     specs: {
       ru: ['50 мг', 'Глюконат цинка 50 мг', 'Витамин C 20 мг', 'Без ГМО', 'Без сахара'],
-      tr: ['50 mg', 'Çinko glukonat 50 mg', 'C vitamini 20 mg', 'GDO''suz', 'Şekersiz'],
+        tr: ['50 mg', 'Çinko glukonat 50 mg', 'C vitamini 20 mg', 'GDO içermez', 'Şekersiz'],
       en: ['50 mg', 'Zinc gluconate 50 mg', 'Vitamin C 20 mg', 'Non-GMO', 'Sugar-free'],
       ar: ['50 ملغ', 'غلوكونات الزنك 50 ملغ', 'فيتامين C 20 ملغ', 'خالٍ من الكائنات المعدلة جينياً', 'خالٍ من السكر'],
     },

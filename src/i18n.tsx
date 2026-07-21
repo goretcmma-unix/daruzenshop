@@ -354,7 +354,7 @@ const ui = {
     professor: {
       title: 'Dr. Hasib Sheikh',
       subtitle: 'أستاذ مساعد، جامعة همدرد بنغلاديش',
-      description: 'يعمل حالياً في همدرد جيدا للاستيراد والتصدير والتجارة الخارجية المحدودة. حي غنيشلي باغلار مح. كوتشمان كاديسي غول سوكاك.',
+      description: 'يعمل حالياً في Hamdard Gıda, İthalat, İhracat ve Dış Ticaret Ltd. Şirketi. Güneşli Bağlar Mah. Koçman Caddesi Gül Sokak.',
     },
   },
 } as const;

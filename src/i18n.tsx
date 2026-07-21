@@ -93,6 +93,11 @@ const ui = {
       connect: 'Связаться',
       rights: 'Все права защищены.',
     },
+    professor: {
+      title: 'Профессор Доктор Омайра',
+      subtitle: 'Автор формул Daruzen',
+      description: 'Более 25 лет исследований в области нутрициологии. Профессор Омайра создала уникальные формулы Daruzen, объединив традиционные знания восточной медицины с современными научными подходами.',
+    },
   },
   tr: {
     nav: {
@@ -173,6 +178,11 @@ const ui = {
       links: ['Hakkımızda', 'Teslimat', 'Ödeme', 'İletişim'],
       connect: 'İletişim',
       rights: 'Tüm hakları saklıdır.',
+    },
+    professor: {
+      title: 'Prof. Dr. Omaira',
+      subtitle: 'Daruzen formüllerinin yazarı',
+      description: 'Beslenme bilimlerinde 25 yılı aşkın araştırma. Prof. Dr. Omaira, geleneksel Doğu tıp bilgisini modern bilimsel yaklaşımla birleştirerek eşsiz Daruzen formüllerini yaratmıştır.',
     },
   },
   en: {
@@ -255,6 +265,11 @@ const ui = {
       connect: 'Connect',
       rights: 'All rights reserved.',
     },
+    professor: {
+      title: 'Professor Dr. Omaira',
+      subtitle: 'Author of Daruzen formulas',
+      description: 'Over 25 years of research in nutririonology. Professor Omaira has created unique Daruzen formulas, combining traditional Eastern medicine knowledge with modern scientific approaches.',
+    },
   },
   ar: {
     nav: {
@@ -335,6 +350,11 @@ const ui = {
       links: ['من نحن', 'التوصيل', 'الدفع', 'اتصل بنا'],
       connect: 'تواصل',
       rights: 'جميع الحقوق محفوظة.',
+    },
+    professor: {
+      title: 'الأستاذة الدكتورة أُمايرة',
+      subtitle: 'مؤلفة صيغ داروزن',
+      description: 'أكثر من 25 عاماً من الأبحاث في مجال التغذية العلاجية. الأستاذة الدكتورة أُمايرة خلقت صيغ داروزن الفريدة، مجتمعةً المعرفة التقليدية للطب الشرقي مع المناهج العلمية الحديثة.',
     },
   },
 } as const;

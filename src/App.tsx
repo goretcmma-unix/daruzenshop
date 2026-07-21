@@ -754,22 +754,44 @@ const App: React.FC = () => {
       {/* Professor Section */}
       <section className="section-padding" style={{ background: '#F9F9FB' }}>
         <div className="container">
-          <div style={{ display: 'flex', justifyContent: 'center' }}>
+          <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
             <motion.div
-              whileHover={{ scale: 1.02 }}
-              style={{ background: 'white', padding: '40px', borderRadius: '32px', boxShadow: '0 10px 30px rgba(0,0,0,0.02)', border: '1px solid var(--border)', textAlign: 'center', maxWidth: '520px', width: '100%' }}
+              className="professor-section-inner"
+              whileHover={{ scale: 1.01 }}
+              style={{ background: 'white', padding: '48px', borderRadius: '32px', boxShadow: '0 10px 30px rgba(0,0,0,0.02)', border: '1px solid var(--border)', display: 'flex', alignItems: 'center', gap: '48px', flexDirection: 'row', width: '100%' }}
             >
-              <div style={{ width: '120px', height: '120px', borderRadius: '50%', background: 'linear-gradient(135deg, #e6bd63 0%, #cf9b41 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 24px', color: 'white', fontSize: '48px', fontWeight: '800', fontFamily: 'Outfit, sans-serif' }}>
-                ДО
+              <div style={{ flex: '0 0 auto', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px' }} className="professor-section-avatar-wrapper">
+                <div className="professor-section-avatar" style={{ width: '160px', height: '160px', borderRadius: '50%', background: 'linear-gradient(135deg, #e6bd63 0%, #cf9b41 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontSize: '56px', fontWeight: '800', fontFamily: 'Outfit, sans-serif', flexShrink: 0 }}>
+                  ДО
+                </div>
               </div>
-              <h3 style={{ fontSize: '24px', fontWeight: '700', marginBottom: '8px', color: 'var(--primary-dark)' }}>{t.professor.title}</h3>
-              <p style={{ fontSize: '14px', color: 'var(--accent)', fontWeight: '600', marginBottom: '16px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{t.professor.subtitle}</p>
-              <p style={{ fontSize: '16px', color: 'var(--text-muted)', lineHeight: '1.6' }}>
-                {t.professor.description}
-              </p>
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <h3 style={{ fontSize: '28px', fontWeight: '700', marginBottom: '8px', color: 'var(--primary-dark)' }}>{t.professor.title}</h3>
+                <p style={{ fontSize: '15px', color: 'var(--accent)', fontWeight: '600', marginBottom: '20px', textTransform: 'uppercase', letterSpacing: '0.06em' }}>{t.professor.subtitle}</p>
+                <p style={{ fontSize: '17px', color: 'var(--text-muted)', lineHeight: '1.7' }}>
+                  {t.professor.description}
+                </p>
+              </div>
             </motion.div>
           </div>
         </div>
+        <style>{`
+          @media (max-width: 720px) {
+            .professor-section-inner {
+              flex-direction: column !important;
+              text-align: center;
+              padding: 32px 24px !important;
+            }
+            .professor-section-inner > div:first-child {
+              align-items: center;
+            }
+            .professor-section-avatar {
+              width: 120px !important;
+              height: 120px !important;
+              font-size: 44px !important;
+            }
+          }
+        `}</style>
       </section>
 
       {/* Contacts Section */}

@@ -417,7 +417,8 @@ a:hover {
 
 .modal-swipe {
   position: relative;
-  overflow: hidden;
+  overflow-y: auto;
+  overflow-x: hidden;
   touch-action: pan-y;
   min-height: 90px;
 }
@@ -431,7 +432,6 @@ a:hover {
   border-collapse: collapse;
   background: rgba(212, 175, 55, 0.03);
   border-radius: 12px;
-  overflow: hidden;
   border: 1px solid rgba(212, 175, 55, 0.12);
 }
 

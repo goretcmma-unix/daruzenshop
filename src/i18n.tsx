@@ -60,11 +60,11 @@ const ui = {
       titleAccent: 'с нами',
       desc: 'Есть вопросы? Мы всегда на связи, чтобы помочь вам с выбором или заказом.',
       office: 'Офис в Турции',
-      officeAddr: 'Махмутбей, Орду Кадеси №26, 3 этаж, дверь №21, Багчылар/İSTANBUL',
+      officeAddr: 'İSTANBUL, Mahmutbey Mah. Ordu Cad. No: 26, 3.kat, İç kapı No: 21, Bağcılar',
       email: 'E-mail',
       emailAddr: 'hello@daruzen.com',
       phone: 'Телефон',
-      phoneNum: '+90 551 048 57 25',
+      phoneNum: '+90 544 679 10 12',
       form: {
         nameLabel: 'Как вас зовут?',
         namePlaceholder: 'Александр',
@@ -92,6 +92,7 @@ const ui = {
       links: ['О нас', 'Доставка', 'Оплата', 'Контакты'],
       connect: 'Связаться',
       rights: 'Все права защищены.',
+      adminLink: 'Вход для администратора',
     },
     professor: {
       title: 'Доктор Хасиб Шейх',
@@ -150,7 +151,7 @@ const ui = {
       email: 'E-posta',
       emailAddr: 'hello@daruzen.com',
       phone: 'Telefon',
-      phoneNum: '+90 551 048 57 25',
+      phoneNum: '+90 544 679 10 12',
       form: {
         nameLabel: 'Adınız nedir?',
         namePlaceholder: 'Ahmet',
@@ -178,6 +179,7 @@ const ui = {
       links: ['Hakkımızda', 'Teslimat', 'Ödeme', 'İletişim'],
       connect: 'İletişim',
       rights: 'Tüm hakları saklıdır.',
+      adminLink: 'Yönetici girişi',
     },
     professor: {
       title: 'Dr. Hasib Sheikh',
@@ -236,7 +238,7 @@ const ui = {
       email: 'E-mail',
       emailAddr: 'hello@daruzen.com',
       phone: 'Phone',
-      phoneNum: '+90 551 048 57 25',
+      phoneNum: '+90 544 679 10 12',
       form: {
         nameLabel: 'What is your name?',
         namePlaceholder: 'Alexander',
@@ -264,6 +266,7 @@ const ui = {
       links: ['About', 'Delivery', 'Payment', 'Contacts'],
       connect: 'Connect',
       rights: 'All rights reserved.',
+      adminLink: 'Admin login',
     },
     professor: {
       title: 'Dr. Hasib Sheikh',
@@ -322,7 +325,7 @@ const ui = {
       email: 'البريد الإلكتروني',
       emailAddr: 'hello@daruzen.com',
       phone: 'الهاتف',
-      phoneNum: '+90 551 048 57 25',
+      phoneNum: '+90 544 679 10 12',
       form: {
         nameLabel: 'ما اسمك؟',
         namePlaceholder: 'أحمد',
@@ -350,6 +353,7 @@ const ui = {
       links: ['من نحن', 'التوصيل', 'الدفع', 'اتصل بنا'],
       connect: 'تواصل',
       rights: 'جميع الحقوق محفوظة.',
+      adminLink: 'تسجيل دخول المشرف',
     },
     professor: {
       title: 'Dr. Hasib Sheikh',

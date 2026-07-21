@@ -94,9 +94,9 @@ const ui = {
       rights: 'Все права защищены.',
     },
     professor: {
-      title: 'Профессор Доктор Омайра',
-      subtitle: 'Автор формул Daruzen',
-      description: 'Более 25 лет исследований в области нутрициологии. Профессор Омайра создала уникальные формулы Daruzen, объединив традиционные знания восточной медицины с современными научными подходами.',
+      title: 'Dr. Hasib Sheikh',
+      subtitle: 'Assistant Professor, Hamdard University Bangladesh',
+      description: 'Currently working for Hamdard Gıda, İthalat, İhracat ve Dış Ticaret Ltd. Şirketi. Güneşli Bağlar Mah. Koçman Caddesi Gül Sokak.',
     },
   },
   tr: {
@@ -180,9 +180,9 @@ const ui = {
       rights: 'Tüm hakları saklıdır.',
     },
     professor: {
-      title: 'Prof. Dr. Omaira',
-      subtitle: 'Daruzen formüllerinin yazarı',
-      description: 'Beslenme bilimlerinde 25 yılı aşkın araştırma. Prof. Dr. Omaira, geleneksel Doğu tıp bilgisini modern bilimsel yaklaşımla birleştirerek eşsiz Daruzen formüllerini yaratmıştır.',
+      title: 'Dr. Hasib Sheikh',
+      subtitle: 'Hamdard Üniversitesi Bangladeş Yardımcı Doçenti',
+      description: 'Hamdard Gıda, İthalat, İhracat ve Dış Ticaret Ltd. Şirketi\'nde çalışıyor. Güneşli Bağlar Mah. Koçman Caddesi Gül Sokak.',
     },
   },
   en: {
@@ -266,9 +266,9 @@ const ui = {
       rights: 'All rights reserved.',
     },
     professor: {
-      title: 'Professor Dr. Omaira',
-      subtitle: 'Author of Daruzen formulas',
-      description: 'Over 25 years of research in nutririonology. Professor Omaira has created unique Daruzen formulas, combining traditional Eastern medicine knowledge with modern scientific approaches.',
+      title: 'Dr. Hasib Sheikh',
+      subtitle: 'Assistant Professor, Hamdard University Bangladesh',
+      description: 'Currently working for Hamdard Gıda, İthalat, İhracat ve Dış Ticaret Ltd. Şirketi. Güneşli Bağlar Mah. Koçman Caddesi Gül Sokak.',
     },
   },
   ar: {
@@ -352,9 +352,9 @@ const ui = {
       rights: 'جميع الحقوق محفوظة.',
     },
     professor: {
-      title: 'الأستاذة الدكتورة أُمايرة',
-      subtitle: 'مؤلفة صيغ داروزن',
-      description: 'أكثر من 25 عاماً من الأبحاث في مجال التغذية العلاجية. الأستاذة الدكتورة أُمايرة خلقت صيغ داروزن الفريدة، مجتمعةً المعرفة التقليدية للطب الشرقي مع المناهج العلمية الحديثة.',
+      title: 'Dr. Hasib Sheikh',
+      subtitle: 'أستاذ مساعد، جامعة همدرد بنغلاديش',
+      description: 'يعمل حالياً في همدرد جيدا للاستيراد والتصدير والتجارة الخارجية المحدودة. حي غنيشلي باغلار مح. كوتشمان كاديسي غول سوكاك.',
     },
   },
 } as const;

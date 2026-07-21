@@ -769,10 +769,6 @@ const App: React.FC = () => {
               <p style={{ fontSize: '17px', color: 'var(--text-muted)', lineHeight: '1.8' }}>
                 {t.professor.description}
               </p>
-              <div style={{ marginTop: '24px', display: 'flex', gap: '12px', alignItems: 'center' }}>
-                <div style={{ height: '1px', width: '40px', background: 'var(--accent)' }}></div>
-                <span style={{ fontSize: '13px', color: 'var(--accent)', fontWeight: '600', letterSpacing: '0.05em' }}>25+ ЛЕТ ОПЫТА</span>
-              </div>
             </div>
           </div>
         </div>

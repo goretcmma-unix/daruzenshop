@@ -62,7 +62,7 @@ const ui = {
       office: 'Офис в Турции',
       officeAddr: 'İSTANBUL, Mahmutbey Mah. Ordu Cad. No: 26, 3.kat, İç kapı No: 21, Bağcılar',
       email: 'E-mail',
-      emailAddr: 'hello@daruzen.com',
+      emailAddr: 'daruzenshop@outlook.com',
       phone: 'Телефон',
       phoneNum: '+90 544 679 10 12',
       form: {
@@ -149,7 +149,7 @@ const ui = {
       office: 'Türkiye Ofisi',
       officeAddr: 'Mahmutbey Mah. Ordu Cad. No: 26 3.kat İç kapı No: 21 Bağcılar/İSTANBUL',
       email: 'E-posta',
-      emailAddr: 'hello@daruzen.com',
+      emailAddr: 'daruzenshop@outlook.com',
       phone: 'Telefon',
       phoneNum: '+90 544 679 10 12',
       form: {
@@ -236,7 +236,7 @@ const ui = {
       office: 'Office in Turkey',
       officeAddr: 'Mahmutbey, Ordu Street No: 26, 3rd Floor, Door No: 21, Bağcılar/İSTANBUL',
       email: 'E-mail',
-      emailAddr: 'hello@daruzen.com',
+      emailAddr: 'daruzenshop@outlook.com',
       phone: 'Phone',
       phoneNum: '+90 544 679 10 12',
       form: {
@@ -323,7 +323,7 @@ const ui = {
       office: 'مكتب في تركيا',
       officeAddr: 'Mahmutbey Mah. Ordu Cad. No: 26 3.kat İç kapı No: 21 Bağcılar/İSTANBUL',
       email: 'البريد الإلكتروني',
-      emailAddr: 'hello@daruzen.com',
+      emailAddr: 'daruzenshop@outlook.com',
       phone: 'الهاتف',
       phoneNum: '+90 544 679 10 12',
       form: {

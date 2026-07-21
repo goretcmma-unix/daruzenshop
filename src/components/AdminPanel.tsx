@@ -20,7 +20,7 @@ const LANGS: Lang[] = ['ru', 'tr', 'en', 'ar'];
 const LANG_LABELS: Record<Lang, string> = { ru: 'РУ', tr: 'TR', en: 'EN', ar: 'AR' };
 
 // Поля логина/пароля вводятся пользователем — никаких учётных данных в коде
-const ADMIN_EMAIL_HINT = 'daruzen@gmail.com';
+const ADMIN_EMAIL_HINT = 'daruzenshop@outlook.com';
 
 const emptyProduct = (): Product => ({
   id: 'prod-' + Date.now(),

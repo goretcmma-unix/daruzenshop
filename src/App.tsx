@@ -1390,8 +1390,8 @@ const App: React.FC = () => {
             <div>
               <h4 style={{ marginBottom: '24px', fontWeight: '700' }}>{t.footer.connect}</h4>
               <nav style={{ display: 'flex', flexDirection: 'column', gap: '12px', opacity: 0.6 }}>
-                <a href="mailto:info@daruzen.ru" style={{ color: 'inherit', textDecoration: 'none' }}>info@daruzen.ru</a>
-                <a href="tel:+905510485725" style={{ color: 'inherit', textDecoration: 'none' }}>+90 551 048 57 25</a>
+                <a href="mailto:daruzenshop@outlook.com" style={{ color: 'inherit', textDecoration: 'none' }}>daruzenshop@outlook.com</a>
+                <a href="tel:+905446791012" style={{ color: 'inherit', textDecoration: 'none' }}>+90 544 679 10 12</a>
                 <div style={{ display: 'flex', gap: '16px', marginTop: '12px' }}>
                    <MessageCircle size={20} />
                    <Send size={20} />

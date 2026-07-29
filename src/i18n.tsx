@@ -4,10 +4,10 @@ export type Lang = 'ru' | 'tr' | 'en' | 'ar';
 
 // eslint-disable-next-line react-refresh/only-export-components
 export const LANGS: { code: Lang; flag: string; label: string }[] = [
-  { code: 'ru', flag: '🇷🇺', label: 'Русский' },
-  { code: 'tr', flag: '🇹🇷', label: 'Türkçe' },
-  { code: 'en', flag: '🇬🇧', label: 'English' },
-  { code: 'ar', flag: '🇸🇦', label: 'العربية' },
+  { code: 'ru', flag: '/images/flags/ru.svg', label: 'Русский' },
+  { code: 'tr', flag: '/images/flags/tr.svg', label: 'Türkçe' },
+  { code: 'en', flag: '/images/flags/gb.svg', label: 'English' },
+  { code: 'ar', flag: '/images/flags/sa.svg', label: 'العربية' },
 ];
 
 type Dict = (typeof ui)[Lang];
@@ -85,6 +85,8 @@ const ui = {
       quantity: 'Количество',
       description: 'Описание',
       composition: 'Состав',
+      substance: 'Вещество',
+      dosage: 'Дозировка',
     },
     footer: {
       desc: 'Натуральные биодобавки и витамины из лучших ингредиентов. Качество, проверенное временем.',
@@ -172,6 +174,8 @@ const ui = {
       quantity: 'Adet',
       description: 'Açıklama',
       composition: 'İçindekiler',
+      substance: 'Madde',
+      dosage: 'Dozaj',
     },
     footer: {
       desc: 'En iyi içeriklerden doğal takviyeler ve vitaminler. Zamanın sınadığı kalite.',
@@ -259,6 +263,8 @@ const ui = {
       quantity: 'Quantity',
       description: 'Description',
       composition: 'Composition',
+      substance: 'Substance',
+      dosage: 'Dosage',
     },
     footer: {
       desc: 'Natural supplements and vitamins made from the finest ingredients. Quality tested by time.',
@@ -346,6 +352,8 @@ const ui = {
       quantity: 'الكمية',
       description: 'الوصف',
       composition: 'المكونات',
+      substance: 'المادة',
+      dosage: 'الجرعة',
     },
     footer: {
       desc: 'مكملات غذائية طبيعية وفيتامينات مصنوعة من أفضل المكونات. جودة اختبرها الزمن.',

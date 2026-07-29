@@ -39,26 +39,31 @@ const App: React.FC = () => {
   const [scrolled, setScrolled] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isLangOpen, setIsLangOpen] = useState(false);
+  const [activeSection, setActiveSection] = useState('top');
   const [selectedProduct, setSelectedProduct] = useState<LocalizedProduct | null>(null);
   const [modalQuantity, setModalQuantity] = useState(1);
   const [productTab, setProductTab] = useState(0);
   const swipeStartX = useRef(0);
   const swipeContentRef = useRef<HTMLDivElement | null>(null);
-  const [swipeHeight, setSwipeHeight] = useState<number | undefined>(undefined);
+  const navClickRef = useRef(false);
+  const [swipeHeight, setSwipeHeight] = useState<number | 'auto'>('auto');
+  const swipeMounted = useRef(false);
 
   useLayoutEffect(() => {
     if (!selectedProduct) {
-      setSwipeHeight(undefined);
+      setSwipeHeight('auto');
+      swipeMounted.current = false;
       return;
     }
+    swipeMounted.current = true;
     const el = swipeContentRef.current;
     if (!el) return;
-    const update = () => setSwipeHeight(el.offsetHeight);
+    const update = () => { if (swipeContentRef.current) setSwipeHeight(swipeContentRef.current.offsetHeight); };
     update();
     const ro = new ResizeObserver(update);
     ro.observe(el);
     return () => ro.disconnect();
-  }, [selectedProduct, productTab]);
+  }, [selectedProduct]);
   const [page, setPage] = useState(0);
   const PAGE_SIZE = 8;
 
@@ -192,6 +197,33 @@ const App: React.FC = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  useEffect(() => {
+    const header = document.querySelector('header');
+    const headerH = header?.offsetHeight || 80;
+    const sections = document.querySelectorAll('section[id]');
+    if (!sections.length || typeof IntersectionObserver === 'undefined') return;
+    const io = new IntersectionObserver(
+      (entries) => {
+        if (navClickRef.current) return;
+        const visible = entries.filter(e => e.isIntersecting);
+        if (visible.length) {
+          let best = visible[0].target.id;
+          let bestTop = visible[0].boundingClientRect.top;
+          visible.forEach(e => {
+            if (e.boundingClientRect.top < bestTop) { bestTop = e.boundingClientRect.top; best = e.target.id; }
+          });
+          setActiveSection(best);
+        }
+      },
+      { threshold: 0, rootMargin: `-${headerH}px 0px -40% 0px` }
+    );
+    sections.forEach(s => io.observe(s));
+
+    const onScrollEnd = () => { navClickRef.current = false; };
+    window.addEventListener('scrollend', onScrollEnd, { passive: true });
+    return () => { io.disconnect(); window.removeEventListener('scrollend', onScrollEnd); };
+  }, []);
+
   const filteredProducts = useMemo(() => {
     return localizedProducts.filter(p => {
       const query = searchQuery.toLowerCase();
@@ -249,6 +281,9 @@ const App: React.FC = () => {
 
   const handleNavClick = (e: React.MouseEvent<HTMLElement> | null, targetId: string) => {
     if (e) e.preventDefault();
+    navClickRef.current = true;
+    setTimeout(() => { navClickRef.current = false; }, 800);
+    setActiveSection(targetId);
     
     if (isMobileMenuOpen) {
       setIsMobileMenuOpen(false);
@@ -257,7 +292,6 @@ const App: React.FC = () => {
     const element = targetId === 'top' ? null : document.getElementById(targetId);
     const targetY = element ? element.offsetTop - 80 : 0;
     
-    // Нативный плавный скролл (крутится на стороне композитора — без rAF-нагрузки на основной поток)
     window.scrollTo({ top: targetY, behavior: 'smooth' });
   };
 
@@ -333,7 +367,7 @@ const App: React.FC = () => {
       `}} />
       {/* Navigation */}
       <header className={`header ${scrolled ? 'scrolled' : ''}`}>
-        <div className="container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
+         <div className="container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%', maxWidth: 'none', paddingLeft: '40px', paddingRight: '40px' }}>
           <div className="header-left-group" style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
             <button className="md-hidden burger-btn" onClick={() => setIsMobileMenuOpen(true)}>
               <BurgerMenu size={22} color="var(--primary)" />
@@ -351,25 +385,68 @@ const App: React.FC = () => {
           </div>
 
           <nav className="desktop-nav" style={{ display: 'flex', gap: '35px', position: 'absolute', left: '50%', transform: 'translateX(-50%)' }}>
-            <a href="#" className="nav-link" onClick={(e) => handleNavClick(e, 'top')}>{t.nav.home}</a>
-            <a href="#catalog" className="nav-link" onClick={(e) => handleNavClick(e, 'catalog')}>{t.nav.catalog}</a>
-            <a href="#about" className="nav-link" onClick={(e) => handleNavClick(e, 'about')}>{t.nav.about}</a>
-            <a href="#contacts" className="nav-link" onClick={(e) => handleNavClick(e, 'contacts')}>{t.nav.contacts}</a>
+            <a href="#" className={`nav-link${activeSection === 'top' ? ' active' : ''}`} onClick={(e) => handleNavClick(e, 'top')}>{t.nav.home}</a>
+            <a href="#catalog" className={`nav-link${activeSection === 'catalog' ? ' active' : ''}`} onClick={(e) => handleNavClick(e, 'catalog')}>{t.nav.catalog}</a>
+            <a href="#about" className={`nav-link${activeSection === 'about' ? ' active' : ''}`} onClick={(e) => handleNavClick(e, 'about')}>{t.nav.about}</a>
+            <a href="#contacts" className={`nav-link${activeSection === 'contacts' ? ' active' : ''}`} onClick={(e) => handleNavClick(e, 'contacts')}>{t.nav.contacts}</a>
           </nav>
 
-          <div className="header-right-group" style={{ display: 'flex', alignItems: 'center', gap: '18px', justifyContent: 'flex-end' }}>
-            <div className="lang-switch" style={{ position: 'relative', display: 'inline-block' }}>
-              <button
-                type="button"
+          <div className="header-right-group" style={{ display: 'flex', alignItems: 'center', gap: '6px', justifyContent: 'flex-end' }}>
+            <button 
+              onClick={() => setIsCartOpen(true)}
+              className="header-cart-btn"
+              style={{ 
+                position: 'relative',
+                background: 'none', 
+                border: 'none', 
+                cursor: 'pointer', 
+                display: 'flex', 
+                alignItems: 'center',
+                justifyContent: 'center',
+                padding: '6px',
+                width: '36px',
+                height: '36px'
+              }}
+            >
+              <ShoppingCart size={20} color="var(--primary)" />
+              <AnimatePresence mode="wait">
+                {cart.length > 0 && (
+                  <motion.span 
+                    key={totalItemsCount}
+                    initial={{ scale: 0.5, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    exit={{ scale: 0.5, opacity: 0 }}
+                    className="cart-badge"
+                    style={{ 
+                      position: 'absolute',
+                      top: '-2px',
+                      right: '-4px',
+                      background: 'var(--accent-light)', 
+                      color: 'var(--primary-dark)', 
+                      fontSize: '10px', 
+                      fontWeight: '900', 
+                      padding: '1px 6px',
+                      borderRadius: '100px',
+                      boxShadow: '0 2px 6px rgba(237, 196, 77, 0.5)',
+                      whiteSpace: 'nowrap',
+                      lineHeight: '1.2'
+                    }}
+                  >
+                    {totalItemsCount}
+                  </motion.span>
+                )}
+              </AnimatePresence>
+            </button>
+            <div style={{ position: 'relative', display: 'inline-block', lineHeight: 0 }}>
+              <div
                 onClick={() => setIsLangOpen(o => !o)}
-                className="lang-btn active"
                 title={LANGS.find(l => l.code === lang)?.label}
-                aria-haspopup="true"
-                aria-expanded={isLangOpen}
-                style={{ fontSize: '20px', lineHeight: 1 }}
+                style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '36px', height: '36px', cursor: 'pointer', borderRadius: '50%' }}
               >
-                {LANGS.find(l => l.code === lang)?.flag}
-              </button>
+                <div style={{ width: '22px', height: '22px', borderRadius: '50%', overflow: 'hidden' }}>
+                  <img src={LANGS.find(l => l.code === lang)?.flag} alt={lang} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+                </div>
+              </div>
               <AnimatePresence>
                 {isLangOpen && (
                   <>
@@ -404,81 +481,37 @@ const App: React.FC = () => {
                       }}
                     >
                       {LANGS.map(l => (
-                        <button
+                        <motion.div
                           key={l.code}
-                          type="button"
                           onClick={() => { setLang(l.code); setIsLangOpen(false); }}
-                          className={`lang-dropdown-item ${lang === l.code ? 'active' : ''}`}
+                          whileHover={{ background: 'rgba(0,0,0,0.06)' }}
+                          transition={{ duration: 0.15 }}
                           style={{
                             display: 'flex',
                             alignItems: 'center',
                             gap: '10px',
                             background: lang === l.code ? 'rgba(0,0,0,0.06)' : 'none',
-                            border: 'none',
                             borderRadius: '10px',
                             cursor: 'pointer',
                             padding: '8px 12px',
                             fontSize: '14px',
                             color: 'var(--primary-dark)',
                             textAlign: 'left',
-                            outline: 'none',
                           }}
                         >
-                          <span style={{ fontSize: '18px' }}>{l.flag}</span>
+                          <div style={{ width: '22px', height: '22px', borderRadius: '50%', overflow: 'hidden', flexShrink: 0 }}>
+                            <img src={l.flag} alt={l.code} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+                          </div>
                           <span>{l.label}</span>
-                        </button>
+                        </motion.div>
                       ))}
                     </motion.div>
                   </>
                 )}
               </AnimatePresence>
             </div>
-            <button onClick={() => setIsSearchOpen(true)} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '8px', color: 'var(--primary)' }}>
-              <Search size={18} />
-            </button>
-            <button 
-              onClick={() => setIsCartOpen(true)}
-              className="header-cart-btn"
-              style={{ 
-                position: 'relative',
-                background: 'none', 
-                border: 'none', 
-                cursor: 'pointer', 
-                display: 'flex', 
-                alignItems: 'center',
-                gap: '10px',
-                padding: '8px',
-                transform: 'translateY(-1px)'
-              }}
-            >
-              <ShoppingCart size={22} color="var(--primary)" />
-              <AnimatePresence mode="wait">
-                {cart.length > 0 && (
-                  <motion.span 
-                    key={totalItemsCount}
-                    initial={{ scale: 0.5, opacity: 0 }}
-                    animate={{ scale: 1, opacity: 1 }}
-                    exit={{ scale: 0.5, opacity: 0 }}
-                    className="cart-badge"
-                    style={{ 
-                      position: 'absolute',
-                      top: '-2px',
-                      right: '-4px',
-                      background: 'var(--accent-light)', 
-                      color: 'var(--primary-dark)', 
-                      fontSize: '10px', 
-                      fontWeight: '900', 
-                      padding: '1px 6px',
-                      borderRadius: '100px',
-                      boxShadow: '0 2px 6px rgba(237, 196, 77, 0.5)',
-                      whiteSpace: 'nowrap',
-                      lineHeight: '1.2'
-                    }}
-                  >
-                    {totalItemsCount}
-                  </motion.span>
-                )}
-              </AnimatePresence>
+            <button onClick={() => setIsSearchOpen(true)} style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '6px', width: '36px', height: '36px', color: 'var(--primary)' }}>
+              <Search size={20} />
             </button>
           </div>
         </div>
@@ -607,12 +640,12 @@ const App: React.FC = () => {
             >
               {visibleProducts.map((product) => (
                 <motion.div
-                  key={product.id}
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.95 }}
-                  transition={{ duration: 0.25, ease: "easeOut" }}
-                  className="product-card"
+                    key={product.id}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.15, ease: "easeOut" }}
+                    className="product-card"
                   style={{ display: 'flex', flexDirection: 'column', height: '100%', cursor: 'pointer' }}
                   onClick={() => setSelectedProduct(product)}
                 >
@@ -719,7 +752,7 @@ const App: React.FC = () => {
           {filteredProducts.length === 0 && (
             <div style={{ textAlign: 'center', padding: '100px 0' }}>
               <Search size={48} color="#ddd" style={{ marginBottom: '20px' }} />
-              <p style={{ color: '#999', fontSize: '18px' }}>{t.catalog.empty}</p>
+               <p style={{ color: '#999', fontSize: '18px' }}>{t.catalog.empty}</p>
             </div>
           )}
         </div>
@@ -1242,9 +1275,11 @@ const App: React.FC = () => {
                             animate={{ x: 0, opacity: 1 }}
                             exit={{ x: -24, opacity: 0 }}
                             transition={{ duration: 0.2 }}
-                          >
-                            <p className="modal-desc" style={{ color: 'var(--text-muted)', lineHeight: '1.6', opacity: 0.9 }}>{selectedProduct.description}</p>
-                          </motion.div>
+                           >
+                             <div className="desc-card__content">
+                               <p>{selectedProduct.description}</p>
+                             </div>
+                           </motion.div>
                         ) : (
                           <motion.div
                             key="comp"
@@ -1254,36 +1289,34 @@ const App: React.FC = () => {
                             exit={{ x: 24, opacity: 0 }}
                             transition={{ duration: 0.2 }}
                           >
-                              <table className="modal-comp-table" style={{ width: '100%', tableLayout: 'fixed' }}>
-                                <thead>
-                                  <tr>
-                                    <th style={{ width: '55%', textAlign: 'left', padding: '10px 18px', borderBottom: 'none', fontSize: '11px', fontWeight: '800', color: '#000', letterSpacing: '0.18em', textTransform: 'uppercase' }}>Активное вещество</th>
-                                    <th style={{ width: '45%', textAlign: 'right', padding: '10px 18px', borderBottom: 'none', fontSize: '11px', fontWeight: '800', color: '#000', letterSpacing: '0.18em', textTransform: 'uppercase' }}>Дозировка</th>
-                                  </tr>
-                                </thead>
-                                <tbody>
+                                <div className="comp-card">
+                                  <div className="comp-card__header">
+                                    <span className="comp-card__pill comp-card__pill--left">{t.modal.substance}</span>
+                                    <span className="comp-card__pill comp-card__pill--right">{t.modal.dosage}</span>
+                                  </div>
                                   {selectedProduct.specs?.map((spec, i) => {
-                                    const { ingredient, dosage } = parseCompositionLine(spec);
-                                    if (!ingredient || !dosage) return null;
+                                    const { ingredient, dosage, daily } = parseCompositionLine(spec);
+                                    if (!ingredient) return null;
                                     return (
-                                      <tr key={i}>
-                                        <td style={{ padding: '14px 18px', borderBottom: '1px solid #f3f4f6', fontSize: '14px', color: '#111827', lineHeight: '1.4', textAlign: 'left', fontWeight: '500' }}>{ingredient}</td>
-                                        <td style={{ padding: '14px 18px', borderBottom: '1px solid #f3f4f6', fontSize: '14px', color: '#000', fontWeight: '700', textAlign: 'right', fontVariantNumeric: 'tabular-nums', letterSpacing: '0.02em' }}>{dosage}</td>
-                                      </tr>
+                                      <div key={i} className="comp-card__row">
+                                        <span className="comp-card__name">{ingredient}</span>
+                                        <span className="comp-card__values">
+                                          {dosage && <span className="comp-card__dosage">{dosage}</span>}
+                                          {daily && <span className="comp-card__daily">{daily}</span>}
+                                        </span>
+                                      </div>
                                     );
                                   })}
-                                </tbody>
-                              </table>
+                                </div>
                           </motion.div>
                         )}
                       </AnimatePresence>
                       </div>
                     </motion.div>
                    
-                    {productTab === 0 && (
-                    <div style={{ marginTop: 'auto', paddingTop: '20px', borderTop: '1px solid rgba(0,0,0,0.05)' }}>
+                     <div style={{ marginTop: 'auto', paddingTop: '20px' }}>
                      <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '16px' }}>
-                       <span style={{ fontWeight: '600', fontSize: '15px', color: 'var(--primary-dark)' }}>{t.modal.quantity}</span>
+                        <span style={{ fontWeight: '600', fontSize: '15px', color: '#8e8e93' }}>{t.modal.quantity}</span>
                        <div style={{ display: 'flex', alignItems: 'center', gap: '18px', background: '#F5F5F7', padding: '8px 18px', borderRadius: '12px' }}>
                          <QtyButton label="-" onClick={() => setModalQuantity(q => Math.max(1, q - 1))}>
                            <Minus size={18} />
@@ -1315,13 +1348,12 @@ const App: React.FC = () => {
                          {t.cart.buyNow}
                        </motion.button>
                      </div>
-                    </div>
-                    )}
-                 </div>
-               </motion.div>
-             </div>
-         )}
-       </AnimatePresence>
+                     </div>
+                  </div>
+                </motion.div>
+              </div>
+          )}
+        </AnimatePresence>
 
       {/* Mobile Nav Drawer */}
       <AnimatePresence>

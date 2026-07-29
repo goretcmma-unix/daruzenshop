@@ -214,26 +214,27 @@ const AppStyles = () => (
       z-index: 1;
     }
     .hero-text-container {
-      max-width: 600px;
+      max-width: 620px;
       text-align: left;
       padding-left: 0;
+      margin-left: -120px;
     }
     .hero-title {
-      font-size: clamp(48px, 10vw, 72px);
+      font-size: clamp(48px, 10vw, 96px);
       font-weight: 700;
-      line-height: 1.1;
+      line-height: 1.05;
       letter-spacing: -0.03em;
-      margin-bottom: 24px;
+      margin-bottom: 28px;
       color: var(--primary);
     }
     .hero-description {
-      font-size: clamp(18px, 4vw, 24px);
+      font-size: clamp(18px, 4vw, 28px);
       line-height: 1.4;
       color: var(--primary);
       opacity: 0.8;
-      margin-bottom: 40px;
+      margin-bottom: 44px;
       font-weight: 400;
-      max-width: 360px;
+      max-width: 440px;
     }
     .marquee-section {
       background: var(--bg-main);
@@ -441,8 +442,9 @@ const AppStyles = () => (
 
     .hero-actions .btn {
       width: auto;
-      padding: 10px 20px;
-      font-size: 14px;
+      padding: 14px 36px;
+      font-size: clamp(16px, 1.8vw, 20px);
+      font-weight: 700;
     }
 
     /* Mobile text normalization */

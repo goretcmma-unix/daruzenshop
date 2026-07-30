@@ -517,8 +517,17 @@ const App: React.FC = () => {
         </div>
       </header>
 
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={lang}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.2, ease: 'easeOut' }}
+        >
       {/* Hero Section */}
-      <section className="hero-section">
+      <section className="hero-section" style={{ position: 'relative' }}>
+        <div style={{ position: 'absolute', top: 0, right: 0, width: '40%', height: '100%', background: 'linear-gradient(225deg, rgba(255,255,255,0.12) 0%, transparent 60%)', pointerEvents: 'none', zIndex: 1 }} />
         <div className="container hero-content-wrapper">
           <motion.div
             style={{ opacity: heroOpacity, scale: heroScale, willChange: 'transform, opacity' }}
@@ -1448,6 +1457,9 @@ const App: React.FC = () => {
           </div>
         </div>
       </footer>
+
+      </motion.div>
+      </AnimatePresence>
 
       {/* CSS for components not using inline styles */}
       <AppStyles />

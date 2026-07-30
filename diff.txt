@@ -1,0 +1,196 @@
+diff --git a/src/App.tsx b/src/App.tsx
+index 84ea1e5..3eea515 100644
+--- a/src/App.tsx
++++ b/src/App.tsx
+@@ -37,8 +37,8 @@ const App: React.FC = () => {
+   const [searchQuery, setSearchQuery] = useState('');
+   const [selectedCategory, setSelectedCategory] = useState<'all' | CategoryKey>('all');
+   const [scrolled, setScrolled] = useState(false);
+-  const [isSearchOpen, setIsSearchOpen] = useState(false);
+   const [isLangOpen, setIsLangOpen] = useState(false);
++  const [isSearchOpen, setIsSearchOpen] = useState(false);
+   const [selectedProduct, setSelectedProduct] = useState<LocalizedProduct | null>(null);
+   const [modalQuantity, setModalQuantity] = useState(1);
+   const [productTab, setProductTab] = useState(0);
+@@ -333,7 +333,7 @@ const App: React.FC = () => {
+       `}} />
+       {/* Navigation */}
+       <header className={`header ${scrolled ? 'scrolled' : ''}`}>
+-        <div className="container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
++        <div className="container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%', paddingLeft: '20px', paddingRight: '20px' }}>
+           <div className="header-left-group" style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+             <button className="md-hidden burger-btn" onClick={() => setIsMobileMenuOpen(true)}>
+               <BurgerMenu size={22} color="var(--primary)" />
+@@ -358,18 +358,14 @@ const App: React.FC = () => {
+           </nav>
+ 
+           <div className="header-right-group" style={{ display: 'flex', alignItems: 'center', gap: '18px', justifyContent: 'flex-end' }}>
+-            <div className="lang-switch" style={{ position: 'relative', display: 'inline-block' }}>
+-              <button
+-                type="button"
++            <div style={{ position: 'relative', display: 'inline-block', lineHeight: 0 }}>
++              <div
+                 onClick={() => setIsLangOpen(o => !o)}
+-                className="lang-btn active"
+                 title={LANGS.find(l => l.code === lang)?.label}
+-                aria-haspopup="true"
+-                aria-expanded={isLangOpen}
+-                style={{ fontSize: '20px', lineHeight: 1 }}
++                style={{ width: '22px', height: '22px', borderRadius: '50%', overflow: 'hidden', cursor: 'pointer' }}
+               >
+-                {LANGS.find(l => l.code === lang)?.flag}
+-              </button>
++                <img src={LANGS.find(l => l.code === lang)?.flag} alt={lang} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
++              </div>
+               <AnimatePresence>
+                 {isLangOpen && (
+                   <>
+@@ -404,37 +400,33 @@ const App: React.FC = () => {
+                       }}
+                     >
+                       {LANGS.map(l => (
+-                        <button
++                        <motion.div
+                           key={l.code}
+-                          type="button"
+                           onClick={() => { setLang(l.code); setIsLangOpen(false); }}
+-                          className={`lang-dropdown-item ${lang === l.code ? 'active' : ''}`}
++                          whileHover={{ background: 'rgba(0,0,0,0.06)' }}
++                          transition={{ duration: 0.15 }}
+                           style={{
+                             display: 'flex',
+                             alignItems: 'center',
+                             gap: '10px',
+                             background: lang === l.code ? 'rgba(0,0,0,0.06)' : 'none',
+-                            border: 'none',
+                             borderRadius: '10px',
+                             cursor: 'pointer',
+                             padding: '8px 12px',
+                             fontSize: '14px',
+                             color: 'var(--primary-dark)',
+                             textAlign: 'left',
+-                            outline: 'none',
+                           }}
+                         >
+-                          <span style={{ fontSize: '18px' }}>{l.flag}</span>
++                          <div style={{ width: '22px', height: '22px', borderRadius: '50%', overflow: 'hidden', flexShrink: 0 }}>
++                            <img src={l.flag} alt={l.code} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
++                          </div>
+                           <span>{l.label}</span>
+-                        </button>
++                        </motion.div>
+                       ))}
+                     </motion.div>
+                   </>
+                 )}
+-              </AnimatePresence>
+-            </div>
+-            <button onClick={() => setIsSearchOpen(true)} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '8px', color: 'var(--primary)' }}>
+-              <Search size={18} />
+             </button>
+             <button 
+               onClick={() => setIsCartOpen(true)}
+@@ -480,12 +472,92 @@ const App: React.FC = () => {
+                 )}
+               </AnimatePresence>
+             </button>
++            <div style={{ position: 'relative', display: 'inline-block', lineHeight: 0 }}>
++              <div
++                onClick={() => setIsLangOpen(o => !o)}
++                title={LANGS.find(l => l.code === lang)?.label}
++                style={{ width: '22px', height: '22px', borderRadius: '50%', overflow: 'hidden', cursor: 'pointer' }}
++              >
++                <img src={LANGS.find(l => l.code === lang)?.flag} alt={lang} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
++              </div>
++              <AnimatePresence>
++                {isLangOpen && (
++                  <>
++                    <motion.div
++                      key="lang-backdrop"
++                      initial={{ opacity: 0 }}
++                      animate={{ opacity: 1 }}
++                      exit={{ opacity: 0 }}
++                      onClick={() => setIsLangOpen(false)}
++                      style={{ position: 'fixed', inset: 0, zIndex: 1190 }}
++                    />
++                    <motion.div
++                      key="lang-dropdown"
++                      initial={{ opacity: 0, y: -8, scale: 0.96 }}
++                      animate={{ opacity: 1, y: 0, scale: 1 }}
++                      exit={{ opacity: 0, y: -8, scale: 0.96 }}
++                      transition={{ duration: 0.18, ease: 'easeOut' }}
++                      className="lang-dropdown"
++                      style={{
++                        position: 'absolute',
++                        top: 'calc(100% + 8px)',
++                        insetInlineEnd: 0,
++                        background: '#fff',
++                        borderRadius: '14px',
++                        boxShadow: '0 12px 30px rgba(0,0,0,0.14)',
++                        padding: '6px',
++                        display: 'flex',
++                        flexDirection: 'column',
++                        gap: '4px',
++                        zIndex: 1200,
++                        minWidth: '150px',
++                      }}
++                    >
++                      {LANGS.map(l => (
++                        <motion.div
++                          key={l.code}
++                          onClick={() => { setLang(l.code); setIsLangOpen(false); }}
++                          whileHover={{ background: 'rgba(0,0,0,0.06)' }}
++                          transition={{ duration: 0.15 }}
++                          style={{
++                            display: 'flex',
++                            alignItems: 'center',
++                            gap: '10px',
++                            background: lang === l.code ? 'rgba(0,0,0,0.06)' : 'none',
++                            borderRadius: '10px',
++                            cursor: 'pointer',
++                            padding: '8px 12px',
++                            fontSize: '14px',
++                            color: 'var(--primary-dark)',
++                            textAlign: 'left',
++                          }}
++                        >
++                          <div style={{ width: '22px', height: '22px', borderRadius: '50%', overflow: 'hidden', flexShrink: 0 }}>
++                            <img src={l.flag} alt={l.code} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
++                          </div>
++                          <span>{l.label}</span>
++                        </motion.div>
++                      ))}
++                    </motion.div>
++                  </>
++                )}
++              </AnimatePresence>
++            </div>
+           </div>
+         </div>
+       </header>
+ 
++      <AnimatePresence mode="wait">
++        <motion.div
++          key={lang}
++          initial={{ opacity: 0 }}
++          animate={{ opacity: 1 }}
++          exit={{ opacity: 0 }}
++          transition={{ duration: 0.2, ease: 'easeOut' }}
++        >
+       {/* Hero Section */}
+-      <section className="hero-section">
++      <section className="hero-section" style={{ position: 'relative' }}>
++        <div style={{ position: 'absolute', top: 0, right: 0, width: '40%', height: '100%', background: 'linear-gradient(225deg, rgba(255,255,255,0.12) 0%, transparent 60%)', pointerEvents: 'none', zIndex: 1 }} />
+         <div className="container hero-content-wrapper">
+           <motion.div
+             style={{ opacity: heroOpacity, scale: heroScale, willChange: 'transform, opacity' }}
+@@ -1368,6 +1440,9 @@ const App: React.FC = () => {
+         )}
+       </AnimatePresence>
+ 
++      </motion.div>
++      </AnimatePresence>
++
+       <footer style={{ 
+         background: 'rgba(62, 39, 35, 0.96)', 
+         color: 'white', 

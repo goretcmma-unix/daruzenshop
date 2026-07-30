@@ -157,6 +157,7 @@ const AdminPanel: React.FC = () => {
   const [tabLang, setTabLang] = useState<Lang>('ru');
   const [showHint, setShowHint] = useState(false);
   const [notice, setNotice] = useState('');
+  const [savedId, setSavedId] = useState<string | null>(null);
 
   useEffect(() => {
     if (!supabase) return;
@@ -223,13 +224,17 @@ const AdminPanel: React.FC = () => {
     setNotice('');
     try {
       await upsertProduct(p);
-      setNotice('Сохранено ✓');
-      await new Promise(r => setTimeout(r, 400));
+      setItems(prev => {
+        const i = prev.findIndex(x => x.id === p.id);
+        if (i >= 0) { const next = [...prev]; next[i] = p; return next; }
+        return [p, ...prev];
+      });
+      setSavedId(p.id);
+      await new Promise(r => setTimeout(r, 1200));
+      setSavedId(null);
       setEditingDraft(null);
       setEditingId(null);
-      setTimeout(() => setNotice(''), 1500);
-      const data = await fetchProducts();
-      setItems(data);
+      setNotice('');
     } catch (e: unknown) {
       const msg =
         e instanceof Error ? e.message :
@@ -505,6 +510,11 @@ const AdminPanel: React.FC = () => {
         .admin-tab.active { background: var(--primary); color: #fff; }
         .admin-modal-img-overlay.show { opacity: 1; }
         .admin-modal-img-overlay svg { opacity: 0.92; }
+
+        @keyframes draw-circle { to { stroke-dashoffset: 0; } }
+        @keyframes draw-check { to { stroke-dashoffset: 0; } }
+        .check-circle { stroke-dasharray: 226; stroke-dashoffset: 226; animation: draw-circle .45s ease-out forwards; }
+        .check-mark { stroke-dasharray: 48; stroke-dashoffset: 48; animation: draw-check .35s ease-out .45s forwards; }
       `}</style>
       <main style={{ maxWidth: 1100, margin: '0 auto', padding: '24px' }}>
         {items.length === 0 && <p style={{ color: 'var(--text-muted)', textAlign: 'center', marginTop: 40 }}>Пока нет товаров. Нажмите «+ Товар».</p>}
@@ -531,6 +541,18 @@ const AdminPanel: React.FC = () => {
       {editing && (
         <div onClick={() => { setEditingDraft(null); setEditingId(null); }} style={{ position: 'fixed', inset: 0, background: 'rgba(58,36,16,0.45)', backdropFilter: 'blur(3px)', zIndex: 50, display: 'flex', justifyContent: 'center', alignItems: 'flex-start', padding: '40px 16px', overflowY: 'auto' }}>
           <div onClick={e => e.stopPropagation()} style={{ width: '100%', maxWidth: 880, background: '#fff', borderRadius: 24, boxShadow: '0 30px 80px rgba(0,0,0,0.28)', overflow: 'hidden', position: 'relative' }}>
+
+            {/* Checkmark animation overlay */}
+            {savedId === editing?.id && (
+              <div style={{ position: 'absolute', inset: 0, zIndex: 100, background: 'rgba(255,255,255,0.92)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 16, borderRadius: 24 }}>
+                <svg width="80" height="80" viewBox="0 0 80 80">
+                  <circle cx="40" cy="40" r="36" fill="none" stroke="#28a745" strokeWidth="5" strokeLinecap="round" className="check-circle" />
+                  <polyline points="24,42 36,54 56,32" fill="none" stroke="#28a745" strokeWidth="5" strokeLinecap="round" strokeLinejoin="round" className="check-mark" />
+                </svg>
+                <div style={{ fontSize: 18, fontWeight: 700, color: '#28a745' }}>Сохранено</div>
+              </div>
+            )}
+
             {editing && (<>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '18px 22px', borderBottom: '1px solid #efeae4' }}>
               <div style={{ fontWeight: 700, fontSize: 18, color: 'var(--primary-dark)' }}>Редактирование товара</div>

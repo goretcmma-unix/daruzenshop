@@ -10,16 +10,12 @@ const translateText = async (text: string, to: Lang): Promise<string> => {
     'https://api.mymemory.translated.net/get?q=' +
     encodeURIComponent(text) +
     '&langpair=ru|' + to;
-  const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 8000);
   try {
-    const res = await fetch(url, { signal: controller.signal });
+    const res = await fetch(url);
     const data = await res.json();
-    clearTimeout(timeout);
     const t = data?.responseData?.translatedText;
     return typeof t === 'string' && t ? t : '';
   } catch {
-    clearTimeout(timeout);
     return '';
   }
 };
@@ -34,19 +30,21 @@ export const autoTranslateFromRu = async (p: Product): Promise<Product> => {
 
   for (const to of TARGETS) {
     await delay(100);
-    const [name, desc, ...specs] = await Promise.all([
+    const [name, desc] = await Promise.all([
       translateText(p.names.ru, to),
       translateText(p.descriptions.ru, to),
-      ...(p.specs?.ru ?? []).map(line => translateText(line, to)),
     ]);
     if (name) result.names[to] = name;
     if (desc) result.descriptions[to] = desc;
 
-    if (specs.length) {
-      result.specs = {
-        ...(result.specs ?? {}),
-        [to]: specs.map((t, i) => t || (p.specs?.ru ?? [])[i]),
-      };
+    const ruSpecs = p.specs?.ru ?? [];
+    if (ruSpecs.length) {
+      const translated: string[] = [];
+      for (const line of ruSpecs) {
+        const t = await translateText(line, to);
+        translated.push(t || line);
+      }
+      result.specs = { ...(result.specs ?? {}), [to]: translated };
     }
   }
 

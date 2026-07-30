@@ -16,7 +16,7 @@ const AppStyles = () => (
       }
       
       .hero-title {
-        font-size: clamp(28px, 5vw, 48px);
+        font-size: clamp(28px, 4vw, 48px);
       }
       
       .header .container {
@@ -217,10 +217,10 @@ const AppStyles = () => (
       max-width: 620px;
       text-align: left;
       padding-left: 0;
-      margin-left: -120px;
+      margin-left: clamp(-120px, -6vw, 0px);
     }
     .hero-title {
-      font-size: clamp(48px, 10vw, 96px);
+      font-size: clamp(32px, 5vw, 96px);
       font-weight: 700;
       line-height: 1.05;
       letter-spacing: -0.03em;
@@ -228,7 +228,7 @@ const AppStyles = () => (
       color: var(--primary);
     }
     .hero-description {
-      font-size: clamp(18px, 4vw, 28px);
+      font-size: clamp(14px, 2.5vw, 28px);
       line-height: 1.4;
       color: var(--primary);
       opacity: 0.8;
@@ -442,8 +442,8 @@ const AppStyles = () => (
 
     .hero-actions .btn {
       width: auto;
-      padding: 14px 36px;
-      font-size: clamp(16px, 1.8vw, 20px);
+      padding: clamp(10px, 2vw, 14px) clamp(24px, 4vw, 36px);
+      font-size: clamp(14px, 1.8vw, 20px);
       font-weight: 700;
     }
 

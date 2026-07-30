@@ -527,7 +527,6 @@ const App: React.FC = () => {
         >
       {/* Hero Section */}
       <section className="hero-section" style={{ position: 'relative' }}>
-        <div style={{ position: 'absolute', top: 0, right: 0, width: '40%', height: '100%', background: 'linear-gradient(225deg, rgba(255,255,255,0.12) 0%, transparent 60%)', pointerEvents: 'none', zIndex: 1 }} />
         <div className="container hero-content-wrapper">
           <motion.div
             style={{ opacity: heroOpacity, scale: heroScale, willChange: 'transform, opacity' }}
@@ -537,10 +536,15 @@ const App: React.FC = () => {
             className="hero-text-container"
           >
             <h1 className="hero-title">
-              {t.hero.titlePre} <br className="md-hidden" />{t.hero.titleAccent.split(/(Daruzen)/).map((part, i) => part === 'Daruzen' ? (<span key={i} style={{ background: 'linear-gradient(135deg, #e6bd63 0%, #cf9b41 55%, #b9822f 100%)', WebkitBackgroundClip: 'text', backgroundClip: 'text', WebkitTextFillColor: 'transparent', color: 'transparent', display: 'inline-block' }}>Daruzen</span>) : (<span key={i} style={{ color: 'var(--primary)' }}>{part}</span>))}
+              {t.hero.titlePre.split(' ')[0]}<br />
+              {t.hero.titlePre.includes(' ') && <>{t.hero.titlePre.split(' ').slice(1).join(' ')} </>}
+              {t.hero.titleAccent.replace('Daruzen', '').trim()}<br className="hero-br-line3" />{' '}
+              <span style={{ background: 'linear-gradient(135deg, #e6bd63 0%, #cf9b41 55%, #b9822f 100%)', WebkitBackgroundClip: 'text', backgroundClip: 'text', WebkitTextFillColor: 'transparent', color: 'transparent', display: 'inline-block' }}>Daruzen</span>
             </h1>
             <p className="hero-description">
-              {t.hero.description}
+              {t.hero.description.split(' ').length > 2 ? (
+                <>{t.hero.description.split(' ').slice(0, -3).join(' ')} <br className="hero-desc-br2" />{t.hero.description.split(' ').slice(-3, -2).join(' ')} <br className="hero-desc-br" />{t.hero.description.split(' ').slice(-2).join(' ')}</>
+              ) : t.hero.description}
             </p>
             <div className="hero-actions">
               <button className="btn btn-primary" onClick={(e) => handleNavClick(e, 'catalog')}>

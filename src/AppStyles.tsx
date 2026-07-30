@@ -1,71 +1,11 @@
 const AppStyles = () => (
   <style>{`
-    /* Tablet styles */
-    @media (max-width: 1024px) {
-      .md-hidden { display: none !important; }
-      
-      .hero-section {
-        min-height: 80vh;
-        padding-top: 80px;
-        padding-bottom: 60px;
-      }
-      
-      .hero-section::before {
-        background-size: 120% auto;
-        background-position: right center;
-      }
-      
-      .hero-title {
-        font-size: clamp(28px, 4vw, 48px);
-      }
-      
-      .header .container {
-        gap: 10px;
-        padding-left: 16px !important;
-        padding-right: 16px !important;
-      }
-      
-      .header .container > div:first-child {
-        flex: 0 0 auto !important;
-      }
-      
-      .header .container > div:last-child {
-        flex: 0 0 auto !important;
-        gap: 8px !important;
-      }
-      
-      .hero-text-container {
-        max-width: 44%;
-        padding-left: 24px;
-        padding-right: 24px;
-        position: relative;
-        z-index: 2;
-      }
-      
-      .hero-description {
-        max-width: 100%;
-      }
-    }
-
     /* Mobile styles */
-    @media (max-width: 768px) {
+    @media (max-width: 778px) {
       .desktop-nav { display: none !important; }
       .md-hidden { display: inline-block !important; }
       
-      .hero-section {
-        min-height: 80vh;
-        padding-top: 80px;
-        padding-bottom: 60px;
-      }
-      
-      .hero-section::before {
-        background-size: 120% auto;
-        background-position: right center;
-      }
-      
-      .hero-title {
-        font-size: clamp(26px, 4.5vw, 44px);
-      }
+      .hero-br-line3 { display: none; }
       
       .header .container {
         gap: 8px;
@@ -80,18 +20,6 @@ const AppStyles = () => (
       .header .container > div:last-child {
         flex: 0 0 auto !important;
         gap: 6px !important;
-      }
-      
-      .hero-text-container {
-        max-width: 42%;
-        padding-left: 24px;
-        padding-right: 24px;
-        position: relative;
-        z-index: 2;
-      }
-      
-      .hero-description {
-        max-width: 100%;
       }
     }
 
@@ -116,7 +44,7 @@ const AppStyles = () => (
       background-position: right center;
       background-repeat: no-repeat;
     }
-    @media (max-width: 768px) {
+    @media (max-width: 778px) {
       .hero-section,
       .marquee-section,
       #catalog,
@@ -184,6 +112,22 @@ const AppStyles = () => (
         background-size: var(--mobile-bg-scale) auto !important;
         background-position: var(--mobile-bg-pos-x) var(--mobile-bg-pos-y) !important;
       }
+      
+      .hero-section .hero-title {
+        font-size: clamp(38px, 10vw, 68px);
+        max-width: 100%;
+        overflow-wrap: break-word;
+        text-shadow: 0 1px 6px rgba(0,0,0,0.06);
+      }
+      
+      .hero-section .hero-text-container {
+        max-width: 100%;
+        margin-left: 0;
+      }
+      
+      .hero-section .hero-description {
+        max-width: 100%;
+      }
 
       .category-filter-container {
         position: relative;
@@ -214,27 +158,33 @@ const AppStyles = () => (
       z-index: 1;
     }
     .hero-text-container {
-      max-width: min(520px, 42vw);
+      max-width: clamp(380px, 45vw, 580px);
       text-align: left;
       padding-left: 0;
-      margin-left: clamp(-60px, -3vw, 0px);
+      margin-left: clamp(0px, -2vw, -40px);
     }
     .hero-title {
-      font-size: clamp(32px, 5vw, 96px);
+      font-size: clamp(36px, 6vw, 96px);
       font-weight: 700;
-      line-height: 1.05;
+      line-height: 1.15;
       letter-spacing: -0.03em;
-      margin-bottom: 28px;
+      margin-bottom: clamp(16px, 2vw, 28px);
       color: var(--primary);
+      overflow-wrap: break-word;
+      text-shadow: 0 1px 6px rgba(0,0,0,0.06);
     }
+    .hero-br-line3 { display: inline; }
+    .hero-desc-br { display: inline; }
+    .hero-desc-br2 { display: none; }
     .hero-description {
-      font-size: clamp(14px, 2.5vw, 28px);
-      line-height: 1.4;
+      font-size: clamp(14px, 1.8vw, 24px);
+      line-height: 1.5;
       color: var(--primary);
       opacity: 0.8;
-      margin-bottom: 44px;
+      margin-bottom: clamp(24px, 3vw, 44px);
       font-weight: 400;
-      max-width: 440px;
+        max-width: clamp(320px, 38vw, 520px);
+      text-shadow: 0 1px 6px rgba(0,0,0,0.06);
     }
     .marquee-section {
       background: var(--bg-main);
@@ -260,10 +210,111 @@ const AppStyles = () => (
       z-index: 2;
     }
 
-    @media (max-width: 1024px) {
+    @media (min-width: 1117px) and (max-width: 1232px) {
+      .hero-section::before {
+        background-position: 70% center;
+        background-size: auto 100%;
+      }
+      .hero-desc-br { display: none; }
+      .hero-desc-br2 { display: inline; }
+    }
+
+    @media (min-width: 780px) and (max-width: 1116px) {
+      .md-hidden { display: none !important; }
+      
+      .hero-section {
+        min-height: 80vh;
+        padding-top: 80px;
+        padding-bottom: 60px;
+      }
+      
+      .hero-section::before {
+        background-size: 200% auto;
+        background-position: right -520px center;
+      }
+      
+      .hero-title {
+        font-size: clamp(38px, 7vw, 76px);
+      }
+      
+      .header .container {
+        gap: 10px;
+        padding-left: 16px !important;
+        padding-right: 16px !important;
+      }
+      
+      .header .container > div:first-child {
+        flex: 0 0 auto !important;
+      }
+      
+      .header .container > div:last-child {
+        flex: 0 0 auto !important;
+        gap: 8px !important;
+      }
+      
       .hero-text-container {
+        max-width: clamp(380px, 45vw, 540px);
+        padding-left: 0;
+        margin-left: 0;
+        position: relative;
+        z-index: 2;
+      }
+      
+      .hero-description {
         max-width: 100%;
       }
+    }
+
+    @media (min-width: 760px) and (max-width: 874px) {
+      .hero-section::before {
+        background-position: right -400px top 55%;
+        background-size: 200% auto;
+      }
+      .hero-title {
+        font-size: clamp(38px, 7.5vw, 76px);
+      }
+      .hero-text-container {
+        max-width: clamp(400px, 48vw, 540px);
+      }
+    }
+
+    @media (min-width: 360px) and (max-width: 778px) {
+      .hero-section::before {
+        background-position: right -240px top 78% !important;
+        background-size: 145% auto !important;
+      }
+    }
+
+    @media (min-width: 360px) and (max-width: 600px) {
+      .hero-section::before {
+        background-position: right -150px top 65% !important;
+        background-size: 180% auto !important;
+      }
+    }
+
+    @media (min-width: 600px) and (max-width: 704px) {
+      .hero-section::before {
+        background-position: right -190px top 70% !important;
+        background-size: 155% auto !important;
+      }
+    }
+
+    @media (min-width: 370px) and (max-width: 416px) {
+      .hero-section .hero-title {
+        font-size: clamp(40px, 11vw, 68px);
+      }
+      .hero-section .hero-text-container {
+        margin-top: -40px;
+      }
+    }
+
+    @media (min-width: 874px) and (max-width: 1116px) {
+      .hero-section::before {
+        background-size: 185% auto;
+      }
+    }
+
+    @media (max-width: 1024px) {
       .hero-grid {
         grid-template-columns: 1fr;
         text-align: center;
@@ -335,7 +386,9 @@ const AppStyles = () => (
         width: auto;
       }
       .modal-info-wrapper {
-        padding: 24px;
+        flex: none !important;
+        display: block !important;
+        padding: 12px 16px 24px !important;
       }
     }
 
@@ -348,7 +401,9 @@ const AppStyles = () => (
         max-height: 160px;
       }
       .modal-info-wrapper {
-        padding: 16px;
+        flex: none !important;
+        display: block !important;
+        padding: 12px 16px 20px !important;
       }
     }
 
@@ -442,9 +497,10 @@ const AppStyles = () => (
 
     .hero-actions .btn {
       width: auto;
-      padding: clamp(10px, 2vw, 14px) clamp(24px, 4vw, 36px);
-      font-size: clamp(14px, 1.8vw, 20px);
+      padding: clamp(10px, 1.5vw, 16px) clamp(20px, 3vw, 40px);
+      font-size: clamp(14px, 1.5vw, 20px);
       font-weight: 700;
+      border-radius: clamp(40px, 5vw, 100px);
     }
 
     /* Mobile text normalization */

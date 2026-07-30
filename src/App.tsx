@@ -65,7 +65,7 @@ const App: React.FC = () => {
     return () => ro.disconnect();
   }, [selectedProduct]);
   const [page, setPage] = useState(0);
-  const PAGE_SIZE = 8;
+  const PAGE_SIZE = 12;
 
   useEffect(() => {
     if (selectedProduct === null) {

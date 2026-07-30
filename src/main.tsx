@@ -4,10 +4,7 @@ import './index.css'
 import App from './App.tsx'
 import { LanguageProvider } from './i18n.tsx'
 
-if ('scrollRestoration' in history) {
-  history.scrollRestoration = 'manual'
-}
-window.scrollTo(0, 0)
+window.addEventListener('pageshow', () => window.scrollTo({ top: 0, behavior: 'smooth' }))
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>

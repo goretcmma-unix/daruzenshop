@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { RefreshCw, Eye, EyeOff } from 'lucide-react';
 import { supabase, fetchProducts, upsertProduct, deleteProduct } from '../lib/supabase';
 import { autoTranslateFromRu } from '../lib/translate';
-import type { Product, CategoryKey, Lang } from '../data';
+import { parseCompositionLine, type Product, type CategoryKey, type Lang } from '../data';
 
 const CATEGORIES: { key: CategoryKey; label: string }[] = [
   { key: 'supplements', label: 'Добавки' },
@@ -276,10 +276,40 @@ const AdminPanel: React.FC = () => {
     reader.readAsDataURL(file);
   };
 
-  const specsLines = (p: Product, l: Lang) => (p.specs?.[l] ?? []).join('\n');
-  const setSpecsLine = (p: Product, l: Lang, val: string): Product => ({
+  const getSpecEntries = (p: Product, l: Lang) =>
+    (p.specs?.[l] ?? []).map(line => {
+      const { ingredient, dosage } = parseCompositionLine(line);
+      return { ingredient, dosage };
+    });
+
+  const setSpecEntry = (p: Product, l: Lang, index: number, field: 'ingredient' | 'dosage', value: string): Product => {
+    const entries = getSpecEntries(p, l);
+    const entry = entries[index] ?? { ingredient: '', dosage: '' };
+    entry[field] = value;
+    entries[index] = entry;
+    return {
+      ...p,
+      specs: {
+        ...(p.specs ?? {}),
+        [l]: entries.map(e => `${e.ingredient} | ${e.dosage}`),
+      },
+    };
+  };
+
+  const addSpecEntry = (p: Product, l: Lang): Product => ({
     ...p,
-    specs: { ...(p.specs ?? {}), [l]: val.split('\n').map(s => s.trim()).filter(Boolean) },
+    specs: {
+      ...(p.specs ?? {}),
+      [l]: [...(p.specs?.[l] ?? []), ' | '],
+    },
+  });
+
+  const removeSpecEntry = (p: Product, l: Lang, index: number): Product => ({
+    ...p,
+    specs: {
+      ...(p.specs ?? {}),
+      [l]: (p.specs?.[l] ?? []).filter((_, i) => i !== index),
+    },
   });
 
   if (!supabase) {
@@ -571,8 +601,17 @@ const AdminPanel: React.FC = () => {
                   <div className="admin-label">Описание</div>
                   <textarea className="admin-field" style={{ minHeight: 90 }} value={editing.descriptions[tabLang]} onChange={e => update(editing.id, pr => ({ ...pr, descriptions: { ...pr.descriptions, [tabLang]: e.target.value } }))} />
 
-                  <div className="admin-label">Характеристики — каждая с новой строки</div>
-                  <textarea className="admin-field" style={{ minHeight: 64 }} value={specsLines(editing, tabLang)} onChange={e => update(editing.id, pr => setSpecsLine(pr, tabLang, e.target.value))} />
+                  <div className="admin-label">Состав</div>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                    {getSpecEntries(editing, tabLang).map((entry, i) => (
+                      <div key={i} style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                        <input className="admin-field" style={{ flex: 1 }} value={entry.ingredient} onChange={e => update(editing.id, pr => setSpecEntry(pr, tabLang, i, 'ingredient', e.target.value))} placeholder="Активное вещество" />
+                        <input className="admin-field" style={{ flex: '0 0 120px' }} value={entry.dosage} onChange={e => update(editing.id, pr => setSpecEntry(pr, tabLang, i, 'dosage', e.target.value))} placeholder="Дозировка" />
+                        <button onClick={() => update(editing.id, pr => removeSpecEntry(pr, tabLang, i))} style={{ background: 'none', border: 'none', fontSize: 18, cursor: 'pointer', color: '#c0392b', padding: '4px 6px', lineHeight: 1 }}>×</button>
+                      </div>
+                    ))}
+                    <button onClick={() => update(editing.id, pr => addSpecEntry(pr, tabLang))} style={{ ...btnGhost, padding: '8px 14px', fontSize: 13, alignSelf: 'flex-start' }}>+ Добавить</button>
+                  </div>
                 </div>
               </div>
             </div>

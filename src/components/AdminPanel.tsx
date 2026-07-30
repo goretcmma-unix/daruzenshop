@@ -137,11 +137,20 @@ const PasswordField: React.FC<{
 
 const AdminPanel: React.FC = () => {
   const [session, setSession] = useState<{ user: { email: string } } | null>(null);
+  const hadSessionRef = useRef(false);
   const [email, setEmail] = useState('');
   const passwordRef = useRef('');
   const [authError, setAuthError] = useState('');
   const [items, setItems] = useState<Product[]>([]);
-  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editingId, setEditingId] = useState<string | null>(() => {
+    try { return sessionStorage.getItem('adminEditingId'); } catch { return null; }
+  });
+  const [editingDraft, setEditingDraft] = useState<Product | null>(() => {
+    try {
+      const raw = sessionStorage.getItem('adminEditingDraft');
+      return raw ? JSON.parse(raw) : null;
+    } catch { return null; }
+  });
   const [savingId, setSavingId] = useState<string | null>(null);
   const [translatingId, setTranslatingId] = useState<string | null>(null);
   const [dragOver, setDragOver] = useState(false);
@@ -151,8 +160,14 @@ const AdminPanel: React.FC = () => {
 
   useEffect(() => {
     if (!supabase) return;
-    supabase.auth.getSession().then(({ data }) => setSession(data.session as never));
-    const { data: sub } = supabase.auth.onAuthStateChange((_e, s) => setSession(s as never));
+    supabase.auth.getSession().then(({ data }) => {
+      setSession(data.session as never);
+      if (data.session) hadSessionRef.current = true;
+    });
+    const { data: sub } = supabase.auth.onAuthStateChange((_e, s) => {
+      if (s) hadSessionRef.current = true;
+      setSession(s as never);
+    });
     return () => sub.subscription.unsubscribe();
   }, []);
 
@@ -162,6 +177,20 @@ const AdminPanel: React.FC = () => {
       fetchProducts().then(data => { setItems(data); setNotice(''); });
     }
   }, [session]);
+
+  useEffect(() => {
+    try {
+      if (editingId) sessionStorage.setItem('adminEditingId', editingId);
+      else sessionStorage.removeItem('adminEditingId');
+    } catch {}
+  }, [editingId]);
+
+  useEffect(() => {
+    try {
+      if (editingDraft) sessionStorage.setItem('adminEditingDraft', JSON.stringify(editingDraft));
+      else sessionStorage.removeItem('adminEditingDraft');
+    } catch {}
+  }, [editingDraft]);
 
   useEffect(() => {
     if (!editingId) return;
@@ -179,12 +208,15 @@ const AdminPanel: React.FC = () => {
 
   const logout = async () => {
     await supabase?.auth.signOut();
+    hadSessionRef.current = false;
     setSession(null);
     setItems([]);
   };
 
-  const update = (id: string, fn: (p: Product) => Product) =>
+  const update = (id: string, fn: (p: Product) => Product) => {
     setItems(prev => prev.map(p => (p.id === id ? fn(p) : p)));
+    setEditingDraft(prev => prev && prev.id === id ? fn(prev) : prev);
+  };
 
   const save = async (p: Product) => {
     setSavingId(p.id);
@@ -193,6 +225,7 @@ const AdminPanel: React.FC = () => {
       await upsertProduct(p);
       setNotice('Сохранено ✓');
       setTimeout(() => setNotice(''), 2000);
+      setEditingDraft(null);
       setEditingId(null);
       setItems(prev => prev.map(item => (item.id === p.id ? p : item)));
     } catch (e: unknown) {
@@ -207,13 +240,14 @@ const AdminPanel: React.FC = () => {
     if (!window.confirm('Удалить этот товар?')) return;
     await deleteProduct(id);
     setItems(prev => prev.filter(p => p.id !== id));
-    if (editingId === id) setEditingId(null);
+    if (editingId === id) { setEditingDraft(null); setEditingId(null); }
   };
 
   const add = () => {
     const p = emptyProduct();
     setItems(prev => [p, ...prev]);
     setTabLang('ru');
+    setEditingDraft(p);
     setEditingId(p.id);
   };
 
@@ -257,7 +291,7 @@ const AdminPanel: React.FC = () => {
     );
   }
 
-  if (!session) {
+  if (!session && !hadSessionRef.current) {
     return (
       <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'Outfit, sans-serif', background: 'linear-gradient(135deg,#fbfaf8,#f1ece6)' }}>
         <div style={{ width: '100%', maxWidth: '380px', background: '#fff', padding: '36px', borderRadius: '24px', boxShadow: '0 20px 60px rgba(99,67,49,0.12)' }}>
@@ -274,7 +308,7 @@ const AdminPanel: React.FC = () => {
     );
   }
 
-  const editing = items.find(p => p.id === editingId) ?? null;
+  const editing = editingDraft ?? items.find(p => p.id === editingId) ?? null;
 
   return (
     <div style={{ minHeight: '100vh', fontFamily: 'Outfit, sans-serif', background: '#f7f4f0', color: 'var(--text-main)' }}>
@@ -452,7 +486,7 @@ const AdminPanel: React.FC = () => {
                 <div className="admin-card-name">{p.names.ru || '— без названия —'}</div>
                 <div className="admin-card-foot">
                   <span className="admin-price">{p.price} ₺</span>
-                  <button onClick={() => { setTabLang('ru'); setEditingId(p.id); }} className="admin-edit-btn">Изменить</button>
+                  <button onClick={() => { setTabLang('ru'); setEditingDraft(null); setEditingId(p.id); }} className="admin-edit-btn">Изменить</button>
                 </div>
               </div>
             </div>
@@ -462,11 +496,11 @@ const AdminPanel: React.FC = () => {
 
       {/* Edit modal */}
       {editing && (
-        <div onClick={() => setEditingId(null)} style={{ position: 'fixed', inset: 0, background: 'rgba(58,36,16,0.45)', backdropFilter: 'blur(3px)', zIndex: 50, display: 'flex', justifyContent: 'center', alignItems: 'flex-start', padding: '40px 16px', overflowY: 'auto' }}>
+        <div onClick={() => { setEditingDraft(null); setEditingId(null); }} style={{ position: 'fixed', inset: 0, background: 'rgba(58,36,16,0.45)', backdropFilter: 'blur(3px)', zIndex: 50, display: 'flex', justifyContent: 'center', alignItems: 'flex-start', padding: '40px 16px', overflowY: 'auto' }}>
           <div onClick={e => e.stopPropagation()} style={{ width: '100%', maxWidth: 880, background: '#fff', borderRadius: 24, boxShadow: '0 30px 80px rgba(0,0,0,0.28)', overflow: 'hidden' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '18px 22px', borderBottom: '1px solid #efeae4' }}>
               <div style={{ fontWeight: 700, fontSize: 18, color: 'var(--primary-dark)' }}>Редактирование товара</div>
-              <button onClick={() => setEditingId(null)} style={{ border: 'none', background: '#f3efe9', width: 34, height: 34, borderRadius: 10, cursor: 'pointer', fontSize: 18, color: 'var(--text-muted)' }}>×</button>
+              <button onClick={() => { setEditingDraft(null); setEditingId(null); }} style={{ border: 'none', background: '#f3efe9', width: 34, height: 34, borderRadius: 10, cursor: 'pointer', fontSize: 18, color: 'var(--text-muted)' }}>×</button>
             </div>
 
             <div style={{ padding: 22, maxHeight: '74vh', overflowY: 'auto' }}>

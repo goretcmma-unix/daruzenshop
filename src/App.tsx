@@ -543,7 +543,7 @@ const App: React.FC = () => {
             </h1>
             <p className="hero-description">
               {t.hero.description.split(' ').length > 2 ? (
-                <>{t.hero.description.split(' ').slice(0, -3).join(' ')} <br className="hero-desc-br2" />{t.hero.description.split(' ').slice(-3, -2).join(' ')} <br className="hero-desc-br" />{t.hero.description.split(' ').slice(-2).join(' ')}</>
+                <>{t.hero.description.split(' ').slice(0, -4).join(' ')} <br className="hero-desc-br3" />{t.hero.description.split(' ').slice(-4, -2).join(' ')} <br className="hero-desc-br" />{t.hero.description.split(' ').slice(-2).join(' ')}</>
               ) : t.hero.description}
             </p>
             <div className="hero-actions">

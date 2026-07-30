@@ -176,6 +176,7 @@ const AppStyles = () => (
     .hero-br-line3 { display: inline; }
     .hero-desc-br { display: inline; }
     .hero-desc-br2 { display: none; }
+    .hero-desc-br3 { display: none; }
     .hero-description {
       font-size: clamp(14px, 1.8vw, 24px);
       line-height: 1.5;
@@ -216,7 +217,7 @@ const AppStyles = () => (
         background-size: auto 100%;
       }
       .hero-desc-br { display: none; }
-      .hero-desc-br2 { display: inline; }
+      .hero-desc-br3 { display: inline; }
     }
 
     @media (min-width: 780px) and (max-width: 1116px) {
@@ -306,6 +307,11 @@ const AppStyles = () => (
       .hero-section .hero-text-container {
         margin-top: -40px;
       }
+    }
+
+    @media (min-width: 350px) and (max-width: 400px) {
+      .hero-desc-br { display: none !important; }
+      .hero-desc-br3 { display: inline !important; }
     }
 
     @media (min-width: 874px) and (max-width: 1116px) {

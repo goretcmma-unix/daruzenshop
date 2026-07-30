@@ -529,7 +529,7 @@ const AdminPanel: React.FC = () => {
                 <div className="admin-card-name">{p.names.ru || '— без названия —'}</div>
                 <div className="admin-card-foot">
                   <span className="admin-price">{p.price} ₺</span>
-                  <button onClick={() => { setTabLang('ru'); setEditingDraft(null); setEditingId(p.id); }} className="admin-edit-btn">Изменить</button>
+                  <button onClick={() => { setTabLang('ru'); setEditingDraft(p); setEditingId(p.id); }} className="admin-edit-btn">Изменить</button>
                 </div>
               </div>
             </div>

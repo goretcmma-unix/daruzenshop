@@ -79,6 +79,7 @@ const productToRow = (p: Product) => ({
   desc_en: p.descriptions.en,
   desc_ar: p.descriptions.ar,
   specs: p.specs ?? null,
+  sort_order: 0,
 });
 
 export const upsertProduct = async (p: Product): Promise<void> => {

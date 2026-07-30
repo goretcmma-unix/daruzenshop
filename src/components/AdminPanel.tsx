@@ -231,7 +231,10 @@ const AdminPanel: React.FC = () => {
       const data = await fetchProducts();
       setItems(data);
     } catch (e: unknown) {
-      const msg = e instanceof Error ? e.message : String(e);
+      const msg =
+        e instanceof Error ? e.message :
+        e && typeof e === 'object' && 'message' in e ? String((e as any).message) :
+        String(e);
       setNotice('Ошибка сохранения: ' + msg);
     } finally {
       setSavingId(null);
@@ -253,18 +256,15 @@ const AdminPanel: React.FC = () => {
     setEditingId(p.id);
   };
 
-  const translate = async (id: string) => {
-    setTranslatingId(id);
+  const translate = async (p: Product) => {
+    setTranslatingId(p.id);
     setNotice('Перевод…');
     try {
-      const p = items.find(x => x.id === id);
-      if (p) {
-        const translated = await autoTranslateFromRu(p);
-        update(id, () => translated);
-        setTabLang('en');
-        setNotice('Переведено ✓');
-        setTimeout(() => setNotice(''), 3000);
-      }
+      const translated = await autoTranslateFromRu(p);
+      update(p.id, () => translated);
+      setTabLang('en');
+      setNotice('Переведено ✓');
+      setTimeout(() => setNotice(''), 3000);
     } catch {
       setNotice('Ошибка перевода');
     } finally {
@@ -621,7 +621,7 @@ const AdminPanel: React.FC = () => {
             </div>
 
             <div style={{ display: 'flex', gap: 10, padding: '16px 22px', borderTop: '1px solid #efeae4', background: '#fbfaf8', flexWrap: 'wrap' }}>
-              <button onClick={() => translate(editing.id)} disabled={translatingId === editing.id || savingId === editing.id} style={{ ...btnGhost, borderColor: '#2a7', color: '#2a7', opacity: translatingId === editing.id ? 0.6 : 1 }}>
+              <button onClick={() => translate(editing)} disabled={translatingId === editing.id || savingId === editing.id} style={{ ...btnGhost, borderColor: '#2a7', color: '#2a7', opacity: translatingId === editing.id ? 0.6 : 1 }}>
                 {translatingId === editing.id ? 'Перевожу…' : '🌐 Перевести с русского'}
               </button>
               <button onClick={() => save(editing)} disabled={savingId === editing.id} style={{ ...btnGold, opacity: savingId === editing.id ? 0.6 : 1 }}>

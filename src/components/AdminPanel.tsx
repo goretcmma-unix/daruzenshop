@@ -279,9 +279,24 @@ const AdminPanel: React.FC = () => {
 
   const handleImageFile = (file: File | null) => {
     if (!editing || !file || !file.type.startsWith('image/')) return;
-    const reader = new FileReader();
-    reader.onload = () => update(editing.id, pr => ({ ...pr, image: String(reader.result) }));
-    reader.readAsDataURL(file);
+    const img = new Image();
+    img.onload = () => {
+      const MAX = 800;
+      let w = img.naturalWidth, h = img.naturalHeight;
+      if (w > MAX || h > MAX) {
+        const ratio = Math.min(MAX / w, MAX / h);
+        w = Math.round(w * ratio);
+        h = Math.round(h * ratio);
+      }
+      const c = document.createElement('canvas');
+      c.width = w; c.height = h;
+      const ctx = c.getContext('2d')!;
+      ctx.fillStyle = '#fff';
+      ctx.fillRect(0, 0, w, h);
+      ctx.drawImage(img, 0, 0, w, h);
+      update(editing.id, pr => ({ ...pr, image: c.toDataURL('image/webp', 0.85) }));
+    };
+    img.src = URL.createObjectURL(file);
   };
 
   const getSpecEntries = (p: Product, l: Lang) =>

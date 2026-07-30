@@ -81,3 +81,11 @@ export const deleteProduct = async (id: string): Promise<void> => {
   const { error } = await supabase.from('products').delete().eq('id', id);
   if (error) throw error;
 };
+
+export const seedAllProducts = async (): Promise<number> => {
+  if (!supabase) return 0;
+  for (const p of products) {
+    await upsertProduct(p);
+  }
+  return products.length;
+};

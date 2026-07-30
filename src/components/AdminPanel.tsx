@@ -218,16 +218,22 @@ const AdminPanel: React.FC = () => {
     setEditingDraft(prev => prev && prev.id === id ? fn(prev) : prev);
   };
 
+  const [saved, setSaved] = useState(false);
+
   const save = async (p: Product) => {
     setSavingId(p.id);
     setNotice('');
     try {
       await upsertProduct(p);
-      setNotice('Сохранено ✓');
-      setTimeout(() => setNotice(''), 2000);
+      setSaved(true);
+      await new Promise(r => setTimeout(r, 600));
       setEditingDraft(null);
       setEditingId(null);
-      setItems(prev => prev.map(item => (item.id === p.id ? p : item)));
+      setSaved(false);
+      setNotice('Сохранено ✓');
+      setTimeout(() => setNotice(''), 2000);
+      const data = await fetchProducts();
+      setItems(data);
     } catch (e: unknown) {
       const msg = e instanceof Error ? e.message : String(e);
       setNotice('Ошибка сохранения: ' + msg);
@@ -527,7 +533,13 @@ const AdminPanel: React.FC = () => {
       {/* Edit modal */}
       {editing && (
         <div onClick={() => { setEditingDraft(null); setEditingId(null); }} style={{ position: 'fixed', inset: 0, background: 'rgba(58,36,16,0.45)', backdropFilter: 'blur(3px)', zIndex: 50, display: 'flex', justifyContent: 'center', alignItems: 'flex-start', padding: '40px 16px', overflowY: 'auto' }}>
-          <div onClick={e => e.stopPropagation()} style={{ width: '100%', maxWidth: 880, background: '#fff', borderRadius: 24, boxShadow: '0 30px 80px rgba(0,0,0,0.28)', overflow: 'hidden' }}>
+          <div onClick={e => e.stopPropagation()} style={{ width: '100%', maxWidth: 880, background: '#fff', borderRadius: 24, boxShadow: '0 30px 80px rgba(0,0,0,0.28)', overflow: 'hidden', position: 'relative' }}>
+            {saved && (
+              <div style={{ position: 'absolute', inset: 0, zIndex: 60, background: 'rgba(255,255,255,0.92)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 12 }}>
+                <div style={{ width: 56, height: 56, borderRadius: '50%', background: '#2a7', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 28, color: '#fff', fontWeight: 700, boxShadow: '0 8px 30px rgba(34,153,119,0.3)' }}>✓</div>
+                <div style={{ fontSize: 18, fontWeight: 700, color: '#2a7' }}>Сохранено</div>
+              </div>
+            )}
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '18px 22px', borderBottom: '1px solid #efeae4' }}>
               <div style={{ fontWeight: 700, fontSize: 18, color: 'var(--primary-dark)' }}>Редактирование товара</div>
               <button onClick={() => { setEditingDraft(null); setEditingId(null); }} style={{ border: 'none', background: '#f3efe9', width: 34, height: 34, borderRadius: 10, cursor: 'pointer', fontSize: 18, color: 'var(--text-muted)' }}>×</button>

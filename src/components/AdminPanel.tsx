@@ -281,16 +281,60 @@ const AdminPanel: React.FC = () => {
     if (!editing || !file || !file.type.startsWith('image/')) return;
     const img = new Image();
     img.onload = () => {
+      // find content bounds (skip near-white pixels)
+      const tmp = document.createElement('canvas');
+      tmp.width = img.naturalWidth; tmp.height = img.naturalHeight;
+      const tctx = tmp.getContext('2d')!;
+      tctx.drawImage(img, 0, 0);
+      const data = tctx.getImageData(0, 0, tmp.width, tmp.height).data;
+      const threshold = 240;
+      let top = 0, bottom = tmp.height, left = 0, right = tmp.width;
+      for (let y = 0; y < tmp.height; y++) {
+        let empty = true;
+        for (let x = 0; x < tmp.width; x++) {
+          const i = (y * tmp.width + x) * 4;
+          if (data[i] < threshold || data[i+1] < threshold || data[i+2] < threshold) { empty = false; break; }
+        }
+        if (!empty) { top = y; break; }
+      }
+      for (let y = tmp.height - 1; y >= 0; y--) {
+        let empty = true;
+        for (let x = 0; x < tmp.width; x++) {
+          const i = (y * tmp.width + x) * 4;
+          if (data[i] < threshold || data[i+1] < threshold || data[i+2] < threshold) { empty = false; break; }
+        }
+        if (!empty) { bottom = y + 1; break; }
+      }
+      for (let x = 0; x < tmp.width; x++) {
+        let empty = true;
+        for (let y = 0; y < tmp.height; y++) {
+          const i = (y * tmp.width + x) * 4;
+          if (data[i] < threshold || data[i+1] < threshold || data[i+2] < threshold) { empty = false; break; }
+        }
+        if (!empty) { left = x; break; }
+      }
+      for (let x = tmp.width - 1; x >= 0; x--) {
+        let empty = true;
+        for (let y = 0; y < tmp.height; y++) {
+          const i = (y * tmp.width + x) * 4;
+          if (data[i] < threshold || data[i+1] < threshold || data[i+2] < threshold) { empty = false; break; }
+        }
+        if (!empty) { right = x + 1; break; }
+      }
+
+      const cw = right - left, ch = bottom - top;
       const W = 600, H = 800;
-      const scale = Math.max(W / img.naturalWidth, H / img.naturalHeight);
-      const sw = img.naturalWidth * scale;
-      const sh = img.naturalHeight * scale;
+      const PAD = 0.06;
+      const drawW = W * (1 - 2 * PAD);
+      const drawH = H * (1 - 2 * PAD);
+      const scale = Math.min(drawW / cw, drawH / ch);
+      const sw = cw * scale, sh = ch * scale;
       const c = document.createElement('canvas');
       c.width = W; c.height = H;
       const ctx = c.getContext('2d')!;
       ctx.fillStyle = '#fff';
       ctx.fillRect(0, 0, W, H);
-      ctx.drawImage(img, (W - sw) / 2, (H - sh) / 2, sw, sh);
+      ctx.drawImage(img, left, top, cw, ch, (W - sw) / 2, (H - sh) / 2, sw, sh);
       update(editing.id, pr => ({ ...pr, image: c.toDataURL('image/webp', 0.85) }));
     };
     img.src = URL.createObjectURL(file);

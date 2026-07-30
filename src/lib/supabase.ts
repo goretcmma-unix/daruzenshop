@@ -45,13 +45,7 @@ const rowToProduct = (r: ProductRow): Product => {
 };
 
 export const fetchProducts = async (): Promise<Product[]> => {
-  if (!supabase) return dedupeProducts(products);
-  const { data, error } = await supabase
-    .from('products')
-    .select('*')
-    .order('sort_order', { ascending: true, nullsFirst: false });
-  if (error || !data) return dedupeProducts(products);
-  return dedupeProducts((data as ProductRow[]).map(rowToProduct));
+  return dedupeProducts(products);
 };
 
 const productToRow = (p: Product) => ({

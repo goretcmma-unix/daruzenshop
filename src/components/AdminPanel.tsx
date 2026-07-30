@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { RefreshCw, Eye, EyeOff } from 'lucide-react';
-import { supabase, fetchProducts, upsertProduct, deleteProduct, seedAllProducts } from '../lib/supabase';
+import { supabase, fetchProducts, upsertProduct, deleteProduct } from '../lib/supabase';
 import { autoTranslateFromRu } from '../lib/translate';
 import type { Product, CategoryKey, Lang } from '../data';
 
@@ -194,8 +194,7 @@ const AdminPanel: React.FC = () => {
       setNotice('Сохранено ✓');
       setTimeout(() => setNotice(''), 2000);
       setEditingId(null);
-      const data = await fetchProducts();
-      setItems(data);
+      setItems(prev => prev.map(item => (item.id === p.id ? p : item)));
     } catch (e: unknown) {
       const msg = e instanceof Error ? e.message : String(e);
       setNotice('Ошибка сохранения: ' + msg);
@@ -291,7 +290,6 @@ const AdminPanel: React.FC = () => {
         <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
           {notice && <span style={{ color: '#2a7', fontSize: 14, fontWeight: 600 }}>{notice}</span>}
           <button onClick={add} style={btnGold}>+ Товар</button>
-          <button onClick={async () => { setNotice('Загрузка всех товаров…'); const n = await seedAllProducts(); setNotice(`Загружено ${n} товаров ✓`); setTimeout(() => setNotice(''), 3000); fetchProducts().then(data => setItems(data)); }} style={{ ...btnGhost, color: '#8B5E3C' }}>Sync all</button>
           <button onClick={logout} style={btnGhost}>Выйти</button>
         </div>
       </header>

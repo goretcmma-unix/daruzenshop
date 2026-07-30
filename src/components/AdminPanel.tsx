@@ -281,19 +281,16 @@ const AdminPanel: React.FC = () => {
     if (!editing || !file || !file.type.startsWith('image/')) return;
     const img = new Image();
     img.onload = () => {
-      const MAX = 800;
-      let w = img.naturalWidth, h = img.naturalHeight;
-      if (w > MAX || h > MAX) {
-        const ratio = Math.min(MAX / w, MAX / h);
-        w = Math.round(w * ratio);
-        h = Math.round(h * ratio);
-      }
+      const W = 600, H = 800;
+      const scale = Math.max(W / img.naturalWidth, H / img.naturalHeight);
+      const sw = img.naturalWidth * scale;
+      const sh = img.naturalHeight * scale;
       const c = document.createElement('canvas');
-      c.width = w; c.height = h;
+      c.width = W; c.height = H;
       const ctx = c.getContext('2d')!;
       ctx.fillStyle = '#fff';
-      ctx.fillRect(0, 0, w, h);
-      ctx.drawImage(img, 0, 0, w, h);
+      ctx.fillRect(0, 0, W, H);
+      ctx.drawImage(img, (W - sw) / 2, (H - sh) / 2, sw, sh);
       update(editing.id, pr => ({ ...pr, image: c.toDataURL('image/webp', 0.85) }));
     };
     img.src = URL.createObjectURL(file);

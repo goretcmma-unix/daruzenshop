@@ -35,7 +35,7 @@ const AppStyles = () => (
       }
       
       .hero-text-container {
-        max-width: 50%;
+        max-width: 44%;
         padding-left: 24px;
         padding-right: 24px;
         position: relative;
@@ -214,10 +214,10 @@ const AppStyles = () => (
       z-index: 1;
     }
     .hero-text-container {
-      max-width: 620px;
+      max-width: min(520px, 42vw);
       text-align: left;
       padding-left: 0;
-      margin-left: clamp(-120px, -6vw, 0px);
+      margin-left: clamp(-60px, -3vw, 0px);
     }
     .hero-title {
       font-size: clamp(32px, 5vw, 96px);

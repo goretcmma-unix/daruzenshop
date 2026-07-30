@@ -161,7 +161,7 @@ const AppStyles = () => (
       max-width: clamp(380px, 45vw, 580px);
       text-align: left;
       padding-left: 0;
-      margin-left: clamp(0px, -2vw, -40px);
+      margin-left: clamp(-160px, -6vw, 0px);
     }
     .hero-title {
       font-size: clamp(36px, 6vw, 96px);

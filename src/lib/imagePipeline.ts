@@ -5,13 +5,17 @@ export const IMG_H = 800;
 export const IMG_PAD = 0.105;
 
 export const cropToStandard = (img: HTMLImageElement): HTMLCanvasElement => {
-  const iw = img.naturalWidth, ih = img.naturalHeight;
+  let iw = img.naturalWidth, ih = img.naturalHeight;
+  const MAX_DIM = 1600;
+  const s = Math.min(1, MAX_DIM / Math.max(iw, ih));
+  iw = Math.round(iw * s);
+  ih = Math.round(ih * s);
   const tmp = document.createElement('canvas');
   tmp.width = iw; tmp.height = ih;
   const tctx = tmp.getContext('2d')!;
   tctx.fillStyle = '#fff';
   tctx.fillRect(0, 0, iw, ih);
-  tctx.drawImage(img, 0, 0);
+  tctx.drawImage(img, 0, 0, iw, ih);
   const imageData = tctx.getImageData(0, 0, iw, ih);
   const px = imageData.data;
   const N = iw * ih;

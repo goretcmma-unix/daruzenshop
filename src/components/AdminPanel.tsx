@@ -307,20 +307,24 @@ const AdminPanel: React.FC = () => {
 
   const getSpecEntries = (p: Product, l: Lang) =>
     (p.specs?.[l] ?? []).map(line => {
-      const { ingredient, dosage } = parseCompositionLine(line);
-      return { ingredient, dosage };
+      const { ingredient, dosage, daily, isHeader } = parseCompositionLine(line);
+      return { ingredient, dosage, daily, isHeader };
     });
 
-  const setSpecEntry = (p: Product, l: Lang, index: number, field: 'ingredient' | 'dosage', value: string): Product => {
+  const setSpecEntry = (p: Product, l: Lang, index: number, field: 'ingredient' | 'dosage' | 'daily', value: string): Product => {
     const entries = getSpecEntries(p, l);
-    const entry = entries[index] ?? { ingredient: '', dosage: '' };
+    const entry = entries[index] ?? { ingredient: '', dosage: '', daily: '', isHeader: false };
     entry[field] = value;
     entries[index] = entry;
     return {
       ...p,
       specs: {
         ...(p.specs ?? {}),
-        [l]: entries.map(e => `${e.ingredient} | ${e.dosage}`),
+        [l]: entries.map(e =>
+          e.isHeader
+            ? `# ${e.ingredient}`
+            : [e.ingredient, e.dosage, e.daily].filter(Boolean).join(' | ')
+        ),
       },
     };
   };
@@ -330,6 +334,14 @@ const AdminPanel: React.FC = () => {
     specs: {
       ...(p.specs ?? {}),
       [l]: [...(p.specs?.[l] ?? []), ' | '],
+    },
+  });
+
+  const addSpecHeader = (p: Product, l: Lang): Product => ({
+    ...p,
+    specs: {
+      ...(p.specs ?? {}),
+      [l]: [...(p.specs?.[l] ?? []), '# '],
     },
   });
 
@@ -651,13 +663,25 @@ const AdminPanel: React.FC = () => {
                   <div className="admin-label">Состав</div>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
                     {getSpecEntries(editing, tabLang).map((entry, i) => (
-                      <div key={i} style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-                        <input className="admin-field" style={{ flex: 1 }} value={entry.ingredient} onChange={e => update(editing.id, pr => setSpecEntry(pr, tabLang, i, 'ingredient', e.target.value))} placeholder="Активное вещество" />
-                        <input className="admin-field" style={{ flex: '0 0 120px' }} value={entry.dosage} onChange={e => update(editing.id, pr => setSpecEntry(pr, tabLang, i, 'dosage', e.target.value))} placeholder="Дозировка" />
-                        <button onClick={() => update(editing.id, pr => removeSpecEntry(pr, tabLang, i))} style={{ background: 'none', border: 'none', fontSize: 18, cursor: 'pointer', color: '#c0392b', padding: '4px 6px', lineHeight: 1 }}>×</button>
-                      </div>
+                      entry.isHeader ? (
+                        <div key={i} style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                          <span style={{ fontSize: 13, color: '#b08a4a', fontWeight: 800, letterSpacing: '0.1em', lineHeight: 1 }}>#</span>
+                          <input className="admin-field" style={{ flex: 1, fontWeight: 700 }} value={entry.ingredient} onChange={e => update(editing.id, pr => setSpecEntry(pr, tabLang, i, 'ingredient', e.target.value))} placeholder="Заголовок секции (например, На 5 мл)" />
+                          <button onClick={() => update(editing.id, pr => removeSpecEntry(pr, tabLang, i))} style={{ background: 'none', border: 'none', fontSize: 18, cursor: 'pointer', color: '#c0392b', padding: '4px 6px', lineHeight: 1 }}>×</button>
+                        </div>
+                      ) : (
+                        <div key={i} style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                          <input className="admin-field" style={{ flex: 1 }} value={entry.ingredient} onChange={e => update(editing.id, pr => setSpecEntry(pr, tabLang, i, 'ingredient', e.target.value))} placeholder="Активное вещество" />
+                          <input className="admin-field" style={{ flex: '0 0 110px' }} value={entry.dosage} onChange={e => update(editing.id, pr => setSpecEntry(pr, tabLang, i, 'dosage', e.target.value))} placeholder="Дозировка" />
+                          <input className="admin-field" style={{ flex: '0 0 110px' }} value={entry.daily} onChange={e => update(editing.id, pr => setSpecEntry(pr, tabLang, i, 'daily', e.target.value))} placeholder="Норма" />
+                          <button onClick={() => update(editing.id, pr => removeSpecEntry(pr, tabLang, i))} style={{ background: 'none', border: 'none', fontSize: 18, cursor: 'pointer', color: '#c0392b', padding: '4px 6px', lineHeight: 1 }}>×</button>
+                        </div>
+                      )
                     ))}
-                    <button onClick={() => update(editing.id, pr => addSpecEntry(pr, tabLang))} style={{ ...btnGhost, padding: '8px 14px', fontSize: 13, alignSelf: 'flex-start' }}>+ Добавить</button>
+                    <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                      <button onClick={() => update(editing.id, pr => addSpecEntry(pr, tabLang))} style={{ ...btnGhost, padding: '8px 14px', fontSize: 13 }}>+ Добавить вещество</button>
+                      <button onClick={() => update(editing.id, pr => addSpecHeader(pr, tabLang))} style={{ ...btnGhost, padding: '8px 14px', fontSize: 13 }}># Заголовок секции</button>
+                    </div>
                   </div>
                 </div>
               </div>

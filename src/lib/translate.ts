@@ -109,7 +109,11 @@ export const autoTranslateFromRu = async (p: Product): Promise<Product> => {
       if (ruSpecs.length) {
         const translated = await Promise.all(
           ruSpecs.map(async line => {
-            const { ingredient, dosage, daily } = parseCompositionLine(line);
+            const { ingredient, dosage, daily, isHeader } = parseCompositionLine(line);
+            if (isHeader) {
+              const t = ingredient ? await translateText(ingredient, to) : '';
+              return `# ${t || ingredient}`;
+            }
             const translatedIngredient = ingredient ? await translateText(ingredient, to) : '';
             return [translatedIngredient || ingredient, convertUnits(dosage, to), convertUnits(daily, to)]
               .filter(Boolean)

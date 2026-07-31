@@ -282,10 +282,10 @@ export const products: Product[] = [
       ar: 'مجمّع نباتي طبيعي على أساس الجنكو بيلوبا والجنسنغ لدعم النشاط الذهني وتحسين الذاكرة والتركيز.',
     },
     specs: {
-      ru: ['Экстракт гинкго билоба | 150 мг', 'Экстракт женьшеня | 100 мг', 'Витамин B6 | 5 мг'],
-      tr: ['Ginkgo biloba ekstresi | 150 mg', 'Saman ekstresi | 100 mg', 'B6 vitamini | 5 mg'],
-      en: ['Ginkgo biloba extract | 150 mg', 'Ginseng extract | 100 mg', 'Vitamin B6 | 5 mg'],
-      ar: ['مستخلص الجنكو بيلوبا | 150 ملغ', 'مستخلص الجنسنغ | 100 ملغ', 'فيتامين B6 | 5 ملغ'],
+      ru: ['# На 5 мл', 'Экстракт гинкго билоба | 375 мг', 'Экстракт корейского женьшеня | 20 мг', 'Цитиколин | 15 мг', '# На 10 мл', 'Экстракт гинкго билоба | 750 мг', 'Экстракт корейского женьшеня | 40 мг', 'Цитиколин | 30 мг'],
+      tr: ['# 5 ml başına', 'Ginkgo biloba ekstresi | 375 mg', 'Kore ginsengi ekstresi | 20 mg', 'Sitikolin | 15 mg', '# 10 ml başına', 'Ginkgo biloba ekstresi | 750 mg', 'Kore ginsengi ekstresi | 40 mg', 'Sitikolin | 30 mg'],
+      en: ['# Per 5 ml', 'Ginkgo biloba extract | 375 mg', 'Korean ginseng extract | 20 mg', 'Citicoline | 15 mg', '# Per 10 ml', 'Ginkgo biloba extract | 750 mg', 'Korean ginseng extract | 40 mg', 'Citicoline | 30 mg'],
+      ar: ['# لكل 5 مل', 'مستخلص الجنكو بيلوبا | 375 ملغ', 'مستخلص الجنسنغ الكوري | 20 ملغ', 'سيتيكولين | 15 ملغ', '# لكل 10 مل', 'مستخلص الجنكو بيلوبا | 750 ملغ', 'مستخلص الجنسنغ الكوري | 40 ملغ', 'سيتيكولين | 30 ملغ'],
     },
   },
   {
@@ -338,13 +338,17 @@ export const products: Product[] = [
   },
 ];
 
-export const parseCompositionLine = (line: string): { ingredient: string; dosage: string; daily: string } => {
+export const parseCompositionLine = (line: string): { ingredient: string; dosage: string; daily: string; isHeader: boolean } => {
+  const trimmed = line.trim();
+  if (trimmed.startsWith('#')) {
+    return { ingredient: trimmed.replace(/^#+\s*/, ''), dosage: '', daily: '', isHeader: true };
+  }
   const parts = line.split('|').map(s => s.trim()).filter(Boolean);
   if (parts.length >= 3) {
-    return { ingredient: parts[0], dosage: parts[1], daily: parts[2] };
+    return { ingredient: parts[0], dosage: parts[1], daily: parts[2], isHeader: false };
   }
   if (parts.length === 2) {
-    return { ingredient: parts[0], dosage: parts[1], daily: '' };
+    return { ingredient: parts[0], dosage: parts[1], daily: '', isHeader: false };
   }
   if (parts.length === 1) {
     const text = parts[0];
@@ -352,11 +356,11 @@ export const parseCompositionLine = (line: string): { ingredient: string; dosage
     if (m) {
       const dosage = m[1].trim();
       const ingredient = text.replace(m[1], '').trim().replace(/^[\s,;:-]+|[\s,;:-]+$/g, '');
-      return { ingredient: ingredient || text, dosage, daily: '' };
+      return { ingredient: ingredient || text, dosage, daily: '', isHeader: false };
     }
-    return { ingredient: text, dosage: '', daily: '' };
+    return { ingredient: text, dosage: '', daily: '', isHeader: false };
   }
-  return { ingredient: line, dosage: '', daily: '' };
+  return { ingredient: line, dosage: '', daily: '', isHeader: false };
 };
 
 export const dedupeProducts = (list: Product[]): Product[] => {

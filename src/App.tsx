@@ -1311,8 +1311,15 @@ const App: React.FC = () => {
                                     <span className="comp-card__pill comp-card__pill--right">{t.modal.dosage}</span>
                                   </div>
                                   {selectedProduct.specs?.map((spec, i) => {
-                                    const { ingredient, dosage, daily } = parseCompositionLine(spec);
+                                    const { ingredient, dosage, daily, isHeader } = parseCompositionLine(spec);
                                     if (!ingredient) return null;
+                                    if (isHeader) {
+                                      return (
+                                        <div key={i} className="comp-card__section">
+                                          <span>{ingredient}</span>
+                                        </div>
+                                      );
+                                    }
                                     return (
                                       <div key={i} className="comp-card__row">
                                         <span className="comp-card__name">{ingredient}</span>

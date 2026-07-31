@@ -447,10 +447,43 @@ a:hover {
   overflow-x: hidden;
   touch-action: pan-y;
   overscroll-behavior-y: contain;
+  padding-right: 8px;
+}
+
+[dir="rtl"] .modal-swipe {
+  padding-right: 0;
+  padding-left: 8px;
+}
+
+.modal-swipe,
+.modal-layout {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(99, 67, 49, 0.35) transparent;
+}
+
+.modal-swipe::-webkit-scrollbar,
+.modal-layout::-webkit-scrollbar {
+  width: 5px;
+}
+
+.modal-swipe::-webkit-scrollbar-track,
+.modal-layout::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.modal-swipe::-webkit-scrollbar-thumb,
+.modal-layout::-webkit-scrollbar-thumb {
+  background: rgba(99, 67, 49, 0.3);
+  border-radius: 999px;
+}
+
+.modal-swipe::-webkit-scrollbar-thumb:hover,
+.modal-layout::-webkit-scrollbar-thumb:hover {
+  background: rgba(207, 155, 65, 0.6);
 }
 
 .modal-panel {
-  min-height: 90px;
+  min-height: 0;
 }
 
 .comp-card {
@@ -725,6 +758,10 @@ a:hover {
 }
 
 .comp-acc__body {
+  overflow: hidden;
+}
+
+.comp-acc__body-inner {
   padding: 6px 14px 10px;
 }
 

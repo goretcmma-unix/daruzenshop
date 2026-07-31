@@ -123,17 +123,28 @@ const CompositionPanel: React.FC<{ specs?: string[]; t: ReturnType<typeof useLan
               <span>{g.title}</span>
               <ChevronDown size={16} className="comp-acc__chev" />
             </button>
-            {i === openSection && (
-              <div className="comp-acc__body">
-                {g.blocks.map((b, bi) =>
-                  b.headers.length ? (
-                    <CompTable key={bi} block={b} t={t} />
-                  ) : (
-                    <CompRows key={bi} rows={b.rows} />
-                  )
-                )}
-              </div>
-            )}
+            <AnimatePresence initial={false}>
+              {i === openSection && (
+                <motion.div
+                  key="acc-body"
+                  className="comp-acc__body"
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: 'auto', opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+                >
+                  <div className="comp-acc__body-inner">
+                    {g.blocks.map((b, bi) =>
+                      b.headers.length ? (
+                        <CompTable key={bi} block={b} t={t} />
+                      ) : (
+                        <CompRows key={bi} rows={b.rows} />
+                      )
+                    )}
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
         ))}
       </div>
@@ -1411,10 +1422,11 @@ const App: React.FC = () => {
                           <motion.div
                             key="desc"
                             className="modal-panel"
-                            initial={{ x: -24, opacity: 0 }}
-                            animate={{ x: 0, opacity: 1 }}
-                            exit={{ x: -24, opacity: 0 }}
-                            transition={{ duration: 0.2 }}
+                            initial={{ height: 0, opacity: 0, x: -24 }}
+                            animate={{ height: 'auto', opacity: 1, x: 0 }}
+                            exit={{ height: 0, opacity: 0, x: -24 }}
+                            transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
+                            style={{ overflow: 'hidden' }}
                            >
                              <div className="desc-card__content">
                                <p>{selectedProduct.description}</p>
@@ -1424,10 +1436,11 @@ const App: React.FC = () => {
                           <motion.div
                             key="comp"
                             className="modal-panel"
-                            initial={{ x: 24, opacity: 0 }}
-                            animate={{ x: 0, opacity: 1 }}
-                            exit={{ x: 24, opacity: 0 }}
-                            transition={{ duration: 0.2 }}
+                            initial={{ height: 0, opacity: 0, x: 24 }}
+                            animate={{ height: 'auto', opacity: 1, x: 0 }}
+                            exit={{ height: 0, opacity: 0, x: 24 }}
+                            transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
+                            style={{ overflow: 'hidden' }}
                           >
                                 <CompositionPanel specs={selectedProduct.specs} t={t} />
                           </motion.div>

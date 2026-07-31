@@ -98,6 +98,8 @@ export const cropToStandard = (img: HTMLImageElement): HTMLCanvasElement => {
   const ctx = c.getContext('2d')!;
   ctx.fillStyle = '#fff';
   ctx.fillRect(0, 0, IMG_W, IMG_H);
+  ctx.imageSmoothingEnabled = true;
+  ctx.imageSmoothingQuality = 'high';
   ctx.drawImage(tmp, left, top, cw, ch, (IMG_W - sw) / 2, (IMG_H - sh) / 2, sw, sh);
   return c;
 };

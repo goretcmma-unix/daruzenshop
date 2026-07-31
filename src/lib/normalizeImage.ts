@@ -6,7 +6,7 @@ const memory = new Map<string, Promise<string>>();
 const cacheKey = (src: string): string => {
   let h = 5381;
   for (let i = 0; i < src.length; i++) h = ((h * 33) ^ src.charCodeAt(i)) >>> 0;
-  return 'daruzen:img2:' + h + ':' + src.length;
+  return 'daruzen:img3:' + h + ':' + src.length;
 };
 
 const loadImage = (src: string): Promise<HTMLImageElement> =>
@@ -72,8 +72,10 @@ const fitToStandard = (img: HTMLImageElement, box: { left: number; top: number; 
   const ctx = c.getContext('2d')!;
   ctx.fillStyle = '#fff';
   ctx.fillRect(0, 0, IMG_W, IMG_H);
+  ctx.imageSmoothingEnabled = true;
+  ctx.imageSmoothingQuality = 'high';
   ctx.drawImage(img, left, top, cw, ch, (IMG_W - sw) / 2, (IMG_H - sh) / 2, sw, sh);
-  return c.toDataURL('image/webp', 0.85);
+  return c.toDataURL('image/webp', 0.95);
 };
 
 export const getNormalizedImage = (src: string): Promise<string> => {
@@ -105,7 +107,7 @@ export const getNormalizedImage = (src: string): Promise<string> => {
         try { localStorage.setItem(key, dataUrl); } catch { /* переполнение/приватный режим */ }
         return dataUrl;
       }
-      const dataUrl = cropToStandard(img).toDataURL('image/webp', 0.85);
+      const dataUrl = cropToStandard(img).toDataURL('image/webp', 0.95);
       try { localStorage.setItem(key, dataUrl); } catch { /* переполнение/приватный режим */ }
       return dataUrl;
     } catch {

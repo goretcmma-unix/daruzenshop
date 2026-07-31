@@ -284,7 +284,7 @@ const AdminPanel: React.FC = () => {
     const img = new Image();
     img.onload = () => {
       const c = cropToStandard(img);
-      update(editing.id, pr => ({ ...pr, image: c.toDataURL('image/webp', 0.85) }));
+      update(editing.id, pr => ({ ...pr, image: c.toDataURL('image/webp', 0.95) }));
       URL.revokeObjectURL(img.src);
     };
     img.src = URL.createObjectURL(file);

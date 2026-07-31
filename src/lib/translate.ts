@@ -1,6 +1,21 @@
-import type { Product, Lang } from '../data';
+import { parseCompositionLine, type Product, type Lang } from '../data';
 
 const TARGETS: Lang[] = ['tr', 'en', 'ar'];
+
+const UNIT_MAP: Record<Lang, Record<string, string>> = {
+  ru: {},
+  tr: { мкг: 'mcg', мг: 'mg', мл: 'ml', г: 'g', л: 'l', ед: 'IU', Ед: 'IU' },
+  en: { мкг: 'mcg', мг: 'mg', мл: 'ml', г: 'g', л: 'l', ед: 'IU', Ед: 'IU' },
+  ar: { мкг: 'مكغ', мг: 'ملغ', мл: 'مل', г: 'غ', л: 'ل', ед: 'IU', Ед: 'IU' },
+};
+
+const convertUnits = (text: string, to: Lang): string => {
+  const units = UNIT_MAP[to];
+  const keys = Object.keys(units).sort((a, b) => b.length - a.length);
+  let out = text;
+  for (const k of keys) out = out.split(k).join(units[k]);
+  return out;
+};
 
 const LANGS_MAP: Record<Lang, string> = { ru: 'ru', tr: 'tr', en: 'en', ar: 'ar' };
 
@@ -93,11 +108,17 @@ export const autoTranslateFromRu = async (p: Product): Promise<Product> => {
       const ruSpecs = p.specs?.ru ?? [];
       if (ruSpecs.length) {
         const translated = await Promise.all(
-          ruSpecs.map(line => translateText(line, to))
+          ruSpecs.map(async line => {
+            const { ingredient, dosage, daily } = parseCompositionLine(line);
+            const translatedIngredient = ingredient ? await translateText(ingredient, to) : '';
+            return [translatedIngredient || ingredient, convertUnits(dosage, to), convertUnits(daily, to)]
+              .filter(Boolean)
+              .join(' | ');
+          })
         );
         result.specs = {
           ...(result.specs ?? {}),
-          [to]: translated.map((t, i) => t || ruSpecs[i]),
+          [to]: translated,
         };
       }
     })());

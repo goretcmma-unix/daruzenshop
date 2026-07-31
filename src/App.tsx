@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useMemo, startTransition } from 'react';
+import React, { useState, useEffect, useRef, useMemo, useLayoutEffect, startTransition } from 'react';
 import { 
   ShoppingCart, 
   Search, 
@@ -151,34 +151,29 @@ const CompositionPanel: React.FC<{ specs?: string[]; t: ReturnType<typeof useLan
     );
   }
 
-  const gridMode = specLines.some(l => parseCompositionLine(l).type === 'colheader');
-  if (gridMode) {
-    return (
-      <div className="comp-card">
-        {groups.map((g, gi) => (
-          <div key={gi}>
-            {g.title && <div className="comp-card__section"><span>{g.title}</span></div>}
-            {g.blocks.map((b, bi) => <CompTable key={bi} block={b} t={t} />)}
-          </div>
-        ))}
-      </div>
-    );
-  }
-
   return (
     <div className="comp-card">
-      {!groups.some(g => g.title) && (
-        <div className="comp-card__header">
-          <span className="comp-card__pill comp-card__pill--left">{t.modal.substance}</span>
-          <span className="comp-card__pill comp-card__pill--right">{t.modal.dosage}</span>
+      <div className="comp-acc">
+        <div className="comp-acc__head is-open">
+          <span>{t.modal.composition}</span>
         </div>
-      )}
-      {groups.map((g, gi) => (
-        <div key={gi}>
-          {g.title && <div className="comp-card__section"><span>{g.title}</span></div>}
-          {g.blocks.map((b, bi) => <CompRows key={bi} rows={b.rows} />)}
+        <div className="comp-acc__body">
+          <div className="comp-acc__body-inner">
+            {groups.map((g, gi) => (
+              <div key={gi}>
+                {g.title && <div className="comp-card__section"><span>{g.title}</span></div>}
+                {g.blocks.map((b, bi) =>
+                  b.headers.length ? (
+                    <CompTable key={bi} block={b} t={t} />
+                  ) : (
+                    <CompRows key={bi} rows={b.rows} />
+                  )
+                )}
+              </div>
+            ))}
+          </div>
         </div>
-      ))}
+      </div>
     </div>
   );
 };
@@ -201,6 +196,21 @@ const App: React.FC = () => {
   const selectedProductImage = useNormalizedImage(selectedProduct?.image);
   const swipeStartX = useRef(0);
   const navClickRef = useRef(false);
+  const tabBodyRef = useRef<HTMLDivElement | null>(null);
+  const [tabHeight, setTabHeight] = useState<number | 'auto'>('auto');
+
+  useLayoutEffect(() => {
+    const el = tabBodyRef.current;
+    if (!el) return;
+    const measure = () => {
+      const h = el.offsetHeight;
+      setTabHeight(h > 0 ? h : 'auto');
+    };
+    measure();
+    const ro = new ResizeObserver(measure);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, [productTab, selectedProduct]);
 
   const [page, setPage] = useState(0);
   const PAGE_SIZE = 12;
@@ -1416,17 +1426,21 @@ const App: React.FC = () => {
                       transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
                        style={{ position: 'relative', overflowY: 'auto', overflowX: 'hidden' }}
                     >
-                       <div style={{ position: 'relative', top: 0, left: 0, right: 0 }}>
+                       <motion.div
+                         style={{ overflow: 'hidden' }}
+                         animate={{ height: tabHeight }}
+                         transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
+                       >
+                       <div ref={tabBodyRef} style={{ position: 'relative', top: 0, left: 0, right: 0 }}>
                       <AnimatePresence mode="wait" initial={false}>
                         {productTab === 0 ? (
                           <motion.div
                             key="desc"
                             className="modal-panel"
-                            initial={{ height: 0, opacity: 0, x: -24 }}
-                            animate={{ height: 'auto', opacity: 1, x: 0 }}
-                            exit={{ height: 0, opacity: 0, x: -24 }}
-                            transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
-                            style={{ overflow: 'hidden' }}
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            transition={{ duration: 0.18 }}
                            >
                              <div className="desc-card__content">
                                <p>{selectedProduct.description}</p>
@@ -1436,17 +1450,17 @@ const App: React.FC = () => {
                           <motion.div
                             key="comp"
                             className="modal-panel"
-                            initial={{ height: 0, opacity: 0, x: 24 }}
-                            animate={{ height: 'auto', opacity: 1, x: 0 }}
-                            exit={{ height: 0, opacity: 0, x: 24 }}
-                            transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
-                            style={{ overflow: 'hidden' }}
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            transition={{ duration: 0.18 }}
                           >
                                 <CompositionPanel specs={selectedProduct.specs} t={t} />
                           </motion.div>
                         )}
                       </AnimatePresence>
-                      </div>
+                       </div>
+                       </motion.div>
                     </motion.div>
                    
                      <div style={{ marginTop: 'auto', paddingTop: '20px' }}>

@@ -62,7 +62,19 @@ export const fetchProducts = async (): Promise<Product[]> => {
     }
     return dedupeProducts(products);
   }
-  return dedupeProducts((data as ProductRow[]).map(rowToProduct));
+  const dbRows = (data as ProductRow[]).map(rowToProduct);
+  const localMap = new Map(dedupeProducts(products).map(p => [p.id, p]));
+  const sync = (p: Product) => supabase.from('products').upsert(productToRow(p)).catch(() => {});
+  const result: Product[] = dbRows.map(db => {
+    const local = localMap.get(db.id);
+    if (!local) return db;
+    if (JSON.stringify(local.specs ?? null) !== JSON.stringify(db.specs ?? null)) {
+      sync(local);
+      return local;
+    }
+    return db;
+  });
+  return dedupeProducts(result);
 };
 
 const productToRow = (p: Product) => ({

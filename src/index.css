@@ -698,6 +698,17 @@ a:hover {
   border-radius: 100px;
 }
 
+.comp-card__td.is-name.is-sub {
+  padding-left: 28px;
+  font-weight: 500;
+  color: #7a6a5a;
+  font-size: 13px;
+}
+
+.comp-card__td.is-name.is-sub::before {
+  display: none;
+}
+
 [dir="rtl"] .comp-card__th:not(:first-child),
 [dir="rtl"] .comp-card__td.is-value {
   text-align: left;
@@ -706,6 +717,11 @@ a:hover {
 [dir="rtl"] .comp-card__td.is-name {
   padding-left: 14px;
   padding-right: 18px;
+}
+
+[dir="rtl"] .comp-card__td.is-name.is-sub {
+  padding-left: 14px;
+  padding-right: 28px;
 }
 
 [dir="rtl"] .comp-card__td.is-name::before {

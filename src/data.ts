@@ -138,10 +138,10 @@ export const products: Product[] = [
       ar: 'مزيج ثلاثي المغنيسيوم لاسترخاء العضلات وتحسين النوم. منتج عالي الجودة لدعم صحتك. تركيبة طبيعية وفعالية عالية.',
     },
     specs: {
-      ru: ['Магний | 400 мг', 'Глицинат магния | 150 мг', 'Цитрат магния | 150 мг', 'Малат магния | 100 мг'],
-      tr: ['Magnezyum | 400 mg', 'Glisinat magnezyum | 150 mg', 'Sitrat magnezyum | 150 mg', 'Malat magnezyum | 100 mg'],
-      en: ['Magnesium | 400 mg', 'Magnesium Glycinate | 150 mg', 'Magnesium Citrate | 150 mg', 'Magnesium Malate | 100 mg'],
-      ar: ['مغنيسيوم | 400 ملغ', 'غلايسينات المغنيسيوم | 150 ملغ', 'سترات المغنيسيوم | 150 ملغ', 'مالات المغنيسيوم | 100 ملغ'],
+      ru: ['## | Активный компонент | 1 таблетка | 2 таблетки', 'Магний (всего) | 125 мг | 250 мг', '└ Магний ацетилтаурат | 33,005 мг | 66,010 мг', '└ Магний бисглицинат | 49,65 мг | 99,3 мг', '└ Магний малат | 34,5 мг | 69 мг', '└ Магний цитрат | 7,845 мг | 15,69 мг', 'Витамин B6 | 2 мг | 4 мг'],
+      tr: ['## | Aktif bileşen | 1 tablet | 2 tablet', 'Magnezyum (toplam) | 125 mg | 250 mg', '└ Magnezyum asetiltaurat | 33.005 mg | 66.010 mg', '└ Magnezyum bisglisinat | 49.65 mg | 99.3 mg', '└ Magnezyum malat | 34.5 mg | 69 mg', '└ Magnezyum sitrat | 7.845 mg | 15.69 mg', 'B6 vitamini | 2 mg | 4 mg'],
+      en: ['## | Active ingredient | Per 1 tablet | Per 2 tablets', 'Magnesium (total) | 125 mg | 250 mg', '└ Magnesium acetyltaurate | 33.005 mg | 66.010 mg', '└ Magnesium bisglycinate | 49.65 mg | 99.3 mg', '└ Magnesium malate | 34.5 mg | 69 mg', '└ Magnesium citrate | 7.845 mg | 15.69 mg', 'Vitamin B6 | 2 mg | 4 mg'],
+      ar: ['## | المكون النشط | قرص واحد | قرصان', 'مغنيسيوم (إجمالي) | 125 ملغ | 250 ملغ', '└ ماغنيسيوم أسيتيل تورات | 33.005 ملغ | 66.010 ملغ', '└ مغنيسيوم بيسغليسينات | 49.65 ملغ | 99.3 ملغ', '└ مغنيسيوم مالات | 34.5 ملغ | 69 ملغ', '└ سترات المغنيسيوم | 7.845 ملغ | 15.69 ملغ', 'فيتامين B6 | 2 ملغ | 4 ملغ'],
     },
   },
   {

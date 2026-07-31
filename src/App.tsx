@@ -80,9 +80,11 @@ const CompTable: React.FC<{ block: CompTableBlock; t: ReturnType<typeof useLang>
         while (cells.length < cols) cells.push('');
         return (
           <div key={ri} className="comp-card__trow" style={{ gridTemplateColumns: template }}>
-            {cells.map((cell, ci) => (
-              <div key={ci} className={'comp-card__td' + (ci === 0 ? ' is-name' : ' is-value')}>{cell}</div>
-            ))}
+            {cells.map((cell, ci) => {
+              const sub = ci === 0 && cell.startsWith('└');
+              const cls = 'comp-card__td' + (ci === 0 ? ' is-name' : ' is-value') + (sub ? ' is-sub' : '');
+              return <div key={ci} className={cls}>{sub ? cell.replace(/^└\s*/, '') : cell}</div>;
+            })}
           </div>
         );
       })}

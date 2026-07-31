@@ -85,10 +85,10 @@ const PasswordField: React.FC<{
   valueRef: React.MutableRefObject<string>;
   onEnter: () => void;
 }> = ({ valueRef, onEnter }) => {
-  const [dots, setDots] = useState(0);
+  const [value, setValue] = useState('');
   const [show, setShow] = useState(false);
   const [focused, setFocused] = useState(false);
-  const setVal = (v: string) => { valueRef.current = v; setDots(v.length); };
+  const setVal = (v: string) => { valueRef.current = v; setValue(v); };
   return (
     <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
       <style>{`@keyframes pwBlink{50%{opacity:0}}.pw-caret{animation:pwBlink 1s step-end infinite;margin-left:1px;fontWeight:400;}`}</style>
@@ -118,9 +118,9 @@ const PasswordField: React.FC<{
         }}
       >
         {show
-          ? valueRef.current
-          : dots > 0
-            ? '•'.repeat(dots)
+          ? value
+          : value.length > 0
+            ? '•'.repeat(value.length)
             : <span style={{ color: '#bcb4aa' }}>••••••</span>}
         {focused && <span className="pw-caret">|</span>}
       </div>
@@ -139,7 +139,7 @@ const PasswordField: React.FC<{
 
 const AdminPanel: React.FC = () => {
   const [session, setSession] = useState<{ user: { email: string } } | null>(null);
-  const hadSessionRef = useRef(false);
+  const [hadSession, setHadSession] = useState(false);
   const [email, setEmail] = useState('');
   const passwordRef = useRef('');
   const [authError, setAuthError] = useState('');
@@ -165,10 +165,10 @@ const AdminPanel: React.FC = () => {
     if (!supabase) return;
     supabase.auth.getSession().then(({ data }) => {
       setSession(data.session as never);
-      if (data.session) hadSessionRef.current = true;
+      if (data.session) setHadSession(true);
     });
     const { data: sub } = supabase.auth.onAuthStateChange((_e, s) => {
-      if (s) hadSessionRef.current = true;
+      if (s) setHadSession(true);
       setSession(s as never);
     });
     return () => sub.subscription.unsubscribe();
@@ -176,7 +176,6 @@ const AdminPanel: React.FC = () => {
 
   useEffect(() => {
     if (session) {
-      setNotice('Загрузка…');
       fetchProducts().then(data => { setItems(data); setNotice(''); });
     }
   }, [session]);
@@ -185,19 +184,18 @@ const AdminPanel: React.FC = () => {
     try {
       if (editingId) sessionStorage.setItem('adminEditingId', editingId);
       else sessionStorage.removeItem('adminEditingId');
-    } catch {}
+    } catch { /* ignore */ }
   }, [editingId]);
 
   useEffect(() => {
     try {
       if (editingDraft) sessionStorage.setItem('adminEditingDraft', JSON.stringify(editingDraft));
       else sessionStorage.removeItem('adminEditingDraft');
-    } catch {}
+    } catch { /* ignore */ }
   }, [editingDraft]);
 
   useEffect(() => {
     if (!editingId) return;
-    setShowHint(true);
     const t = setTimeout(() => setShowHint(false), 2800);
     return () => clearTimeout(t);
   }, [editingId]);
@@ -211,7 +209,7 @@ const AdminPanel: React.FC = () => {
 
   const logout = async () => {
     await supabase?.auth.signOut();
-    hadSessionRef.current = false;
+    setHadSession(false);
     setSession(null);
     setItems([]);
   };
@@ -240,7 +238,7 @@ const AdminPanel: React.FC = () => {
     } catch (e: unknown) {
       const msg =
         e instanceof Error ? e.message :
-        e && typeof e === 'object' && 'message' in e ? String((e as any).message) :
+        e && typeof e === 'object' && 'message' in e ? String((e as { message: unknown }).message) :
         String(e);
       setNotice('Ошибка сохранения: ' + msg);
     } finally {
@@ -261,6 +259,7 @@ const AdminPanel: React.FC = () => {
     setTabLang('ru');
     setEditingDraft(p);
     setEditingId(p.id);
+    setShowHint(true);
   };
 
   const translate = async (p: Product) => {
@@ -351,7 +350,7 @@ const AdminPanel: React.FC = () => {
     );
   }
 
-  if (!session && !hadSessionRef.current) {
+  if (!session && !hadSession) {
     return (
       <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'Outfit, sans-serif', background: 'linear-gradient(135deg,#fbfaf8,#f1ece6)' }}>
         <div style={{ width: '100%', maxWidth: '380px', background: '#fff', padding: '36px', borderRadius: '24px', boxShadow: '0 20px 60px rgba(99,67,49,0.12)' }}>
@@ -551,7 +550,7 @@ const AdminPanel: React.FC = () => {
                 <div className="admin-card-name">{p.names.ru || '— без названия —'}</div>
                 <div className="admin-card-foot">
                   <span className="admin-price">{p.price} ₺</span>
-                  <button onClick={() => { setTabLang('ru'); setEditingDraft(p); setEditingId(p.id); }} className="admin-edit-btn">Изменить</button>
+                  <button onClick={() => { setTabLang('ru'); setEditingDraft(p); setEditingId(p.id); setShowHint(true); }} className="admin-edit-btn">Изменить</button>
                 </div>
               </div>
             </div>

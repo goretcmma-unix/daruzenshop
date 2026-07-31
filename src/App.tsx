@@ -77,6 +77,7 @@ const useMediaQuery = (query: string): boolean => {
 const CompTable: React.FC<{ block: CompTableBlock; t: ReturnType<typeof useLang>['t'] }> = ({ block, t }) => {
   const isStack = useMediaQuery('(max-width: 640px)');
   const cols = Math.max(block.headers.length, ...block.rows.map(r => r.length), 1);
+  const wide = cols >= 4;
   const hs = block.headers.length
     ? [...block.headers]
     : [t.modal.substance, t.modal.dosage];
@@ -110,9 +111,9 @@ const CompTable: React.FC<{ block: CompTableBlock; t: ReturnType<typeof useLang>
     );
   }
 
-  const template = 'minmax(0, 1fr)' + Array(Math.max(0, cols - 1)).fill(' auto').join('');
+  const template = 'minmax(0, ' + (wide ? '1.2fr' : '1.6fr') + ')' + Array(Math.max(0, cols - 1)).fill(' minmax(0, 1fr)').join('');
   return (
-    <div className="comp-card__table">
+    <div className={'comp-card__table' + (wide ? ' comp-card__table--wide' : '')}>
       <div className="comp-card__trow comp-card__trow--head" style={{ gridTemplateColumns: template }}>
         {hs.map((h, i) => (
           <div key={i} className={'comp-card__th' + (h ? '' : ' is-empty')}>{h}</div>
@@ -1416,13 +1417,14 @@ const App: React.FC = () => {
                 zIndex: 4001, 
                 borderRadius: '24px', 
                 overflowY: 'auto',
+                overflowX: 'hidden',
                 overscrollBehaviorY: 'contain',
                 boxShadow: '0 25px 50px -12px rgba(0,0,0,0.25)'
               }}
             >
               <motion.div 
                 className="modal-image-wrapper"
-                style={{ flex: '0 0 55%', display: 'flex', alignItems: 'flex-start', justifyContent: 'center', position: 'relative' }}
+                style={{ flex: '1 1 50%', display: 'flex', alignItems: 'flex-start', justifyContent: 'center', position: 'relative' }}
               >
                  <motion.img 
                   initial={{ scale: 0.8, opacity: 0 }}

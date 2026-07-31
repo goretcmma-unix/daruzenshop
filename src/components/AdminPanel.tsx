@@ -4,7 +4,7 @@ import { supabase, fetchProducts, upsertProduct, deleteProduct, uploadProductIma
 import { autoTranslateFromRu } from '../lib/translate';
 import { cropToStandard } from '../lib/imagePipeline';
 import { NormalizedImg } from './NormalizedImg';
-import { parseCompositionLine, type Product, type CategoryKey, type Lang } from '../data';
+import { parseCompositionLine, dedupeProducts, products, type Product, type CategoryKey, type Lang } from '../data';
 
 const CATEGORIES: { key: CategoryKey; label: string }[] = [
   { key: 'supplements', label: 'Добавки' },
@@ -195,7 +195,9 @@ const AdminPanel: React.FC = () => {
 
   useEffect(() => {
     if (session) {
-      fetchProducts().then(data => { setItems(data); setNotice(''); });
+      fetchProducts()
+        .then(data => { setItems(data); setNotice(''); })
+        .catch(() => { setItems(dedupeProducts(products)); });
     }
   }, [session]);
 

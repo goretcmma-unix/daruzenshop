@@ -47,34 +47,37 @@ const rowToProduct = (r: ProductRow): Product => {
 let seeded = false;
 
 export const fetchProducts = async (): Promise<Product[]> => {
-  if (!supabase) return dedupeProducts(products);
-  const { data, error } = await supabase
-    .from('products')
-    .select('*')
-    .order('sort_order', { ascending: true, nullsFirst: false });
-  if (error || !data || data.length === 0) {
-    if (!seeded) {
-      seeded = true;
-      for (const p of products) {
-        await supabase.from('products').upsert(productToRow(p)).catch(() => {});
+  try {
+    if (!supabase) return dedupeProducts(products);
+    const { data, error } = await supabase
+      .from('products')
+      .select('*')
+      .order('sort_order', { ascending: true, nullsFirst: false });
+    if (error || !data || data.length === 0) {
+      if (!seeded) {
+        seeded = true;
+        for (const p of products) {
+          await supabase.from('products').upsert(productToRow(p)).catch(() => {});
+        }
       }
       return dedupeProducts(products);
     }
+    const dbRows = (data as ProductRow[]).map(rowToProduct);
+    const localMap = new Map(dedupeProducts(products).map(p => [p.id, p]));
+    const sync = (p: Product) => supabase.from('products').upsert(productToRow(p)).catch(() => {});
+    const result: Product[] = dbRows.map(db => {
+      const local = localMap.get(db.id);
+      if (!local) return db;
+      if (JSON.stringify(local.specs ?? null) !== JSON.stringify(db.specs ?? null)) {
+        sync(local);
+        return local;
+      }
+      return db;
+    });
+    return dedupeProducts(result);
+  } catch {
     return dedupeProducts(products);
   }
-  const dbRows = (data as ProductRow[]).map(rowToProduct);
-  const localMap = new Map(dedupeProducts(products).map(p => [p.id, p]));
-  const sync = (p: Product) => supabase.from('products').upsert(productToRow(p)).catch(() => {});
-  const result: Product[] = dbRows.map(db => {
-    const local = localMap.get(db.id);
-    if (!local) return db;
-    if (JSON.stringify(local.specs ?? null) !== JSON.stringify(db.specs ?? null)) {
-      sync(local);
-      return local;
-    }
-    return db;
-  });
-  return dedupeProducts(result);
 };
 
 const productToRow = (p: Product) => ({

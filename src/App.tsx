@@ -60,13 +60,56 @@ const buildSections = (specs: string[]): SectionGroup[] => {
   return groups;
 };
 
+const useMediaQuery = (query: string): boolean => {
+  const [matches, setMatches] = useState(() =>
+    typeof window !== 'undefined' && window.matchMedia(query).matches
+  );
+  useEffect(() => {
+    const mql = window.matchMedia(query);
+    const onChange = () => setMatches(mql.matches);
+    mql.addEventListener('change', onChange);
+    setMatches(mql.matches);
+    return () => mql.removeEventListener('change', onChange);
+  }, [query]);
+  return matches;
+};
+
 const CompTable: React.FC<{ block: CompTableBlock; t: ReturnType<typeof useLang>['t'] }> = ({ block, t }) => {
+  const isStack = useMediaQuery('(max-width: 640px)');
   const cols = Math.max(block.headers.length, ...block.rows.map(r => r.length), 1);
   const hs = block.headers.length
     ? [...block.headers]
     : [t.modal.substance, t.modal.dosage];
   if (cols >= 3 && hs.length < 3) hs.push(t.modal.daily);
   while (hs.length < cols) hs.push('');
+
+  if (isStack) {
+    const labels = hs.slice(1);
+    return (
+      <div className="comp-card__table comp-card__table--stack">
+        {block.rows.map((row, ri) => {
+          const cells = [...row];
+          while (cells.length < cols) cells.push('');
+          const name = cells[0] ?? '';
+          const sub = name.startsWith('└');
+          return (
+            <div key={ri} className={'comp-stack__item' + (sub ? ' is-sub' : '')}>
+              <div className="comp-stack__name">{sub ? name.replace(/^└\s*/, '') : name}</div>
+              {cells.slice(1).map((v, vi) =>
+                v ? (
+                  <div key={vi} className="comp-stack__row">
+                    <span className="comp-stack__label">{labels[vi] || ''}</span>
+                    <span className="comp-stack__value">{v}</span>
+                  </div>
+                ) : null
+              )}
+            </div>
+          );
+        })}
+      </div>
+    );
+  }
+
   const template = 'minmax(0, 1fr)' + Array(Math.max(0, cols - 1)).fill(' auto').join('');
   return (
     <div className="comp-card__table">
@@ -1368,7 +1411,7 @@ const App: React.FC = () => {
                 position: 'fixed', 
                 top: '50%',
                 left: '50%', 
-                width: 'clamp(300px, 94vw, 800px)', 
+                width: 'clamp(300px, 94vw, 940px)', 
                 maxHeight: '90vh', 
                 background: 'white', 
                 zIndex: 4001, 

@@ -398,8 +398,9 @@ a:hover {
 }
 
 .modal-image {
-  width: 125%;
+  width: auto;
   height: auto;
+  max-width: 100%;
   max-height: 500px;
   object-fit: contain;
 }
@@ -724,6 +725,58 @@ a:hover {
   padding-right: 28px;
 }
 
+.comp-card__table--stack {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.comp-stack__item {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 10px 12px;
+  background: #fff;
+}
+
+.comp-stack__item.is-sub {
+  margin-left: 12px;
+  background: #fbf9f6;
+  border-style: dashed;
+}
+
+.comp-stack__name {
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--primary);
+  margin-bottom: 6px;
+}
+
+.comp-stack__row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+  font-size: 13px;
+  padding: 2px 0;
+}
+
+.comp-stack__label {
+  color: #9a8a78;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.comp-stack__value {
+  font-weight: 800;
+  color: var(--primary);
+  font-variant-numeric: tabular-nums;
+}
+
+[dir="rtl"] .comp-stack__item.is-sub {
+  margin-left: 0;
+  margin-right: 12px;
+}
+
 [dir="rtl"] .comp-card__td.is-name::before {
   left: auto;
   right: 0;
@@ -826,10 +879,10 @@ a:hover {
     padding: 12px;
   }
   .modal-image {
-    width: 110% !important;
-    height: 110% !important;
-    max-height: none !important;
-    max-width: none !important;
+    width: auto !important;
+    height: auto !important;
+    max-height: 100% !important;
+    max-width: 100% !important;
     object-fit: contain;
   }
   .modal-info-wrapper {

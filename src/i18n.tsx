@@ -87,6 +87,7 @@ const ui = {
       composition: 'Состав',
       substance: 'Вещество',
       dosage: 'Дозировка',
+      daily: 'Норма',
     },
     footer: {
       desc: 'Натуральные биодобавки и витамины из лучших ингредиентов. Качество, проверенное временем.',
@@ -176,6 +177,7 @@ const ui = {
       composition: 'İçindekiler',
       substance: 'Madde',
       dosage: 'Dozaj',
+      daily: 'Günlük değer',
     },
     footer: {
       desc: 'En iyi içeriklerden doğal takviyeler ve vitaminler. Zamanın sınadığı kalite.',
@@ -265,6 +267,7 @@ const ui = {
       composition: 'Composition',
       substance: 'Substance',
       dosage: 'Dosage',
+      daily: 'Daily value',
     },
     footer: {
       desc: 'Natural supplements and vitamins made from the finest ingredients. Quality tested by time.',
@@ -354,6 +357,7 @@ const ui = {
       composition: 'المكونات',
       substance: 'المادة',
       dosage: 'الجرعة',
+      daily: 'القيمة اليومية',
     },
     footer: {
       desc: 'مكملات غذائية طبيعية وفيتامينات مصنوعة من أفضل المكونات. جودة اختبرها الزمن.',

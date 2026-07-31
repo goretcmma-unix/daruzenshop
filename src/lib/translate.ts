@@ -109,13 +109,22 @@ export const autoTranslateFromRu = async (p: Product): Promise<Product> => {
       if (ruSpecs.length) {
         const translated = await Promise.all(
           ruSpecs.map(async line => {
-            const { ingredient, dosage, daily, isHeader } = parseCompositionLine(line);
-            if (isHeader) {
-              const t = ingredient ? await translateText(ingredient, to) : '';
-              return `# ${t || ingredient}`;
+            const part = parseCompositionLine(line);
+            if (part.type === 'section') {
+              const t = part.text ? await translateText(part.text, to) : '';
+              return `# ${t || part.text}`;
             }
-            const translatedIngredient = ingredient ? await translateText(ingredient, to) : '';
-            return [translatedIngredient || ingredient, convertUnits(dosage, to), convertUnits(daily, to)]
+            if (part.type === 'colheader') {
+              const cells = await Promise.all(
+                part.cells.map(cell => (cell ? translateText(cell, to) : Promise.resolve('')))
+              );
+              return `## ${cells.map((c, i) => c || part.cells[i]).join(' | ')}`;
+            }
+            const translatedCells = await Promise.all(
+              part.cells.map(cell => (cell ? translateText(cell, to) : Promise.resolve('')))
+            );
+            return translatedCells
+              .map((c, i) => (i === 0 ? c || part.cells[0] : convertUnits(c || part.cells[i], to)))
               .filter(Boolean)
               .join(' | ');
           })

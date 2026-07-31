@@ -282,10 +282,10 @@ export const products: Product[] = [
       ar: 'مجمّع نباتي طبيعي على أساس الجنكو بيلوبا والجنسنغ لدعم النشاط الذهني وتحسين الذاكرة والتركيز.',
     },
     specs: {
-      ru: ['# На 5 мл', 'Экстракт гинкго билоба | 375 мг', 'Экстракт корейского женьшеня | 20 мг', 'Цитиколин | 15 мг', '# На 10 мл', 'Экстракт гинкго билоба | 750 мг', 'Экстракт корейского женьшеня | 40 мг', 'Цитиколин | 30 мг'],
-      tr: ['# 5 ml başına', 'Ginkgo biloba ekstresi | 375 mg', 'Kore ginsengi ekstresi | 20 mg', 'Sitikolin | 15 mg', '# 10 ml başına', 'Ginkgo biloba ekstresi | 750 mg', 'Kore ginsengi ekstresi | 40 mg', 'Sitikolin | 30 mg'],
-      en: ['# Per 5 ml', 'Ginkgo biloba extract | 375 mg', 'Korean ginseng extract | 20 mg', 'Citicoline | 15 mg', '# Per 10 ml', 'Ginkgo biloba extract | 750 mg', 'Korean ginseng extract | 40 mg', 'Citicoline | 30 mg'],
-      ar: ['# لكل 5 مل', 'مستخلص الجنكو بيلوبا | 375 ملغ', 'مستخلص الجنسنغ الكوري | 20 ملغ', 'سيتيكولين | 15 ملغ', '# لكل 10 مل', 'مستخلص الجنكو بيلوبا | 750 ملغ', 'مستخلص الجنسنغ الكوري | 40 ملغ', 'سيتيكولين | 30 ملغ'],
+      ru: ['## | На 5 мл | На 10 мл', 'Экстракт гинкго билоба | 375 мг | 750 мг', 'Экстракт корейского женьшеня | 20 мг | 40 мг', 'Цитиколин | 15 мг | 30 мг'],
+      tr: ['## | 5 ml başına | 10 ml başına', 'Ginkgo biloba ekstresi | 375 mg | 750 mg', 'Kore ginsengi ekstresi | 20 mg | 40 mg', 'Sitikolin | 15 mg | 30 mg'],
+      en: ['## | Per 5 ml | Per 10 ml', 'Ginkgo biloba extract | 375 mg | 750 mg', 'Korean ginseng extract | 20 mg | 40 mg', 'Citicoline | 15 mg | 30 mg'],
+      ar: ['## | لكل 5 مل | لكل 10 مل', 'مستخلص الجنكو بيلوبا | 375 ملغ | 750 ملغ', 'مستخلص الجنسنغ الكوري | 20 ملغ | 40 ملغ', 'سيتيكولين | 15 ملغ | 30 ملغ'],
     },
   },
   {
@@ -338,17 +338,22 @@ export const products: Product[] = [
   },
 ];
 
-export const parseCompositionLine = (line: string): { ingredient: string; dosage: string; daily: string; isHeader: boolean } => {
+export type CompositionPart =
+  | { type: 'section'; text: string }
+  | { type: 'colheader'; cells: string[] }
+  | { type: 'row'; cells: string[] };
+
+export const parseCompositionLine = (line: string): CompositionPart => {
   const trimmed = line.trim();
+  if (trimmed.startsWith('##')) {
+    return { type: 'colheader', cells: trimmed.replace(/^##+\s*/, '').split('|').map(s => s.trim()) };
+  }
   if (trimmed.startsWith('#')) {
-    return { ingredient: trimmed.replace(/^#+\s*/, ''), dosage: '', daily: '', isHeader: true };
+    return { type: 'section', text: trimmed.replace(/^#+\s*/, '').trim() };
   }
   const parts = line.split('|').map(s => s.trim()).filter(Boolean);
-  if (parts.length >= 3) {
-    return { ingredient: parts[0], dosage: parts[1], daily: parts[2], isHeader: false };
-  }
-  if (parts.length === 2) {
-    return { ingredient: parts[0], dosage: parts[1], daily: '', isHeader: false };
+  if (parts.length >= 2) {
+    return { type: 'row', cells: parts };
   }
   if (parts.length === 1) {
     const text = parts[0];
@@ -356,11 +361,11 @@ export const parseCompositionLine = (line: string): { ingredient: string; dosage
     if (m) {
       const dosage = m[1].trim();
       const ingredient = text.replace(m[1], '').trim().replace(/^[\s,;:-]+|[\s,;:-]+$/g, '');
-      return { ingredient: ingredient || text, dosage, daily: '', isHeader: false };
+      return { type: 'row', cells: [ingredient || text, dosage] };
     }
-    return { ingredient: text, dosage: '', daily: '', isHeader: false };
+    return { type: 'row', cells: [text] };
   }
-  return { ingredient: line, dosage: '', daily: '', isHeader: false };
+  return { type: 'row', cells: [] };
 };
 
 export const dedupeProducts = (list: Product[]): Product[] => {

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useMemo, useLayoutEffect, startTransition } from 'react';
+import React, { useState, useEffect, useRef, useMemo, startTransition } from 'react';
 import { 
   ShoppingCart, 
   Search, 
@@ -30,6 +30,107 @@ import RecoveryPage from './components/RecoveryPage';
 import { NormalizedImg } from './components/NormalizedImg';
 import { useNormalizedImage } from './lib/normalizeImage';
 
+interface CompTableBlock {
+  headers: string[];
+  rows: string[][];
+}
+
+const buildCompBlocks = (specs: string[]): (CompTableBlock | { section: string })[] => {
+  const blocks: (CompTableBlock | { section: string })[] = [];
+  let current: CompTableBlock | null = null;
+  for (const spec of specs) {
+    const p = parseCompositionLine(spec);
+    if (p.type === 'section') {
+      current = null;
+      blocks.push({ section: p.text });
+    } else if (p.type === 'colheader') {
+      current = { headers: p.cells, rows: [] };
+      blocks.push(current);
+    } else {
+      if (!current) {
+        current = { headers: [], rows: [] };
+        blocks.push(current);
+      }
+      current.rows.push(p.cells);
+    }
+  }
+  return blocks;
+};
+
+const CompTable: React.FC<{ block: CompTableBlock; t: ReturnType<typeof useLang>['t'] }> = ({ block, t }) => {
+  const cols = Math.max(block.headers.length, ...block.rows.map(r => r.length), 1);
+  const hs = block.headers.length
+    ? [...block.headers]
+    : [t.modal.substance, t.modal.dosage];
+  if (cols >= 3 && hs.length < 3) hs.push(t.modal.daily);
+  while (hs.length < cols) hs.push('');
+  const template = 'minmax(0, 1fr)' + Array(Math.max(0, cols - 1)).fill(' auto').join('');
+  return (
+    <div className="comp-card__table">
+      <div className="comp-card__trow comp-card__trow--head" style={{ gridTemplateColumns: template }}>
+        {hs.map((h, i) => (
+          <div key={i} className={'comp-card__th' + (h ? '' : ' is-empty')}>{h}</div>
+        ))}
+      </div>
+      {block.rows.map((row, ri) => {
+        const cells = [...row];
+        while (cells.length < cols) cells.push('');
+        return (
+          <div key={ri} className="comp-card__trow" style={{ gridTemplateColumns: template }}>
+            {cells.map((cell, ci) => (
+              <div key={ci} className={'comp-card__td' + (ci === 0 ? ' is-name' : ' is-value')}>{cell}</div>
+            ))}
+          </div>
+        );
+      })}
+    </div>
+  );
+};
+
+const CompositionPanel: React.FC<{ specs?: string[]; t: ReturnType<typeof useLang>['t'] }> = ({ specs, t }) => {
+  const specLines = specs ?? [];
+  const gridMode = specLines.some(l => parseCompositionLine(l).type === 'colheader');
+  if (gridMode) {
+    return (
+      <div className="comp-card">
+        {buildCompBlocks(specLines).map((b, bi) =>
+          'section' in b ? (
+            <div key={bi} className="comp-card__section"><span>{b.section}</span></div>
+          ) : (
+            <CompTable key={bi} block={b} t={t} />
+          )
+        )}
+      </div>
+    );
+  }
+  return (
+    <div className="comp-card">
+      <div className="comp-card__header">
+        <span className="comp-card__pill comp-card__pill--left">{t.modal.substance}</span>
+        <span className="comp-card__pill comp-card__pill--right">{t.modal.dosage}</span>
+      </div>
+      {specLines.map((spec, i) => {
+        const p = parseCompositionLine(spec);
+        if (p.type === 'section') {
+          return <div key={i} className="comp-card__section"><span>{p.text}</span></div>;
+        }
+        if (p.type !== 'row') return null;
+        const [ingredient, dosage = '', daily = ''] = p.cells;
+        if (!ingredient) return null;
+        return (
+          <div key={i} className="comp-card__row">
+            <span className="comp-card__name">{ingredient}</span>
+            <span className="comp-card__values">
+              {dosage && <span className="comp-card__dosage">{dosage}</span>}
+              {daily && <span className="comp-card__daily">{daily}</span>}
+            </span>
+          </div>
+        );
+      })}
+    </div>
+  );
+};
+
 const App: React.FC = () => {
   const { lang, setLang, t } = useLang();
   const isRtl = lang === 'ar';
@@ -47,26 +148,8 @@ const App: React.FC = () => {
   const [productTab, setProductTab] = useState(0);
   const selectedProductImage = useNormalizedImage(selectedProduct?.image);
   const swipeStartX = useRef(0);
-  const swipeContentRef = useRef<HTMLDivElement | null>(null);
   const navClickRef = useRef(false);
-  const [swipeHeight, setSwipeHeight] = useState<number | 'auto'>('auto');
-  const swipeMounted = useRef(false);
 
-  useLayoutEffect(() => {
-    if (!selectedProduct) {
-      setSwipeHeight('auto');
-      swipeMounted.current = false;
-      return;
-    }
-    swipeMounted.current = true;
-    const el = swipeContentRef.current;
-    if (!el) return;
-    const update = () => { if (swipeContentRef.current) setSwipeHeight(swipeContentRef.current.offsetHeight); };
-    update();
-    const ro = new ResizeObserver(update);
-    ro.observe(el);
-    return () => ro.disconnect();
-  }, [selectedProduct]);
   const [page, setPage] = useState(0);
   const PAGE_SIZE = 12;
 
@@ -1277,11 +1360,11 @@ const App: React.FC = () => {
                         if (Math.abs(dx) < 30) return;
                         setProductTab((t) => (dx < 0 ? Math.min(1, t + 1) : Math.max(0, t - 1)));
                       }}
-                      animate={{ height: swipeHeight ?? 'auto' }}
+                      animate={{ opacity: 1 }}
                       transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
-                       style={{ position: 'relative', overflow: 'visible' }}
+                       style={{ position: 'relative', overflowY: 'auto', overflowX: 'hidden' }}
                     >
-                       <div ref={swipeContentRef} style={{ position: 'relative', top: 0, left: 0, right: 0 }}>
+                       <div style={{ position: 'relative', top: 0, left: 0, right: 0 }}>
                       <AnimatePresence mode="wait" initial={false}>
                         {productTab === 0 ? (
                           <motion.div
@@ -1305,32 +1388,7 @@ const App: React.FC = () => {
                             exit={{ x: 24, opacity: 0 }}
                             transition={{ duration: 0.2 }}
                           >
-                                <div className="comp-card">
-                                  <div className="comp-card__header">
-                                    <span className="comp-card__pill comp-card__pill--left">{t.modal.substance}</span>
-                                    <span className="comp-card__pill comp-card__pill--right">{t.modal.dosage}</span>
-                                  </div>
-                                  {selectedProduct.specs?.map((spec, i) => {
-                                    const { ingredient, dosage, daily, isHeader } = parseCompositionLine(spec);
-                                    if (!ingredient) return null;
-                                    if (isHeader) {
-                                      return (
-                                        <div key={i} className="comp-card__section">
-                                          <span>{ingredient}</span>
-                                        </div>
-                                      );
-                                    }
-                                    return (
-                                      <div key={i} className="comp-card__row">
-                                        <span className="comp-card__name">{ingredient}</span>
-                                        <span className="comp-card__values">
-                                          {dosage && <span className="comp-card__dosage">{dosage}</span>}
-                                          {daily && <span className="comp-card__daily">{daily}</span>}
-                                        </span>
-                                      </div>
-                                    );
-                                  })}
-                                </div>
+                                <CompositionPanel specs={selectedProduct.specs} t={t} />
                           </motion.div>
                         )}
                       </AnimatePresence>

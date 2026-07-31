@@ -99,9 +99,12 @@ const ProductModal: React.FC<Props> = (props) => {
                              </tr>
                            </thead>
                            <tbody>
-                             {selectedProduct.specs.map((spec, i) => {
-                               const { ingredient, dosage } = parseCompositionLine(spec);
-                               if (!ingredient || !dosage) return null;
+                              {selectedProduct.specs.map((spec, i) => {
+                                const part = parseCompositionLine(spec);
+                                if (part.type !== 'row') return null;
+                                const ingredient = part.cells[0] ?? '';
+                                const dosage = part.cells[1] ?? '';
+                                if (!ingredient || !dosage) return null;
                                return (
                                  <tr key={i}>
                                    <td style={{ padding: '14px 18px', borderBottom: '1px solid #f3f4f6', fontSize: '14px', color: '#111827', lineHeight: '1.4', textAlign: 'left', fontWeight: '500' }}>{ingredient}</td>

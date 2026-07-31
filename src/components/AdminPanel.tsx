@@ -79,6 +79,25 @@ const btnGhost: React.CSSProperties = {
   cursor: 'pointer',
 };
 
+const btnMini: React.CSSProperties = {
+  width: 26,
+  height: 26,
+  flex: '0 0 26px',
+  borderRadius: 8,
+  border: '1px solid #eadfc9',
+  background: '#fdfaf4',
+  color: '#b08a4a',
+  fontSize: 14,
+  fontWeight: 800,
+  cursor: 'pointer',
+  lineHeight: 1,
+  padding: 0,
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  opacity: 0.85,
+};
+
 // Кастомное поле пароля: в DOM попадают только точки, реальное значение —
 // только в ref (память JS), поэтому в «коде элемента» пароль не виден.
 const PasswordField: React.FC<{
@@ -305,31 +324,37 @@ const AdminPanel: React.FC = () => {
     img.src = localUrl;
   };
 
-  const getSpecEntries = (p: Product, l: Lang) =>
+  type SpecEntry = { type: 'section' | 'colheader' | 'row'; cells: string[] };
+
+  const serializeSpec = (e: SpecEntry): string => {
+    if (e.type === 'section') return `# ${e.cells[0] ?? ''}`.trimEnd();
+    if (e.type === 'colheader') return `## ${e.cells.map(c => c.trim()).join(' | ')}`;
+    return e.cells.map(c => c.trim()).filter(Boolean).join(' | ');
+  };
+
+  const getSpecEntries = (p: Product, l: Lang): SpecEntry[] =>
     (p.specs?.[l] ?? []).map(line => {
-      const { ingredient, dosage, daily, isHeader } = parseCompositionLine(line);
-      return { ingredient, dosage, daily, isHeader };
+      const part = parseCompositionLine(line);
+      if (part.type === 'section') return { type: 'section', cells: [part.text] };
+      if (part.type === 'colheader') return { type: 'colheader', cells: [...part.cells, '', '', '', ''].slice(0, 4) };
+      return { type: 'row', cells: [...part.cells, '', '', '', ''].slice(0, 4) };
     });
 
-  const setSpecEntry = (p: Product, l: Lang, index: number, field: 'ingredient' | 'dosage' | 'daily', value: string): Product => {
+  const setSpecCell = (p: Product, l: Lang, index: number, cellIndex: number, value: string): Product => {
     const entries = getSpecEntries(p, l);
-    const entry = entries[index] ?? { ingredient: '', dosage: '', daily: '', isHeader: false };
-    entry[field] = value;
+    const entry = entries[index] ?? { type: 'row', cells: ['', '', '', ''] };
+    entry.cells[cellIndex] = value;
     entries[index] = entry;
     return {
       ...p,
       specs: {
         ...(p.specs ?? {}),
-        [l]: entries.map(e =>
-          e.isHeader
-            ? `# ${e.ingredient}`
-            : [e.ingredient, e.dosage, e.daily].filter(Boolean).join(' | ')
-        ),
+        [l]: entries.map(serializeSpec),
       },
     };
   };
 
-  const addSpecEntry = (p: Product, l: Lang): Product => ({
+  const addSpecRow = (p: Product, l: Lang): Product => ({
     ...p,
     specs: {
       ...(p.specs ?? {}),
@@ -337,13 +362,33 @@ const AdminPanel: React.FC = () => {
     },
   });
 
-  const addSpecHeader = (p: Product, l: Lang): Product => ({
+  const addSpecSection = (p: Product, l: Lang): Product => ({
     ...p,
     specs: {
       ...(p.specs ?? {}),
       [l]: [...(p.specs?.[l] ?? []), '# '],
     },
   });
+
+  const addSpecColHeader = (p: Product, l: Lang): Product => ({
+    ...p,
+    specs: {
+      ...(p.specs ?? {}),
+      [l]: [...(p.specs?.[l] ?? []), '## | '],
+    },
+  });
+
+  const insertSpecEntry = (p: Product, l: Lang, index: number, type: 'row' | 'section' | 'colheader'): Product => {
+    const list = p.specs?.[l] ?? [];
+    const line = type === 'section' ? '# ' : type === 'colheader' ? '## | ' : ' | ';
+    return {
+      ...p,
+      specs: {
+        ...(p.specs ?? {}),
+        [l]: [...list.slice(0, index), line, ...list.slice(index)],
+      },
+    };
+  };
 
   const removeSpecEntry = (p: Product, l: Lang, index: number): Product => ({
     ...p,
@@ -663,24 +708,39 @@ const AdminPanel: React.FC = () => {
                   <div className="admin-label">Состав</div>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
                     {getSpecEntries(editing, tabLang).map((entry, i) => (
-                      entry.isHeader ? (
-                        <div key={i} style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-                          <span style={{ fontSize: 13, color: '#b08a4a', fontWeight: 800, letterSpacing: '0.1em', lineHeight: 1 }}>#</span>
-                          <input className="admin-field" style={{ flex: 1, fontWeight: 700 }} value={entry.ingredient} onChange={e => update(editing.id, pr => setSpecEntry(pr, tabLang, i, 'ingredient', e.target.value))} placeholder="Заголовок секции (например, На 5 мл)" />
-                          <button onClick={() => update(editing.id, pr => removeSpecEntry(pr, tabLang, i))} style={{ background: 'none', border: 'none', fontSize: 18, cursor: 'pointer', color: '#c0392b', padding: '4px 6px', lineHeight: 1 }}>×</button>
-                        </div>
-                      ) : (
-                        <div key={i} style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-                          <input className="admin-field" style={{ flex: 1 }} value={entry.ingredient} onChange={e => update(editing.id, pr => setSpecEntry(pr, tabLang, i, 'ingredient', e.target.value))} placeholder="Активное вещество" />
-                          <input className="admin-field" style={{ flex: '0 0 110px' }} value={entry.dosage} onChange={e => update(editing.id, pr => setSpecEntry(pr, tabLang, i, 'dosage', e.target.value))} placeholder="Дозировка" />
-                          <input className="admin-field" style={{ flex: '0 0 110px' }} value={entry.daily} onChange={e => update(editing.id, pr => setSpecEntry(pr, tabLang, i, 'daily', e.target.value))} placeholder="Норма" />
-                          <button onClick={() => update(editing.id, pr => removeSpecEntry(pr, tabLang, i))} style={{ background: 'none', border: 'none', fontSize: 18, cursor: 'pointer', color: '#c0392b', padding: '4px 6px', lineHeight: 1 }}>×</button>
-                        </div>
-                      )
+                      <div key={i} style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
+                        <button title="Вставить вещество выше" onClick={() => update(editing.id, pr => insertSpecEntry(pr, tabLang, i, 'row'))} style={btnMini}>+</button>
+                        <button title="Вставить раздел выше" onClick={() => update(editing.id, pr => insertSpecEntry(pr, tabLang, i, 'section'))} style={btnMini}>§</button>
+                        <button title="Вставить заголовки колонок выше" onClick={() => update(editing.id, pr => insertSpecEntry(pr, tabLang, i, 'colheader'))} style={btnMini}>#</button>
+                        {entry.type === 'section' && (
+                          <>
+                            <span style={{ fontSize: 13, color: '#b08a4a', fontWeight: 800, letterSpacing: '0.1em', lineHeight: 1 }}>§</span>
+                            <input className="admin-field" style={{ flex: 1, fontWeight: 700 }} value={entry.cells[0] ?? ''} onChange={e => update(editing.id, pr => setSpecCell(pr, tabLang, i, 0, e.target.value))} placeholder="Заголовок раздела (например, На 5 мл)" />
+                          </>
+                        )}
+                        {entry.type === 'colheader' && (
+                          <>
+                            <span style={{ fontSize: 13, color: '#b08a4a', fontWeight: 800, letterSpacing: '0.1em', lineHeight: 1 }}>##</span>
+                            {entry.cells.map((cell, ci) => (
+                              <input key={ci} className="admin-field" style={{ flex: ci === 0 ? 1 : '0 0 90px' }} value={cell} onChange={e => update(editing.id, pr => setSpecCell(pr, tabLang, i, ci, e.target.value))} placeholder={ci === 0 ? 'Колонка 1' : 'Колонка ' + (ci + 1)} />
+                            ))}
+                          </>
+                        )}
+                        {entry.type === 'row' && (
+                          <>
+                            <input className="admin-field" style={{ flex: 1 }} value={entry.cells[0] ?? ''} onChange={e => update(editing.id, pr => setSpecCell(pr, tabLang, i, 0, e.target.value))} placeholder="Активное вещество" />
+                            <input className="admin-field" style={{ flex: '0 0 90px' }} value={entry.cells[1] ?? ''} onChange={e => update(editing.id, pr => setSpecCell(pr, tabLang, i, 1, e.target.value))} placeholder="Дозировка" />
+                            <input className="admin-field" style={{ flex: '0 0 90px' }} value={entry.cells[2] ?? ''} onChange={e => update(editing.id, pr => setSpecCell(pr, tabLang, i, 2, e.target.value))} placeholder="Норма" />
+                            <input className="admin-field" style={{ flex: '0 0 90px' }} value={entry.cells[3] ?? ''} onChange={e => update(editing.id, pr => setSpecCell(pr, tabLang, i, 3, e.target.value))} placeholder="4-я колонка" />
+                          </>
+                        )}
+                        <button title="Удалить" onClick={() => update(editing.id, pr => removeSpecEntry(pr, tabLang, i))} style={{ background: 'none', border: 'none', fontSize: 18, cursor: 'pointer', color: '#c0392b', padding: '4px 6px', lineHeight: 1 }}>×</button>
+                      </div>
                     ))}
                     <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-                      <button onClick={() => update(editing.id, pr => addSpecEntry(pr, tabLang))} style={{ ...btnGhost, padding: '8px 14px', fontSize: 13 }}>+ Добавить вещество</button>
-                      <button onClick={() => update(editing.id, pr => addSpecHeader(pr, tabLang))} style={{ ...btnGhost, padding: '8px 14px', fontSize: 13 }}># Заголовок секции</button>
+                      <button onClick={() => update(editing.id, pr => addSpecRow(pr, tabLang))} style={{ ...btnGhost, padding: '8px 14px', fontSize: 13 }}>+ Добавить вещество</button>
+                      <button onClick={() => update(editing.id, pr => addSpecSection(pr, tabLang))} style={{ ...btnGhost, padding: '8px 14px', fontSize: 13 }}>§ Раздел</button>
+                      <button onClick={() => update(editing.id, pr => addSpecColHeader(pr, tabLang))} style={{ ...btnGhost, padding: '8px 14px', fontSize: 13 }}>## Заголовки колонок</button>
                     </div>
                   </div>
                 </div>

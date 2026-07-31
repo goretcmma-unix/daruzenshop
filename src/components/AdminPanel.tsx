@@ -281,50 +281,98 @@ const AdminPanel: React.FC = () => {
     if (!editing || !file || !file.type.startsWith('image/')) return;
     const img = new Image();
     img.onload = () => {
-      // find content bounds (skip near-white pixels)
+      const iw = img.naturalWidth, ih = img.naturalHeight;
       const tmp = document.createElement('canvas');
-      tmp.width = img.naturalWidth; tmp.height = img.naturalHeight;
+      tmp.width = iw; tmp.height = ih;
       const tctx = tmp.getContext('2d')!;
+      tctx.fillStyle = '#fff';
+      tctx.fillRect(0, 0, iw, ih);
       tctx.drawImage(img, 0, 0);
-      const data = tctx.getImageData(0, 0, tmp.width, tmp.height).data;
-      const threshold = 240;
-      let top = 0, bottom = tmp.height, left = 0, right = tmp.width;
-      for (let y = 0; y < tmp.height; y++) {
-        let empty = true;
-        for (let x = 0; x < tmp.width; x++) {
-          const i = (y * tmp.width + x) * 4;
-          if (data[i] < threshold || data[i+1] < threshold || data[i+2] < threshold) { empty = false; break; }
-        }
-        if (!empty) { top = y; break; }
-      }
-      for (let y = tmp.height - 1; y >= 0; y--) {
-        let empty = true;
-        for (let x = 0; x < tmp.width; x++) {
-          const i = (y * tmp.width + x) * 4;
-          if (data[i] < threshold || data[i+1] < threshold || data[i+2] < threshold) { empty = false; break; }
-        }
-        if (!empty) { bottom = y + 1; break; }
-      }
-      for (let x = 0; x < tmp.width; x++) {
-        let empty = true;
-        for (let y = 0; y < tmp.height; y++) {
-          const i = (y * tmp.width + x) * 4;
-          if (data[i] < threshold || data[i+1] < threshold || data[i+2] < threshold) { empty = false; break; }
-        }
-        if (!empty) { left = x; break; }
-      }
-      for (let x = tmp.width - 1; x >= 0; x--) {
-        let empty = true;
-        for (let y = 0; y < tmp.height; y++) {
-          const i = (y * tmp.width + x) * 4;
-          if (data[i] < threshold || data[i+1] < threshold || data[i+2] < threshold) { empty = false; break; }
-        }
-        if (!empty) { right = x + 1; break; }
+      const imageData = tctx.getImageData(0, 0, iw, ih);
+      const px = imageData.data;
+      const N = iw * ih;
+
+      // background color = median of border pixels
+      const border: number[] = [];
+      for (let x = 0; x < iw; x++) { border.push(x, (ih - 1) * iw + x); }
+      for (let y = 0; y < ih; y++) { border.push(y * iw, y * iw + iw - 1); }
+      const rs: number[] = [], gs: number[] = [], bs: number[] = [];
+      for (const p of border) { const i = p * 4; rs.push(px[i]); gs.push(px[i + 1]); bs.push(px[i + 2]); }
+      const sorted = (a: number[]) => [...a].sort((x, y) => x - y);
+      const bgR = sorted(rs)[Math.floor(rs.length / 2)];
+      const bgG = sorted(gs)[Math.floor(gs.length / 2)];
+      const bgB = sorted(bs)[Math.floor(bs.length / 2)];
+
+      // distance to background
+      const diff = new Float32Array(N);
+      for (let p = 0; p < N; p++) {
+        const i = p * 4;
+        diff[p] = Math.max(Math.abs(px[i] - bgR), Math.abs(px[i + 1] - bgG), Math.abs(px[i + 2] - bgB));
       }
 
+      // Otsu threshold on diff
+      const hist = new Float64Array(256);
+      for (let p = 0; p < N; p++) hist[Math.min(255, Math.round(diff[p]))]++;
+      let sum = 0;
+      for (let t = 0; t < 256; t++) sum += t * hist[t];
+      let sumB = 0, wB = 0, wF = 0, best = 0, bestVar = 0;
+      for (let t = 0; t < 256; t++) {
+        wB += hist[t];
+        if (wB === 0) continue;
+        wF = N - wB;
+        if (wF === 0) break;
+        sumB += t * hist[t];
+        const mB = sumB / wB, mF = (sum - sumB) / wF;
+        const v = wB * wF * (mB - mF) * (mB - mF);
+        if (v > bestVar) { bestVar = v; best = t; }
+      }
+      const distThreshold = best;
+
+      // flood-fill background from all edges
+      const removed = new Uint8Array(N);
+      const queue = new Int32Array(N);
+      let qHead = 0, qTail = 0;
+      const pushP = (p: number) => { if (removed[p]) return; removed[p] = 1; queue[qTail++] = p; };
+      for (let x = 0; x < iw; x++) {
+        if (diff[x] <= distThreshold) pushP(x);
+        const b = (ih - 1) * iw + x;
+        if (diff[b] <= distThreshold) pushP(b);
+      }
+      for (let y = 0; y < ih; y++) {
+        const l = y * iw, r = y * iw + iw - 1;
+        if (diff[l] <= distThreshold) pushP(l);
+        if (diff[r] <= distThreshold) pushP(r);
+      }
+      while (qHead < qTail) {
+        const p = queue[qHead++];
+        const x = p % iw, y = (p / iw) | 0;
+        if (x > 0 && !removed[p - 1] && diff[p - 1] <= distThreshold) pushP(p - 1);
+        if (x < iw - 1 && !removed[p + 1] && diff[p + 1] <= distThreshold) pushP(p + 1);
+        if (y > 0 && !removed[p - iw] && diff[p - iw] <= distThreshold) pushP(p - iw);
+        if (y < ih - 1 && !removed[p + iw] && diff[p + iw] <= distThreshold) pushP(p + iw);
+      }
+
+      // product bounding box (everything that is not background)
+      let top = ih, bottom = 0, left = iw, right = 0;
+      for (let p = 0; p < N; p++) {
+        if (removed[p]) continue;
+        const x = p % iw, y = (p / iw) | 0;
+        if (y < top) top = y;
+        if (y > bottom) bottom = y;
+        if (x < left) left = x;
+        if (x > right) right = x;
+      }
+      if (!(bottom > top && right > left)) { top = 0; bottom = ih; left = 0; right = iw; }
       const cw = right - left, ch = bottom - top;
+
+      // whiten background pixels
+      for (let p = 0; p < N; p++) {
+        if (removed[p]) { const i = p * 4; px[i] = 255; px[i + 1] = 255; px[i + 2] = 255; px[i + 3] = 255; }
+      }
+      tctx.putImageData(imageData, 0, 0);
+
       const W = 600, H = 800;
-      const PAD = 0.06;
+      const PAD = 0.016;
       const drawW = W * (1 - 2 * PAD);
       const drawH = H * (1 - 2 * PAD);
       const scale = Math.min(drawW / cw, drawH / ch);
@@ -334,8 +382,9 @@ const AdminPanel: React.FC = () => {
       const ctx = c.getContext('2d')!;
       ctx.fillStyle = '#fff';
       ctx.fillRect(0, 0, W, H);
-      ctx.drawImage(img, left, top, cw, ch, (W - sw) / 2, (H - sh) / 2, sw, sh);
+      ctx.drawImage(tmp, left, top, cw, ch, (W - sw) / 2, (H - sh) / 2, sw, sh);
       update(editing.id, pr => ({ ...pr, image: c.toDataURL('image/webp', 0.85) }));
+      URL.revokeObjectURL(img.src);
     };
     img.src = URL.createObjectURL(file);
   };

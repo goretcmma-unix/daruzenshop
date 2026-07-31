@@ -681,6 +681,57 @@ a:hover {
   border-radius: 3px 0 0 3px;
 }
 
+.comp-acc {
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  margin-bottom: 10px;
+  background: #fff;
+  overflow: hidden;
+}
+
+.comp-acc__head {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 13px 16px;
+  border: none;
+  background: linear-gradient(135deg, #faf7f2, #f1ebe1);
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  color: var(--primary);
+  text-align: left;
+  transition: background 0.25s ease, color 0.25s ease;
+}
+
+.comp-acc__head.is-open {
+  background: linear-gradient(135deg, #7c5c3e, #5a3f2d);
+  color: #fff;
+}
+
+.comp-acc__chev {
+  flex: none;
+  opacity: 0.55;
+  transition: transform 0.25s ease, opacity 0.25s ease;
+}
+
+.comp-acc__head.is-open .comp-acc__chev {
+  transform: rotate(180deg);
+  opacity: 1;
+}
+
+.comp-acc__body {
+  padding: 6px 14px 10px;
+}
+
+[dir="rtl"] .comp-acc__head {
+  text-align: right;
+}
+
 .desc-card__content {
   padding: 8px 0 4px 20px;
   position: relative;

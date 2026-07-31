@@ -282,10 +282,10 @@ export const products: Product[] = [
       ar: 'مجمّع نباتي طبيعي على أساس الجنكو بيلوبا والجنسنغ لدعم النشاط الذهني وتحسين الذاكرة والتركيز.',
     },
     specs: {
-      ru: ['## | На 5 мл | На 10 мл', 'Экстракт гинкго билоба | 375 мг | 750 мг', 'Экстракт корейского женьшеня | 20 мг | 40 мг', 'Цитиколин | 15 мг | 30 мг'],
-      tr: ['## | 5 ml başına | 10 ml başına', 'Ginkgo biloba ekstresi | 375 mg | 750 mg', 'Kore ginsengi ekstresi | 20 mg | 40 mg', 'Sitikolin | 15 mg | 30 mg'],
-      en: ['## | Per 5 ml | Per 10 ml', 'Ginkgo biloba extract | 375 mg | 750 mg', 'Korean ginseng extract | 20 mg | 40 mg', 'Citicoline | 15 mg | 30 mg'],
-      ar: ['## | لكل 5 مل | لكل 10 مل', 'مستخلص الجنكو بيلوبا | 375 ملغ | 750 ملغ', 'مستخلص الجنسنغ الكوري | 20 ملغ | 40 ملغ', 'سيتيكولين | 15 ملغ | 30 ملغ'],
+      ru: ['# На 5 мл', 'Экстракт гинкго билоба | 375 мг', 'Экстракт корейского женьшеня | 20 мг', 'Цитиколин | 15 мг', '# На 10 мл', 'Экстракт гинкго билоба | 750 мг', 'Экстракт корейского женьшеня | 40 мг', 'Цитиколин | 30 мг'],
+      tr: ['# 5 ml başına', 'Ginkgo biloba ekstresi | 375 mg', 'Kore ginsengi ekstresi | 20 mg', 'Sitikolin | 15 mg', '# 10 ml başına', 'Ginkgo biloba ekstresi | 750 mg', 'Kore ginsengi ekstresi | 40 mg', 'Sitikolin | 30 mg'],
+      en: ['# Per 5 ml', 'Ginkgo biloba extract | 375 mg', 'Korean ginseng extract | 20 mg', 'Citicoline | 15 mg', '# Per 10 ml', 'Ginkgo biloba extract | 750 mg', 'Korean ginseng extract | 40 mg', 'Citicoline | 30 mg'],
+      ar: ['# لكل 5 مل', 'مستخلص الجنكو بيلوبا | 375 ملغ', 'مستخلص الجنسنغ الكوري | 20 ملغ', 'سيتيكولين | 15 ملغ', '# لكل 10 مل', 'مستخلص الجنكو بيلوبا | 750 ملغ', 'مستخلص الجنسنغ الكوري | 40 ملغ', 'سيتيكولين | 30 ملغ'],
     },
   },
   {

@@ -16,6 +16,7 @@ import {
   MapPin,
   Mail,
   Phone,
+  ChevronDown,
   //Check
 } from 'lucide-react';
 import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion';
@@ -35,26 +36,28 @@ interface CompTableBlock {
   rows: string[][];
 }
 
-const buildCompBlocks = (specs: string[]): (CompTableBlock | { section: string })[] => {
-  const blocks: (CompTableBlock | { section: string })[] = [];
-  let current: CompTableBlock | null = null;
+interface SectionGroup {
+  title: string | null;
+  blocks: CompTableBlock[];
+}
+
+const buildSections = (specs: string[]): SectionGroup[] => {
+  const groups: SectionGroup[] = [];
+  let cur: SectionGroup = { title: null, blocks: [] };
   for (const spec of specs) {
     const p = parseCompositionLine(spec);
     if (p.type === 'section') {
-      current = null;
-      blocks.push({ section: p.text });
+      if (cur.blocks.length) groups.push(cur);
+      cur = { title: p.text, blocks: [] };
     } else if (p.type === 'colheader') {
-      current = { headers: p.cells, rows: [] };
-      blocks.push(current);
+      cur.blocks.push({ headers: p.cells, rows: [] });
     } else {
-      if (!current) {
-        current = { headers: [], rows: [] };
-        blocks.push(current);
-      }
-      current.rows.push(p.cells);
+      if (!cur.blocks.length) cur.blocks.push({ headers: [], rows: [] });
+      cur.blocks[cur.blocks.length - 1].rows.push(p.cells);
     }
   }
-  return blocks;
+  if (cur.blocks.length) groups.push(cur);
+  return groups;
 };
 
 const CompTable: React.FC<{ block: CompTableBlock; t: ReturnType<typeof useLang>['t'] }> = ({ block, t }) => {
@@ -87,46 +90,84 @@ const CompTable: React.FC<{ block: CompTableBlock; t: ReturnType<typeof useLang>
   );
 };
 
+const CompRows: React.FC<{ rows: string[][] }> = ({ rows }) => (
+  <>
+    {rows.map((cells, ri) => {
+      const [name, ...vals] = cells;
+      if (!name) return null;
+      return (
+        <div key={ri} className="comp-card__row">
+          <span className="comp-card__name">{name}</span>
+          <span className="comp-card__values">
+            {vals.map((v, vi) => (v ? <span key={vi} className="comp-card__dosage">{v}</span> : null))}
+          </span>
+        </div>
+      );
+    })}
+  </>
+);
+
 const CompositionPanel: React.FC<{ specs?: string[]; t: ReturnType<typeof useLang>['t'] }> = ({ specs, t }) => {
   const specLines = specs ?? [];
+  const groups = useMemo(() => buildSections(specLines), [specLines]);
+  const sectioned = groups.filter(g => g.title).length > 1;
+  const [openSection, setOpenSection] = useState(0);
+  useEffect(() => { setOpenSection(0); }, [specLines]);
+
+  if (sectioned) {
+    return (
+      <div className="comp-card">
+        {groups.map((g, i) => (
+          <div key={i} className="comp-acc">
+            <button type="button" className={`comp-acc__head${i === openSection ? ' is-open' : ''}`} onClick={() => setOpenSection(i)}>
+              <span>{g.title}</span>
+              <ChevronDown size={16} className="comp-acc__chev" />
+            </button>
+            {i === openSection && (
+              <div className="comp-acc__body">
+                {g.blocks.map((b, bi) =>
+                  b.headers.length ? (
+                    <CompTable key={bi} block={b} t={t} />
+                  ) : (
+                    <CompRows key={bi} rows={b.rows} />
+                  )
+                )}
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+    );
+  }
+
   const gridMode = specLines.some(l => parseCompositionLine(l).type === 'colheader');
   if (gridMode) {
     return (
       <div className="comp-card">
-        {buildCompBlocks(specLines).map((b, bi) =>
-          'section' in b ? (
-            <div key={bi} className="comp-card__section"><span>{b.section}</span></div>
-          ) : (
-            <CompTable key={bi} block={b} t={t} />
-          )
-        )}
+        {groups.map((g, gi) => (
+          <div key={gi}>
+            {g.title && <div className="comp-card__section"><span>{g.title}</span></div>}
+            {g.blocks.map((b, bi) => <CompTable key={bi} block={b} t={t} />)}
+          </div>
+        ))}
       </div>
     );
   }
+
   return (
     <div className="comp-card">
-      <div className="comp-card__header">
-        <span className="comp-card__pill comp-card__pill--left">{t.modal.substance}</span>
-        <span className="comp-card__pill comp-card__pill--right">{t.modal.dosage}</span>
-      </div>
-      {specLines.map((spec, i) => {
-        const p = parseCompositionLine(spec);
-        if (p.type === 'section') {
-          return <div key={i} className="comp-card__section"><span>{p.text}</span></div>;
-        }
-        if (p.type !== 'row') return null;
-        const [ingredient, dosage = '', daily = ''] = p.cells;
-        if (!ingredient) return null;
-        return (
-          <div key={i} className="comp-card__row">
-            <span className="comp-card__name">{ingredient}</span>
-            <span className="comp-card__values">
-              {dosage && <span className="comp-card__dosage">{dosage}</span>}
-              {daily && <span className="comp-card__daily">{daily}</span>}
-            </span>
-          </div>
-        );
-      })}
+      {!groups.some(g => g.title) && (
+        <div className="comp-card__header">
+          <span className="comp-card__pill comp-card__pill--left">{t.modal.substance}</span>
+          <span className="comp-card__pill comp-card__pill--right">{t.modal.dosage}</span>
+        </div>
+      )}
+      {groups.map((g, gi) => (
+        <div key={gi}>
+          {g.title && <div className="comp-card__section"><span>{g.title}</span></div>}
+          {g.blocks.map((b, bi) => <CompRows key={bi} rows={b.rows} />)}
+        </div>
+      ))}
     </div>
   );
 };

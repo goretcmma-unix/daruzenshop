@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { RefreshCw, Eye, EyeOff } from 'lucide-react';
-import { supabase, fetchProducts, upsertProduct, deleteProduct } from '../lib/supabase';
+import { supabase, fetchProducts, upsertProduct, deleteProduct, uploadProductImage } from '../lib/supabase';
 import { autoTranslateFromRu } from '../lib/translate';
 import { cropToStandard } from '../lib/imagePipeline';
 import { NormalizedImg } from './NormalizedImg';
@@ -281,11 +281,28 @@ const AdminPanel: React.FC = () => {
 
   const handleImageFile = (file: File | null) => {
     if (!editing || !file || !file.type.startsWith('image/')) return;
+    setSavingId(editing.id);
+    setNotice('Загрузка фото…');
     const img = new Image();
-    img.onload = () => {
-      const c = cropToStandard(img);
-      update(editing.id, pr => ({ ...pr, image: c.toDataURL('image/webp', 0.95) }));
+    img.onload = async () => {
+      try {
+        const c = cropToStandard(img);
+        const blob: Blob = await new Promise((resolve, reject) =>
+          c.toBlob(b => (b ? resolve(b) : reject(new Error('Ошибка конвертации фото'))), 'image/webp', 0.95)
+        );
+        const url = await uploadProductImage(editing.id, blob);
+        update(editing.id, pr => ({ ...pr, image: url }));
+        setNotice('');
+      } catch (e: unknown) {
+        setNotice('Ошибка загрузки фото: ' + String(e instanceof Error ? e.message : e));
+      } finally {
+        setSavingId(null);
+      }
       URL.revokeObjectURL(img.src);
+    };
+    img.onerror = () => {
+      setNotice('Ошибка чтения файла');
+      setSavingId(null);
     };
     img.src = URL.createObjectURL(file);
   };

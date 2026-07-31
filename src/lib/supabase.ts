@@ -88,6 +88,17 @@ export const upsertProduct = async (p: Product): Promise<void> => {
   if (error) throw error;
 };
 
+export const uploadProductImage = async (productId: string, blob: Blob): Promise<string> => {
+  if (!supabase) throw new Error('Supabase не настроен');
+  const path = `${productId}/${Date.now()}.webp`;
+  const { error } = await supabase.storage.from('product_image').upload(path, blob, {
+    contentType: 'image/webp',
+  });
+  if (error) throw error;
+  const { data } = supabase.storage.from('product_image').getPublicUrl(path);
+  return data.publicUrl;
+};
+
 export const deleteProduct = async (id: string): Promise<void> => {
   if (!supabase) return;
   const { error } = await supabase.from('products').delete().eq('id', id);

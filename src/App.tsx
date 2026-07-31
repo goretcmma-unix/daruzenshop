@@ -27,6 +27,8 @@ import AppStyles from './AppStyles';
 import QtyButton from './components/QtyButton';
 import AdminPanel from './components/AdminPanel';
 import RecoveryPage from './components/RecoveryPage';
+import { NormalizedImg } from './components/NormalizedImg';
+import { useNormalizedImage } from './lib/normalizeImage';
 
 const App: React.FC = () => {
   const { lang, setLang, t } = useLang();
@@ -43,6 +45,7 @@ const App: React.FC = () => {
   const [selectedProduct, setSelectedProduct] = useState<LocalizedProduct | null>(null);
   const [modalQuantity, setModalQuantity] = useState(1);
   const [productTab, setProductTab] = useState(0);
+  const selectedProductImage = useNormalizedImage(selectedProduct?.image);
   const swipeStartX = useRef(0);
   const swipeContentRef = useRef<HTMLDivElement | null>(null);
   const navClickRef = useRef(false);
@@ -663,7 +666,7 @@ const App: React.FC = () => {
                   onClick={() => setSelectedProduct(product)}
                 >
                   <div className="product-image-container">
-                    <img
+                    <NormalizedImg
                       src={product.image}
                       alt={product.name}
                       className="product-image"
@@ -990,7 +993,7 @@ const App: React.FC = () => {
                       style={{ display: 'flex', flexDirection: 'column', alignItems: 'stretch', gap: '10px', background: 'none', padding: '16px 0', borderBottom: '1px solid var(--border)' }}
                     >
                       <div className="cart-drawer-item-image" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
-                        <img src={localizedProduct.image} className="cart-item-img" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+                        <NormalizedImg src={localizedProduct.image} className="cart-item-img" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
                       </div>
                       <div style={{ display: 'flex', flexDirection: 'column', width: '100%' }}>
                         <div style={{ fontWeight: '700', fontSize: '18px', color: 'var(--primary-dark)', marginBottom: '4px', lineHeight: '1.3', wordBreak: 'break-word', overflowWrap: 'break-word' }}>{localizedProduct.name}</div>
@@ -1235,7 +1238,7 @@ const App: React.FC = () => {
                  <motion.img 
                   initial={{ scale: 0.8, opacity: 0 }}
                   animate={{ scale: 1, opacity: 1 }}
-                  src={selectedProduct.image}
+                  src={selectedProductImage}
                   loading="lazy"
                   decoding="async"
                   className="modal-image"

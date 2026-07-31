@@ -281,8 +281,9 @@ const AdminPanel: React.FC = () => {
 
   const handleImageFile = (file: File | null) => {
     if (!editing || !file || !file.type.startsWith('image/')) return;
-    setSavingId(editing.id);
-    setNotice('Загрузка фото…');
+    const localUrl = URL.createObjectURL(file);
+    update(editing.id, pr => ({ ...pr, image: localUrl }));
+    setNotice('Обработка фото…');
     const img = new Image();
     img.onload = async () => {
       try {
@@ -295,16 +296,14 @@ const AdminPanel: React.FC = () => {
         setNotice('');
       } catch (e: unknown) {
         setNotice('Ошибка загрузки фото: ' + String(e instanceof Error ? e.message : e));
-      } finally {
-        setSavingId(null);
       }
-      URL.revokeObjectURL(img.src);
+      URL.revokeObjectURL(localUrl);
     };
     img.onerror = () => {
+      URL.revokeObjectURL(localUrl);
       setNotice('Ошибка чтения файла');
-      setSavingId(null);
     };
-    img.src = URL.createObjectURL(file);
+    img.src = localUrl;
   };
 
   const getSpecEntries = (p: Product, l: Lang) =>

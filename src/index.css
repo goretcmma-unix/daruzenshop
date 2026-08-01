@@ -546,17 +546,9 @@ a:hover {
 .comp-table__notes {
   margin-top: 12px;
   padding: 10px 12px;
-  border-top: 1px solid #ece3d3;
   display: flex;
   flex-direction: column;
   gap: 4px;
-}
-
-.comp-table__notes--top {
-  margin: 2px 0 14px;
-  padding: 0 2px 10px;
-  border-top: none;
-  border-bottom: 1px solid #ece3d3;
 }
 
 .comp-table__note {
@@ -706,6 +698,10 @@ a:hover {
   white-space: nowrap;
 }
 
+.comp-rows__hint-val--brd {
+  color: #a08a6d;
+}
+
 .comp-card__row.is-sub {
   padding-left: 24px;
 }
@@ -772,13 +768,6 @@ a:hover {
   min-width: 0;
 }
 
-.comp-table-collapse {
-  border: none;
-  border-radius: 0;
-  background: transparent;
-  overflow: visible;
-}
-
 .comp-acc__head {
   width: 100%;
   display: flex;
@@ -826,12 +815,6 @@ a:hover {
   text-align: right;
 }
 
-@media (min-width: 769px) {
-  .comp-table-collapse > .comp-acc__head {
-    display: none;
-  }
-}
-
 .desc-card__content {
   padding: 8px 0 4px 20px;
   position: relative;
@@ -868,6 +851,7 @@ a:hover {
     border-radius: 0 !important;
     gap: 0 !important;
     padding: 0 !important;
+    overflow: hidden !important;
   }
   .modal-image-col {
     flex: none !important;
@@ -886,18 +870,11 @@ a:hover {
     bottom: 0;
     z-index: 20;
     margin: 0;
-    padding: 12px 20px calc(12px + env(safe-area-inset-bottom));
-    background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border-top: 1px solid rgba(0, 0, 0, 0.06);
-    box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.06);
-    transition: opacity 0.3s ease, visibility 0.3s ease;
-  }
-  .modal-buy-under.is-hidden {
-    opacity: 0;
-    visibility: hidden;
-    pointer-events: none;
+    padding: 14px 20px calc(14px + env(safe-area-inset-bottom));
+    background: #fff;
+    border-radius: 20px 20px 0 0;
+    border-top: 1px solid rgba(0, 0, 0, 0.05);
+    box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.08);
   }
   .modal-buy-actions {
     grid-template-columns: auto 1fr;
@@ -908,6 +885,9 @@ a:hover {
   }
   .modal-buy-qty {
     min-width: 0;
+  }
+  .modal-swipe {
+    padding-bottom: calc(130px + env(safe-area-inset-bottom));
   }
   .modal-image {
     width: auto !important;
@@ -922,13 +902,6 @@ a:hover {
     display: flex;
     flex-direction: column;
     min-height: 0;
-    transition: padding-bottom 0.3s ease;
-  }
-  .modal-info-wrapper {
-    padding-bottom: calc(110px + env(safe-area-inset-bottom)) !important;
-  }
-  .modal-layout.comp-open .modal-info-wrapper {
-    padding-bottom: 24px !important;
   }
   .modal-scroll-area {
     overflow: visible;
@@ -964,9 +937,6 @@ a:hover {
   }
   .modal-info-wrapper {
     padding: 8px 12px 12px;
-  }
-  .modal-info-wrapper {
-    padding-bottom: calc(110px + env(safe-area-inset-bottom)) !important;
   }
   .modal-comp-table th,
   .modal-comp-table td {

@@ -60,98 +60,38 @@ const buildSections = (specs: string[]): SectionGroup[] => {
   return groups;
 };
 
-const useMediaQuery = (query: string): boolean => {
-  const [matches, setMatches] = useState(() =>
-    typeof window !== 'undefined' && window.matchMedia(query).matches
-  );
-  useEffect(() => {
-    const mql = window.matchMedia(query);
-    const onChange = () => setMatches(mql.matches);
-    mql.addEventListener('change', onChange);
-    setMatches(mql.matches);
-    return () => mql.removeEventListener('change', onChange);
-  }, [query]);
-  return matches;
-};
-
-const CompTable: React.FC<{ block: CompTableBlock; t: ReturnType<typeof useLang>['t'] }> = ({ block, t }) => {
-  const isStack = useMediaQuery('(max-width: 640px)');
+const CompRows: React.FC<{ block: CompTableBlock; t: ReturnType<typeof useLang>['t'] }> = ({ block, t }) => {
   const cols = Math.max(block.headers.length, ...block.rows.map(r => r.length), 1);
-  const wide = cols >= 4;
-  const hs = block.headers.length
+  const headVals = block.headers.length
     ? [...block.headers]
     : [t.modal.substance, t.modal.dosage];
-  if (cols >= 3 && hs.length < 3) hs.push(t.modal.daily);
-  while (hs.length < cols) hs.push('');
-
-  if (isStack) {
-    const labels = hs.slice(1);
-    return (
-      <div className="comp-card__table comp-card__table--stack">
-        {block.rows.map((row, ri) => {
-          const cells = [...row];
-          while (cells.length < cols) cells.push('');
-          const name = cells[0] ?? '';
-          const sub = name.startsWith('└');
-          return (
-            <div key={ri} className={'comp-stack__item' + (sub ? ' is-sub' : '')}>
-              <div className="comp-stack__name">{sub ? name.replace(/^└\s*/, '') : name}</div>
-              {cells.slice(1).map((v, vi) =>
-                v ? (
-                  <div key={vi} className="comp-stack__row">
-                    <span className="comp-stack__label">{labels[vi] || ''}</span>
-                    <span className="comp-stack__value">{v}</span>
-                  </div>
-                ) : null
-              )}
-            </div>
-          );
-        })}
-      </div>
-    );
-  }
-
-  const template = 'minmax(0, ' + (wide ? '1.2fr' : '1.6fr') + ')' + Array(Math.max(0, cols - 1)).fill(' minmax(0, 1fr)').join('');
+  const showHint = cols > 1 && block.headers.some(h => h);
   return (
-    <div className={'comp-card__table' + (wide ? ' comp-card__table--wide' : '')}>
-      <div className="comp-card__trow comp-card__trow--head" style={{ gridTemplateColumns: template }}>
-        {hs.map((h, i) => (
-          <div key={i} className={'comp-card__th' + (h ? '' : ' is-empty')}>{h}</div>
-        ))}
-      </div>
-      {block.rows.map((row, ri) => {
-        const cells = [...row];
-        while (cells.length < cols) cells.push('');
+    <>
+      {showHint && (
+        <div className="comp-rows__hint">
+          <span className="comp-rows__hint-name">{block.headers[0] || headVals[0]}</span>
+          <span className="comp-card__values">
+            {headVals.slice(1).map((h, i) => (h ? <span key={i} className="comp-rows__hint-val">{h}</span> : null))}
+          </span>
+        </div>
+      )}
+      {block.rows.map((cells, ri) => {
+        const name = cells[0];
+        if (!name) return null;
+        const sub = name.startsWith('└');
         return (
-          <div key={ri} className="comp-card__trow" style={{ gridTemplateColumns: template }}>
-            {cells.map((cell, ci) => {
-              const sub = ci === 0 && cell.startsWith('└');
-              const cls = 'comp-card__td' + (ci === 0 ? ' is-name' : ' is-value') + (sub ? ' is-sub' : '');
-              return <div key={ci} className={cls}>{sub ? cell.replace(/^└\s*/, '') : cell}</div>;
-            })}
+          <div key={ri} className={'comp-card__row' + (sub ? ' is-sub' : '')}>
+            <span className="comp-card__name">{sub ? name.replace(/^└\s*/, '') : name}</span>
+            <span className="comp-card__values">
+              {cells.slice(1).map((v, vi) => (v ? <span key={vi} className="comp-card__dosage">{v}</span> : null))}
+            </span>
           </div>
         );
       })}
-    </div>
+    </>
   );
 };
-
-const CompRows: React.FC<{ rows: string[][] }> = ({ rows }) => (
-  <>
-    {rows.map((cells, ri) => {
-      const [name, ...vals] = cells;
-      if (!name) return null;
-      return (
-        <div key={ri} className="comp-card__row">
-          <span className="comp-card__name">{name}</span>
-          <span className="comp-card__values">
-            {vals.map((v, vi) => (v ? <span key={vi} className="comp-card__dosage">{v}</span> : null))}
-          </span>
-        </div>
-      );
-    })}
-  </>
-);
 
 const CompositionPanel: React.FC<{ specs?: string[]; t: ReturnType<typeof useLang>['t'] }> = ({ specs, t }) => {
   const specLines = specs ?? [];
@@ -181,13 +121,9 @@ const CompositionPanel: React.FC<{ specs?: string[]; t: ReturnType<typeof useLan
                   transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
                 >
                   <div className="comp-acc__body-inner">
-                    {g.blocks.map((b, bi) =>
-                      b.headers.length ? (
-                        <CompTable key={bi} block={b} t={t} />
-                      ) : (
-                        <CompRows key={bi} rows={b.rows} />
-                      )
-                    )}
+                    {g.blocks.map((b, bi) => (
+                      <CompRows key={bi} block={b} t={t} />
+                    ))}
                   </div>
                 </motion.div>
               )}
@@ -219,13 +155,9 @@ const CompositionPanel: React.FC<{ specs?: string[]; t: ReturnType<typeof useLan
                 {groups.map((g, gi) => (
                   <div key={gi}>
                     {g.title && <div className="comp-card__section"><span>{g.title}</span></div>}
-                    {g.blocks.map((b, bi) =>
-                      b.headers.length ? (
-                        <CompTable key={bi} block={b} t={t} />
-                      ) : (
-                        <CompRows key={bi} rows={b.rows} />
-                      )
-                    )}
+                    {g.blocks.map((b, bi) => (
+                      <CompRows key={bi} block={b} t={t} />
+                    ))}
                   </div>
                 ))}
               </div>
@@ -1410,7 +1342,7 @@ const App: React.FC = () => {
                 position: 'fixed', 
                 top: '50%',
                 left: '50%', 
-                width: 'clamp(320px, 94vw, 1060px)', 
+                width: 'clamp(320px, 94vw, 1280px)', 
                 height: '90vh',
                 maxHeight: '90vh', 
                 background: 'white', 
@@ -1424,7 +1356,7 @@ const App: React.FC = () => {
             >
               <motion.div 
                 className="modal-image-wrapper"
-                style={{ flex: '1 1 50%', display: 'flex', alignItems: 'flex-start', justifyContent: 'center', position: 'relative' }}
+                style={{ flex: '1 1 54%', display: 'flex', alignItems: 'flex-start', justifyContent: 'center', position: 'relative' }}
               >
                  <motion.img 
                   initial={{ scale: 0.8, opacity: 0 }}
@@ -1452,9 +1384,9 @@ const App: React.FC = () => {
                    </motion.button>
                  </motion.div>
                  <div className="modal-info-wrapper">
-                  <span className="modal-category" style={{ color: 'var(--accent)', fontWeight: '800', fontSize: '12px', textTransform: 'uppercase', letterSpacing: '0.18em', marginBottom: '16px' }}>{selectedProduct.category}</span>
-                  <h2 className="modal-title" style={{ fontWeight: '700', marginBottom: '14px', lineHeight: '1.15', color: 'var(--primary-dark)', letterSpacing: '-0.03em' }}>{selectedProduct.name}</h2>
-                   <div className="modal-price" style={{ fontWeight: '700', marginBottom: '28px', color: 'var(--primary)' }}>{formatPrice(selectedProduct.price, lang)}</div>
+                  <span className="modal-category" style={{ color: 'var(--accent)', fontWeight: '800', fontSize: '12px', textTransform: 'uppercase', letterSpacing: '0.18em', marginBottom: '20px' }}>{selectedProduct.category}</span>
+                  <h2 className="modal-title" style={{ fontWeight: '700', marginBottom: '16px', lineHeight: '1.15', color: 'var(--primary-dark)', letterSpacing: '-0.03em' }}>{selectedProduct.name}</h2>
+                   <div className="modal-price" style={{ fontWeight: '700', marginBottom: '32px', color: 'var(--primary)' }}>{formatPrice(selectedProduct.price, lang)}</div>
                   
                    <div className="modal-tabs">
                      <button type="button" className={`modal-tab ${productTab === 0 ? 'active' : ''}`} onClick={() => setProductTab(0)}>{t.modal.description}</button>
@@ -1499,7 +1431,7 @@ const App: React.FC = () => {
                       </AnimatePresence>
                     </motion.div>
                    
-                     <div style={{ marginTop: 'auto', paddingTop: '28px' }}>
+                     <div style={{ marginTop: 'auto', paddingTop: '32px' }}>
                      <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '16px' }}>
                         <span style={{ fontWeight: '600', fontSize: '15px', color: '#8e8e93' }}>{t.modal.quantity}</span>
                        <div style={{ display: 'flex', alignItems: 'center', gap: '18px', background: '#F5F5F7', padding: '8px 18px', borderRadius: '12px' }}>

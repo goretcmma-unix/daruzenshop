@@ -267,8 +267,6 @@ const App: React.FC = () => {
   useEffect(() => {
     if (selectedProduct === null) {
       setModalQuantity(1);
-    } else {
-      setProductTab(0);
     }
   }, [selectedProduct]);
   //const [lastAddedItem, setLastAddedItem] = useState<string | null>(null);

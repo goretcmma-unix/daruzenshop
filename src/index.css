@@ -671,6 +671,15 @@ a:hover {
   margin-top: 4px;
 }
 
+.comp-dose {
+  display: flex;
+  flex-direction: column;
+}
+
+.comp-dose .comp-acc:last-child {
+  margin-bottom: 0;
+}
+
 .comp-acc {
   border: 1px solid var(--border);
   border-radius: 16px;

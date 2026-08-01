@@ -55,7 +55,7 @@ insert into public.products (id, category_key, price, image, name_ru, name_tr, n
  'أقراص قابلة للمضغ على أساس خل التفاح لدعم الأيض وإزالة السموم والهضم الصحي.',
    '{"ru":["Яблочный уксус | 500 мг | —","Витамин B12 | 10 мкг | 400%","Пиридоксин (B6) | 5 мг | 385%"],"tr":["Elma sirkesi | 500 mg | —","B12 vitamini | 10 mcg | 400%","Piridoksin (B6) | 5 mg | 385%"],"en":["Apple cider vinegar | 500 mg | —","Vitamin B12 | 10 mcg | 400%","Pyridoxine (B6) | 5 mg | 385%"],"ar":["خل التفاح | 500 ملغ | —","فيتامين B12 | 10 مكغ | 400%","بيريدوكسين (B6) | 5 ملغ | 385%"]}', 3),
 
-('prod-4', 'minerals', 1950, '/images/magnezyum.webp',
+('prod-4', 'minerals', 1950, '/images/magnez.webp',
  'Магний Комплекс', 'Magnezyum Kompleks', 'Magnesium Complex', 'مجمّع المغنيسيوم',
  'Тройная смесь магния для расслабления мышц и улучшения сна. Качественный препарат для поддержания вашего здоровья. Натуральный состав и высокая эффективность.',
  'Kas gevşemesi ve uyku kalitesi için üçlü magnezyum karışımı. Sağlığınızı destekleyen kaliteli bir ürün. Doğal içerik ve yüksek etkililik.',

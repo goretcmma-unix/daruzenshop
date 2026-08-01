@@ -66,6 +66,57 @@ const CompRows: React.FC<{ block: CompTableBlock; t: ReturnType<typeof useLang>[
   const nameLabel = nonEmptyHeaders[0] || t.modal.substance;
   const valueLabels = nonEmptyHeaders.slice(1);
   const showHint = valueLabels.length > 0;
+  const [openCol, setOpenCol] = useState(0);
+  useEffect(() => { setOpenCol(0); }, [block]);
+
+  if (valueLabels.length > 0) {
+    return (
+      <div className="comp-dose">
+        {valueLabels.map((label, ci) => {
+          const open = ci === openCol;
+          return (
+            <div key={ci} className="comp-acc">
+              <button type="button" className={`comp-acc__head${open ? ' is-open' : ''}`} onClick={() => setOpenCol(ci)}>
+                <span>{label}</span>
+                <ChevronDown size={16} className="comp-acc__chev" />
+              </button>
+              <AnimatePresence initial={false}>
+                {open && (
+                  <motion.div
+                    key="acc-body"
+                    className="comp-acc__body"
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: 'auto', opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+                  >
+                    <div className="comp-acc__body-inner">
+                      {block.rows.map((cells, ri) => {
+                        const name = cells[0];
+                        if (!name) return null;
+                        const sub = name.startsWith('└');
+                        const val = cells[ci + 1];
+                        if (!val || val === '-') return null;
+                        return (
+                          <div key={ri} className={'comp-card__row' + (sub ? ' is-sub' : '')}>
+                            <span className="comp-card__name">{sub ? name.replace(/^└\s*/, '') : name}</span>
+                            <span className="comp-card__values">
+                              <span className="comp-card__dosage">{val}</span>
+                            </span>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+          );
+        })}
+      </div>
+    );
+  }
+
   return (
     <>
       {showHint && (
@@ -130,6 +181,23 @@ const CompositionPanel: React.FC<{ specs?: string[]; t: ReturnType<typeof useLan
                 </motion.div>
               )}
             </AnimatePresence>
+          </div>
+        ))}
+      </div>
+    );
+  }
+
+  const hasValueCols = groups.some(g => g.blocks.some(b => b.headers.filter(h => h).length > 1));
+
+  if (hasValueCols) {
+    return (
+      <div className="comp-card">
+        {groups.map((g, gi) => (
+          <div key={gi}>
+            {g.title && <div className="comp-card__section"><span>{g.title}</span></div>}
+            {g.blocks.map((b, bi) => (
+              <CompRows key={bi} block={b} t={t} />
+            ))}
           </div>
         ))}
       </div>

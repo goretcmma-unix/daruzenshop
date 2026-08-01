@@ -130,7 +130,7 @@ export const products: Product[] = [
     },
     categoryKey: 'minerals',
     price: 1950,
-    image: '/images/magnezyum.webp',
+    image: '/images/magnez.webp',
     descriptions: {
       ru: 'Тройная смесь магния для расслабления мышц и улучшения сна. Качественный препарат для поддержания вашего здоровья. Натуральный состав и высокая эффективность.',
       tr: 'Kas gevşemesi ve uyku kalitesi için üçlü magnezyum karışımı. Sağlığınızı destekleyen kaliteli bir ürün. Doğal içerik ve yüksek etkililik.',

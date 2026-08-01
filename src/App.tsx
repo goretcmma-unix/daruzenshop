@@ -42,16 +42,17 @@ interface SectionGroup {
 }
 
 const buildSections = (specs: string[]): SectionGroup[] => {
+  const parts = specs.map(s => parseCompositionLine(s));
   const groups: SectionGroup[] = [];
   let cur: SectionGroup = { title: null, blocks: [] };
-  for (const spec of specs) {
-    const p = parseCompositionLine(spec);
+  for (let i = 0; i < parts.length; i++) {
+    const p = parts[i];
     if (p.type === 'section') {
       if (cur.blocks.length) groups.push(cur);
       cur = { title: p.text, blocks: [] };
-    } else if (p.type === 'colheader') {
+    } else if (p.type === 'colheader' || (p.type === 'row' && parts[i + 1]?.type === 'sep')) {
       cur.blocks.push({ headers: p.cells, rows: [] });
-    } else {
+    } else if (p.type === 'row') {
       if (!cur.blocks.length) cur.blocks.push({ headers: [], rows: [] });
       cur.blocks[cur.blocks.length - 1].rows.push(p.cells);
     }
@@ -61,18 +62,19 @@ const buildSections = (specs: string[]): SectionGroup[] => {
 };
 
 const CompRows: React.FC<{ block: CompTableBlock; t: ReturnType<typeof useLang>['t'] }> = ({ block, t }) => {
-  const cols = Math.max(block.headers.length, ...block.rows.map(r => r.length), 1);
-  const headVals = block.headers.length
-    ? [...block.headers]
-    : [t.modal.substance, t.modal.dosage];
-  const showHint = cols > 1 && block.headers.some(h => h);
+  const nonEmptyHeaders = block.headers.filter(h => h);
+  const nameLabel = nonEmptyHeaders[0] || t.modal.substance;
+  const valueLabels = nonEmptyHeaders.slice(1);
+  const showHint = valueLabels.length > 0;
   return (
     <>
       {showHint && (
         <div className="comp-rows__hint">
-          <span className="comp-rows__hint-name">{block.headers[0] || headVals[0]}</span>
+          <span className="comp-rows__hint-name">{nameLabel}</span>
           <span className="comp-card__values">
-            {headVals.slice(1).map((h, i) => (h ? <span key={i} className="comp-rows__hint-val">{h}</span> : null))}
+            {valueLabels.map((h, i) => (
+              <span key={i} className="comp-rows__hint-val">{h}</span>
+            ))}
           </span>
         </div>
       )}

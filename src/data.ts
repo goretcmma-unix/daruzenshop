@@ -138,10 +138,46 @@ export const products: Product[] = [
       ar: 'مزيج ثلاثي المغنيسيوم لاسترخاء العضلات وتحسين النوم. منتج عالي الجودة لدعم صحتك. تركيبة طبيعية وفعالية عالية.',
     },
     specs: {
-      ru: ['## | Активный компонент | 1 таблетка | 2 таблетки', 'Магний (всего) | 125 мг | 250 мг', '└ Магний ацетилтаурат | 33,005 мг | 66,010 мг', '└ Магний бисглицинат | 49,65 мг | 99,3 мг', '└ Магний малат | 34,5 мг | 69 мг', '└ Магний цитрат | 7,845 мг | 15,69 мг', 'Витамин B6 | 2 мг | 4 мг'],
-      tr: ['## | Aktif bileşen | 1 tablet | 2 tablet', 'Magnezyum (toplam) | 125 mg | 250 mg', '└ Magnezyum asetiltaurat | 33.005 mg | 66.010 mg', '└ Magnezyum bisglisinat | 49.65 mg | 99.3 mg', '└ Magnezyum malat | 34.5 mg | 69 mg', '└ Magnezyum sitrat | 7.845 mg | 15.69 mg', 'B6 vitamini | 2 mg | 4 mg'],
-      en: ['## | Active ingredient | Per 1 tablet | Per 2 tablets', 'Magnesium (total) | 125 mg | 250 mg', '└ Magnesium acetyltaurate | 33.005 mg | 66.010 mg', '└ Magnesium bisglycinate | 49.65 mg | 99.3 mg', '└ Magnesium malate | 34.5 mg | 69 mg', '└ Magnesium citrate | 7.845 mg | 15.69 mg', 'Vitamin B6 | 2 mg | 4 mg'],
-      ar: ['## | المكون النشط | قرص واحد | قرصان', 'مغنيسيوم (إجمالي) | 125 ملغ | 250 ملغ', '└ ماغنيسيوم أسيتيل تورات | 33.005 ملغ | 66.010 ملغ', '└ مغنيسيوم بيسغليسينات | 49.65 ملغ | 99.3 ملغ', '└ مغنيسيوم مالات | 34.5 ملغ | 69 ملغ', '└ سترات المغنيسيوم | 7.845 ملغ | 15.69 ملغ', 'فيتامين B6 | 2 ملغ | 4 ملغ'],
+      ru: [
+        '| **Активный компонент** | **1 таблетка** | **2 таблетки** |',
+        '| --- | ---: | ---: |',
+        '| **Магний (всего)** | 125 мг | 250 мг |',
+        '| └ Магний ацетилтаурат | 33,005 мг | 66,010 мг |',
+        '| └ Магний бисглицинат | 49,65 мг | 99,3 мг |',
+        '| └ Магний малат | 34,5 мг | 69 мг |',
+        '| └ Магний цитрат | 7,845 мг | 15,69 мг |',
+        '| **Витамин B6** | 2 мг | 4 мг |',
+      ],
+      tr: [
+        '| **Aktif bileşen** | **1 tablet** | **2 tablet** |',
+        '| --- | ---: | ---: |',
+        '| **Magnezyum (toplam)** | 125 mg | 250 mg |',
+        '| └ Magnezyum asetiltaurat | 33.005 mg | 66.010 mg |',
+        '| └ Magnezyum bisglisinat | 49.65 mg | 99.3 mg |',
+        '| └ Magnezyum malat | 34.5 mg | 69 mg |',
+        '| └ Magnezyum sitrat | 7.845 mg | 15.69 mg |',
+        '| **B6 vitamini** | 2 mg | 4 mg |',
+      ],
+      en: [
+        '| **Active ingredient** | **Per 1 tablet** | **Per 2 tablets** |',
+        '| --- | ---: | ---: |',
+        '| **Magnesium (total)** | 125 mg | 250 mg |',
+        '| └ Magnesium acetyltaurate | 33.005 mg | 66.010 mg |',
+        '| └ Magnesium bisglycinate | 49.65 mg | 99.3 mg |',
+        '| └ Magnesium malate | 34.5 mg | 69 mg |',
+        '| └ Magnesium citrate | 7.845 mg | 15.69 mg |',
+        '| **Vitamin B6** | 2 mg | 4 mg |',
+      ],
+      ar: [
+        '| **المكون النشط** | **قرص واحد** | **قرصان** |',
+        '| --- | ---: | ---: |',
+        '| **مغنيسيوم (إجمالي)** | 125 ملغ | 250 ملغ |',
+        '| └ ماغنيسيوم أسيتيل تورات | 33.005 ملغ | 66.010 ملغ |',
+        '| └ مغنيسيوم بيسغليسينات | 49.65 ملغ | 99.3 ملغ |',
+        '| └ مغنيسيوم مالات | 34.5 ملغ | 69 ملغ |',
+        '| └ سترات المغنيسيوم | 7.845 ملغ | 15.69 ملغ |',
+        '| **فيتامين B6** | 2 ملغ | 4 ملغ |',
+      ],
     },
   },
   {
@@ -341,17 +377,34 @@ export const products: Product[] = [
 export type CompositionPart =
   | { type: 'section'; text: string }
   | { type: 'colheader'; cells: string[] }
-  | { type: 'row'; cells: string[] };
+  | { type: 'row'; cells: string[] }
+  | { type: 'sep' };
+
+const cleanCell = (s: string): string =>
+  s.trim().replace(/^\*\*\s*/, '').replace(/\s*\*\*$/, '').trim();
 
 export const parseCompositionLine = (line: string): CompositionPart => {
   const trimmed = line.trim();
   if (trimmed.startsWith('##')) {
-    return { type: 'colheader', cells: trimmed.replace(/^##+\s*/, '').split('|').map(s => s.trim()) };
+    return { type: 'colheader', cells: trimmed.replace(/^##+\s*/, '').split('|').map(cleanCell) };
   }
   if (trimmed.startsWith('#')) {
     return { type: 'section', text: trimmed.replace(/^#+\s*/, '').trim() };
   }
-  const parts = line.split('|').map(s => s.trim()).filter(Boolean);
+  if (trimmed.startsWith('|') || trimmed.endsWith('|')) {
+    const cells = trimmed
+      .replace(/^\|/, '')
+      .replace(/\|$/, '')
+      .split('|')
+      .map(cleanCell)
+      .filter(Boolean);
+    if (cells.length && cells.every(c => /^:?-+:?$/.test(c))) {
+      return { type: 'sep' };
+    }
+    if (cells.length >= 2) return { type: 'row', cells };
+    return { type: 'sep' };
+  }
+  const parts = line.split('|').map(cleanCell).filter(Boolean);
   if (parts.length >= 2) {
     return { type: 'row', cells: parts };
   }

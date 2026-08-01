@@ -398,7 +398,7 @@ a:hover {
   min-height: 0;
   overflow: hidden;
   border-radius: 18px;
-  background: linear-gradient(160deg, #FAF8F5 0%, #F1EBE1 100%);
+  background: #ffffff;
 }
 
 .modal-image {

@@ -699,6 +699,36 @@ const AdminPanel: React.FC = () => {
           background: #fff; color: #7a6a58; font-weight: 700; font-size: 13.5px; cursor: pointer;
         }
         .admin-spec-addblock:hover { border-color: #c9b28a; color: #a08a6d; }
+
+        .admin-spec-table { width: 100%; border-collapse: collapse; table-layout: auto; }
+        .admin-spec-table th, .admin-spec-table td { border: 1px solid #eee5d6; padding: 6px 7px; vertical-align: middle; }
+        .admin-spec-table thead th { background: #faf5ec; }
+        .admin-spec-table thead input {
+          border: none; background: transparent; font-weight: 800; font-size: 12.5px;
+          color: #7a5c3a; width: 100%; box-sizing: border-box; padding: 4px 6px; outline: none;
+        }
+        .admin-spec-table thead input:focus { background: #fff; border-radius: 6px; }
+        .admin-spec-table tbody input {
+          width: 100%; box-sizing: border-box; border: 1px solid transparent; border-radius: 8px;
+          padding: 7px 9px; font-size: 13.5px; color: #4a3a2a; background: transparent;
+        }
+        .admin-spec-table tbody input:hover { border-color: #e6ddcf; background: #fff; }
+        .admin-spec-table tbody input:focus { border-color: #c9b28a; background: #fff; outline: none; }
+        .admin-spec-table tbody tr.is-sub td { background: #fbf9f4; }
+        .admin-spec-table tbody tr.is-sub td.admin-spec-nest-col { border-left: 3px solid #d9bf93; }
+        .admin-spec-table tbody tr.is-sub input { background: #fffdf9; }
+        .admin-spec-table tbody tr.is-sub td:nth-child(2) input { padding-left: 22px; }
+        .admin-spec-table .admin-spec-nest-col { width: 42px; text-align: center; }
+        .admin-spec-table .admin-spec-actions-col { width: 106px; text-align: center; }
+        .admin-spec-table .admin-spec-icobtn { width: 24px; height: 24px; flex: 0 0 24px; }
+        .admin-spec-table .admin-spec-row-actions { display: inline-flex; gap: 3px; opacity: 0.35; transition: opacity 0.15s ease; }
+        .admin-spec-table tbody tr:hover .admin-spec-row-actions { opacity: 1; }
+        .admin-spec-subtag { font-size: 11.5px; color: #b3a58f; }
+        .admin-spec-section-input {
+          width: 100%; box-sizing: border-box; border: 1px solid #e6ddcf; border-radius: 10px;
+          padding: 10px 12px; font-size: 14px; font-weight: 700; color: #4a3a2a; background: #fffdf8;
+        }
+        .admin-spec-section-input:focus { border-color: #c9b28a; outline: none; }
       `}</style>
       <main style={{ maxWidth: 1100, margin: '0 auto', padding: '24px' }}>
         {items.length === 0 && <p style={{ color: 'var(--text-muted)', textAlign: 'center', marginTop: 40 }}>Пока нет товаров. Нажмите «+ Товар».</p>}
@@ -814,12 +844,13 @@ const AdminPanel: React.FC = () => {
                   <div style={{ marginTop: 26, paddingTop: 20, borderTop: '1px dashed #e2d8ca' }}>
                     <div className="admin-label" style={{ color: '#a08a6d' }}>Состав</div>
                     <p style={{ margin: '-2px 0 12px', fontSize: 12.5, color: '#a89a88', lineHeight: 1.55 }}>
-                      Порядок разделов и веществ = порядок на сайте. Пустые строки не сохраняются.
+                      Заголовки колонок кликабельны (например «1 таблетка», «Норма %»). Кнопка «вложить» делает строку подчинённой предыдущей. Порядок = порядок на сайте. Пустые строки не сохраняются.
                     </p>
                     {(() => {
                       const entries = parseSpecEntries(getSpecLines(editing, tabLang));
                       const blocks = buildSpecBlocks(entries);
                       const blockCount = blocks.length;
+                      const staticHead = ['Компонент', 'Дозировка', 'Дозировка 2', 'Норма %'];
                       return (
                         <>
                           <div className="admin-spec">
@@ -829,6 +860,7 @@ const AdminPanel: React.FC = () => {
                                   <>
                                     <div className="admin-spec-card-head">
                                       <span className="admin-spec-tag">Раздел</span>
+                                      <span className="admin-spec-subtag">заголовок группы веществ</span>
                                       <div style={{ marginLeft: 'auto', display: 'flex', gap: 6 }}>
                                         <button type="button" disabled={bi === 0} onClick={() => update(editing.id, pr => moveSpecBlock(pr, tabLang, bi, -1))} className="admin-spec-icobtn" title="Выше"><ChevronUp size={15} /></button>
                                         <button type="button" disabled={bi === blockCount - 1} onClick={() => update(editing.id, pr => moveSpecBlock(pr, tabLang, bi, 1))} className="admin-spec-icobtn" title="Ниже"><ChevronDown size={15} /></button>
@@ -836,16 +868,14 @@ const AdminPanel: React.FC = () => {
                                       </div>
                                     </div>
                                     <div className="admin-spec-card-body">
-                                      <input className="admin-field" style={{ fontWeight: 700, background: '#fffdf8' }} value={block.text} onChange={e => update(editing.id, pr => setSpecCell(pr, tabLang, block.entryIdx, 0, e.target.value))} placeholder="Название раздела (например: Состав на 1 порцию)" />
+                                      <input className="admin-spec-section-input" value={block.text} onChange={e => update(editing.id, pr => setSpecCell(pr, tabLang, block.entryIdx, 0, e.target.value))} placeholder="Например: Состав на 1 порцию (2 таблетки)" />
                                     </div>
                                   </>
                                 ) : (
                                   <>
                                     <div className="admin-spec-card-head">
                                       <span className="admin-spec-tag">Таблица</span>
-                                      <span style={{ fontSize: 11.5, color: '#b3a58f' }}>
-                                        {block.rows.length} {block.rows.length % 10 === 1 && block.rows.length % 100 !== 11 ? 'вещество' : 'веществ'}
-                                      </span>
+                                      <span className="admin-spec-subtag">{block.rows.length} {block.rows.length % 10 === 1 && block.rows.length % 100 !== 11 ? 'вещество' : 'веществ'}</span>
                                       <div style={{ marginLeft: 'auto', display: 'flex', gap: 6 }}>
                                         <button type="button" disabled={bi === 0} onClick={() => update(editing.id, pr => moveSpecBlock(pr, tabLang, bi, -1))} className="admin-spec-icobtn" title="Выше"><ChevronUp size={15} /></button>
                                         <button type="button" disabled={bi === blockCount - 1} onClick={() => update(editing.id, pr => moveSpecBlock(pr, tabLang, bi, 1))} className="admin-spec-icobtn" title="Ниже"><ChevronDown size={15} /></button>
@@ -853,36 +883,51 @@ const AdminPanel: React.FC = () => {
                                       </div>
                                     </div>
                                     <div className="admin-spec-card-body">
-                                      <div className="admin-spec-cols">
-                                        {block.headers.map((h, ci) => (
-                                          <input
-                                            key={ci}
-                                            className="admin-field"
-                                            style={{ flex: ci === 0 ? 1.6 : 1, fontWeight: 700, background: '#faf7f1', fontSize: 13 }}
-                                            value={h}
-                                            onChange={e => {
-                                              if (block.headerIdx === null) return;
-                                              update(editing.id, pr => setSpecCell(pr, tabLang, block.headerIdx, ci, e.target.value));
-                                            }}
-                                            placeholder={ci === 0 ? 'Компонент' : ci === 1 ? 'Дозировка 1' : ci === 2 ? 'Дозировка 2' : 'Норма %'}
-                                          />
-                                        ))}
-                                      </div>
-                                      {block.rows.map((row, ri) => {
-                                        const sub = (row.cells[0] ?? '').trim().startsWith('└');
-                                        return (
-                                          <div key={row.entryIdx} className={'admin-spec-row' + (sub ? ' is-sub' : '')}>
-                                            <button type="button" title={sub ? 'Сделать обычной строкой' : 'Вложить под вещество'} onClick={() => update(editing.id, pr => toggleSpecSub(pr, tabLang, row.entryIdx))} className={'admin-spec-icobtn' + (sub ? ' active' : '')}><ArrowDownLeft size={15} /></button>
-                                            <input className="admin-field" style={{ flex: 1.6, fontSize: 13.5 }} value={row.cells[0] ?? ''} onChange={e => update(editing.id, pr => setSpecCell(pr, tabLang, row.entryIdx, 0, e.target.value))} placeholder="Активное вещество" />
-                                            {row.cells.slice(1).map((c, ci) => (
-                                              <input key={ci} className="admin-field" style={{ flex: 1, fontSize: 13 }} value={c} onChange={e => update(editing.id, pr => setSpecCell(pr, tabLang, row.entryIdx, ci + 1, e.target.value))} placeholder={ci === 2 ? 'Норма' : 'Доза'} />
+                                      <table className="admin-spec-table">
+                                        <thead>
+                                          <tr>
+                                            <th className="admin-spec-nest-col"></th>
+                                            {block.headers.map((h, ci) => (
+                                              <th key={ci} style={{ minWidth: ci === 0 ? 240 : 110 }}>
+                                                {block.headerIdx !== null ? (
+                                                  <input
+                                                    value={h}
+                                                    onChange={e => update(editing.id, pr => setSpecCell(pr, tabLang, block.headerIdx, ci, e.target.value))}
+                                                    placeholder={staticHead[ci] ?? ''}
+                                                  />
+                                                ) : (
+                                                  <span>{staticHead[ci] ?? ''}</span>
+                                                )}
+                                              </th>
                                             ))}
-                                            <button type="button" disabled={ri === 0} onClick={() => update(editing.id, pr => moveSpecRow(pr, tabLang, row.entryIdx, -1))} className="admin-spec-icobtn" title="Выше"><ChevronUp size={15} /></button>
-                                            <button type="button" disabled={ri === block.rows.length - 1} onClick={() => update(editing.id, pr => moveSpecRow(pr, tabLang, row.entryIdx, 1))} className="admin-spec-icobtn" title="Ниже"><ChevronDown size={15} /></button>
-                                            <button type="button" onClick={() => update(editing.id, pr => removeSpecRow(pr, tabLang, row.entryIdx))} className="admin-spec-icobtn danger" title="Удалить"><Trash2 size={15} /></button>
-                                          </div>
-                                        );
-                                      })}
+                                            <th className="admin-spec-actions-col"></th>
+                                          </tr>
+                                        </thead>
+                                        <tbody>
+                                          {block.rows.map((row, ri) => {
+                                            const sub = (row.cells[0] ?? '').trim().startsWith('└');
+                                            return (
+                                              <tr key={row.entryIdx} className={sub ? 'is-sub' : ''}>
+                                                <td className="admin-spec-nest-col">
+                                                  <button type="button" title={sub ? 'Снять вложенность' : 'Вложить под предыдущее'} onClick={() => update(editing.id, pr => toggleSpecSub(pr, tabLang, row.entryIdx))} className={'admin-spec-icobtn' + (sub ? ' active' : '')}><ArrowDownLeft size={15} /></button>
+                                                </td>
+                                                {row.cells.map((c, ci) => (
+                                                  <td key={ci}>
+                                                    <input value={c} onChange={e => update(editing.id, pr => setSpecCell(pr, tabLang, row.entryIdx, ci, e.target.value))} placeholder={ci === 0 ? 'Активное вещество' : 'Доза'} />
+                                                  </td>
+                                                ))}
+                                                <td className="admin-spec-actions-col">
+                                                  <span className="admin-spec-row-actions">
+                                                    <button type="button" disabled={ri === 0} onClick={() => update(editing.id, pr => moveSpecRow(pr, tabLang, row.entryIdx, -1))} className="admin-spec-icobtn" title="Выше"><ChevronUp size={15} /></button>
+                                                    <button type="button" disabled={ri === block.rows.length - 1} onClick={() => update(editing.id, pr => moveSpecRow(pr, tabLang, row.entryIdx, 1))} className="admin-spec-icobtn" title="Ниже"><ChevronDown size={15} /></button>
+                                                    <button type="button" onClick={() => update(editing.id, pr => removeSpecRow(pr, tabLang, row.entryIdx))} className="admin-spec-icobtn danger" title="Удалить"><Trash2 size={15} /></button>
+                                                  </span>
+                                                </td>
+                                              </tr>
+                                            );
+                                          })}
+                                        </tbody>
+                                      </table>
                                       <button type="button" className="admin-spec-add" onClick={() => update(editing.id, pr => addSpecRowTo(pr, tabLang, block))}>
                                         <Plus size={14} style={{ verticalAlign: -2, marginRight: 5 }} />Добавить вещество
                                       </button>

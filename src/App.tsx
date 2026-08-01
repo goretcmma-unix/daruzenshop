@@ -66,7 +66,7 @@ const CompRows: React.FC<{ block: CompTableBlock; t: ReturnType<typeof useLang>[
   const nameLabel = nonEmptyHeaders[0] || t.modal.substance;
   const valueLabels = nonEmptyHeaders.slice(1);
   const showHint = valueLabels.length > 0;
-  const [openCol, setOpenCol] = useState(0);
+  const [openCol, setOpenCol] = useState<number | null>(0);
   useEffect(() => { setOpenCol(0); }, [block]);
 
   if (valueLabels.length > 0) {
@@ -76,7 +76,7 @@ const CompRows: React.FC<{ block: CompTableBlock; t: ReturnType<typeof useLang>[
           const open = ci === openCol;
           return (
             <div key={ci} className="comp-acc">
-              <button type="button" className={`comp-acc__head${open ? ' is-open' : ''}`} onClick={() => setOpenCol(ci)}>
+              <button type="button" className={`comp-acc__head${open ? ' is-open' : ''}`} onClick={() => setOpenCol(open ? null : ci)}>
                 <span>{label}</span>
                 <ChevronDown size={16} className="comp-acc__chev" />
               </button>

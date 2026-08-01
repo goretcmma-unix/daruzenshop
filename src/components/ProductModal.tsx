@@ -138,11 +138,11 @@ const ProductModal: React.FC<Props> = (props) => {
                          <ShoppingCart size={20} /> {t.cart.inCart}
                        </motion.button>
                         <motion.button 
-                          whileHover={{ scale: 1.02, background: '#20b857' }}
+                          whileHover={{ scale: 1.02, filter: 'brightness(1.08)' }}
                           whileTap={{ scale: 0.98 }}
                           onClick={() => buyNow(selectedProduct, modalQuantity)} 
                           className="modal-buy-btn"
-                          style={{ width: '100%', background: 'linear-gradient(135deg, #25D366 0%, #128C7E 100%)', color: 'white', border: 'none', borderRadius: '22px', fontWeight: '700', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', transition: 'all 0.2s ease', boxShadow: '0 10px 20px rgba(37, 211, 102, 0.15)' }}
+                          style={{ width: '100%', background: 'linear-gradient(135deg, #25D366 0%, #128C7E 100%)', color: 'white', border: 'none', borderRadius: '22px', fontWeight: '700', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', boxShadow: '0 10px 20px rgba(37, 211, 102, 0.15)' }}
                         >
                          {t.cart.buyNow}
                        </motion.button>

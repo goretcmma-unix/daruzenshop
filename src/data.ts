@@ -139,7 +139,7 @@ export const products: Product[] = [
     },
     specs: {
       ru: [
-        '| **Активный компонент** | **1 таблетка** | **2 таблетки** | **% от суточной нормы (BRD)** |',
+        '| **Активный компонент** | **Состав на 1 таблетку** | **Состав на 2 таблетки** | **% от суточной нормы (BRD) на 2 таблетки** |',
         '| --- | ---: | ---: | ---: |',
         '| **Магний (всего)** | 125 мг | 250 мг | **67%** |',
         '| └ Магний ацетилтаурат | 33,005 мг | 66,010 мг | — |',
@@ -147,9 +147,10 @@ export const products: Product[] = [
         '| └ Магний малат | 34,5 мг | 69 мг | — |',
         '| └ Магний цитрат | 7,845 мг | 15,69 мг | — |',
         '| **Витамин B6** | 2 мг | 4 мг | **286%** |',
+        '~~BRD рассчитан для 2 таблеток. Для отдельных форм магния рекомендуемая суточная норма не установлена.',
       ],
       tr: [
-        '| **Aktif bileşen** | **1 tablet** | **2 tablet** | **% günlük ihtiyaç (BRD)** |',
+        '| **Aktif bileşen** | **1 tablet için içerik** | **2 tablet için içerik** | **% günlük ihtiyaç (BRD) 2 tablet için** |',
         '| --- | ---: | ---: | ---: |',
         '| **Magnezyum (toplam)** | 125 mg | 250 mg | **%67** |',
         '| └ Magnezyum asetiltaurat | 33.005 mg | 66.010 mg | — |',
@@ -157,9 +158,10 @@ export const products: Product[] = [
         '| └ Magnezyum malat | 34.5 mg | 69 mg | — |',
         '| └ Magnezyum sitrat | 7.845 mg | 15.69 mg | — |',
         '| **B6 vitamini** | 2 mg | 4 mg | **%286** |',
+        '~~BRD 2 tablet için hesaplanmıştır. Bireysel magnezyum formları için önerilen günlük alım miktarı belirlenmemiştir.',
       ],
       en: [
-        '| **Active ingredient** | **Per 1 tablet** | **Per 2 tablets** | **% of daily value (BRD)** |',
+        '| **Active ingredient** | **Composition per 1 tablet** | **Composition per 2 tablets** | **% of daily value (BRD) per 2 tablets** |',
         '| --- | ---: | ---: | ---: |',
         '| **Magnesium (total)** | 125 mg | 250 mg | **67%** |',
         '| └ Magnesium acetyltaurate | 33.005 mg | 66.010 mg | — |',
@@ -167,9 +169,10 @@ export const products: Product[] = [
         '| └ Magnesium malate | 34.5 mg | 69 mg | — |',
         '| └ Magnesium citrate | 7.845 mg | 15.69 mg | — |',
         '| **Vitamin B6** | 2 mg | 4 mg | **286%** |',
+        '~~BRD is calculated per 2 tablets. No recommended daily allowance is established for individual magnesium forms.',
       ],
       ar: [
-        '| **المكون النشط** | **قرص واحد** | **قرصان** | **% من الاحتياج اليومي (BRD)** |',
+        '| **المكون النشط** | **مكونات قرص واحد** | **مكونات قرصين** | **% من الاحتياج اليومي (BRD) لقرصين** |',
         '| --- | ---: | ---: | ---: |',
         '| **مغنيسيوم (إجمالي)** | 125 ملغ | 250 ملغ | **%67** |',
         '| └ ماغنيسيوم أسيتيل تورات | 33.005 ملغ | 66.010 ملغ | — |',
@@ -177,6 +180,7 @@ export const products: Product[] = [
         '| └ مغنيسيوم مالات | 34.5 ملغ | 69 ملغ | — |',
         '| └ سترات المغنيسيوم | 7.845 ملغ | 15.69 ملغ | — |',
         '| **فيتامين B6** | 2 ملغ | 4 ملغ | **%286** |',
+        '~~يُحسب BRD لقرصين. لم يتم تحديد الكمية اليومية الموصى بها للأشكال الفردية من المغنيسيوم.',
       ],
     },
   },
@@ -246,10 +250,34 @@ export const products: Product[] = [
       ar: 'حلوى طبيعية قابلة للمضغ بمستخلص البلسان وفيتامين C والزنك. منتج عالي الجودة لدعم صحتك. تركيبة طبيعية وفعالية عالية.',
     },
     specs: {
-      ru: ['Экстракт бузины | 150 мг | —', 'Витамин C | 20 мг | 22%', 'Цинк | 10 мг | 100%'],
-      tr: ['Kuş üzümü ekstresi | 150 mg | —', 'C vitamini | 20 mg | 22%', 'Çinko | 10 mg | 100%'],
-      en: ['Elderberry extract | 150 mg | —', 'Vitamin C | 20 mg | 22%', 'Zinc | 10 mg | 100%'],
-      ar: ['مستخلص البلسان | 150 ملغ | —', 'فيتامين C | 20 ملغ | 22%', 'زنك | 10 ملغ | 100%'],
+      ru: [
+        '| **Активный компонент** | **Состав на 1 капсулу** | **2 капсулы в день** | **% от суточной нормы (BRD) на 2 капсулы** |',
+        '| --- | ---: | ---: | ---: |',
+        '| **Экстракт бузины** | 75 мг | 150 мг | — |',
+        '| **Витамин C** | 10 мг | 20 мг | **22%** |',
+        '| **Цинк** | 5 мг | 10 мг | **100%** |',
+      ],
+      tr: [
+        '| **Aktif bileşen** | **1 kapsül için içerik** | **Günde 2 kapsül** | **% günlük ihtiyaç (BRD) 2 kapsül için** |',
+        '| --- | ---: | ---: | ---: |',
+        '| **Kuş üzümü ekstresi** | 75 mg | 150 mg | — |',
+        '| **C vitamini** | 10 mg | 20 mg | **%22** |',
+        '| **Çinko** | 5 mg | 10 mg | **%100** |',
+      ],
+      en: [
+        '| **Active ingredient** | **Composition per 1 capsule** | **2 capsules per day** | **% of daily value (BRD) per 2 capsules** |',
+        '| --- | ---: | ---: | ---: |',
+        '| **Elderberry extract** | 75 mg | 150 mg | — |',
+        '| **Vitamin C** | 10 mg | 20 mg | **22%** |',
+        '| **Zinc** | 5 mg | 10 mg | **100%** |',
+      ],
+      ar: [
+        '| **المكون النشط** | **مكونات كبسولة واحدة** | **كبسولتين يوميا** | **% من الاحتياج اليومي (BRD) لكبسولتين** |',
+        '| --- | ---: | ---: | ---: |',
+        '| **مستخلص البلسان** | 75 ملغ | 150 ملغ | — |',
+        '| **فيتامين C** | 10 ملغ | 20 ملغ | **%22** |',
+        '| **زنك** | 5 ملغ | 10 ملغ | **%100** |',
+      ],
     },
   },
   {
@@ -378,6 +406,7 @@ export type CompositionPart =
   | { type: 'section'; text: string }
   | { type: 'colheader'; cells: string[] }
   | { type: 'row'; cells: string[] }
+  | { type: 'note'; text: string }
   | { type: 'sep' };
 
 const cleanCell = (s: string): string =>
@@ -385,6 +414,9 @@ const cleanCell = (s: string): string =>
 
 export const parseCompositionLine = (line: string): CompositionPart => {
   const trimmed = line.trim();
+  if (trimmed.startsWith('~~')) {
+    return { type: 'note', text: trimmed.replace(/^~~+\s*/, '').trim() };
+  }
   if (trimmed.startsWith('##')) {
     return { type: 'colheader', cells: trimmed.replace(/^##+\s*/, '').split('|').map(cleanCell) };
   }

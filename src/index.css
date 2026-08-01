@@ -543,6 +543,28 @@ a:hover {
   overflow: hidden;
 }
 
+.comp-table__notes {
+  margin-top: 12px;
+  padding: 10px 12px;
+  border-top: 1px solid #ece3d3;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.comp-table__notes--top {
+  margin: 2px 0 14px;
+  padding: 0 2px 10px;
+  border-top: none;
+  border-bottom: 1px solid #ece3d3;
+}
+
+.comp-table__note {
+  font-size: 13px;
+  color: #a89a88;
+  line-height: 1.6;
+}
+
 .comp-card__row {
   display: flex;
   justify-content: space-between;
@@ -604,7 +626,7 @@ a:hover {
 
 .comp-card__name {
   font-family: 'system-ui', -apple-system, sans-serif;
-  font-size: 14px;
+  font-size: 15px;
   font-weight: 500;
   color: #111827;
   line-height: 1.5;
@@ -619,7 +641,7 @@ a:hover {
 }
 
 .comp-card__dosage {
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 700;
   color: #111827;
   background: #f3f4f6;
@@ -638,7 +660,7 @@ a:hover {
 }
 
 .comp-card__pct {
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 700;
   color: #a08a6d;
   background: #f6f0e7;
@@ -646,6 +668,15 @@ a:hover {
   border-radius: 100px;
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
+}
+
+.comp-card__pct-caption {
+  margin: 4px 0 10px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #a08a6d;
+  letter-spacing: 0.02em;
+  line-height: 1.5;
 }
 
 .comp-rows__hint {
@@ -686,7 +717,7 @@ a:hover {
 .comp-card__row.is-sub .comp-card__name {
   color: #7a6a5a;
   font-weight: 500;
-  font-size: 13px;
+  font-size: 14px;
 }
 
 [dir="rtl"] .comp-card__row.is-sub {
@@ -741,6 +772,13 @@ a:hover {
   min-width: 0;
 }
 
+.comp-table-collapse {
+  border: none;
+  border-radius: 0;
+  background: transparent;
+  overflow: visible;
+}
+
 .comp-acc__head {
   width: 100%;
   display: flex;
@@ -752,7 +790,7 @@ a:hover {
   background: linear-gradient(135deg, #faf7f2, #f1ebe1);
   cursor: pointer;
   font-family: inherit;
-  font-size: 14px;
+  font-size: 15px;
   font-weight: 800;
   letter-spacing: 0.02em;
   color: var(--primary);
@@ -786,6 +824,12 @@ a:hover {
 
 [dir="rtl"] .comp-acc__head {
   text-align: right;
+}
+
+@media (min-width: 769px) {
+  .comp-table-collapse > .comp-acc__head {
+    display: none;
+  }
 }
 
 .desc-card__content {
@@ -836,7 +880,24 @@ a:hover {
     align-items: center !important;
   }
   .modal-buy-under {
-    padding: 16px 20px 24px;
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 20;
+    margin: 0;
+    padding: 12px 20px calc(12px + env(safe-area-inset-bottom));
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-top: 1px solid rgba(0, 0, 0, 0.06);
+    box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.06);
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+  }
+  .modal-buy-under.is-hidden {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
   }
   .modal-buy-actions {
     grid-template-columns: auto 1fr;
@@ -861,6 +922,13 @@ a:hover {
     display: flex;
     flex-direction: column;
     min-height: 0;
+    transition: padding-bottom 0.3s ease;
+  }
+  .modal-info-wrapper {
+    padding-bottom: calc(110px + env(safe-area-inset-bottom)) !important;
+  }
+  .modal-layout.comp-open .modal-info-wrapper {
+    padding-bottom: 24px !important;
   }
   .modal-scroll-area {
     overflow: visible;
@@ -896,6 +964,9 @@ a:hover {
   }
   .modal-info-wrapper {
     padding: 8px 12px 12px;
+  }
+  .modal-info-wrapper {
+    padding-bottom: calc(110px + env(safe-area-inset-bottom)) !important;
   }
   .modal-comp-table th,
   .modal-comp-table td {

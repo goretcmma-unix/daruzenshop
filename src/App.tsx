@@ -34,6 +34,7 @@ import { useNormalizedImage } from './lib/normalizeImage';
 interface CompTableBlock {
   headers: string[];
   rows: string[][];
+  notes: string[];
 }
 
 interface SectionGroup {
@@ -50,10 +51,13 @@ const buildSections = (specs: string[]): SectionGroup[] => {
     if (p.type === 'section') {
       if (cur.blocks.length) groups.push(cur);
       cur = { title: p.text, blocks: [] };
+    } else if (p.type === 'note') {
+      if (!cur.blocks.length) cur.blocks.push({ headers: [], rows: [], notes: [] });
+      cur.blocks[cur.blocks.length - 1].notes.push(p.text);
     } else if (p.type === 'colheader' || (p.type === 'row' && parts[i + 1]?.type === 'sep')) {
-      cur.blocks.push({ headers: p.cells, rows: [] });
+      cur.blocks.push({ headers: p.cells, rows: [], notes: [] });
     } else if (p.type === 'row') {
-      if (!cur.blocks.length) cur.blocks.push({ headers: [], rows: [] });
+      if (!cur.blocks.length) cur.blocks.push({ headers: [], rows: [], notes: [] });
       cur.blocks[cur.blocks.length - 1].rows.push(p.cells);
     }
   }
@@ -73,6 +77,17 @@ const CompRows: React.FC<{ block: CompTableBlock; t: ReturnType<typeof useLang>[
     const pctIdx = valueLabels.findIndex(h => /%/.test(h));
     const doseLabels = pctIdx !== -1 ? valueLabels.filter((_, i) => i !== pctIdx) : valueLabels;
     return (
+      <>
+      {pctIdx !== -1 && valueLabels[pctIdx] && (
+        <div className="comp-card__pct-caption">{valueLabels[pctIdx]}</div>
+      )}
+      {block.notes.length > 0 && (
+        <div className="comp-table__notes comp-table__notes--top">
+          {block.notes.map((n, i) => (
+            <div key={i} className="comp-table__note">{n}</div>
+          ))}
+        </div>
+      )}
       <div className="comp-dose">
         {doseLabels.map((label, ci) => {
           const open = ci === openCol;
@@ -119,6 +134,7 @@ const CompRows: React.FC<{ block: CompTableBlock; t: ReturnType<typeof useLang>[
           );
         })}
       </div>
+      </>
     );
   }
 
@@ -147,11 +163,18 @@ const CompRows: React.FC<{ block: CompTableBlock; t: ReturnType<typeof useLang>[
           </div>
         );
       })}
+      {block.notes.length > 0 && (
+        <div className="comp-table__notes">
+          {block.notes.map((n, i) => (
+            <div key={i} className="comp-table__note">{n}</div>
+          ))}
+        </div>
+      )}
     </>
   );
 };
 
-const CompositionPanel: React.FC<{ specs?: string[]; t: ReturnType<typeof useLang>['t'] }> = ({ specs, t }) => {
+const CompositionPanel: React.FC<{ specs?: string[]; t: ReturnType<typeof useLang>['t']; compositionOpen: boolean; onCompositionToggle: (v: boolean) => void }> = ({ specs, t, compositionOpen, onCompositionToggle }) => {
   const specLines = specs ?? [];
   const groups = useMemo(() => buildSections(specLines), [specLines]);
   const sectioned = groups.filter(g => g.title).length > 1;
@@ -197,14 +220,35 @@ const CompositionPanel: React.FC<{ specs?: string[]; t: ReturnType<typeof useLan
   if (hasValueCols) {
     return (
       <div className="comp-card">
-        {groups.map((g, gi) => (
-          <div key={gi}>
-            {g.title && <div className="comp-card__section"><span>{g.title}</span></div>}
-            {g.blocks.map((b, bi) => (
-              <CompRows key={bi} block={b} t={t} />
-            ))}
-          </div>
-        ))}
+        <div className="comp-acc comp-table-collapse">
+          <button type="button" className={`comp-acc__head${compositionOpen ? ' is-open' : ''}`} onClick={() => onCompositionToggle(!compositionOpen)}>
+            <span>{t.modal.composition}</span>
+            <ChevronDown size={16} className="comp-acc__chev" />
+          </button>
+          <AnimatePresence initial={false}>
+            {compositionOpen && (
+              <motion.div
+                key="acc-body"
+                className="comp-acc__body"
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: 'auto', opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
+                transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+              >
+                <div className="comp-acc__body-inner">
+                  {groups.map((g, gi) => (
+                    <div key={gi}>
+                      {g.title && <div className="comp-card__section"><span>{g.title}</span></div>}
+                      {g.blocks.map((b, bi) => (
+                        <CompRows key={bi} block={b} t={t} />
+                      ))}
+                    </div>
+                  ))}
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
       </div>
     );
   }
@@ -258,6 +302,9 @@ const App: React.FC = () => {
   const [activeSection, setActiveSection] = useState('top');
   const [selectedProduct, setSelectedProduct] = useState<LocalizedProduct | null>(null);
   const [modalQuantity, setModalQuantity] = useState(1);
+  const [compositionOpen, setCompositionOpen] = useState<boolean>(() =>
+    typeof window !== 'undefined' ? !window.matchMedia('(max-width: 768px)').matches : true
+  );
   const selectedProductImage = useNormalizedImage(selectedProduct?.image);
   const navClickRef = useRef(false);
 
@@ -267,6 +314,8 @@ const App: React.FC = () => {
   useEffect(() => {
     if (selectedProduct === null) {
       setModalQuantity(1);
+    } else {
+      setCompositionOpen(typeof window !== 'undefined' ? !window.matchMedia('(max-width: 768px)').matches : true);
     }
   }, [selectedProduct]);
   //const [lastAddedItem, setLastAddedItem] = useState<string | null>(null);
@@ -1408,7 +1457,7 @@ const App: React.FC = () => {
               animate={{ scale: 1, opacity: 1, x: '-50%', y: '-50%' }} 
               exit={{ scale: 0.95, opacity: 0, x: '-50%', y: '-55%' }}
               transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-              className="modal-layout"
+              className={'modal-layout' + (compositionOpen ? ' comp-open' : '')}
               style={{ 
                 position: 'fixed', 
                 top: '50%',
@@ -1455,7 +1504,7 @@ const App: React.FC = () => {
                     <X size={16} color="var(--text-muted)" />
                    </motion.button>
                  </motion.div>
-                  <div className="modal-buy-under">
+                  <div className={'modal-buy-under' + (compositionOpen ? ' is-hidden' : '')}>
                     <div className="modal-buy-actions">
                        <div className="modal-buy-qty">
                          <QtyButton label="-" onClick={() => setModalQuantity(q => Math.max(1, q - 1))}>
@@ -1496,7 +1545,7 @@ const App: React.FC = () => {
                      <div className="desc-card__content">
                        <p>{selectedProduct.description}</p>
                      </div>
-                     <CompositionPanel specs={selectedProduct.specs} t={t} />
+                     <CompositionPanel specs={selectedProduct.specs} t={t} compositionOpen={compositionOpen} onCompositionToggle={setCompositionOpen} />
                    </motion.div>
                   </div>
                 </motion.div>

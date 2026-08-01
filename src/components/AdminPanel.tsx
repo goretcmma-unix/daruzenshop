@@ -307,13 +307,14 @@ const AdminPanel: React.FC = () => {
     img.src = localUrl;
   };
 
-  type SpecEntry = { type: 'section' | 'colheader' | 'row'; cells: string[] };
+  type SpecEntry = { type: 'section' | 'colheader' | 'row' | 'note'; cells: string[] };
 
   const parseSpecEntries = (lines: string[]): SpecEntry[] => {
     const parts = lines.map(line => parseCompositionLine(line));
     const entries: SpecEntry[] = [];
     parts.forEach((p, i) => {
       if (p.type === 'section') { entries.push({ type: 'section', cells: [p.text] }); return; }
+      if (p.type === 'note') { entries.push({ type: 'note', cells: [p.text] }); return; }
       if (p.type === 'colheader' || (p.type === 'row' && parts[i + 1]?.type === 'sep')) {
         entries.push({ type: 'colheader', cells: [...p.cells] });
         return;
@@ -325,6 +326,7 @@ const AdminPanel: React.FC = () => {
 
   const serializeSpecEntry = (e: SpecEntry): string => {
     if (e.type === 'section') return `# ${(e.cells[0] ?? '').trim()}`.trimEnd();
+    if (e.type === 'note') return `~~ ${(e.cells[0] ?? '').trim()}`.trimEnd();
     if (e.type === 'colheader') {
       const cells = e.cells.map(c => c.trim());
       while (cells.length && !cells[cells.length - 1]) cells.pop();
@@ -345,7 +347,7 @@ const AdminPanel: React.FC = () => {
 
   const getSpecLines = (p: Product, l: Lang): string[] => p.specs?.[l] ?? [];
 
-  type SpecRow = { entryIdx: number; cells: string[] };
+  type SpecRow = { entryIdx: number; cells: string[]; note?: boolean };
   type SpecBlock =
     | { kind: 'section'; entryIdx: number; text: string }
     | { kind: 'table'; headerIdx: number | null; headers: string[]; rows: SpecRow[] };
@@ -365,14 +367,17 @@ const AdminPanel: React.FC = () => {
           cur = { kind: 'table', headerIdx: null, headers: [], rows: [] };
           blocks.push(cur);
         }
-        cur.rows.push({ entryIdx: i, cells: e.cells });
+        cur.rows.push({ entryIdx: i, cells: e.cells, note: e.type === 'note' });
       }
     });
     return blocks;
   };
 
-  const tableInsertRowIdx = (t: Extract<SpecBlock, { kind: 'table' }>): number =>
-    t.rows.length ? t.rows[t.rows.length - 1].entryIdx + 1 : (t.headerIdx ?? 0) + 1;
+  const tableInsertRowIdx = (t: Extract<SpecBlock, { kind: 'table' }>): number => {
+    const firstNote = t.rows.findIndex(r => r.note);
+    const before = firstNote === -1 ? t.rows.length : firstNote;
+    return before ? t.rows[before - 1].entryIdx + 1 : (t.headerIdx ?? 0) + 1;
+  };
 
   const blockRange = (b: SpecBlock): [number, number] => {
     if (b.kind === 'section') return [b.entryIdx, b.entryIdx + 1];
@@ -435,11 +440,19 @@ const AdminPanel: React.FC = () => {
   const specTrimLen = (arr: string[]): number => { let n = arr.length; while (n > 0 && !((arr[n - 1] ?? '').trim())) n--; return n; };
 
   const blockColCount = (b: Extract<SpecBlock, { kind: 'table' }>): number =>
-    Math.max(1, specTrimLen(b.headers), ...b.rows.map(r => specTrimLen(r.cells)));
+    Math.max(1, specTrimLen(b.headers), ...b.rows.filter(r => !r.note).map(r => specTrimLen(r.cells)));
 
   const addSpecRowTo = (p: Product, l: Lang, block: Extract<SpecBlock, { kind: 'table' }>): Product => {
     const entries = parseSpecEntries(getSpecLines(p, l));
     entries.splice(tableInsertRowIdx(block), 0, { type: 'row', cells: emptyCells(blockColCount(block)) });
+    return writeSpecs(p, l, entries);
+  };
+
+  const addSpecNoteAfter = (p: Product, l: Lang): Product => {
+    const entries = parseSpecEntries(getSpecLines(p, l));
+    const blocks = buildSpecBlocks(entries);
+    const at = blocks.length ? blockRange(blocks[blocks.length - 1])[1] : entries.length;
+    entries.splice(at, 0, { type: 'note', cells: [''] });
     return writeSpecs(p, l, entries);
   };
 
@@ -749,6 +762,19 @@ const AdminPanel: React.FC = () => {
         .admin-spec-table tbody tr.is-sub td.admin-spec-nest-col { border-left: 3px solid #d9bf93; }
         .admin-spec-table tbody tr.is-sub input { background: #fffdf9; }
         .admin-spec-table tbody tr.is-sub td:nth-child(2) input { padding-left: 22px; }
+        .admin-spec-note-input { font-style: italic; font-weight: 500; color: #8a7a68; }
+        .admin-spec-disclaimer {
+          margin-top: 8px;
+          display: flex;
+          align-items: center;
+          gap: 6px;
+          background: #faf7f0;
+          border: 1px dashed #dfd3c0;
+          border-radius: 10px;
+          padding: 6px 8px 6px 12px;
+        }
+        .admin-spec-disclaimer .admin-spec-note-input { border-color: transparent; }
+        .admin-spec-disclaimer .admin-spec-row-actions { margin-left: auto; }
         .admin-spec-table .admin-spec-nest-col { width: 34px; text-align: center; }
         .admin-spec-table .admin-spec-actions-col { width: 86px; text-align: center; }
         .admin-spec-table .admin-spec-icobtn { width: 24px; height: 24px; flex: 0 0 24px; }
@@ -933,7 +959,7 @@ const AdminPanel: React.FC = () => {
                                           </tr>
                                         </thead>
                                         <tbody>
-                                          {block.rows.map((row, ri) => {
+                                          {block.rows.filter(r => !r.note).map((row, ri) => {
                                             const sub = (row.cells[0] ?? '').trim().startsWith('└');
                                             return (
                                               <tr key={row.entryIdx} className={sub ? 'is-sub' : ''}>
@@ -958,6 +984,16 @@ const AdminPanel: React.FC = () => {
                                         </tbody>
                                       </table>
                                       </div>
+                                      {block.rows.filter(r => r.note).map((row, nri) => (
+                                        <div key={row.entryIdx} className="admin-spec-disclaimer">
+                                          <input className="admin-spec-note-input" value={row.cells[0] ?? ''} onChange={e => update(editing.id, pr => setSpecCell(pr, tabLang, row.entryIdx, 0, e.target.value))} placeholder="Дисклеймер под таблицей" />
+                                          <span className="admin-spec-row-actions">
+                                            <button type="button" onClick={() => update(editing.id, pr => moveSpecRow(pr, tabLang, row.entryIdx, -1))} className="admin-spec-icobtn" title="Выше"><ChevronUp size={15} /></button>
+                                            <button type="button" onClick={() => update(editing.id, pr => moveSpecRow(pr, tabLang, row.entryIdx, 1))} className="admin-spec-icobtn" title="Ниже"><ChevronDown size={15} /></button>
+                                            <button type="button" onClick={() => update(editing.id, pr => removeSpecRow(pr, tabLang, row.entryIdx))} className="admin-spec-icobtn danger" title="Удалить"><Trash2 size={15} /></button>
+                                          </span>
+                                        </div>
+                                      ))}
                                       <button type="button" className="admin-spec-add" onClick={() => update(editing.id, pr => addSpecRowTo(pr, tabLang, block))}>
                                         <Plus size={14} style={{ verticalAlign: -2, marginRight: 5 }} />Добавить вещество
                                       </button>
@@ -978,6 +1014,9 @@ const AdminPanel: React.FC = () => {
                             </button>
                             <button type="button" className="admin-spec-addblock" onClick={() => update(editing.id, pr => addSpecBlockAfter(pr, tabLang, blockCount - 1, 'section'))}>
                               <Plus size={14} style={{ verticalAlign: -2, marginRight: 5 }} />Раздел
+                            </button>
+                            <button type="button" className="admin-spec-addblock" onClick={() => update(editing.id, pr => addSpecNoteAfter(pr, tabLang))}>
+                              <Plus size={14} style={{ verticalAlign: -2, marginRight: 5 }} />Примечание
                             </button>
                           </div>
                         </>

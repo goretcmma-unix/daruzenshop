@@ -450,7 +450,7 @@ a:hover {
 
 .modal-swipe {
   position: relative;
-  flex: 1 1 auto;
+  flex: 0 1 auto;
   min-width: 0;
   min-height: 0;
   overflow-y: auto;

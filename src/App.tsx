@@ -1506,7 +1506,7 @@ const App: React.FC = () => {
                       </AnimatePresence>
                     </motion.div>
                    
-                     <div style={{ marginTop: 'auto', paddingTop: '32px' }}>
+                     <div style={{ paddingTop: '32px' }}>
                      <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '16px' }}>
                         <span style={{ fontWeight: '600', fontSize: '15px', color: '#8e8e93' }}>{t.modal.quantity}</span>
                        <div style={{ display: 'flex', alignItems: 'center', gap: '18px', background: '#F5F5F7', padding: '8px 18px', borderRadius: '12px' }}>

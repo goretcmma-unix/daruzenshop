@@ -70,9 +70,11 @@ const CompRows: React.FC<{ block: CompTableBlock; t: ReturnType<typeof useLang>[
   useEffect(() => { setOpenCol(0); }, [block]);
 
   if (valueLabels.length > 0) {
+    const pctIdx = valueLabels.findIndex(h => /%/.test(h));
+    const doseLabels = pctIdx !== -1 ? valueLabels.filter((_, i) => i !== pctIdx) : valueLabels;
     return (
       <div className="comp-dose">
-        {valueLabels.map((label, ci) => {
+        {doseLabels.map((label, ci) => {
           const open = ci === openCol;
           return (
             <div key={ci} className="comp-acc">
@@ -97,11 +99,14 @@ const CompRows: React.FC<{ block: CompTableBlock; t: ReturnType<typeof useLang>[
                         const sub = name.startsWith('└');
                         const val = cells[ci + 1];
                         if (!val || val === '-') return null;
+                        const pct = pctIdx !== -1 ? cells[pctIdx + 1] : null;
+                        const showPct = pct && pct !== '—' && pct !== '-';
                         return (
                           <div key={ri} className={'comp-card__row' + (sub ? ' is-sub' : '')}>
                             <span className="comp-card__name">{sub ? name.replace(/^└\s*/, '') : name}</span>
                             <span className="comp-card__values">
                               <span className="comp-card__dosage">{val}</span>
+                              {showPct && <span className="comp-card__pct">{pct}</span>}
                             </span>
                           </div>
                         );

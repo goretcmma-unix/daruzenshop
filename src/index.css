@@ -467,29 +467,14 @@ a:hover {
 
 .modal-swipe,
 .modal-layout {
-  scrollbar-width: thin;
-  scrollbar-color: rgba(99, 67, 49, 0.35) transparent;
+  scrollbar-width: none;
 }
 
 .modal-swipe::-webkit-scrollbar,
 .modal-layout::-webkit-scrollbar {
-  width: 5px;
-}
-
-.modal-swipe::-webkit-scrollbar-track,
-.modal-layout::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.modal-swipe::-webkit-scrollbar-thumb,
-.modal-layout::-webkit-scrollbar-thumb {
-  background: rgba(99, 67, 49, 0.3);
-  border-radius: 999px;
-}
-
-.modal-swipe::-webkit-scrollbar-thumb:hover,
-.modal-layout::-webkit-scrollbar-thumb:hover {
-  background: rgba(207, 155, 65, 0.6);
+  display: none;
+  width: 0;
+  height: 0;
 }
 
 .modal-panel {

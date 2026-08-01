@@ -309,20 +309,27 @@ const AdminPanel: React.FC = () => {
 
   type SpecEntry = { type: 'section' | 'colheader' | 'row'; cells: string[] };
 
-  const SPEC_EMPTY_4 = ['', '', '', ''];
-
-  const parseSpecEntries = (lines: string[]): SpecEntry[] =>
-    lines.map(line => {
-      const part = parseCompositionLine(line);
-      if (part.type === 'section') return { type: 'section', cells: [part.text] };
-      if (part.type === 'colheader') return { type: 'colheader', cells: [...part.cells, ...SPEC_EMPTY_4].slice(0, 4) };
-      if (part.type === 'row') return { type: 'row', cells: [...part.cells, ...SPEC_EMPTY_4].slice(0, 4) };
-      return { type: 'row', cells: [...SPEC_EMPTY_4] };
+  const parseSpecEntries = (lines: string[]): SpecEntry[] => {
+    const parts = lines.map(line => parseCompositionLine(line));
+    const entries: SpecEntry[] = [];
+    parts.forEach((p, i) => {
+      if (p.type === 'section') { entries.push({ type: 'section', cells: [p.text] }); return; }
+      if (p.type === 'colheader' || (p.type === 'row' && parts[i + 1]?.type === 'sep')) {
+        entries.push({ type: 'colheader', cells: [...p.cells] });
+        return;
+      }
+      if (p.type === 'row') { entries.push({ type: 'row', cells: [...p.cells] }); return; }
     });
+    return entries;
+  };
 
   const serializeSpecEntry = (e: SpecEntry): string => {
     if (e.type === 'section') return `# ${(e.cells[0] ?? '').trim()}`.trimEnd();
-    if (e.type === 'colheader') return `## ${e.cells.map(c => c.trim()).join(' | ')}`;
+    if (e.type === 'colheader') {
+      const cells = e.cells.map(c => c.trim());
+      while (cells.length && !cells[cells.length - 1]) cells.pop();
+      return `## ${cells.join(' | ')}`;
+    }
     return e.cells.map(c => c.trim()).filter(Boolean).join(' | ');
   };
 
@@ -355,7 +362,7 @@ const AdminPanel: React.FC = () => {
         blocks.push(cur);
       } else {
         if (!cur) {
-          cur = { kind: 'table', headerIdx: null, headers: [...SPEC_EMPTY_4], rows: [] };
+          cur = { kind: 'table', headerIdx: null, headers: [], rows: [] };
           blocks.push(cur);
         }
         cur.rows.push({ entryIdx: i, cells: e.cells });
@@ -397,6 +404,22 @@ const AdminPanel: React.FC = () => {
     return writeSpecs(p, l, entries);
   };
 
+  const setSpecHeader = (p: Product, l: Lang, block: Extract<SpecBlock, { kind: 'table' }>, cellIdx: number, value: string): Product => {
+    const entries = parseSpecEntries(getSpecLines(p, l));
+    if (block.headerIdx !== null) {
+      const e = entries[block.headerIdx];
+      if (!e) return p;
+      entries[block.headerIdx] = { ...e, cells: [...e.cells] };
+      entries[block.headerIdx].cells[cellIdx] = value;
+      return writeSpecs(p, l, entries);
+    }
+    const start = block.rows.length ? block.rows[0].entryIdx : 0;
+    const hc = emptyCells(blockColCount(block));
+    hc[cellIdx] = value;
+    entries.splice(start, 0, { type: 'colheader', cells: hc });
+    return writeSpecs(p, l, entries);
+  };
+
   const toggleSpecSub = (p: Product, l: Lang, entryIdx: number): Product => {
     const entries = parseSpecEntries(getSpecLines(p, l));
     const e = entries[entryIdx];
@@ -407,9 +430,16 @@ const AdminPanel: React.FC = () => {
     return writeSpecs(p, l, entries);
   };
 
+  const emptyCells = (n: number): string[] => Array.from({ length: n }, () => '');
+
+  const specTrimLen = (arr: string[]): number => { let n = arr.length; while (n > 0 && !((arr[n - 1] ?? '').trim())) n--; return n; };
+
+  const blockColCount = (b: Extract<SpecBlock, { kind: 'table' }>): number =>
+    Math.max(1, specTrimLen(b.headers), ...b.rows.map(r => specTrimLen(r.cells)));
+
   const addSpecRowTo = (p: Product, l: Lang, block: Extract<SpecBlock, { kind: 'table' }>): Product => {
     const entries = parseSpecEntries(getSpecLines(p, l));
-    entries.splice(tableInsertRowIdx(block), 0, { type: 'row', cells: [...SPEC_EMPTY_4] });
+    entries.splice(tableInsertRowIdx(block), 0, { type: 'row', cells: emptyCells(blockColCount(block)) });
     return writeSpecs(p, l, entries);
   };
 
@@ -420,7 +450,7 @@ const AdminPanel: React.FC = () => {
     const at = b ? blockRange(b)[1] : entries.length;
     const line = kind === 'section'
       ? { type: 'section' as const, cells: [''] }
-      : { type: 'colheader' as const, cells: [...SPEC_EMPTY_4] };
+      : { type: 'colheader' as const, cells: emptyCells(4) };
     entries.splice(at, 0, line);
     return writeSpecs(p, l, entries);
   };
@@ -654,7 +684,7 @@ const AdminPanel: React.FC = () => {
         .check-circle { stroke-dasharray: 226; stroke-dashoffset: 226; animation: draw-circle .45s ease-out forwards; }
         .check-mark { stroke-dasharray: 48; stroke-dashoffset: 48; animation: draw-check .35s ease-out .45s forwards; }
 
-        .admin-spec { display: flex; flex-direction: column; gap: 12px; }
+        .admin-spec { display: flex; flex-direction: column; gap: 10px; }
         .admin-spec-card {
           background: #fff; border: 1px solid #e6ddcf; border-radius: 14px;
           box-shadow: 0 1px 3px rgba(99,67,49,0.05); overflow: hidden;
@@ -667,7 +697,7 @@ const AdminPanel: React.FC = () => {
           font-size: 10px; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase;
           color: #a08a6d; background: #f3ead9; padding: 3px 10px; border-radius: 100px;
         }
-        .admin-spec-card-body { padding: 12px; display: flex; flex-direction: column; gap: 8px; }
+        .admin-spec-card-body { padding: 10px; display: flex; flex-direction: column; gap: 8px; }
         .admin-spec-cols { display: flex; gap: 8px; }
         .admin-spec-row { display: flex; gap: 6px; align-items: center; }
         .admin-spec-row.is-sub {
@@ -700,17 +730,18 @@ const AdminPanel: React.FC = () => {
         }
         .admin-spec-addblock:hover { border-color: #c9b28a; color: #a08a6d; }
 
-        .admin-spec-table { width: 100%; border-collapse: collapse; table-layout: auto; }
-        .admin-spec-table th, .admin-spec-table td { border: 1px solid #eee5d6; padding: 6px 7px; vertical-align: middle; }
+        .admin-spec-table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+        .admin-spec-table-wrap { overflow-x: hidden; max-width: 100%; min-width: 0; padding-bottom: 2px; }
+        .admin-spec-table th, .admin-spec-table td { border: 1px solid #eee5d6; padding: 4px 5px; vertical-align: middle; }
         .admin-spec-table thead th { background: #faf5ec; }
         .admin-spec-table thead input {
-          border: none; background: transparent; font-weight: 800; font-size: 12.5px;
-          color: #7a5c3a; width: 100%; box-sizing: border-box; padding: 4px 6px; outline: none;
+          border: none; background: transparent; font-weight: 800; font-size: 12px;
+          color: #7a5c3a; width: 100%; box-sizing: border-box; padding: 4px 5px; outline: none; min-width: 0;
         }
         .admin-spec-table thead input:focus { background: #fff; border-radius: 6px; }
         .admin-spec-table tbody input {
           width: 100%; box-sizing: border-box; border: 1px solid transparent; border-radius: 8px;
-          padding: 7px 9px; font-size: 13.5px; color: #4a3a2a; background: transparent;
+          padding: 5px 7px; font-size: 12.5px; color: #4a3a2a; background: transparent; min-width: 0;
         }
         .admin-spec-table tbody input:hover { border-color: #e6ddcf; background: #fff; }
         .admin-spec-table tbody input:focus { border-color: #c9b28a; background: #fff; outline: none; }
@@ -718,8 +749,8 @@ const AdminPanel: React.FC = () => {
         .admin-spec-table tbody tr.is-sub td.admin-spec-nest-col { border-left: 3px solid #d9bf93; }
         .admin-spec-table tbody tr.is-sub input { background: #fffdf9; }
         .admin-spec-table tbody tr.is-sub td:nth-child(2) input { padding-left: 22px; }
-        .admin-spec-table .admin-spec-nest-col { width: 42px; text-align: center; }
-        .admin-spec-table .admin-spec-actions-col { width: 106px; text-align: center; }
+        .admin-spec-table .admin-spec-nest-col { width: 34px; text-align: center; }
+        .admin-spec-table .admin-spec-actions-col { width: 86px; text-align: center; }
         .admin-spec-table .admin-spec-icobtn { width: 24px; height: 24px; flex: 0 0 24px; }
         .admin-spec-table .admin-spec-row-actions { display: inline-flex; gap: 3px; opacity: 0.35; transition: opacity 0.15s ease; }
         .admin-spec-table tbody tr:hover .admin-spec-row-actions { opacity: 1; }
@@ -753,8 +784,8 @@ const AdminPanel: React.FC = () => {
 
       {/* Edit modal */}
       {editing && (
-        <div onClick={() => { setEditingDraft(null); setEditingId(null); }} style={{ position: 'fixed', inset: 0, background: 'rgba(58,36,16,0.45)', backdropFilter: 'blur(3px)', zIndex: 50, display: 'flex', justifyContent: 'center', alignItems: 'flex-start', padding: '40px 16px', overflowY: 'auto' }}>
-          <div onClick={e => e.stopPropagation()} style={{ width: '100%', maxWidth: 880, background: '#fff', borderRadius: 24, boxShadow: '0 30px 80px rgba(0,0,0,0.28)', overflow: 'hidden', position: 'relative' }}>
+        <div onClick={() => { setEditingDraft(null); setEditingId(null); }} style={{ position: 'fixed', inset: 0, background: 'rgba(58,36,16,0.45)', backdropFilter: 'blur(3px)', zIndex: 50, display: 'flex', justifyContent: 'center', alignItems: 'flex-start', padding: '14px 12px', overflowY: 'auto' }}>
+          <div onClick={e => e.stopPropagation()} style={{ width: '100%', maxWidth: 'min(1480px, 98vw)', background: '#fff', borderRadius: 24, boxShadow: '0 30px 80px rgba(0,0,0,0.28)', overflow: 'hidden', position: 'relative' }}>
 
             {/* Checkmark animation overlay */}
             {savedId === editing?.id && (
@@ -773,7 +804,7 @@ const AdminPanel: React.FC = () => {
               <button onClick={() => { setEditingDraft(null); setEditingId(null); }} style={{ border: 'none', background: '#f3efe9', width: 34, height: 34, borderRadius: 10, cursor: 'pointer', fontSize: 18, color: 'var(--text-muted)' }}>×</button>
             </div>
 
-            <div style={{ padding: 22, maxHeight: '74vh', overflowY: 'auto' }}>
+            <div style={{ padding: 22, maxHeight: '88vh', overflowY: 'auto' }}>
               <div className="admin-modal-body">
                 <div className="admin-modal-left">
                   <div
@@ -839,18 +870,19 @@ const AdminPanel: React.FC = () => {
                   <input className="admin-field" value={editing.names[tabLang]} onChange={e => update(editing.id, pr => ({ ...pr, names: { ...pr.names, [tabLang]: e.target.value } }))} />
 
                   <div className="admin-label">Описание</div>
-                  <textarea className="admin-field" style={{ minHeight: 90 }} value={editing.descriptions[tabLang]} onChange={e => update(editing.id, pr => ({ ...pr, descriptions: { ...pr.descriptions, [tabLang]: e.target.value } }))} />
+                  <textarea className="admin-field" style={{ minHeight: 64 }} value={editing.descriptions[tabLang]} onChange={e => update(editing.id, pr => ({ ...pr, descriptions: { ...pr.descriptions, [tabLang]: e.target.value } }))} />
+                </div>
+              </div>
 
-                  <div style={{ marginTop: 26, paddingTop: 20, borderTop: '1px dashed #e2d8ca' }}>
-                    <div className="admin-label" style={{ color: '#a08a6d' }}>Состав</div>
+              <div style={{ marginTop: 22, paddingTop: 18, borderTop: '1px dashed #e2d8ca' }}>
+                <div className="admin-label" style={{ color: '#a08a6d' }}>Состав</div>
                     <p style={{ margin: '-2px 0 12px', fontSize: 12.5, color: '#a89a88', lineHeight: 1.55 }}>
-                      Заголовки колонок кликабельны (например «1 таблетка», «Норма %»). Кнопка «вложить» делает строку подчинённой предыдущей. Порядок = порядок на сайте. Пустые строки не сохраняются.
+                      Таблица = как на сайте: колонки и их заголовки (например «1 таблетка», «Норма %») показываются на сайте ровно так же. Пустой заголовок колонки на сайте не отображается. Кнопка «вложить» делает строку подчинённой предыдущей. Порядок = порядок на сайте. Пустые строки не сохраняются.
                     </p>
                     {(() => {
                       const entries = parseSpecEntries(getSpecLines(editing, tabLang));
                       const blocks = buildSpecBlocks(entries);
                       const blockCount = blocks.length;
-                      const staticHead = ['Компонент', 'Дозировка', 'Дозировка 2', 'Норма %'];
                       return (
                         <>
                           <div className="admin-spec">
@@ -883,21 +915,18 @@ const AdminPanel: React.FC = () => {
                                       </div>
                                     </div>
                                     <div className="admin-spec-card-body">
+                                      <div className="admin-spec-table-wrap">
                                       <table className="admin-spec-table">
                                         <thead>
                                           <tr>
                                             <th className="admin-spec-nest-col"></th>
-                                            {block.headers.map((h, ci) => (
-                                              <th key={ci} style={{ minWidth: ci === 0 ? 240 : 110 }}>
-                                                {block.headerIdx !== null ? (
-                                                  <input
-                                                    value={h}
-                                                    onChange={e => update(editing.id, pr => setSpecCell(pr, tabLang, block.headerIdx, ci, e.target.value))}
-                                                    placeholder={staticHead[ci] ?? ''}
-                                                  />
-                                                ) : (
-                                                  <span>{staticHead[ci] ?? ''}</span>
-                                                )}
+                                            {Array.from({ length: blockColCount(block) }).map((_, ci) => (
+                                              <th key={ci} style={{ width: ci === 0 ? '30%' : undefined }}>
+                                                <input
+                                                  value={block.headerIdx !== null ? (block.headers[ci] ?? '') : ''}
+                                                  onChange={e => update(editing.id, pr => setSpecHeader(pr, tabLang, block, ci, e.target.value))}
+                                                  placeholder={ci === 0 ? 'Название' : 'Заголовок колонки'}
+                                                />
                                               </th>
                                             ))}
                                             <th className="admin-spec-actions-col"></th>
@@ -911,9 +940,9 @@ const AdminPanel: React.FC = () => {
                                                 <td className="admin-spec-nest-col">
                                                   <button type="button" title={sub ? 'Снять вложенность' : 'Вложить под предыдущее'} onClick={() => update(editing.id, pr => toggleSpecSub(pr, tabLang, row.entryIdx))} className={'admin-spec-icobtn' + (sub ? ' active' : '')}><ArrowDownLeft size={15} /></button>
                                                 </td>
-                                                {row.cells.map((c, ci) => (
+                                                {Array.from({ length: blockColCount(block) }).map((_, ci) => (
                                                   <td key={ci}>
-                                                    <input value={c} onChange={e => update(editing.id, pr => setSpecCell(pr, tabLang, row.entryIdx, ci, e.target.value))} placeholder={ci === 0 ? 'Активное вещество' : 'Доза'} />
+                                                    <input value={row.cells[ci] ?? ''} onChange={e => update(editing.id, pr => setSpecCell(pr, tabLang, row.entryIdx, ci, e.target.value))} placeholder={ci === 0 ? 'Название вещества' : 'Значение'} />
                                                   </td>
                                                 ))}
                                                 <td className="admin-spec-actions-col">
@@ -928,6 +957,7 @@ const AdminPanel: React.FC = () => {
                                           })}
                                         </tbody>
                                       </table>
+                                      </div>
                                       <button type="button" className="admin-spec-add" onClick={() => update(editing.id, pr => addSpecRowTo(pr, tabLang, block))}>
                                         <Plus size={14} style={{ verticalAlign: -2, marginRight: 5 }} />Добавить вещество
                                       </button>
@@ -953,8 +983,6 @@ const AdminPanel: React.FC = () => {
                         </>
                       );
                     })()}
-                  </div>
-                </div>
               </div>
             </div>
 

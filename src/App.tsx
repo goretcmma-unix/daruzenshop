@@ -258,9 +258,7 @@ const App: React.FC = () => {
   const [activeSection, setActiveSection] = useState('top');
   const [selectedProduct, setSelectedProduct] = useState<LocalizedProduct | null>(null);
   const [modalQuantity, setModalQuantity] = useState(1);
-  const [productTab, setProductTab] = useState(0);
   const selectedProductImage = useNormalizedImage(selectedProduct?.image);
-  const swipeStartX = useRef(0);
   const navClickRef = useRef(false);
 
   const [page, setPage] = useState(0);
@@ -1429,9 +1427,10 @@ const App: React.FC = () => {
                 boxShadow: '0 25px 50px -12px rgba(0,0,0,0.25)'
               }}
             >
+              <motion.div className="modal-image-col">
               <motion.div 
                 className="modal-image-wrapper"
-                style={{ flex: '1 1 54%', display: 'flex', alignItems: 'flex-start', justifyContent: 'center', position: 'relative' }}
+                style={{ flex: '1 1 auto', display: 'flex', alignItems: 'flex-start', justifyContent: 'center', position: 'relative' }}
               >
                  <motion.img 
                   initial={{ scale: 0.8, opacity: 0 }}
@@ -1458,89 +1457,52 @@ const App: React.FC = () => {
                     <X size={16} color="var(--text-muted)" />
                    </motion.button>
                  </motion.div>
-                 <div className="modal-info-wrapper">
+                 <div className="modal-buy-under">
+                   <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '16px' }}>
+                     <span style={{ fontWeight: '600', fontSize: '15px', color: '#8e8e93' }}>{t.modal.quantity}</span>
+                     <div style={{ display: 'flex', alignItems: 'center', gap: '18px', background: '#F5F5F7', padding: '8px 18px', borderRadius: '12px' }}>
+                       <QtyButton label="-" onClick={() => setModalQuantity(q => Math.max(1, q - 1))}>
+                         <Minus size={18} />
+                       </QtyButton>
+                       <span style={{ fontWeight: '700', minWidth: '24px', textAlign: 'center', fontSize: '18px' }}>{modalQuantity}</span>
+                       <QtyButton label="+" withRotate onClick={() => setModalQuantity(q => q + 1)}>
+                         <Plus size={18} />
+                       </QtyButton>
+                     </div>
+                   </div>
+                   <div className="modal-buy-actions">
+                     <motion.button 
+                       whileHover={{ scale: 1.02 }}
+                       whileTap={{ scale: 0.98 }}
+                       onClick={() => addToCart(selectedProduct, modalQuantity)}
+                       className="btn btn-primary"
+                       style={{ height: '54px', borderRadius: '14px', fontSize: '16px', boxShadow: '0 4px 12px rgba(93, 64, 55, 0.1)' }}
+                     >
+                       <ShoppingCart size={20} /> {t.cart.inCart}
+                     </motion.button>
+                     <motion.button 
+                       whileHover={{ scale: 1.02, background: '#20b857' }}
+                       whileTap={{ scale: 0.98 }}
+                       onClick={() => buyNow(selectedProduct, modalQuantity)} 
+                       className="modal-buy-btn"
+                       style={{ background: 'linear-gradient(135deg, #25D366 0%, #128C7E 100%)', color: 'white', border: 'none', height: '54px', borderRadius: '14px', fontWeight: '700', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', transition: 'all 0.2s ease', boxShadow: '0 10px 20px rgba(37, 211, 102, 0.15)' }}
+                     >
+                       {t.cart.buyNow}
+                     </motion.button>
+                   </div>
+                 </div>
+              </motion.div>
+              <div className="modal-info-wrapper">
                   <span className="modal-category" style={{ color: 'var(--accent)', fontWeight: '800', fontSize: '12px', textTransform: 'uppercase', letterSpacing: '0.18em', marginBottom: '20px' }}>{selectedProduct.category}</span>
                   <h2 className="modal-title" style={{ fontWeight: '700', marginBottom: '16px', lineHeight: '1.15', color: 'var(--primary-dark)', letterSpacing: '-0.03em' }}>{selectedProduct.name}</h2>
                    <div className="modal-price" style={{ fontWeight: '700', marginBottom: '32px', color: 'var(--primary)' }}>{formatPrice(selectedProduct.price, lang)}</div>
                   
-                   <div className="modal-tabs">
-                     <button type="button" className={`modal-tab ${productTab === 0 ? 'active' : ''}`} onClick={() => setProductTab(0)}>{t.modal.description}</button>
-                     <button type="button" className={`modal-tab ${productTab === 1 ? 'active' : ''}`} onClick={() => setProductTab(1)}>{t.modal.composition}</button>
-                   </div>
-                    <motion.div
-                      className="modal-swipe"
-                      onPointerDown={(e) => { swipeStartX.current = e.clientX; }}
-                      onPointerUp={(e) => {
-                        const dx = e.clientX - swipeStartX.current;
-                        if (Math.abs(dx) < 30) return;
-                        setProductTab((t) => (dx < 0 ? Math.min(1, t + 1) : Math.max(0, t - 1)));
-                      }}
-                      style={{ position: 'relative' }}
-                    >
-                      <AnimatePresence mode="wait" initial={false}>
-                        {productTab === 0 ? (
-                          <motion.div
-                            key="desc"
-                            className="modal-panel"
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            exit={{ opacity: 0 }}
-                            transition={{ duration: 0.18 }}
-                           >
-                             <div className="desc-card__content">
-                               <p>{selectedProduct.description}</p>
-                             </div>
-                           </motion.div>
-                        ) : (
-                          <motion.div
-                            key="comp"
-                            className="modal-panel"
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            exit={{ opacity: 0 }}
-                            transition={{ duration: 0.18 }}
-                          >
-                                <CompositionPanel specs={selectedProduct.specs} t={t} />
-                          </motion.div>
-                        )}
-                      </AnimatePresence>
-                    </motion.div>
-                   
-                     <div style={{ paddingTop: '32px' }}>
-                     <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '16px' }}>
-                        <span style={{ fontWeight: '600', fontSize: '15px', color: '#8e8e93' }}>{t.modal.quantity}</span>
-                       <div style={{ display: 'flex', alignItems: 'center', gap: '18px', background: '#F5F5F7', padding: '8px 18px', borderRadius: '12px' }}>
-                         <QtyButton label="-" onClick={() => setModalQuantity(q => Math.max(1, q - 1))}>
-                           <Minus size={18} />
-                         </QtyButton>
-                         <span style={{ fontWeight: '700', minWidth: '24px', textAlign: 'center', fontSize: '18px' }}>{modalQuantity}</span>
-                         <QtyButton label="+" withRotate onClick={() => setModalQuantity(q => q + 1)}>
-                           <Plus size={18} />
-                         </QtyButton>
-                       </div>
+                   <motion.div className="modal-swipe" style={{ position: 'relative' }}>
+                     <div className="desc-card__content">
+                       <p>{selectedProduct.description}</p>
                      </div>
-
-                     <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                       <motion.button 
-                         whileHover={{ scale: 1.02 }}
-                         whileTap={{ scale: 0.98 }}
-                         onClick={() => addToCart(selectedProduct, modalQuantity)}
-                         className="btn btn-primary"
-                         style={{ width: '100%', height: '54px', borderRadius: '14px', fontSize: '16px', boxShadow: '0 4px 12px rgba(93, 64, 55, 0.1)' }}
-                       >
-                         <ShoppingCart size={20} /> {t.cart.inCart}
-                       </motion.button>
-                        <motion.button 
-                          whileHover={{ scale: 1.02, background: '#20b857' }}
-                          whileTap={{ scale: 0.98 }}
-                          onClick={() => buyNow(selectedProduct, modalQuantity)} 
-                          className="modal-buy-btn"
-                          style={{ width: '100%', background: 'linear-gradient(135deg, #25D366 0%, #128C7E 100%)', color: 'white', border: 'none', borderRadius: '22px', fontWeight: '700', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', transition: 'all 0.2s ease', boxShadow: '0 10px 20px rgba(37, 211, 102, 0.15)' }}
-                        >
-                         {t.cart.buyNow}
-                       </motion.button>
-                     </div>
-                     </div>
+                     <CompositionPanel specs={selectedProduct.specs} t={t} />
+                   </motion.div>
                   </div>
                 </motion.div>
               </div>

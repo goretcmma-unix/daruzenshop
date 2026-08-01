@@ -388,8 +388,16 @@ a:hover {
   padding: clamp(28px, 4vw, 52px);
 }
 
-.modal-image-wrapper {
+.modal-image-col {
   flex: 1 1 54%;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.modal-image-wrapper {
+  flex: 1 1 auto;
   min-width: 0;
   display: flex;
   align-items: flex-start;
@@ -448,9 +456,24 @@ a:hover {
   font-size: clamp(16px, 2.5vw, 18px);
 }
 
+.modal-buy-under {
+  margin-top: auto;
+  padding-top: 28px;
+}
+
+.modal-buy-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.modal-buy-actions > * {
+  flex: 1 1 0;
+  min-width: 0;
+}
+
 .modal-swipe {
   position: relative;
-  flex: 0 1 auto;
+  flex: 1 1 auto;
   min-width: 0;
   min-height: 0;
   overflow-y: auto;
@@ -769,12 +792,21 @@ a:hover {
     gap: 0 !important;
     padding: 0 !important;
   }
+  .modal-image-col {
+    flex: none !important;
+  }
   .modal-image-wrapper {
     flex: none !important;
     min-height: 0;
     height: 38vh !important;
     padding: 12px !important;
     align-items: center !important;
+  }
+  .modal-buy-under {
+    padding: 16px 20px 24px;
+  }
+  .modal-buy-actions {
+    flex-direction: column;
   }
   .modal-image {
     width: auto !important;
@@ -807,6 +839,9 @@ a:hover {
 }
 
 @media (max-height: 700px) and (max-width: 480px) {
+  .modal-image-col {
+    flex: none !important;
+  }
   .modal-image-wrapper {
     flex: none !important;
     height: 45vh !important;

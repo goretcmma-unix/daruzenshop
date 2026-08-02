@@ -912,13 +912,13 @@ export interface LocalizedProduct {
 export const localizeProducts = (lang: Lang, source: Product[] = products): LocalizedProduct[] =>
   source.map(p => ({
     id: p.id,
-    name: p.names[lang],
+    name: p.names[lang] || p.names.ru,
     categoryKey: p.categoryKey,
     category: categoryLabels[lang][p.categoryKey],
     price: p.price,
     image: p.image,
-    description: p.descriptions[lang],
-    specs: p.specs ? p.specs[lang] : undefined,
+    description: p.descriptions[lang] || p.descriptions.ru,
+    specs: p.specs ? (p.specs[lang] || p.specs.ru) : undefined,
   }));
 
 // Ключи категорий (первый — «все»)

@@ -1,28 +1,37 @@
 import { useEffect, useRef, useState } from 'react';
-import { RefreshCw, Eye, EyeOff, Plus, Minus, Trash2, ChevronUp, ChevronDown, ArrowDownLeft } from 'lucide-react';
+import {
+  Eye, EyeOff, Plus, Trash2, ChevronUp, ChevronDown, X, Upload,
+  ImageIcon, Type, Coins, FileText, ListChecks, Sparkles, Languages,
+  CheckCircle2, ArrowRight, ArrowLeft, Save, Pencil, LayoutGrid,
+  Settings, Package, Pill, Citrus, Gem, Leaf, Lightbulb, Camera, FlaskConical,
+} from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { supabase, fetchProducts, upsertProduct, deleteProduct, uploadProductImage } from '../lib/supabase';
 import { autoTranslateFromRu } from '../lib/translate';
 import { cropToStandard } from '../lib/imagePipeline';
 import { NormalizedImg } from './NormalizedImg';
-import { parseCompositionLine, dedupeProducts, products, type Product, type CategoryKey, type Lang } from '../data';
+import { parseCompositionLine, dedupeProducts, products, type Product, type CategoryKey } from '../data';
 
-const CATEGORIES: { key: CategoryKey; label: string }[] = [
-  { key: 'supplements', label: 'Добавки' },
-  { key: 'vitamins', label: 'Витамины' },
-  { key: 'minerals', label: 'Минералы' },
-  { key: 'beauty', label: 'Красота' },
-  { key: 'herbs', label: 'Травы' },
+const CATEGORIES: { key: CategoryKey; label: string; icon: React.ReactNode; desc: string }[] = [
+  { key: 'supplements', label: 'Добавки', icon: <Pill size={20} />, desc: 'БАДы и спортивные добавки' },
+  { key: 'vitamins', label: 'Витамины', icon: <Citrus size={20} />, desc: 'Витамины и комплексы' },
+  { key: 'minerals', label: 'Минералы', icon: <Gem size={20} />, desc: 'Железо, цинк, магний и др.' },
+  { key: 'beauty', label: 'Красота', icon: <Sparkles size={20} />, desc: 'Для кожи, волос и ногтей' },
+  { key: 'herbs', label: 'Травы', icon: <Leaf size={20} />, desc: 'Травяные экстракты' },
 ];
 
 const CAT_LABEL: Record<CategoryKey, string> = Object.fromEntries(
   CATEGORIES.map(c => [c.key, c.label]),
 ) as Record<CategoryKey, string>;
 
-const LANGS: Lang[] = ['ru', 'tr', 'en', 'ar'];
-const LANG_LABELS: Record<Lang, string> = { ru: 'РУ', tr: 'TR', en: 'EN', ar: 'AR' };
-
-// Поля логина/пароля вводятся пользователем — никаких учётных данных в коде
 const ADMIN_EMAIL_HINT = 'daruzenshop@outlook.com';
+
+const imgCardStyle: React.CSSProperties = {
+  width: '100%',
+  height: '100%',
+  objectFit: 'cover',
+  display: 'block',
+};
 
 const emptyProduct = (): Product => ({
   id: 'prod-' + Date.now(),
@@ -34,53 +43,67 @@ const emptyProduct = (): Product => ({
   specs: undefined,
 });
 
-const input: React.CSSProperties = {
+/* ------------------------------------------------------------------ */
+/*  Простая модель состава                                             */
+/* ------------------------------------------------------------------ */
+type SpecRow =
+  | { kind: 'section'; text: string }
+  | { kind: 'row'; cells: string[] }
+  | { kind: 'note'; text: string };
+
+const parseSpecs = (lines: string[]): SpecRow[] =>
+  lines.map(parseCompositionLine).map(p => {
+    if (p.type === 'section') return { kind: 'section', text: p.text };
+    if (p.type === 'note') return { kind: 'note', text: p.text };
+    if (p.type === 'row') return { kind: 'row', cells: p.cells };
+    return { kind: 'row', cells: [] };
+  });
+
+const serializeSpecs = (rows: SpecRow[]): string[] =>
+  rows
+    .filter(r => {
+      if (r.kind === 'row') return r.cells.some(c => c.trim());
+      return r.text.trim();
+    })
+    .map(r => {
+      if (r.kind === 'section') return `# ${r.text.trim()}`;
+      if (r.kind === 'note') return `~~ ${r.text.trim()}`;
+      const cells = r.cells.map(c => c.trim());
+      while (cells.length && !cells[cells.length - 1]) cells.pop();
+      return cells.join(' | ');
+    });
+
+const rowCellLabel = (i: number): string =>
+  i === 0 ? 'Название вещества' : i === 1 ? 'Дозировка' : i === 2 ? '% от суточной нормы' : `Колонка ${i + 1}`;
+
+/* ------------------------------------------------------------------ */
+/*  Стили                                                              */
+/* ------------------------------------------------------------------ */
+const field: React.CSSProperties = {
   width: '100%',
   boxSizing: 'border-box',
-  padding: '11px 13px',
-  fontSize: '15px',
-  borderRadius: '12px',
-  border: '1px solid #e4e0db',
-  background: '#fbfaf8',
+  padding: '13px 16px',
+  fontSize: '16px',
+  borderRadius: '14px',
+  border: '2px solid #e7e2db',
+  background: '#fff',
   fontFamily: 'inherit',
   color: 'var(--text-main)',
   outline: 'none',
+  transition: 'border-color .15s ease, box-shadow .15s ease',
 };
 
-const label: React.CSSProperties = {
+const fieldLabel: React.CSSProperties = {
   display: 'block',
-  fontSize: '12px',
-  fontWeight: '700',
-  letterSpacing: '0.04em',
-  textTransform: 'uppercase',
-  color: 'var(--text-muted)',
-  margin: '14px 0 6px',
-};
-
-const btnGold: React.CSSProperties = {
-  padding: '11px 18px',
-  borderRadius: '12px',
-  border: 'none',
-  background: 'linear-gradient(180deg, #f0cd83 0%, #e7be63 100%)',
-  color: '#5e3312',
-  fontWeight: '700',
   fontSize: '15px',
-  cursor: 'pointer',
-};
-
-const btnGhost: React.CSSProperties = {
-  padding: '11px 18px',
-  borderRadius: '12px',
-  border: '1px solid #e4e0db',
-  background: '#fff',
+  fontWeight: '700',
   color: 'var(--text-main)',
-  fontWeight: '600',
-  fontSize: '15px',
-  cursor: 'pointer',
+  margin: '0 0 8px',
 };
 
-// Кастомное поле пароля: в DOM попадают только точки, реальное значение —
-// только в ref (память JS), поэтому в «коде элемента» пароль не виден.
+/* ------------------------------------------------------------------ */
+/*  Поле пароля                                                        */
+/* ------------------------------------------------------------------ */
 const PasswordField: React.FC<{
   valueRef: React.MutableRefObject<string>;
   onEnter: () => void;
@@ -91,7 +114,6 @@ const PasswordField: React.FC<{
   const setVal = (v: string) => { valueRef.current = v; setValue(v); };
   return (
     <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
-      <style>{`@keyframes pwBlink{50%{opacity:0}}.pw-caret{animation:pwBlink 1s step-end infinite;margin-left:1px;fontWeight:400;}`}</style>
       <div
         tabIndex={0}
         onFocus={() => setFocused(true)}
@@ -107,29 +129,25 @@ const PasswordField: React.FC<{
           if (text) setVal(valueRef.current + text);
         }}
         style={{
-          ...input,
+          ...field,
           display: 'flex',
           alignItems: 'center',
           cursor: 'text',
           color: 'var(--text-main)',
-          paddingRight: 42,
-          borderColor: focused ? 'var(--accent)' : '#e4e0db',
-          boxShadow: focused ? '0 0 0 3px rgba(207,155,65,0.18)' : 'none',
+          paddingRight: 46,
+          borderColor: focused ? 'var(--accent)' : '#e7e2db',
+          boxShadow: focused ? '0 0 0 4px rgba(207,155,65,0.15)' : 'none',
         }}
       >
-        {show
-          ? value
-          : value.length > 0
-            ? '•'.repeat(value.length)
-            : <span style={{ color: '#bcb4aa' }}>••••••</span>}
-        {focused && <span className="pw-caret">|</span>}
+        {show ? value : value.length > 0 ? '•'.repeat(value.length) : <span style={{ color: '#c2bab0' }}>••••••</span>}
+        {focused && <span style={{ marginLeft: 1 }}>|</span>}
       </div>
       <button
         type="button"
         onClick={() => setShow(s => !s)}
         tabIndex={-1}
         aria-label={show ? 'Скрыть пароль' : 'Показать пароль'}
-        style={{ position: 'absolute', right: 12, background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)', display: 'flex', alignItems: 'center' }}
+        style={{ position: 'absolute', right: 14, background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)', display: 'flex', alignItems: 'center' }}
       >
         {show ? <EyeOff size={18} /> : <Eye size={18} />}
       </button>
@@ -137,6 +155,9 @@ const PasswordField: React.FC<{
   );
 };
 
+/* ------------------------------------------------------------------ */
+/*  Компонент                                                          */
+/* ------------------------------------------------------------------ */
 const AdminPanel: React.FC = () => {
   const [session, setSession] = useState<{ user: { email: string } } | null>(null);
   const [hadSession, setHadSession] = useState(false);
@@ -144,23 +165,23 @@ const AdminPanel: React.FC = () => {
   const passwordRef = useRef('');
   const [authError, setAuthError] = useState('');
   const [items, setItems] = useState<Product[]>([]);
-  const [editingId, setEditingId] = useState<string | null>(() => {
-    try { return sessionStorage.getItem('adminEditingId'); } catch { return null; }
-  });
-  const [editingDraft, setEditingDraft] = useState<Product | null>(() => {
-    try {
-      const raw = sessionStorage.getItem('adminEditingDraft');
-      return raw ? JSON.parse(raw) : null;
-    } catch { return null; }
-  });
+  const [draft, setDraft] = useState<Product | null>(null);
+  const [step, setStep] = useState(0);
+  const [specRows, setSpecRows] = useState<SpecRow[]>([]);
   const [savingId, setSavingId] = useState<string | null>(null);
   const [translatingId, setTranslatingId] = useState<string | null>(null);
   const [dragOver, setDragOver] = useState(false);
-  const [tabLang, setTabLang] = useState<Lang>('ru');
-  const [showHint, setShowHint] = useState(false);
   const [notice, setNotice] = useState('');
   const [savedId, setSavedId] = useState<string | null>(null);
-  const [openDoseCols, setOpenDoseCols] = useState<Record<string, number>>({});
+  const [showHelp, setShowHelp] = useState(true);
+
+  const steps = [
+    { id: 'photo', label: 'Фотография', icon: ImageIcon, hint: 'Покажите товар красиво — фото привлекает покупателя. Перетащите картинку прямо в это окно или нажмите на него.' },
+    { id: 'name', label: 'Название', icon: Type, hint: 'Напишите название по-русски. Остальные языки (турецкий, английский, арабский) мы переведём автоматически — кнопка «Перевести» в конце.' },
+    { id: 'price', label: 'Цена и категория', icon: Coins, hint: 'Выберите, к какому разделу относится товар, и укажите цену в турецких лирах (₺).' },
+    { id: 'desc', label: 'Описание', icon: FileText, hint: 'Расскажите о товаре простыми словами: что это, зачем, как принимать. Это увидит покупатель.' },
+    { id: 'specs', label: 'Состав', icon: ListChecks, hint: 'Что внутри? Название вещества, дозировка и % от суточной нормы. Пустые поля просто не покажем.' },
+  ];
 
   useEffect(() => {
     if (!supabase) return;
@@ -183,26 +204,6 @@ const AdminPanel: React.FC = () => {
     }
   }, [session]);
 
-  useEffect(() => {
-    try {
-      if (editingId) sessionStorage.setItem('adminEditingId', editingId);
-      else sessionStorage.removeItem('adminEditingId');
-    } catch { /* ignore */ }
-  }, [editingId]);
-
-  useEffect(() => {
-    try {
-      if (editingDraft) sessionStorage.setItem('adminEditingDraft', JSON.stringify(editingDraft));
-      else sessionStorage.removeItem('adminEditingDraft');
-    } catch { /* ignore */ }
-  }, [editingDraft]);
-
-  useEffect(() => {
-    if (!editingId) return;
-    const t = setTimeout(() => setShowHint(false), 2800);
-    return () => clearTimeout(t);
-  }, [editingId]);
-
   const login = async () => {
     if (!supabase) return;
     setAuthError('');
@@ -215,28 +216,29 @@ const AdminPanel: React.FC = () => {
     setHadSession(false);
     setSession(null);
     setItems([]);
+    setDraft(null);
   };
 
-  const update = (id: string, fn: (p: Product) => Product) => {
-    setItems(prev => prev.map(p => (p.id === id ? fn(p) : p)));
-    setEditingDraft(prev => prev && prev.id === id ? fn(prev) : prev);
+  const updateDraft = (fn: (p: Product) => Product) => {
+    setDraft(prev => (prev ? fn(prev) : prev));
   };
 
-  const save = async (p: Product) => {
-    setSavingId(p.id);
+  const save = async () => {
+    if (!draft) return;
+    setSavingId(draft.id);
     setNotice('');
     try {
-      await upsertProduct(p);
+      const final = { ...draft, specs: { ...(draft.specs ?? {}), ru: serializeSpecs(specRows) } };
+      await upsertProduct(final);
       setItems(prev => {
-        const i = prev.findIndex(x => x.id === p.id);
-        if (i >= 0) { const next = [...prev]; next[i] = p; return next; }
-        return [p, ...prev];
+        const i = prev.findIndex(x => x.id === final.id);
+        if (i >= 0) { const next = [...prev]; next[i] = final; return next; }
+        return [final, ...prev];
       });
-      setSavedId(p.id);
+      setSavedId(final.id);
       await new Promise(r => setTimeout(r, 1200));
       setSavedId(null);
-      setEditingDraft(null);
-      setEditingId(null);
+      setDraft(null);
       setNotice('');
     } catch (e: unknown) {
       const msg =
@@ -253,25 +255,32 @@ const AdminPanel: React.FC = () => {
     if (!window.confirm('Удалить этот товар?')) return;
     await deleteProduct(id);
     setItems(prev => prev.filter(p => p.id !== id));
-    if (editingId === id) { setEditingDraft(null); setEditingId(null); }
+    if (draft?.id === id) setDraft(null);
   };
 
   const add = () => {
     const p = emptyProduct();
-    setItems(prev => [p, ...prev]);
-    setTabLang('ru');
-    setEditingDraft(p);
-    setEditingId(p.id);
-    setShowHint(true);
+    setDraft(p);
+    setSpecRows([]);
+    setStep(0);
+    setShowHelp(true);
   };
 
-  const translate = async (p: Product) => {
-    setTranslatingId(p.id);
-    setNotice('Перевод…');
+  const edit = (p: Product) => {
+    setDraft({ ...p });
+    setSpecRows(parseSpecs(p.specs?.ru ?? []));
+    setStep(0);
+    setShowHelp(true);
+  };
+
+  const translate = async () => {
+    if (!draft) return;
+    setTranslatingId(draft.id);
+    setNotice('Переводим на другие языки…');
     try {
-      const translated = await autoTranslateFromRu(p);
-      update(p.id, () => translated);
-      setTabLang('en');
+      const withRu = { ...draft, specs: { ...(draft.specs ?? {}), ru: serializeSpecs(specRows) } };
+      const translated = await autoTranslateFromRu(withRu);
+      setDraft(translated);
       setNotice('Переведено ✓');
       setTimeout(() => setNotice(''), 3000);
     } catch {
@@ -282,10 +291,10 @@ const AdminPanel: React.FC = () => {
   };
 
   const handleImageFile = (file: File | null) => {
-    if (!editing || !file || !file.type.startsWith('image/')) return;
+    if (!draft || !file || !file.type.startsWith('image/')) return;
     const localUrl = URL.createObjectURL(file);
-    update(editing.id, pr => ({ ...pr, image: localUrl }));
-    setNotice('Обработка фото…');
+    updateDraft(pr => ({ ...pr, image: localUrl }));
+    setNotice('Обрабатываем фото…');
     const img = new Image();
     img.onload = async () => {
       try {
@@ -293,8 +302,8 @@ const AdminPanel: React.FC = () => {
         const blob: Blob = await new Promise((resolve, reject) =>
           c.toBlob(b => (b ? resolve(b) : reject(new Error('Ошибка конвертации фото'))), 'image/webp', 0.95)
         );
-        const url = await uploadProductImage(editing.id, blob);
-        update(editing.id, pr => ({ ...pr, image: url }));
+        const url = await uploadProductImage(draft.id, blob);
+        updateDraft(pr => ({ ...pr, image: url }));
         setNotice('');
       } catch (e: unknown) {
         setNotice('Ошибка загрузки фото: ' + String(e instanceof Error ? e.message : e));
@@ -308,860 +317,529 @@ const AdminPanel: React.FC = () => {
     img.src = localUrl;
   };
 
-  type SpecEntry = { type: 'section' | 'colheader' | 'row' | 'note'; cells: string[] };
+  const mutateRow = (idx: number, fn: (r: SpecRow) => SpecRow) =>
+    setSpecRows(prev => prev.map((r, i) => (i === idx ? fn(r) : r)));
 
-  const parseSpecEntries = (lines: string[]): SpecEntry[] => {
-    const parts = lines.map(line => parseCompositionLine(line));
-    const entries: SpecEntry[] = [];
-    parts.forEach((p, i) => {
-      if (p.type === 'section') { entries.push({ type: 'section', cells: [p.text] }); return; }
-      if (p.type === 'note') { entries.push({ type: 'note', cells: [p.text] }); return; }
-      if (p.type === 'colheader' || (p.type === 'row' && parts[i + 1]?.type === 'sep')) {
-        entries.push({ type: 'colheader', cells: [...p.cells] });
-        return;
-      }
-      if (p.type === 'row') { entries.push({ type: 'row', cells: [...p.cells] }); return; }
+  const moveRow = (idx: number, dir: -1 | 1) =>
+    setSpecRows(prev => {
+      const target = idx + dir;
+      if (target < 0 || target >= prev.length) return prev;
+      const next = [...prev];
+      [next[idx], next[target]] = [next[target], next[idx]];
+      return next;
     });
-    return entries;
-  };
 
-  const serializeSpecEntry = (e: SpecEntry): string => {
-    if (e.type === 'section') return `# ${(e.cells[0] ?? '').trim()}`.trimEnd();
-    if (e.type === 'note') return `~~ ${(e.cells[0] ?? '').trim()}`.trimEnd();
-    if (e.type === 'colheader') {
-      const cells = e.cells.map(c => c.trim());
-      while (cells.length && !cells[cells.length - 1]) cells.pop();
-      return `## ${cells.join(' | ')}`;
-    }
-    return e.cells.map(c => c.trim()).filter(Boolean).join(' | ');
-  };
+  const removeRow = (idx: number) =>
+    setSpecRows(prev => prev.filter((_, i) => i !== idx));
 
-  const entriesToSpecs = (entries: SpecEntry[]): string[] =>
-    entries.map(serializeSpecEntry);
-
-  const writeSpecs = (p: Product, l: Lang, entries: SpecEntry[]): Product => ({
-    ...p,
-    specs: { ...(p.specs ?? {}), [l]: entriesToSpecs(entries) },
-  });
-
-  const getSpecLines = (p: Product, l: Lang): string[] => p.specs?.[l] ?? [];
-
-  type SpecRow = { entryIdx: number; cells: string[]; note?: boolean };
-  type SpecBlock =
-    | { kind: 'section'; entryIdx: number; text: string }
-    | { kind: 'table'; headerIdx: number | null; headers: string[]; rows: SpecRow[] };
-
-  const buildSpecBlocks = (entries: SpecEntry[]): SpecBlock[] => {
-    const blocks: SpecBlock[] = [];
-    let cur: Extract<SpecBlock, { kind: 'table' }> | null = null;
-    entries.forEach((e, i) => {
-      if (e.type === 'section') {
-        cur = null;
-        blocks.push({ kind: 'section', entryIdx: i, text: e.cells[0] ?? '' });
-      } else if (e.type === 'colheader') {
-        cur = { kind: 'table', headerIdx: i, headers: e.cells, rows: [] };
-        blocks.push(cur);
-      } else {
-        if (!cur) {
-          cur = { kind: 'table', headerIdx: null, headers: [], rows: [] };
-          blocks.push(cur);
-        }
-        cur.rows.push({ entryIdx: i, cells: e.cells, note: e.type === 'note' });
+  const stepError = (): string | null => {
+    if (!draft) return null;
+    switch (step) {
+      case 0:
+        return draft.image.trim() ? null : 'Добавьте фотографию товара';
+      case 1:
+        return draft.names.ru.trim() ? null : 'Напишите название товара';
+      case 2:
+        return draft.price > 0 ? null : 'Укажите цену товара';
+      case 3:
+        return draft.descriptions.ru.trim() ? null : 'Напишите описание товара';
+      case 4: {
+        const hasRow = specRows.some(r => {
+          if (r.kind === 'row') return r.cells.some(c => c.trim());
+          return r.text.trim();
+        });
+        return hasRow ? null : 'Добавьте хотя бы один пункт состава';
       }
-    });
-    return blocks;
-  };
-
-  const tableInsertRowIdx = (t: Extract<SpecBlock, { kind: 'table' }>): number => {
-    const firstNote = t.rows.findIndex(r => r.note);
-    const before = firstNote === -1 ? t.rows.length : firstNote;
-    return before ? t.rows[before - 1].entryIdx + 1 : (t.headerIdx ?? 0) + 1;
-  };
-
-  const blockRange = (b: SpecBlock): [number, number] => {
-    if (b.kind === 'section') return [b.entryIdx, b.entryIdx + 1];
-    const start = b.headerIdx ?? (b.rows.length ? b.rows[0].entryIdx : 0);
-    const end = b.rows.length ? b.rows[b.rows.length - 1].entryIdx + 1 : (b.headerIdx ?? -1) + 1;
-    return [start, end];
-  };
-
-  const moveSpecRange = (entries: SpecEntry[], start: number, count: number, dir: 1 | -1): SpecEntry[] => {
-    const copy = entries.slice();
-    if (dir === -1) {
-      if (start <= 0) return copy;
-      const moved = copy.splice(start, count);
-      copy.splice(start - 1, 0, ...moved);
-    } else {
-      if (start + count >= copy.length) return copy;
-      const moved = copy.splice(start, count);
-      copy.splice(start + count, 0, ...moved);
+      default:
+        return null;
     }
-    return copy;
   };
 
-  const setSpecCell = (p: Product, l: Lang, entryIdx: number, cellIdx: number, value: string): Product => {
-    const entries = parseSpecEntries(getSpecLines(p, l));
-    const e = entries[entryIdx];
-    if (!e) return p;
-    entries[entryIdx] = { ...e, cells: [...e.cells] };
-    entries[entryIdx].cells[cellIdx] = value;
-    return writeSpecs(p, l, entries);
-  };
-
-  const setSpecHeader = (p: Product, l: Lang, block: Extract<SpecBlock, { kind: 'table' }>, cellIdx: number, value: string): Product => {
-    const entries = parseSpecEntries(getSpecLines(p, l));
-    if (block.headerIdx !== null) {
-      const e = entries[block.headerIdx];
-      if (!e) return p;
-      entries[block.headerIdx] = { ...e, cells: [...e.cells] };
-      entries[block.headerIdx].cells[cellIdx] = value;
-      return writeSpecs(p, l, entries);
-    }
-    const start = block.rows.length ? block.rows[0].entryIdx : 0;
-    const hc = emptyCells(blockColCount(block));
-    hc[cellIdx] = value;
-    entries.splice(start, 0, { type: 'colheader', cells: hc });
-    return writeSpecs(p, l, entries);
-  };
-
-  const toggleSpecSub = (p: Product, l: Lang, entryIdx: number): Product => {
-    const entries = parseSpecEntries(getSpecLines(p, l));
-    const e = entries[entryIdx];
-    if (!e) return p;
-    const name = (e.cells[0] ?? '').trim();
-    const sub = name.startsWith('└');
-    e.cells[0] = sub ? name.replace(/^└\s*/, '') : (name ? '└ ' + name : '└ ');
-    return writeSpecs(p, l, entries);
-  };
-
-  const emptyCells = (n: number): string[] => Array.from({ length: n }, () => '');
-
-  const blockColCount = (b: Extract<SpecBlock, { kind: 'table' }>): number =>
-    Math.max(1, b.headers.length, ...b.rows.filter(r => !r.note).map(r => r.cells.length));
-
-  const addSpecRowTo = (p: Product, l: Lang, block: Extract<SpecBlock, { kind: 'table' }>): Product => {
-    const entries = parseSpecEntries(getSpecLines(p, l));
-    entries.splice(tableInsertRowIdx(block), 0, { type: 'row', cells: emptyCells(blockColCount(block)) });
-    return writeSpecs(p, l, entries);
-  };
-
-  const addSpecColumnTo = (p: Product, l: Lang, block: Extract<SpecBlock, { kind: 'table' }>): Product => {
-    const entries = parseSpecEntries(getSpecLines(p, l));
-    const [start, end] = blockRange(block);
-    for (let i = start; i < end; i++) {
-      const e = entries[i];
-      if (!e || e.type === 'section') continue;
-      entries[i] = { ...e, cells: [...e.cells, ''] };
-    }
-    return writeSpecs(p, l, entries);
-  };
-
-  const removeSpecColumnTo = (p: Product, l: Lang, block: Extract<SpecBlock, { kind: 'table' }>): Product => {
-    const entries = parseSpecEntries(getSpecLines(p, l));
-    const [start, end] = blockRange(block);
-    for (let i = start; i < end; i++) {
-      const e = entries[i];
-      if (!e || e.type === 'section') continue;
-      entries[i] = { ...e, cells: e.cells.slice(0, -1) };
-    }
-    return writeSpecs(p, l, entries);
-  };
-
-  const addSpecNoteAfter = (p: Product, l: Lang): Product => {
-    const entries = parseSpecEntries(getSpecLines(p, l));
-    const blocks = buildSpecBlocks(entries);
-    const at = blocks.length ? blockRange(blocks[blocks.length - 1])[1] : entries.length;
-    entries.splice(at, 0, { type: 'note', cells: [''] });
-    return writeSpecs(p, l, entries);
-  };
-
-  const addSpecBlockAfter = (p: Product, l: Lang, blockIdx: number, kind: 'section' | 'table'): Product => {
-    const entries = parseSpecEntries(getSpecLines(p, l));
-    const blocks = buildSpecBlocks(entries);
-    const b = blocks[blockIdx];
-    const at = b ? blockRange(b)[1] : entries.length;
-    const line = kind === 'section'
-      ? { type: 'section' as const, cells: [''] }
-      : { type: 'colheader' as const, cells: emptyCells(4) };
-    entries.splice(at, 0, line);
-    return writeSpecs(p, l, entries);
-  };
-
-  const removeSpecBlock = (p: Product, l: Lang, blockIdx: number): Product => {
-    const entries = parseSpecEntries(getSpecLines(p, l));
-    const b = buildSpecBlocks(entries)[blockIdx];
-    if (!b) return p;
-    const [start, end] = blockRange(b);
-    entries.splice(start, end - start);
-    return writeSpecs(p, l, entries);
-  };
-
-  const removeSpecRow = (p: Product, l: Lang, entryIdx: number): Product => {
-    const entries = parseSpecEntries(getSpecLines(p, l));
-    entries.splice(entryIdx, 1);
-    return writeSpecs(p, l, entries);
-  };
-
-  const moveSpecBlock = (p: Product, l: Lang, blockIdx: number, dir: 1 | -1): Product => {
-    const entries = parseSpecEntries(getSpecLines(p, l));
-    const blocks = buildSpecBlocks(entries);
-    const swapWith = dir === -1 ? blockIdx - 1 : blockIdx + 1;
-    if (swapWith < 0 || swapWith >= blocks.length) return p;
-    const a = blockRange(blocks[Math.min(blockIdx, swapWith)]);
-    const b = blockRange(blocks[Math.max(blockIdx, swapWith)]);
-    const copy = [...entries.slice(0, a[0]), ...entries.slice(b[0], b[1]), ...entries.slice(a[0], b[0]), ...entries.slice(b[1])];
-    return writeSpecs(p, l, copy);
-  };
-
-  const moveSpecRow = (p: Product, l: Lang, entryIdx: number, dir: 1 | -1): Product => {
-    const entries = parseSpecEntries(getSpecLines(p, l));
-    const adj = entries[entryIdx + dir];
-    if (adj?.type !== 'row') return p;
-    return writeSpecs(p, l, moveSpecRange(entries, entryIdx, 1, dir));
-  };
+  const currentError = stepError();
 
   if (!supabase) {
     return (
-      <div style={{ padding: '60px 20px', textAlign: 'center', fontFamily: 'Outfit, sans-serif' }}>
-        <h2>Админ-панель</h2>
-        <p style={{ color: '#888' }}>Supabase не настроен. Заполните .env и перезапустите сайт.</p>
-      </div>
-    );
-  }
-
-  if (!session && !hadSession) {
-    return (
-      <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'Outfit, sans-serif', background: 'linear-gradient(135deg,#fbfaf8,#f1ece6)' }}>
-        <div style={{ width: '100%', maxWidth: '380px', background: '#fff', padding: '36px', borderRadius: '24px', boxShadow: '0 20px 60px rgba(99,67,49,0.12)' }}>
-          <img src="/images/dr.svg.png" alt="Daruzen" style={{ width: 72, height: 72, objectFit: 'contain', borderRadius: 16, marginBottom: 18, filter: 'brightness(0) saturate(100%) invert(26%) sepia(13%) saturate(1185%) hue-rotate(331deg) brightness(94%) contrast(89%)' }} />
-          <h2 style={{ marginTop: 0, fontSize: 22, color: 'var(--primary-dark)' }}>Личный кабинет</h2>
-          <div style={label}>Email</div>
-          <input style={input} type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder={ADMIN_EMAIL_HINT} />
-          <div style={label}>Пароль</div>
-          <PasswordField valueRef={passwordRef} onEnter={login} />
-          {authError && <p style={{ color: '#c0392b', fontSize: '14px', margin: '8px 0 0' }}>{authError}</p>}
-          <button onClick={login} style={{ ...btnGold, width: '100%', marginTop: 18, padding: 13, fontSize: 16 }}>Войти</button>
+      <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'Outfit, sans-serif' }}>
+        <div style={{ textAlign: 'center', maxWidth: 420, padding: 40 }}>
+          <div style={{ width: 72, height: 72, borderRadius: 20, margin: '0 auto 16px', background: '#f3efe9', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--primary)' }}>
+            <Settings size={32} />
+          </div>
+          <h2 style={{ marginTop: 0 }}>Панель товаров</h2>
+          <p style={{ color: '#888' }}>Supabase не настроен. Заполните .env и перезапустите сайт.</p>
         </div>
       </div>
     );
   }
 
-  const editing = editingDraft ?? items.find(p => p.id === editingId) ?? null;
+  /* ---------------- Логин ---------------- */
+  if (!session && !hadSession) {
+    return (
+      <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'Outfit, sans-serif', background: 'radial-gradient(1200px 600px at 80% -10%, rgba(207,155,65,0.12), transparent), radial-gradient(900px 500px at 10% 110%, rgba(99,67,49,0.10), transparent), linear-gradient(135deg,#fbfaf8,#f1ece6)' }}>
+        <motion.div
+          initial={{ opacity: 0, y: 16, scale: 0.98 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          transition={{ duration: 0.4 }}
+          style={{ width: '100%', maxWidth: 420, background: 'rgba(255,255,255,0.95)', backdropFilter: 'blur(12px)', padding: '40px', borderRadius: 28, boxShadow: '0 30px 80px rgba(99,67,49,0.16), 0 0 0 1px rgba(255,255,255,0.6)' }}
+        >
+          <img src="/images/dr.svg.png" alt="Daruzen" style={{ width: 76, height: 76, objectFit: 'contain', borderRadius: 20, marginBottom: 16, filter: 'brightness(0) saturate(100%) invert(26%) sepia(13%) saturate(1185%) hue-rotate(331deg) brightness(94%) contrast(89%)' }} />
+          <h2 style={{ margin: '0 0 4px', fontSize: 24, color: 'var(--primary-dark)' }}>Панель товаров Daruzen</h2>
+          <p style={{ margin: '0 0 24px', color: 'var(--text-muted)', fontSize: 14 }}>Войдите, чтобы добавлять и редактировать товары магазина.</p>
+          <div style={fieldLabel}>Ваш Email</div>
+          <input style={field} type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder={ADMIN_EMAIL_HINT} />
+          <div style={{ ...fieldLabel, marginTop: 18 }}>Пароль</div>
+          <PasswordField valueRef={passwordRef} onEnter={login} />
+          {authError && <p style={{ color: '#c0392b', fontSize: 14, margin: '10px 0 0' }}>{authError}</p>}
+          <motion.button
+            whileTap={{ scale: 0.97 }}
+            onClick={login}
+            style={{ width: '100%', marginTop: 24, padding: 15, borderRadius: 16, border: 'none', background: 'linear-gradient(135deg, var(--primary), #7d5236)', color: '#fff', fontWeight: 800, fontSize: 17, cursor: 'pointer', boxShadow: '0 12px 30px rgba(99,67,49,0.35)' }}
+          >
+            Войти
+          </motion.button>
+        </motion.div>
+      </div>
+    );
+  }
 
+  /* ---------------- Основная панель ---------------- */
   return (
-    <div style={{ minHeight: '100vh', fontFamily: 'Outfit, sans-serif', background: '#f7f4f0', color: 'var(--text-main)' }}>
-      {/* Top bar */}
-      <header style={{ position: 'sticky', top: 0, zIndex: 10, background: 'rgba(255,255,255,0.9)', backdropFilter: 'blur(8px)', borderBottom: '1px solid #ece7e1', padding: '16px 24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 16 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-          <img src="/images/dr.svg.png" alt="Daruzen" style={{ width: 46, height: 46, objectFit: 'contain', borderRadius: 12, filter: 'brightness(0) saturate(100%) invert(26%) sepia(13%) saturate(1185%) hue-rotate(331deg) brightness(94%) contrast(89%)' }} />
+    <div style={{ minHeight: '100vh', fontFamily: 'Outfit, sans-serif', background: 'linear-gradient(180deg, #faf7f3 0%, #f3efe9 100%)', color: 'var(--text-main)' }}>
+      <header style={{ position: 'sticky', top: 0, zIndex: 10, background: 'rgba(255,255,255,0.88)', backdropFilter: 'blur(14px)', borderBottom: '1px solid rgba(99,67,49,0.08)', padding: '14px 28px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 16 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+          <div style={{ width: 44, height: 44, borderRadius: 14, background: 'linear-gradient(135deg, var(--primary), #7d5236)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', boxShadow: '0 8px 20px rgba(99,67,49,0.3)' }}>
+            <LayoutGrid size={22} />
+          </div>
           <div>
-            <div style={{ fontWeight: 700, fontSize: 17, lineHeight: 1 }}>Панель управления</div>
-            <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>{items.length} товаров</div>
+            <div style={{ fontWeight: 800, fontSize: 17, lineHeight: 1.1, color: 'var(--primary-dark)' }}>Каталог Daruzen</div>
+            <div style={{ fontSize: 13, color: 'var(--text-muted)' }}>{items.length} товаров</div>
           </div>
         </div>
         <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
-          {notice && <span style={{ color: '#2a7', fontSize: 14, fontWeight: 600 }}>{notice}</span>}
-          <button onClick={add} style={btnGold}>+ Товар</button>
-          <button onClick={logout} style={btnGhost}>Выйти</button>
+          <AnimatePresence>
+            {notice && (
+              <motion.span
+                initial={{ opacity: 0, x: 8 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0 }}
+                style={{ color: '#28a745', fontSize: 14, fontWeight: 700, background: '#eaf8ee', padding: '8px 14px', borderRadius: 12 }}
+              >
+                {notice}
+              </motion.span>
+            )}
+          </AnimatePresence>
+          <motion.button whileTap={{ scale: 0.96 }} onClick={add} style={{ padding: '12px 20px', borderRadius: 14, border: 'none', background: 'linear-gradient(135deg, #f0cd83, #e7be63)', color: '#5e3312', fontWeight: 800, fontSize: 15, cursor: 'pointer', boxShadow: '0 8px 20px rgba(231,190,99,0.4)', display: 'flex', alignItems: 'center', gap: 8 }}>
+            <Plus size={18} /> Добавить товар
+          </motion.button>
+          <button onClick={logout} style={{ padding: '12px 18px', borderRadius: 14, border: '1px solid #e0dad2', background: '#fff', color: 'var(--text-main)', fontWeight: 700, fontSize: 14, cursor: 'pointer' }}>Выйти</button>
         </div>
       </header>
 
-      {/* Product grid */}
-      <style>{`
-        .admin-grid {
-          display: grid;
-          grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-          gap: 18px;
-        }
-        .admin-card {
-          background: #fff;
-          border-radius: var(--radius-lg);
-          border: 1px solid var(--border);
-          overflow: hidden;
-          display: flex;
-          flex-direction: column;
-          transition: box-shadow .2s ease;
-        }
-        .admin-card:hover {
-          box-shadow: var(--shadow-md);
-        }
-        .admin-card-img {
-          aspect-ratio: 3 / 4;
-          background: #fff;
-          display: grid;
-          place-items: center;
-          overflow: hidden;
-          padding: 12px 8px 28px;
-        }
-        .admin-card-img img {
-          width: auto;
-          height: auto;
-          max-width: 100%;
-          max-height: 90%;
-          object-fit: contain;
-          transform: translateY(-6%);
-          transition: transform .4s ease-out;
-        }
-        .admin-card:hover .admin-card-img img { transform: scale(1.06) translateY(-6%); }
-        .admin-noimg { color: #bbb; font-size: 13px; }
-        .admin-card-body { padding: 14px 16px 16px; flex: 1; display: flex; flex-direction: column; }
-        .admin-chip {
-          align-self: flex-start; font-size: 11px; font-weight: 700;
-          color: var(--accent); background: #fbf3e2; padding: 3px 10px; border-radius: 100px; margin-bottom: 8px;
-        }
-        .admin-card-name { font-weight: 600; font-size: 15px; line-height: 1.25; min-height: 38px; color: var(--primary-dark); }
-        .admin-card-foot { margin-top: auto; display: flex; justify-content: space-between; align-items: center; padding-top: 10px; }
-        .admin-price { font-weight: 800; color: var(--primary); }
-        .admin-edit-btn {
-          padding: 7px 16px; border-radius: 11px; border: 1px solid #e4e0db;
-          background: #fff; color: var(--text-main); font-weight: 600; font-size: 14px; cursor: pointer;
-        }
-        .admin-edit-btn:hover { border-color: var(--accent); color: var(--accent); }
-
-        .admin-modal-body { display: flex; gap: 26px; align-items: flex-start; }
-        .admin-modal-left { width: 300px; flex-shrink: 0; }
-        .admin-modal-right { flex: 1; min-width: 0; }
-        @media (max-width: 720px) {
-          .admin-modal-body { flex-direction: column; }
-          .admin-modal-left { width: 100%; }
-        }
-        .admin-modal-img {
-          position: relative;
-          width: 100%;
-          aspect-ratio: 1;
-          border-radius: 18px;
-          background: #ffffff;
-          display: grid;
-          align-items: start;
-          justify-items: center;
-          overflow: hidden;
-          cursor: pointer;
-          transition: box-shadow .2s ease;
-          padding: 0 0 22px;
-        }
-        .admin-modal-img.drag {
-          box-shadow: 0 0 0 3px var(--accent) inset;
-        }
-        .admin-modal-img img { width: auto; height: auto; max-width: 90%; max-height: 90%; object-fit: contain; }
-        .admin-modal-img-empty { color: #bbb; font-size: 13px; }
-        .admin-modal-img-overlay {
-          position: absolute;
-          inset: 0;
-          background: rgba(58,36,16,0.55);
-          backdrop-filter: blur(1px);
-          display: grid;
-          place-items: center;
-          color: #fff;
-          font-weight: 700;
-          font-size: 15px;
-          opacity: 0;
-          transition: opacity .2s ease;
-          pointer-events: none;
-        }
-        .admin-modal-img:hover .admin-modal-img-overlay { opacity: 1; }
-        .admin-modal-link { fontSize: 12; color: #999; margin-top: 12px; }
-        .admin-modal-link input { marginTop: 4px; }
-        .admin-field {
-          width: 100%;
-          box-sizing: border-box;
-          padding: 12px 14px;
-          font-size: 15px;
-          font-family: inherit;
-          color: var(--text-main);
-          background: #fff;
-          border: 1px solid #e6e1da;
-          border-radius: 12px;
-          outline: none;
-          transition: border-color .15s ease, box-shadow .15s ease;
-          resize: vertical;
-        }
-        .admin-field:focus {
-          border-color: var(--accent);
-          box-shadow: 0 0 0 3px rgba(207,155,65,0.18);
-        }
-        .admin-field::placeholder { color: #bcb4aa; }
-        .admin-label {
-          display: block;
-          font-size: 13px;
-          font-weight: 600;
-          color: var(--text-muted);
-          margin: 16px 0 7px;
-        }
-        .admin-tabs {
-          display: flex;
-          gap: 6px;
-          margin-top: 22px;
-          background: #f5f1ec;
-          padding: 5px;
-          border-radius: 14px;
-        }
-        .admin-tab {
-          flex: 1;
-          padding: 9px 8px;
-          border: none;
-          background: transparent;
-          font-weight: 700;
-          font-size: 14px;
-          cursor: pointer;
-          color: var(--text-muted);
-          border-radius: 10px;
-          transition: all .15s ease;
-        }
-        .admin-tab.active { background: var(--primary); color: #fff; }
-        .admin-modal-img-overlay.show { opacity: 1; }
-        .admin-modal-img-overlay svg { opacity: 0.92; }
-
-        @keyframes draw-circle { to { stroke-dashoffset: 0; } }
-        @keyframes draw-check { to { stroke-dashoffset: 0; } }
-        .check-circle { stroke-dasharray: 226; stroke-dashoffset: 226; animation: draw-circle .45s ease-out forwards; }
-        .check-mark { stroke-dasharray: 48; stroke-dashoffset: 48; animation: draw-check .35s ease-out .45s forwards; }
-
-        .admin-spec-icobtn {
-          width: 28px; height: 28px; flex: 0 0 28px; border-radius: 8px; border: 1px solid #e6ddcf;
-          background: #fff; color: #8a7a68; display: inline-flex; align-items: center;
-          justify-content: center; cursor: pointer; padding: 0;
-        }
-        .admin-spec-icobtn:hover { border-color: #c9b28a; color: #a08a6d; }
-        .admin-spec-icobtn.danger:hover { border-color: #e5b3b3; color: #c0392b; background: #fdf3f3; }
-        .admin-spec-icobtn.active { border-color: #d9bf93; color: #a08a6d; background: #fbf3e2; }
-        .admin-spec-icobtn:disabled { opacity: 0.3; cursor: default; }
-        .admin-spec-icobtn:disabled:hover { border-color: #e6ddcf; color: #8a7a68; }
-        .admin-spec-add {
-          align-self: flex-start; margin-top: 4px; padding: 8px 14px; border-radius: 10px;
-          border: 1px dashed #d5c3a6; background: #fdfaf4; color: #a08a6d;
-          font-weight: 700; font-size: 13px; cursor: pointer;
-        }
-        .admin-spec-add:hover { border-color: #c9b28a; background: #fbf3e2; }
-        .admin-spec-toolbar { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
-        .admin-spec-addblock {
-          display: inline-flex; align-items: center; gap: 4px;
-          padding: 9px 16px; border-radius: 11px; border: 1px solid #e0d6c6;
-          background: #fff; color: #7a6a58; font-weight: 700; font-size: 13.5px; cursor: pointer;
-        }
-        .admin-spec-addblock:hover { border-color: #c9b28a; color: #a08a6d; }
-
-        .admin-spec-note-input { font-style: italic; font-weight: 500; color: #8a7a68; }
-        .admin-spec-disclaimer {
-          margin-top: 8px;
-          display: flex;
-          align-items: center;
-          gap: 6px;
-          background: #faf7f0;
-          border: 1px dashed #dfd3c0;
-          border-radius: 10px;
-          padding: 6px 8px 6px 12px;
-        }
-        .admin-spec-disclaimer .admin-spec-note-input { border-color: transparent; }
-        .admin-spec-disclaimer .admin-spec-row-actions { margin-left: auto; }
-
-        .admin-spec-edit-card .comp-card__row::before { opacity: 0.3; height: 18px; }
-        .admin-wysiwyg-row { padding-right: 106px; }
-        .admin-wysiwyg-row .admin-wysiwyg-name { flex: 1; min-width: 0; }
-        .admin-wysiwyg-actions .admin-spec-icobtn { width: 22px; height: 22px; flex: 0 0 22px; }
-        .admin-wysiwyg-name, .admin-wysiwyg-hint, .admin-wysiwyg-caption {
-          border: 1px dashed transparent; background: transparent; outline: none;
-          border-radius: 8px; font-family: inherit; box-sizing: border-box;
-        }
-        .admin-wysiwyg-name { padding: 2px 6px 2px 14px; margin: -2px 0; }
-        .admin-wysiwyg-hint { padding: 2px 6px; margin: -2px 0; }
-        .admin-wysiwyg-name:hover, .admin-wysiwyg-hint:hover, .admin-wysiwyg-caption:hover { border-color: #e2d6c2; background: #fff; }
-        .admin-wysiwyg-name:focus, .admin-wysiwyg-hint:focus, .admin-wysiwyg-caption:focus { border-color: #c9b28a; background: #fff; box-shadow: 0 0 0 3px rgba(207,155,65,0.12); }
-        .admin-wysiwyg-caption { display: block; width: 100%; margin: 4px 0 10px; padding: 2px 6px; }
-        .comp-rows__hint-val.admin-wysiwyg-hint { text-align: right; }
-        .admin-wysiwyg-pill {
-          border: 1px dashed transparent; outline: none; font-family: inherit;
-          box-sizing: border-box; min-width: 24px; text-align: center;
-        }
-        .admin-wysiwyg-pill:hover { border-color: #c9b28a; background: #fff; }
-        .admin-wysiwyg-pill:focus { border-color: #a08a6d; background: #fff; box-shadow: 0 0 0 3px rgba(207,155,65,0.12); }
-        .admin-wysiwyg-actions {
-          position: absolute; right: 6px; top: 50%; transform: translateY(-50%);
-          display: inline-flex; gap: 2px; opacity: 0.2; transition: opacity .15s ease;
-        }
-        .admin-wysiwyg-row:hover .admin-wysiwyg-actions { opacity: 1; }
-        .admin-wysiwyg-row .comp-card__values { margin-right: 4px; }
-        .admin-spec-edit .comp-rows__hint { padding-right: 106px; }
-        .admin-spec-edit .comp-rows__hint-name { padding-left: 14px; }
-        .admin-spec-edit .comp-card__values { justify-content: flex-end; margin-right: 4px; }
-        .admin-spec-edit .comp-rows__hint-val { display: inline-block; text-align: center; }
-        .admin-spec-acc-head { display: flex; align-items: center; gap: 10px; padding: 14px 18px; cursor: default; }
-        .admin-spec-acc-head-input {
-          flex: 1; min-width: 0;
-          border: 1px dashed transparent; background: transparent; outline: none;
-          font-family: inherit; font-size: inherit; font-weight: inherit; letter-spacing: inherit; color: inherit;
-        }
-        .admin-spec-acc-head-input::placeholder { opacity: 0.55; }
-        .admin-spec-acc-head-input:hover, .admin-spec-acc-head-input:focus {
-          border-color: rgba(122,106,88,0.35); background: rgba(255,255,255,0.35);
-        }
-        .admin-spec-acc-head.is-open .admin-spec-acc-head-input:hover,
-        .admin-spec-acc-head.is-open .admin-spec-acc-head-input:focus {
-          border-color: rgba(255,255,255,0.65); background: rgba(255,255,255,0.14);
-        }
-        .admin-spec-acc-chev {
-          background: transparent; border: none; padding: 0; cursor: pointer;
-          display: inline-flex; opacity: 0.55; color: inherit; transition: transform 0.25s ease, opacity 0.25s ease;
-        }
-        .admin-spec-acc-head.is-open .admin-spec-acc-chev { transform: rotate(180deg); opacity: 1; }
-        .admin-spec-preview { margin-top: 18px; }
-        .admin-spec-edit { display: flex; flex-direction: column; gap: 6px; }
-        .admin-spec-edit-block { position: relative; }
-        .admin-spec-edit-block:hover .admin-spec-edit-block-actions { opacity: 1; }
-        .admin-spec-edit-block-actions {
-          position: absolute; right: 10px; top: 6px; z-index: 3;
-          display: inline-flex; gap: 3px; opacity: 0; transition: opacity .15s ease;
-        }
-        .admin-spec-edit-card { padding: 2px 10px 8px; }
-        .admin-spec-edit-section-input { margin: 16px 0 6px; }
-        .admin-spec-edit-section-input input {
-          width: auto; min-width: 200px; text-align: center;
-          font-family: inherit; font-size: inherit; font-weight: inherit; letter-spacing: inherit; color: inherit;
-          border: 1px dashed transparent; background: transparent; border-radius: 8px; padding: 3px 8px; outline: none;
-        }
-        .admin-spec-edit-section-input input:hover, .admin-spec-edit-section-input input:focus { border-color: #d9bf93; background: #fff; }
-        .admin-spec-add-row { display: flex; align-items: center; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
-        .admin-spec-col-ctrl { display: inline-flex; gap: 6px; margin-left: auto; }
-        .admin-spec-col-ctrl .admin-spec-add { padding: 6px 12px; font-size: 12.5px; }
-        .admin-spec-col-ctrl .admin-spec-add:disabled { opacity: 0.4; cursor: default; }
-      `}</style>
-      <main style={{ maxWidth: 1100, margin: '0 auto', padding: '24px' }}>
-        {items.length === 0 && <p style={{ color: 'var(--text-muted)', textAlign: 'center', marginTop: 40 }}>Пока нет товаров. Нажмите «+ Товар».</p>}
-        <div className="admin-grid">
-          {items.map(p => (
-            <div key={p.id} className="admin-card">
-              <div className="admin-card-img">
-                {p.image ? <NormalizedImg src={p.image} alt="" /> : <span className="admin-noimg">нет фото</span>}
-              </div>
-              <div className="admin-card-body">
-                <span className="admin-chip">{CAT_LABEL[p.categoryKey]}</span>
-                <div className="admin-card-name">{p.names.ru || '— без названия —'}</div>
-                <div className="admin-card-foot">
-                  <span className="admin-price">{p.price} ₺</span>
-                  <button onClick={() => { setTabLang('ru'); setEditingDraft(p); setEditingId(p.id); setShowHint(true); }} className="admin-edit-btn">Изменить</button>
-                </div>
-              </div>
+      <main style={{ maxWidth: 1180, margin: '0 auto', padding: '28px 28px 60px' }}>
+        {items.length === 0 ? (
+          <div style={{ textAlign: 'center', padding: '80px 20px' }}>
+            <div style={{ width: 84, height: 84, borderRadius: 22, margin: '0 auto 20px', background: '#f3efe9', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#a89a88' }}>
+              <Package size={40} />
             </div>
-          ))}
-        </div>
+            <h2 style={{ margin: '0 0 8px', color: 'var(--primary-dark)' }}>Пока нет ни одного товара</h2>
+            <p style={{ color: 'var(--text-muted)', margin: '0 0 24px' }}>Нажмите «Добавить товар», чтобы создать первый.</p>
+            <button onClick={add} style={{ padding: '15px 28px', borderRadius: 16, border: 'none', background: 'linear-gradient(135deg, #f0cd83, #e7be63)', color: '#5e3312', fontWeight: 800, fontSize: 16, cursor: 'pointer' }}>+ Добавить первый товар</button>
+          </div>
+        ) : (
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(270px, 1fr))', gap: 20 }}>
+            {items.map((p, i) => (
+              <motion.div
+                key={p.id}
+                initial={{ opacity: 0, y: 14 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: i * 0.03 }}
+                whileHover={{ y: -4 }}
+                style={{ background: '#fff', borderRadius: 22, border: '1px solid rgba(99,67,49,0.08)', overflow: 'hidden', boxShadow: '0 2px 12px rgba(99,67,49,0.05)', transition: 'box-shadow .25s ease' }}
+              >
+                <div style={{ aspectRatio: '3 / 4', background: 'linear-gradient(180deg, #fdfcfa, #f5f1ea)', overflow: 'hidden' }}>
+                  {p.image ? <NormalizedImg src={p.image} alt="" style={imgCardStyle} /> : <div style={{ height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#c9bfb2' }}><ImageIcon size={44} /></div>}
+                </div>
+                <div style={{ padding: '16px 18px 18px' }}>
+                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, fontSize: 12, fontWeight: 800, color: '#9a7b3f', background: '#fbf3e2', padding: '4px 10px', borderRadius: 100, marginBottom: 8 }}>
+                    {CATEGORIES.find(c => c.key === p.categoryKey)?.icon} {CAT_LABEL[p.categoryKey]}
+                  </span>
+                  <div style={{ fontWeight: 700, fontSize: 15.5, lineHeight: 1.3, minHeight: 40, color: 'var(--primary-dark)' }}>{p.names.ru || '— без названия —'}</div>
+                  <div style={{ marginTop: 12, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <span style={{ fontWeight: 800, fontSize: 17, color: 'var(--primary)' }}>{p.price.toLocaleString('ru-RU')} ₺</span>
+                    <motion.button
+                      whileTap={{ scale: 0.95 }}
+                      onClick={() => edit(p)}
+                      style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '9px 14px', borderRadius: 12, border: '1px solid #e0dad2', background: '#fff', color: 'var(--primary)', fontWeight: 700, fontSize: 14, cursor: 'pointer' }}
+                    >
+                      <Pencil size={14} /> Изменить
+                    </motion.button>
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </motion.div>
+        )}
       </main>
 
-      {/* Edit modal */}
-      {editing && (
-        <div onClick={() => { setEditingDraft(null); setEditingId(null); }} style={{ position: 'fixed', inset: 0, background: 'rgba(58,36,16,0.45)', backdropFilter: 'blur(3px)', zIndex: 50, display: 'flex', justifyContent: 'center', alignItems: 'flex-start', padding: '14px 12px', overflowY: 'auto' }}>
-          <div onClick={e => e.stopPropagation()} style={{ width: '100%', maxWidth: 'min(1480px, 98vw)', background: '#fff', borderRadius: 24, boxShadow: '0 30px 80px rgba(0,0,0,0.28)', overflow: 'hidden', position: 'relative' }}>
+      {/* ---------------- Мастер товара ---------------- */}
+      <AnimatePresence>
+        {draft && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setDraft(null)}
+            style={{ position: 'fixed', inset: 0, background: 'rgba(40,26,12,0.55)', backdropFilter: 'blur(6px)', zIndex: 50, display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '20px' }}
+          >
+            <motion.div
+              initial={{ opacity: 0, y: 24, scale: 0.98 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 12, scale: 0.98 }}
+              transition={{ duration: 0.3 }}
+              onClick={e => e.stopPropagation()}
+              style={{ width: '100%', maxWidth: 980, maxHeight: '92vh', display: 'flex', flexDirection: 'column', background: '#fff', borderRadius: 28, boxShadow: '0 40px 100px rgba(0,0,0,0.35)', overflow: 'hidden', position: 'relative' }}
+            >
+              {savedId === draft.id && (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  style={{ position: 'absolute', inset: 0, zIndex: 100, background: 'rgba(255,255,255,0.94)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 16 }}
+                >
+                  <motion.div initial={{ scale: 0.6 }} animate={{ scale: 1 }} transition={{ type: 'spring', stiffness: 200, damping: 14 }}>
+                    <svg width="84" height="84" viewBox="0 0 80 80">
+                      <circle cx="40" cy="40" r="36" fill="none" stroke="#28a745" strokeWidth="5" strokeLinecap="round" strokeDasharray="226" strokeDashoffset="0" />
+                      <path d="M24,42 L36,54 L56,32" fill="none" stroke="#28a745" strokeWidth="6" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                  </motion.div>
+                  <div style={{ fontSize: 20, fontWeight: 800, color: '#28a745' }}>Товар сохранён!</div>
+                </motion.div>
+              )}
 
-            {/* Checkmark animation overlay */}
-            {savedId === editing?.id && (
-              <div style={{ position: 'absolute', inset: 0, zIndex: 100, background: 'rgba(255,255,255,0.92)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 16, borderRadius: 24 }}>
-                <svg width="80" height="80" viewBox="0 0 80 80">
-                  <circle cx="40" cy="40" r="36" fill="none" stroke="#28a745" strokeWidth="5" strokeLinecap="round" className="check-circle" />
-                  <polyline points="24,42 36,54 56,32" fill="none" stroke="#28a745" strokeWidth="5" strokeLinecap="round" strokeLinejoin="round" className="check-mark" />
-                </svg>
-                <div style={{ fontSize: 18, fontWeight: 700, color: '#28a745' }}>Сохранено</div>
-              </div>
-            )}
-
-            {editing && (<>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '18px 22px', borderBottom: '1px solid #efeae4' }}>
-              <div style={{ fontWeight: 700, fontSize: 18, color: 'var(--primary-dark)' }}>Редактирование товара</div>
-              <button onClick={() => { setEditingDraft(null); setEditingId(null); }} style={{ border: 'none', background: '#f3efe9', width: 34, height: 34, borderRadius: 10, cursor: 'pointer', fontSize: 18, color: 'var(--text-muted)' }}>×</button>
-            </div>
-
-            <div style={{ padding: 22, maxHeight: '88vh', overflowY: 'auto' }}>
-              <div className="admin-modal-body">
-                <div className="admin-modal-left">
-                  <div
-                    className={'admin-modal-img' + (dragOver ? ' drag' : '')}
-                    onDragOver={e => { e.preventDefault(); setDragOver(true); }}
-                    onDragLeave={() => setDragOver(false)}
-                    onDrop={e => {
-                      e.preventDefault();
-                      setDragOver(false);
-                      handleImageFile(e.dataTransfer.files?.[0] ?? null);
-                    }}
-                    onClick={() => (document.getElementById('img-input-' + editing.id) as HTMLInputElement | null)?.click()}
-                  >
-                    {editing.image
-                      ? <NormalizedImg src={editing.image} alt="" />
-                      : <span className="admin-modal-img-empty">Нет фото</span>}
-                    <div className={'admin-modal-img-overlay' + ((showHint || dragOver) ? ' show' : '')}>
-                      <RefreshCw size={34} strokeWidth={2} />
-                    </div>
-                    <input
-                      id={'img-input-' + editing.id}
-                      type="file"
-                      accept="image/*"
-                      style={{ display: 'none' }}
-                      onChange={e => handleImageFile(e.target.files?.[0] ?? null)}
-                    />
-                  </div>
-                  <div className="admin-modal-link">
-                    или ссылка:
-                    <input style={{ ...input, marginTop: 4, fontSize: 13 }} value={editing.image} onChange={e => update(editing.id, pr => ({ ...pr, image: e.target.value }))} placeholder="https://…" />
-                  </div>
-                  {editing.image && (
-                    <button type="button" onClick={() => update(editing.id, pr => ({ ...pr, image: '' }))} style={{ ...btnGhost, color: '#c0392b', borderColor: '#f0d6d6', marginTop: 10, padding: '8px 14px', fontSize: 13 }}>Удалить фото</button>
-                  )}
+              {/* Заголовок */}
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '22px 28px', borderBottom: '1px solid #f0ece6' }}>
+                <div>
+                  <div style={{ fontWeight: 800, fontSize: 19, color: 'var(--primary-dark)', letterSpacing: '-0.01em' }}>{draft.names.ru ? 'Редактирование товара' : 'Новый товар'}</div>
+                  <div style={{ fontSize: 13.5, color: '#a39483', marginTop: 3 }}>Пройдите 5 шагов — товар появится в магазине</div>
                 </div>
-
-                <div className="admin-modal-right">
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
-                    <div>
-                      <div className="admin-label">Категория</div>
-                      <select className="admin-field" value={editing.categoryKey} onChange={e => update(editing.id, pr => ({ ...pr, categoryKey: e.target.value as CategoryKey }))}>
-                        {CATEGORIES.map(c => <option key={c.key} value={c.key}>{c.label}</option>)}
-                      </select>
-                    </div>
-                    <div>
-                      <div className="admin-label">Цена (₺)</div>
-                      <input className="admin-field" type="number" value={editing.price} onChange={e => update(editing.id, pr => ({ ...pr, price: Number(e.target.value) }))} />
-                    </div>
-                  </div>
-
-                  <div className="admin-tabs">
-                    {LANGS.map(l => {
-                      const filled = Boolean(editing.names[l] || editing.descriptions[l]);
-                      return (
-                        <button key={l} onClick={() => setTabLang(l)} className={'admin-tab' + (tabLang === l ? ' active' : '')}>
-                          {LANG_LABELS[l]}{filled && <span style={{ color: tabLang === l ? 'rgba(255,255,255,0.7)' : '#2a7', marginLeft: 4 }}>●</span>}
-                        </button>
-                      );
-                    })}
-                  </div>
-
-                  <div className="admin-label">Название</div>
-                  <input className="admin-field" value={editing.names[tabLang]} onChange={e => update(editing.id, pr => ({ ...pr, names: { ...pr.names, [tabLang]: e.target.value } }))} />
-
-                  <div className="admin-label">Описание</div>
-                  <textarea className="admin-field" style={{ minHeight: 64 }} value={editing.descriptions[tabLang]} onChange={e => update(editing.id, pr => ({ ...pr, descriptions: { ...pr.descriptions, [tabLang]: e.target.value } }))} />
-                </div>
+                <button onClick={() => setDraft(null)} style={{ border: 'none', background: '#f4f0ea', width: 38, height: 38, borderRadius: 12, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#a39483', transition: 'all .2s ease' }}>
+                  <X size={18} />
+                </button>
               </div>
 
-              <div style={{ marginTop: 22, paddingTop: 18, borderTop: '1px dashed #e2d8ca' }}>
-                <div className="admin-label" style={{ color: '#a08a6d' }}>Состав</div>
-                    <p style={{ margin: '-2px 0 12px', fontSize: 12.5, color: '#a89a88', lineHeight: 1.55 }}>
-                      Это ровно то, что увидит покупатель на сайте. Просто кликните по тексту и правьте прямо здесь. Пустые ячейки на сайте скрываются, пустые строки не сохраняются.
-                    </p>
-                    {(() => {
-                      const entries = parseSpecEntries(getSpecLines(editing, tabLang));
-                      const blocks = buildSpecBlocks(entries);
-                      const blockCount = blocks.length;
-                      return (
-                        <>
-                          <div className="admin-spec-preview admin-spec-edit">
-                            {blocks.map((block, bi) => (
-                              block.kind === 'section' ? (
-                              <div key={'s' + block.entryIdx} className="admin-spec-edit-block">
-                                <span className="admin-spec-edit-block-actions">
-                                  <button type="button" disabled={bi === 0} onClick={() => update(editing.id, pr => moveSpecBlock(pr, tabLang, bi, -1))} className="admin-spec-icobtn" title="Раздел выше"><ChevronUp size={15} /></button>
-                                  <button type="button" disabled={bi === blockCount - 1} onClick={() => update(editing.id, pr => moveSpecBlock(pr, tabLang, bi, 1))} className="admin-spec-icobtn" title="Раздел ниже"><ChevronDown size={15} /></button>
-                                  <button type="button" onClick={() => update(editing.id, pr => removeSpecBlock(pr, tabLang, bi))} className="admin-spec-icobtn danger" title="Удалить раздел"><Trash2 size={15} /></button>
-                                </span>
-                                <div className="comp-card__section admin-spec-edit-section-input">
-                                  <input value={block.text} onChange={e => update(editing.id, pr => setSpecCell(pr, tabLang, block.entryIdx, 0, e.target.value))} placeholder="Заголовок раздела, напр. «Состав на 1 порцию»" />
+              {/* Индикатор шагов */}
+              <div style={{ padding: '20px 28px 0', display: 'flex', alignItems: 'center' }}>
+                {steps.map((s, i) => {
+                  const Icon = s.icon;
+                  const active = i === step;
+                  const done = i < step;
+                  const locked = i > step && !!currentError;
+                  return (
+                    <div key={s.id} style={{ display: 'flex', alignItems: 'flex-start', flex: 1, minWidth: 0 }}>
+                      <button
+                        onClick={() => { if (!locked) setStep(i); }}
+                        disabled={locked}
+                        style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8, border: 'none', background: 'none', cursor: locked ? 'default' : 'pointer', padding: 0, opacity: locked ? 0.55 : 1 }}
+                      >
+                        <div style={{ width: 36, height: 36, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all .25s ease', background: done ? '#2f9e58' : active ? 'var(--primary)' : '#f0ece6', color: done || active ? '#fff' : '#b5a894', boxShadow: active ? '0 8px 20px rgba(99,67,49,0.28)' : 'none', border: done || active ? 'none' : '1px solid #e6dfd6' }}>
+                          {done ? <CheckCircle2 size={17} /> : <Icon size={16} />}
+                        </div>
+                        <span style={{ fontSize: 11, fontWeight: 700, color: active ? 'var(--primary)' : done ? '#2f9e58' : '#b5a894', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: 80 }}>{s.label}</span>
+                      </button>
+                      {i < steps.length - 1 && (
+                        <div style={{ flex: 1, height: 2, borderRadius: 99, background: done ? '#2f9e58' : '#eee8df', margin: '17px 10px 0', minWidth: 8 }} />
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+
+              {/* Контент шага */}
+              <div style={{ flex: 1, overflowY: 'auto', padding: '24px 28px', display: 'grid', gridTemplateColumns: 'minmax(0,1fr) 300px', gap: 32 }}>
+                <div>
+                  <AnimatePresence mode="wait">
+                    <motion.div
+                      key={step}
+                      initial={{ opacity: 0, x: 24 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      exit={{ opacity: 0, x: -24 }}
+                      transition={{ duration: 0.25 }}
+                    >
+                      {showHelp && (
+                        <div style={{ display: 'flex', gap: 12, alignItems: 'flex-start', background: '#faf7f2', border: '1px solid #f0ebe2', borderRadius: 16, padding: '14px 16px', marginBottom: 20 }}>
+                          <div style={{ width: 34, height: 34, borderRadius: 10, background: '#f3e7cd', color: '#8a6a30', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                            <Lightbulb size={17} />
+                          </div>
+                          <div>
+                            <div style={{ fontWeight: 800, fontSize: 13.5, color: '#8a6a30', marginBottom: 3 }}>Совет</div>
+                            <div style={{ fontSize: 13.5, color: '#9a8c7d', lineHeight: 1.6 }}>{steps[step].hint}</div>
+                          </div>
+                          <button onClick={() => setShowHelp(false)} style={{ marginLeft: 'auto', border: 'none', background: 'none', color: '#b5a894', cursor: 'pointer', fontSize: 18, lineHeight: 1 }}>×</button>
+                        </div>
+                      )}
+
+                      {/* Шаг 1 — Фото */}
+                      {step === 0 && (
+                        <div>
+                          <div
+                            onDragOver={e => { e.preventDefault(); setDragOver(true); }}
+                            onDragLeave={() => setDragOver(false)}
+                            onDrop={e => { e.preventDefault(); setDragOver(false); handleImageFile(e.dataTransfer.files?.[0] ?? null); }}
+                            onClick={() => (document.getElementById('img-input') as HTMLInputElement | null)?.click()}
+                            style={{ position: 'relative', width: '100%', maxWidth: 340, aspectRatio: '3 / 4', margin: '0 auto', borderRadius: 22, background: dragOver ? 'rgba(207,155,65,0.1)' : '#faf7f2', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', cursor: 'pointer', border: dragOver ? '3px solid var(--accent)' : '2px dashed #ddd3c4', transition: 'all .2s ease' }}
+                          >
+                            {draft.image ? (
+                              <>
+                                <NormalizedImg src={draft.image} alt="" style={imgCardStyle} />
+                                <div style={{ position: 'absolute', inset: 0, background: 'rgba(40,26,12,0.4)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 8, opacity: 0, transition: 'opacity .2s ease', color: '#fff', fontWeight: 700 }}>
+                                  <Upload size={28} />
+                                  Нажмите, чтобы заменить
                                 </div>
-                              </div>
-                              ) : (
-                              <div key={'t' + (block.headerIdx ?? block.rows[0]?.entryIdx)} className="admin-spec-edit-block">
-                                <span className="admin-spec-edit-block-actions">
-                                  <button type="button" disabled={bi === 0} onClick={() => update(editing.id, pr => moveSpecBlock(pr, tabLang, bi, -1))} className="admin-spec-icobtn" title="Таблица выше"><ChevronUp size={15} /></button>
-                                  <button type="button" disabled={bi === blockCount - 1} onClick={() => update(editing.id, pr => moveSpecBlock(pr, tabLang, bi, 1))} className="admin-spec-icobtn" title="Таблица ниже"><ChevronDown size={15} /></button>
-                                  <button type="button" onClick={() => update(editing.id, pr => removeSpecBlock(pr, tabLang, bi))} className="admin-spec-icobtn danger" title="Удалить таблицу"><Trash2 size={15} /></button>
-                                </span>
-                                <div className="comp-card admin-spec-edit-card">
-                                      {(() => {
-                                          const colCount = blockColCount(block);
-                                          const headers = block.headerIdx !== null ? block.headers : [];
-                                          const headerAt = (ci: number): string => headers[ci] ?? '';
-                                          const valueIdx: number[] = [];
-                                          for (let vi = 1; vi < colCount; vi++) valueIdx.push(vi);
-                                          let pctAbs = valueIdx.find(vi => /%/.test(headerAt(vi))) ?? -1;
-                                          if (pctAbs === -1 && valueIdx.length) {
-                                            const checkRows = block.rows.filter(r => !r.note);
-                                            for (const vi of valueIdx) {
-                                              const vals = checkRows.map(r => (r.cells[vi] ?? '').trim()).filter(v => !!v && v !== '-' && v !== '—');
-                                              if (vals.length && vals.filter(v => /%/.test(v)).length >= vals.length / 2) { pctAbs = vi; break; }
-                                            }
-                                          }
-                                          const doseIdx = valueIdx.filter(vi => vi !== pctAbs);
-                                          const hasValueCols = valueIdx.some(vi => headerAt(vi).trim() !== '');
-                                          const dataRows = block.rows.filter(r => !r.note);
-                                          const cellW = (vi: number) =>
-                                            Math.max(96, Math.ceil(Math.max((headerAt(vi) || '').length, ...dataRows.map(r => ((r.cells[vi] ?? '').trim()).length)) * 9) + 16);
-                                          const brdW = pctAbs === -1 ? 0 :
-                                            Math.max(72, Math.ceil(Math.max(...dataRows.map(r => ((r.cells[pctAbs] ?? '').trim()).length)) * 9) + 16);
-                                          const accKey = 'acc:' + editing.id + ':' + tabLang + ':' + (block.headerIdx ?? block.rows[0]?.entryIdx);
-                                          const openCol = openDoseCols[accKey] ?? 0;
-                                          const setOpenCol = (ci: number) => setOpenDoseCols(prev => ({ ...prev, [accKey]: prev[accKey] === ci ? -1 : ci }));
-                                          const hintRow = (onlyCol?: number) => {
-                                            const cols = onlyCol !== undefined ? [onlyCol] : doseIdx;
-                                            return (
-                                              <div className="comp-rows__hint">
-                                                <span className="comp-rows__hint-name">Вещество</span>
-                                                <span className="comp-card__values">
-                                                  {cols.map(vi => (
-                                                    <span key={vi} className="comp-rows__hint-val" style={{ width: cellW(vi) }}>Дозировка</span>
-                                                  ))}
-                                                  {pctAbs !== -1 && <span className="comp-rows__hint-val comp-rows__hint-val--brd" style={{ width: brdW, display: 'inline-block', textAlign: 'center' }}>BRD</span>}
-                                                </span>
-                                              </div>
-                                            );
-                                          };
-                                          const rowsHtml = (doseOnly?: number) =>
-                                            dataRows.map((row, ri) => {
-                                              const sub = (row.cells[0] ?? '').trim().startsWith('└');
-                                              const doseVals = doseOnly !== undefined ? [doseOnly] : doseIdx;
-                                              return (
-                                                <div key={row.entryIdx} className={'comp-card__row admin-wysiwyg-row' + (sub ? ' is-sub' : '')}>
-                                                  <input
-                                                    className="comp-card__name admin-wysiwyg-name"
-                                                    value={row.cells[0] ?? ''}
-                                                    onChange={e => update(editing.id, pr => setSpecCell(pr, tabLang, row.entryIdx, 0, e.target.value))}
-                                                    placeholder="Название вещества"
-                                                  />
-                                                  <span className="comp-card__values">
-                                                    {doseVals.map(vi => (
-                                                      <input
-                                                        key={vi}
-                                                        className="comp-card__dosage admin-wysiwyg-pill"
-                                                        style={{ width: cellW(vi) }}
-                                                        value={row.cells[vi] ?? ''}
-                                                        onChange={e => update(editing.id, pr => setSpecCell(pr, tabLang, row.entryIdx, vi, e.target.value))}
-                                                        placeholder="—"
-                                                      />
-                                                    ))}
-                                                    {pctAbs !== -1 && (
-                                                      <input
-                                                        className="comp-card__pct admin-wysiwyg-pill"
-                                                        style={{ width: brdW }}
-                                                        value={row.cells[pctAbs] ?? ''}
-                                                        onChange={e => update(editing.id, pr => setSpecCell(pr, tabLang, row.entryIdx, pctAbs, e.target.value))}
-                                                        placeholder="%"
-                                                      />
-                                                    )}
-                                                  </span>
-                                                  <span className="admin-wysiwyg-actions">
-                                                    <button type="button" title={sub ? 'Снять вложенность' : 'Вложить под предыдущее'} onClick={() => update(editing.id, pr => toggleSpecSub(pr, tabLang, row.entryIdx))} className={'admin-spec-icobtn' + (sub ? ' active' : '')}><ArrowDownLeft size={14} /></button>
-                                                    <button type="button" disabled={ri === 0} onClick={() => update(editing.id, pr => moveSpecRow(pr, tabLang, row.entryIdx, -1))} className="admin-spec-icobtn" title="Выше"><ChevronUp size={14} /></button>
-                                                    <button type="button" disabled={ri === dataRows.length - 1} onClick={() => update(editing.id, pr => moveSpecRow(pr, tabLang, row.entryIdx, 1))} className="admin-spec-icobtn" title="Ниже"><ChevronDown size={14} /></button>
-                                                    <button type="button" onClick={() => update(editing.id, pr => removeSpecRow(pr, tabLang, row.entryIdx))} className="admin-spec-icobtn danger" title="Удалить"><Trash2 size={14} /></button>
-                                                  </span>
-                                                </div>
-                                              );
-                                            });
-                                          return (
-                                            <>
-                                              {hasValueCols && doseIdx.length > 0 && (
-                                                <>
-                                                  {pctAbs !== -1 && headerAt(pctAbs) && (
-                                                    <input
-                                                      className="comp-card__pct-caption admin-wysiwyg-caption"
-                                                      value={headerAt(pctAbs)}
-                                                      onChange={e => update(editing.id, pr => setSpecHeader(pr, tabLang, block, pctAbs, e.target.value))}
-                                                      placeholder="% от суточной нормы"
-                                                    />
-                                                  )}
-                                                  <div className="comp-dose">
-                                                    {doseIdx.map((vi, ci) => {
-                                                      const open = openCol === ci;
-                                                      return (
-                                                        <div key={vi} className="comp-acc">
-                                                          <div className={'comp-acc__head admin-spec-acc-head' + (open ? ' is-open' : '')}>
-                                                            <input
-                                                              className="admin-spec-acc-head-input"
-                                                              value={headerAt(vi)}
-                                                              onChange={e => update(editing.id, pr => setSpecHeader(pr, tabLang, block, vi, e.target.value))}
-                                                              placeholder="Дозировка"
-                                                            />
-                                                            <button type="button" className="admin-spec-acc-chev" onClick={() => setOpenCol(ci)}>
-                                                              <ChevronDown size={16} />
-                                                            </button>
-                                                          </div>
-                                                          {open && (
-                                                            <div className="comp-acc__body">
-                                                              <div className="comp-acc__body-inner">
-                                                                {hintRow(vi)}
-                                                                {rowsHtml(vi)}
-                                                              </div>
-                                                            </div>
-                                                          )}
-                                                        </div>
-                                                      );
-                                                    })}
-                                                  </div>
-                                                </>
-                                              )}
-                                              {!(hasValueCols && doseIdx.length > 0) && (
-                                                <>
-                                                  {hintRow()}
-                                                  {rowsHtml()}
-                                                </>
-                                              )}
-                                              {block.rows.filter(r => r.note).map(row => (
-                                                <div key={row.entryIdx} className="admin-spec-disclaimer">
-                                                  <input className="admin-spec-note-input" value={row.cells[0] ?? ''} onChange={e => update(editing.id, pr => setSpecCell(pr, tabLang, row.entryIdx, 0, e.target.value))} placeholder="Примечание под таблицей" />
-                                                  <span className="admin-spec-row-actions">
-                                                    <button type="button" onClick={() => update(editing.id, pr => moveSpecRow(pr, tabLang, row.entryIdx, -1))} className="admin-spec-icobtn" title="Выше"><ChevronUp size={14} /></button>
-                                                    <button type="button" onClick={() => update(editing.id, pr => moveSpecRow(pr, tabLang, row.entryIdx, 1))} className="admin-spec-icobtn" title="Ниже"><ChevronDown size={14} /></button>
-                                                    <button type="button" onClick={() => update(editing.id, pr => removeSpecRow(pr, tabLang, row.entryIdx))} className="admin-spec-icobtn danger" title="Удалить"><Trash2 size={14} /></button>
-                                                  </span>
-                                                </div>
-                                              ))}
-                                              <div className="admin-spec-add-row">
-                                                <button type="button" className="admin-spec-add" onClick={() => update(editing.id, pr => addSpecRowTo(pr, tabLang, block))}>
-                                                  <Plus size={14} style={{ verticalAlign: -2, marginRight: 5 }} />Добавить вещество
-                                                </button>
-                                                <span className="admin-spec-col-ctrl">
-                                                  <button type="button" className="admin-spec-add" title="Добавить колонку" onClick={() => update(editing.id, pr => addSpecColumnTo(pr, tabLang, block))}>
-                                                    <Plus size={14} style={{ verticalAlign: -2, marginRight: 5 }} />Колонка
-                                                  </button>
-                                                  <button type="button" className="admin-spec-add" title="Удалить колонку" disabled={blockColCount(block) <= 2} onClick={() => update(editing.id, pr => removeSpecColumnTo(pr, tabLang, block))}>
-                                                    <Minus size={14} style={{ verticalAlign: -2, marginRight: 5 }} />Колонка
-                                                  </button>
-                                                </span>
-                                              </div>
-                                            </>
-                                          );
-                                        })()}
-                                      </div>
-                                    </div>
-                                )))}
-                            {blockCount === 0 && (
-                              <div style={{ padding: 22, border: '1px dashed #e0d6c6', borderRadius: 14, textAlign: 'center', color: '#a89a88', fontSize: 13.5 }}>
-                                Состав пуст. Добавьте таблицу с веществами или раздел.
+                              </>
+                            ) : (
+                              <div style={{ textAlign: 'center', color: '#a39483', padding: 20 }}>
+                                <div style={{ width: 56, height: 56, borderRadius: 18, background: '#f0ebe3', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#a39483', margin: '0 auto 14px' }}>
+                                  <Camera size={26} />
+                                </div>
+                                <div style={{ fontWeight: 800, fontSize: 16, color: 'var(--primary-dark)' }}>Добавьте фото</div>
+                                <div style={{ fontSize: 13, marginTop: 8, lineHeight: 1.6 }}>Перетащите файл сюда или нажмите,<br />чтобы выбрать. Вертикальное 3:4.</div>
                               </div>
                             )}
                           </div>
-                          <div className="admin-spec-toolbar">
-                            <button type="button" className="admin-spec-addblock" onClick={() => update(editing.id, pr => addSpecBlockAfter(pr, tabLang, blockCount - 1, 'table'))}>
-                              <Plus size={14} style={{ verticalAlign: -2, marginRight: 5 }} />Таблица
-                            </button>
-                            <button type="button" className="admin-spec-addblock" onClick={() => update(editing.id, pr => addSpecBlockAfter(pr, tabLang, blockCount - 1, 'section'))}>
-                              <Plus size={14} style={{ verticalAlign: -2, marginRight: 5 }} />Раздел
-                            </button>
-                            <button type="button" className="admin-spec-addblock" onClick={() => update(editing.id, pr => addSpecNoteAfter(pr, tabLang))}>
-                              <Plus size={14} style={{ verticalAlign: -2, marginRight: 5 }} />Примечание
-                            </button>
+                          <input id="img-input" type="file" accept="image/*" style={{ display: 'none' }} onChange={e => handleImageFile(e.target.files?.[0] ?? null)} />
+                          <div style={{ marginTop: 20 }}>
+                            <div style={{ ...fieldLabel, fontSize: 13.5, color: '#a39483' }}>Или вставьте ссылку на фото</div>
+                            <input style={field} value={draft.image} onChange={e => updateDraft(pr => ({ ...pr, image: e.target.value }))} placeholder="https://…" />
                           </div>
-                        </>
-                      );
-                    })()}
-              </div>
-            </div>
+                          {draft.image && (
+                            <button onClick={() => updateDraft(pr => ({ ...pr, image: '' }))} style={{ marginTop: 12, padding: '10px 16px', borderRadius: 12, border: '1px solid #f0d6d6', background: '#fff', color: '#c0392b', fontWeight: 700, fontSize: 14, cursor: 'pointer' }}>Убрать фото</button>
+                          )}
+                        </div>
+                      )}
 
-            <div style={{ display: 'flex', gap: 10, padding: '16px 22px', borderTop: '1px solid #efeae4', background: '#fbfaf8', flexWrap: 'wrap' }}>
-              <button onClick={() => translate(editing)} disabled={translatingId === editing.id || savingId === editing.id} style={{ ...btnGhost, borderColor: '#2a7', color: '#2a7', opacity: translatingId === editing.id ? 0.6 : 1 }}>
-                {translatingId === editing.id ? 'Перевожу…' : '🌐 Перевести с русского'}
-              </button>
-              <button onClick={() => save(editing)} disabled={savingId === editing.id} style={{ ...btnGold, opacity: savingId === editing.id ? 0.6 : 1 }}>
-                {savingId === editing.id ? 'Сохраняю…' : 'Сохранить'}
-              </button>
-              <button onClick={() => del(editing.id)} style={{ ...btnGhost, color: '#c0392b', borderColor: '#f0d6d6', marginLeft: 'auto' }}>Удалить</button>
-            </div>
-            </>)}
-          </div>
-        </div>
-      )}
+                      {/* Шаг 2 — Название */}
+                      {step === 1 && (
+                        <div>
+                          <div style={fieldLabel}>Название товара <span style={{ color: '#c0392b' }}>*</span></div>
+                          <input
+                            style={field}
+                            autoFocus
+                            value={draft.names.ru}
+                            onChange={e => updateDraft(pr => ({ ...pr, names: { ...pr.names, ru: e.target.value } }))}
+                            placeholder="Например: Витамин C 1000 мг"
+                          />
+                          <div style={{ fontSize: 13, color: '#a89a88', marginTop: 10, lineHeight: 1.5 }}>
+                            Примеры: «Цинк 25 мг», «Омега-3 с рыбьим жиром», «Коллаген для кожи». Чем понятнее название — тем легче покупателю найти товар.
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Шаг 3 — Цена и категория */}
+                      {step === 2 && (
+                        <div>
+                          <div style={fieldLabel}>Категория</div>
+                          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))', gap: 10 }}>
+                            {CATEGORIES.map(c => (
+                              <motion.button
+                                key={c.key}
+                                type="button"
+                                whileTap={{ scale: 0.97 }}
+                                onClick={() => updateDraft(pr => ({ ...pr, categoryKey: c.key }))}
+                                style={{
+                                  padding: '16px 14px',
+                                  borderRadius: 16,
+                                  border: '2px solid ' + (draft.categoryKey === c.key ? 'var(--accent)' : '#e7e2db'),
+                                  background: draft.categoryKey === c.key ? '#fbf3e2' : '#fff',
+                                  color: draft.categoryKey === c.key ? 'var(--primary)' : 'var(--text-muted)',
+                                  fontWeight: 700,
+                                  fontSize: 15,
+                                  cursor: 'pointer',
+                                  display: 'flex',
+                                  flexDirection: 'column',
+                                  alignItems: 'center',
+                                  gap: 6,
+                                  textAlign: 'center',
+                                  boxShadow: draft.categoryKey === c.key ? '0 6px 18px rgba(207,155,65,0.2)' : 'none',
+                                }}
+                              >
+                                <span style={{ fontSize: 28 }}>{c.icon}</span>
+                                {c.label}
+                                <span style={{ fontSize: 11, fontWeight: 500, color: '#a89a88' }}>{c.desc}</span>
+                              </motion.button>
+                            ))}
+                          </div>
+                          <div style={{ ...fieldLabel, marginTop: 22 }}>Цена в турецких лирах (₺)</div>
+                          <div style={{ position: 'relative', maxWidth: 240 }}>
+                            <input style={{ ...field, paddingLeft: 40 }} type="number" value={draft.price} onChange={e => updateDraft(pr => ({ ...pr, price: Number(e.target.value) }))} placeholder="Например: 2500" />
+                            <span style={{ position: 'absolute', left: 16, top: '50%', transform: 'translateY(-50%)', fontWeight: 800, color: 'var(--accent)' }}>₺</span>
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Шаг 4 — Описание */}
+                      {step === 3 && (
+                        <div>
+                          <div style={fieldLabel}>Описание товара</div>
+                          <textarea
+                            style={{ ...field, minHeight: 150, lineHeight: 1.6 }}
+                            value={draft.descriptions.ru}
+                            onChange={e => updateDraft(pr => ({ ...pr, descriptions: { ...pr.descriptions, ru: e.target.value } }))}
+                            placeholder="Что это за товар? Зачем нужен? Как принимать? Напишите своими словами — покупателю важно понять пользу."
+                          />
+                          <div style={{ fontSize: 13, color: '#a89a88', marginTop: 10, lineHeight: 1.5 }}>
+                            Пример: «Натуральная добавка с высоким содержанием витамина C для поддержки иммунитета. Принимайте по 1 капсуле в день во время еды.»
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Шаг 5 — Состав */}
+                      {step === 4 && (
+                        <div>
+                          <div style={fieldLabel}>Состав — что внутри</div>
+
+                          {specRows.length === 0 && (
+                            <div style={{ padding: 24, border: '2px dashed #dcd3c6', borderRadius: 16, textAlign: 'center', color: '#a89a88', fontSize: 14, marginBottom: 14 }}>
+                              <div style={{ width: 44, height: 44, borderRadius: 14, background: '#f3efe9', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#a89a88', margin: '0 auto 10px' }}>
+                                <FlaskConical size={24} />
+                              </div>
+                              Пока состав пуст. Нажмите «Добавить вещество» ниже.
+                            </div>
+                          )}
+
+                          <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                            <AnimatePresence initial={false}>
+                              {specRows.map((r, i) => (
+                                <motion.div
+                                  key={i}
+                                  initial={{ opacity: 0, y: 10 }}
+                                  animate={{ opacity: 1, y: 0 }}
+                                  exit={{ opacity: 0, height: 0, marginBottom: 0 }}
+                                  transition={{ duration: 0.2 }}
+                                  style={{ border: '1px solid ' + (r.kind === 'section' ? '#f0e2c4' : '#e7e2db'), borderRadius: 16, padding: 14, background: r.kind === 'section' ? '#fbf3e2' : r.kind === 'note' ? '#faf7f2' : '#fff' }}
+                                >
+                                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: r.kind === 'row' ? 10 : 0 }}>
+                                    <span style={{ fontSize: 12, fontWeight: 800, color: r.kind === 'section' ? '#9a7b3f' : '#a89a88', letterSpacing: '0.03em', textTransform: 'uppercase' }}>
+                                      {r.kind === 'section' ? 'Заголовок раздела' : r.kind === 'note' ? 'Примечание' : `Строка ${i + 1}`}
+                                    </span>
+                                    <span style={{ display: 'flex', gap: 4 }}>
+                                      <button type="button" disabled={i === 0} onClick={() => moveRow(i, -1)} title="Выше" style={{ width: 30, height: 30, borderRadius: 9, border: '1px solid #e6ddcf', background: '#fff', color: '#8a7a68', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', opacity: i === 0 ? 0.3 : 1 }}><ChevronUp size={15} /></button>
+                                      <button type="button" disabled={i === specRows.length - 1} onClick={() => moveRow(i, 1)} title="Ниже" style={{ width: 30, height: 30, borderRadius: 9, border: '1px solid #e6ddcf', background: '#fff', color: '#8a7a68', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', opacity: i === specRows.length - 1 ? 0.3 : 1 }}><ChevronDown size={15} /></button>
+                                      <button type="button" onClick={() => removeRow(i)} title="Удалить" style={{ width: 30, height: 30, borderRadius: 9, border: '1px solid #f0d6d6', background: '#fff', color: '#c0392b', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}><Trash2 size={15} /></button>
+                                    </span>
+                                  </div>
+                                  {r.kind === 'row' && (
+                                    <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                                      {r.cells.map((c, ci) => (
+                                        <div key={ci}>
+                                          <div style={{ fontSize: 11, fontWeight: 700, color: '#a89a88', marginBottom: 3 }}>{rowCellLabel(ci)}</div>
+                                          <input
+                                            style={field}
+                                            value={c}
+                                            onChange={e => mutateRow(i, rw => (rw.kind === 'row' ? { ...rw, cells: rw.cells.map((x, xi) => (xi === ci ? e.target.value : x)) } : rw))}
+                                            placeholder={ci === 0 ? 'Например: Витамин C' : ci === 1 ? 'Например: 100 мг' : 'Например: 125%'}
+                                          />
+                                        </div>
+                                      ))}
+                                    </div>
+                                  )}
+                                  {r.kind !== 'row' && (
+                                    <input
+                                      style={field}
+                                      value={r.text}
+                                      onChange={e => mutateRow(i, rw => (rw.kind !== 'row' ? { ...rw, text: e.target.value } : rw))}
+                                      placeholder={r.kind === 'section' ? 'Заголовок, напр. «Состав на 1 капсулу»' : 'Например: Примечание под таблицей'}
+                                    />
+                                  )}
+                                </motion.div>
+                              ))}
+                            </AnimatePresence>
+                          </div>
+
+                          <div style={{ display: 'flex', gap: 10, marginTop: 14, flexWrap: 'wrap' }}>
+                            <motion.button whileTap={{ scale: 0.97 }} type="button" onClick={() => setSpecRows(prev => [...prev, { kind: 'row', cells: ['', '', ''] }])} style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '12px 18px', borderRadius: 13, border: '2px solid var(--primary)', background: 'var(--primary)', color: '#fff', fontWeight: 700, fontSize: 14, cursor: 'pointer' }}>
+                              <Plus size={16} /> Добавить вещество
+                            </motion.button>
+                            <button type="button" onClick={() => setSpecRows(prev => [...prev, { kind: 'section', text: '' }])} style={{ padding: '12px 18px', borderRadius: 13, border: '2px solid #e0d8cc', background: '#fff', color: 'var(--text-main)', fontWeight: 700, fontSize: 14, cursor: 'pointer' }}>Добавить заголовок</button>
+                            <button type="button" onClick={() => setSpecRows(prev => [...prev, { kind: 'note', text: '' }])} style={{ padding: '12px 18px', borderRadius: 13, border: '2px solid #e0d8cc', background: '#fff', color: 'var(--text-main)', fontWeight: 700, fontSize: 14, cursor: 'pointer' }}>Добавить примечание</button>
+                          </div>
+                        </div>
+                      )}
+                    </motion.div>
+                  </AnimatePresence>
+                </div>
+
+                {/* Live-превью */}
+                <div style={{ position: 'sticky', top: 0, alignSelf: 'start' }}>
+                  <div style={{ fontSize: 12, fontWeight: 800, color: '#a89a88', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 10, display: 'flex', alignItems: 'center', gap: 6 }}>
+                    <Eye size={14} /> Так увидит покупатель
+                  </div>
+                  <div style={{ borderRadius: 20, overflow: 'hidden', border: '1px solid rgba(99,67,49,0.1)', boxShadow: '0 16px 40px rgba(99,67,49,0.12)' }}>
+                    <div style={{ aspectRatio: '3 / 4', background: 'linear-gradient(180deg, #fdfcfa, #f2ede5)', overflow: 'hidden' }}>
+                      {draft.image ? <NormalizedImg src={draft.image} alt="" style={imgCardStyle} /> : <div style={{ height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#d4c9bb' }}><ImageIcon size={40} /></div>}
+                    </div>
+                    <div style={{ padding: '14px 16px 16px', background: '#fff' }}>
+                      <span style={{ display: 'inline-block', fontSize: 11, fontWeight: 800, color: '#9a7b3f', background: '#fbf3e2', padding: '3px 9px', borderRadius: 100, marginBottom: 8 }}>
+                        {CATEGORIES.find(c => c.key === draft.categoryKey)?.icon} {CAT_LABEL[draft.categoryKey]}
+                      </span>
+                      <div style={{ fontWeight: 800, fontSize: 15, lineHeight: 1.3, color: 'var(--primary-dark)', minHeight: 40 }}>
+                        {draft.names.ru || 'Название товара'}
+                      </div>
+                      <div style={{ marginTop: 8, fontWeight: 800, fontSize: 18, color: 'var(--primary)' }}>{draft.price ? draft.price.toLocaleString('ru-RU') + ' ₺' : '0 ₺'}</div>
+                    </div>
+                  </div>
+                  <div style={{ fontSize: 12, color: '#b0a797', marginTop: 10, lineHeight: 1.5 }}>
+                    Превью обновляется автоматически по мере заполнения полей.
+                  </div>
+                </div>
+              </div>
+
+              {/* Нижняя панель */}
+              <div style={{ display: 'flex', gap: 12, padding: '16px 26px', borderTop: '1px solid #f0ece6', background: '#fbfaf8', flexWrap: 'wrap', alignItems: 'center' }}>
+                <motion.button whileTap={{ scale: 0.97 }} disabled={step === 0} onClick={() => setStep(s => Math.max(0, s - 1))} style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '13px 20px', borderRadius: 14, border: '2px solid #e0dad2', background: '#fff', color: 'var(--text-main)', fontWeight: 700, fontSize: 15, cursor: step === 0 ? 'default' : 'pointer', opacity: step === 0 ? 0.4 : 1 }}>
+                  <ArrowLeft size={16} /> Назад
+                </motion.button>
+
+                {currentError && (
+                  <motion.span
+                    initial={{ opacity: 0, y: -4 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 13, fontWeight: 600, color: '#c0392b', background: '#fdf0ef', padding: '9px 14px', borderRadius: 12 }}
+                  >
+                    <X size={15} /> {currentError}
+                  </motion.span>
+                )}
+
+                <div style={{ flex: 1 }} />
+
+                {step === steps.length - 1 ? (
+                  <>
+                    <motion.button
+                      whileTap={{ scale: 0.97 }}
+                      onClick={translate}
+                      disabled={translatingId === draft.id || savingId === draft.id}
+                      style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '13px 20px', borderRadius: 14, border: '2px solid #2a7', background: '#fff', color: '#2a7', fontWeight: 700, fontSize: 15, cursor: 'pointer', opacity: translatingId === draft.id ? 0.6 : 1 }}
+                    >
+                      <Languages size={16} /> {translatingId === draft.id ? 'Переводим…' : 'Перевести на другие языки'}
+                    </motion.button>
+                    <motion.button
+                      whileTap={{ scale: 0.97 }}
+                      onClick={save}
+                      disabled={!!currentError || savingId === draft.id}
+                      style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '14px 26px', borderRadius: 14, border: 'none', background: currentError ? '#d8d2c8' : 'linear-gradient(135deg, #f0cd83, #e7be63)', color: currentError ? '#fff' : '#5e3312', fontWeight: 800, fontSize: 16, cursor: currentError ? 'default' : 'pointer', boxShadow: currentError ? 'none' : '0 8px 24px rgba(231,190,99,0.45)', opacity: savingId === draft.id ? 0.6 : 1 }}
+                    >
+                      <Save size={17} /> {savingId === draft.id ? 'Сохраняем…' : 'Сохранить товар'}
+                    </motion.button>
+                  </>
+                ) : (
+                  <motion.button whileTap={{ scale: 0.97 }} disabled={!!currentError} onClick={() => setStep(s => s + 1)} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '14px 26px', borderRadius: 14, border: 'none', background: currentError ? '#d8d2c8' : 'linear-gradient(135deg, var(--primary), #7d5236)', color: '#fff', fontWeight: 800, fontSize: 16, cursor: currentError ? 'default' : 'pointer', boxShadow: currentError ? 'none' : '0 8px 24px rgba(99,67,49,0.35)' }}>
+                    Далее <ArrowRight size={17} />
+                  </motion.button>
+                )}
+
+                <button onClick={() => del(draft.id)} style={{ padding: '12px 18px', borderRadius: 14, border: '2px solid #f0d6d6', background: '#fff', color: '#c0392b', fontWeight: 700, fontSize: 14, cursor: 'pointer' }}>Удалить</button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };

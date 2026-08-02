@@ -202,6 +202,18 @@ const AppStyles = () => (
       letter-spacing: -0.02em;
       margin-bottom: 32px;
     }
+    .about-card {
+      padding: 36px 30px;
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      background: #FFFFFF;
+      box-shadow: 0 12px 32px rgba(62,39,35,0.05);
+      transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.35s ease;
+    }
+    .about-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 20px 44px rgba(62,39,35,0.12);
+    }
     .hero-grid {
       display: grid;
       grid-template-columns: 1fr;
@@ -209,6 +221,14 @@ const AppStyles = () => (
       align-items: center;
       position: relative;
       z-index: 2;
+    }
+
+    @media (min-width: 1115px) and (max-width: 1413px) {
+      .hero-text-container {
+        margin-left: 0;
+        padding-left: clamp(10px, 2vw, 40px);
+        max-width: clamp(380px, 44vw, 560px);
+      }
     }
 
     @media (min-width: 1117px) and (max-width: 1232px) {

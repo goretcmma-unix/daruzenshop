@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { RefreshCw, Eye, EyeOff, Plus, Trash2, ChevronUp, ChevronDown, ArrowDownLeft } from 'lucide-react';
+import { RefreshCw, Eye, EyeOff, Plus, Minus, Trash2, ChevronUp, ChevronDown, ArrowDownLeft } from 'lucide-react';
 import { supabase, fetchProducts, upsertProduct, deleteProduct, uploadProductImage } from '../lib/supabase';
 import { autoTranslateFromRu } from '../lib/translate';
 import { cropToStandard } from '../lib/imagePipeline';
@@ -160,6 +160,7 @@ const AdminPanel: React.FC = () => {
   const [showHint, setShowHint] = useState(false);
   const [notice, setNotice] = useState('');
   const [savedId, setSavedId] = useState<string | null>(null);
+  const [openDoseCols, setOpenDoseCols] = useState<Record<string, number>>({});
 
   useEffect(() => {
     if (!supabase) return;
@@ -335,10 +336,8 @@ const AdminPanel: React.FC = () => {
     return e.cells.map(c => c.trim()).filter(Boolean).join(' | ');
   };
 
-  const isSpecEntryEmpty = (e: SpecEntry): boolean => e.cells.every(c => !(c ?? '').trim());
-
   const entriesToSpecs = (entries: SpecEntry[]): string[] =>
-    entries.filter(e => !isSpecEntryEmpty(e)).map(serializeSpecEntry);
+    entries.map(serializeSpecEntry);
 
   const writeSpecs = (p: Product, l: Lang, entries: SpecEntry[]): Product => ({
     ...p,
@@ -437,14 +436,34 @@ const AdminPanel: React.FC = () => {
 
   const emptyCells = (n: number): string[] => Array.from({ length: n }, () => '');
 
-  const specTrimLen = (arr: string[]): number => { let n = arr.length; while (n > 0 && !((arr[n - 1] ?? '').trim())) n--; return n; };
-
   const blockColCount = (b: Extract<SpecBlock, { kind: 'table' }>): number =>
-    Math.max(1, specTrimLen(b.headers), ...b.rows.filter(r => !r.note).map(r => specTrimLen(r.cells)));
+    Math.max(1, b.headers.length, ...b.rows.filter(r => !r.note).map(r => r.cells.length));
 
   const addSpecRowTo = (p: Product, l: Lang, block: Extract<SpecBlock, { kind: 'table' }>): Product => {
     const entries = parseSpecEntries(getSpecLines(p, l));
     entries.splice(tableInsertRowIdx(block), 0, { type: 'row', cells: emptyCells(blockColCount(block)) });
+    return writeSpecs(p, l, entries);
+  };
+
+  const addSpecColumnTo = (p: Product, l: Lang, block: Extract<SpecBlock, { kind: 'table' }>): Product => {
+    const entries = parseSpecEntries(getSpecLines(p, l));
+    const [start, end] = blockRange(block);
+    for (let i = start; i < end; i++) {
+      const e = entries[i];
+      if (!e || e.type === 'section') continue;
+      entries[i] = { ...e, cells: [...e.cells, ''] };
+    }
+    return writeSpecs(p, l, entries);
+  };
+
+  const removeSpecColumnTo = (p: Product, l: Lang, block: Extract<SpecBlock, { kind: 'table' }>): Product => {
+    const entries = parseSpecEntries(getSpecLines(p, l));
+    const [start, end] = blockRange(block);
+    for (let i = start; i < end; i++) {
+      const e = entries[i];
+      if (!e || e.type === 'section') continue;
+      entries[i] = { ...e, cells: e.cells.slice(0, -1) };
+    }
     return writeSpecs(p, l, entries);
   };
 
@@ -697,28 +716,6 @@ const AdminPanel: React.FC = () => {
         .check-circle { stroke-dasharray: 226; stroke-dashoffset: 226; animation: draw-circle .45s ease-out forwards; }
         .check-mark { stroke-dasharray: 48; stroke-dashoffset: 48; animation: draw-check .35s ease-out .45s forwards; }
 
-        .admin-spec { display: flex; flex-direction: column; gap: 10px; }
-        .admin-spec-card {
-          background: #fff; border: 1px solid #e6ddcf; border-radius: 14px;
-          box-shadow: 0 1px 3px rgba(99,67,49,0.05); overflow: hidden;
-        }
-        .admin-spec-card-head {
-          display: flex; align-items: center; gap: 8px;
-          padding: 8px 12px; background: #faf6ef; border-bottom: 1px solid #efe6d8;
-        }
-        .admin-spec-tag {
-          font-size: 10px; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase;
-          color: #a08a6d; background: #f3ead9; padding: 3px 10px; border-radius: 100px;
-        }
-        .admin-spec-card-body { padding: 10px; display: flex; flex-direction: column; gap: 8px; }
-        .admin-spec-cols { display: flex; gap: 8px; }
-        .admin-spec-row { display: flex; gap: 6px; align-items: center; }
-        .admin-spec-row.is-sub {
-          background: #fbf9f4; padding: 6px 8px; border-radius: 10px; margin: -2px 0;
-        }
-        .admin-spec-row.is-sub input {
-          background: #fffdf9;
-        }
         .admin-spec-icobtn {
           width: 28px; height: 28px; flex: 0 0 28px; border-radius: 8px; border: 1px solid #e6ddcf;
           background: #fff; color: #8a7a68; display: inline-flex; align-items: center;
@@ -743,25 +740,6 @@ const AdminPanel: React.FC = () => {
         }
         .admin-spec-addblock:hover { border-color: #c9b28a; color: #a08a6d; }
 
-        .admin-spec-table { width: 100%; border-collapse: collapse; table-layout: fixed; }
-        .admin-spec-table-wrap { overflow-x: hidden; max-width: 100%; min-width: 0; padding-bottom: 2px; }
-        .admin-spec-table th, .admin-spec-table td { border: 1px solid #eee5d6; padding: 4px 5px; vertical-align: middle; }
-        .admin-spec-table thead th { background: #faf5ec; }
-        .admin-spec-table thead input {
-          border: none; background: transparent; font-weight: 800; font-size: 12px;
-          color: #7a5c3a; width: 100%; box-sizing: border-box; padding: 4px 5px; outline: none; min-width: 0;
-        }
-        .admin-spec-table thead input:focus { background: #fff; border-radius: 6px; }
-        .admin-spec-table tbody input {
-          width: 100%; box-sizing: border-box; border: 1px solid transparent; border-radius: 8px;
-          padding: 5px 7px; font-size: 12.5px; color: #4a3a2a; background: transparent; min-width: 0;
-        }
-        .admin-spec-table tbody input:hover { border-color: #e6ddcf; background: #fff; }
-        .admin-spec-table tbody input:focus { border-color: #c9b28a; background: #fff; outline: none; }
-        .admin-spec-table tbody tr.is-sub td { background: #fbf9f4; }
-        .admin-spec-table tbody tr.is-sub td.admin-spec-nest-col { border-left: 3px solid #d9bf93; }
-        .admin-spec-table tbody tr.is-sub input { background: #fffdf9; }
-        .admin-spec-table tbody tr.is-sub td:nth-child(2) input { padding-left: 22px; }
         .admin-spec-note-input { font-style: italic; font-weight: 500; color: #8a7a68; }
         .admin-spec-disclaimer {
           margin-top: 8px;
@@ -775,17 +753,76 @@ const AdminPanel: React.FC = () => {
         }
         .admin-spec-disclaimer .admin-spec-note-input { border-color: transparent; }
         .admin-spec-disclaimer .admin-spec-row-actions { margin-left: auto; }
-        .admin-spec-table .admin-spec-nest-col { width: 34px; text-align: center; }
-        .admin-spec-table .admin-spec-actions-col { width: 86px; text-align: center; }
-        .admin-spec-table .admin-spec-icobtn { width: 24px; height: 24px; flex: 0 0 24px; }
-        .admin-spec-table .admin-spec-row-actions { display: inline-flex; gap: 3px; opacity: 0.35; transition: opacity 0.15s ease; }
-        .admin-spec-table tbody tr:hover .admin-spec-row-actions { opacity: 1; }
-        .admin-spec-subtag { font-size: 11.5px; color: #b3a58f; }
-        .admin-spec-section-input {
-          width: 100%; box-sizing: border-box; border: 1px solid #e6ddcf; border-radius: 10px;
-          padding: 10px 12px; font-size: 14px; font-weight: 700; color: #4a3a2a; background: #fffdf8;
+
+        .admin-spec-edit-card .comp-card__row::before { opacity: 0.3; height: 18px; }
+        .admin-wysiwyg-row { padding-right: 106px; }
+        .admin-wysiwyg-row .admin-wysiwyg-name { flex: 1; min-width: 0; }
+        .admin-wysiwyg-actions .admin-spec-icobtn { width: 22px; height: 22px; flex: 0 0 22px; }
+        .admin-wysiwyg-name, .admin-wysiwyg-hint, .admin-wysiwyg-caption {
+          border: 1px dashed transparent; background: transparent; outline: none;
+          border-radius: 8px; font-family: inherit; box-sizing: border-box;
         }
-        .admin-spec-section-input:focus { border-color: #c9b28a; outline: none; }
+        .admin-wysiwyg-name { padding: 2px 6px 2px 14px; margin: -2px 0; }
+        .admin-wysiwyg-hint { padding: 2px 6px; margin: -2px 0; }
+        .admin-wysiwyg-name:hover, .admin-wysiwyg-hint:hover, .admin-wysiwyg-caption:hover { border-color: #e2d6c2; background: #fff; }
+        .admin-wysiwyg-name:focus, .admin-wysiwyg-hint:focus, .admin-wysiwyg-caption:focus { border-color: #c9b28a; background: #fff; box-shadow: 0 0 0 3px rgba(207,155,65,0.12); }
+        .admin-wysiwyg-caption { display: block; width: 100%; margin: 4px 0 10px; padding: 2px 6px; }
+        .comp-rows__hint-val.admin-wysiwyg-hint { text-align: right; }
+        .admin-wysiwyg-pill {
+          border: 1px dashed transparent; outline: none; font-family: inherit;
+          box-sizing: border-box; min-width: 24px; text-align: center;
+        }
+        .admin-wysiwyg-pill:hover { border-color: #c9b28a; background: #fff; }
+        .admin-wysiwyg-pill:focus { border-color: #a08a6d; background: #fff; box-shadow: 0 0 0 3px rgba(207,155,65,0.12); }
+        .admin-wysiwyg-actions {
+          position: absolute; right: 6px; top: 50%; transform: translateY(-50%);
+          display: inline-flex; gap: 2px; opacity: 0.2; transition: opacity .15s ease;
+        }
+        .admin-wysiwyg-row:hover .admin-wysiwyg-actions { opacity: 1; }
+        .admin-wysiwyg-row .comp-card__values { margin-right: 4px; }
+        .admin-spec-edit .comp-rows__hint { padding-right: 106px; }
+        .admin-spec-edit .comp-rows__hint-name { padding-left: 14px; }
+        .admin-spec-edit .comp-card__values { justify-content: flex-end; margin-right: 4px; }
+        .admin-spec-edit .comp-rows__hint-val { display: inline-block; text-align: center; }
+        .admin-spec-acc-head { display: flex; align-items: center; gap: 10px; padding: 14px 18px; cursor: default; }
+        .admin-spec-acc-head-input {
+          flex: 1; min-width: 0;
+          border: 1px dashed transparent; background: transparent; outline: none;
+          font-family: inherit; font-size: inherit; font-weight: inherit; letter-spacing: inherit; color: inherit;
+        }
+        .admin-spec-acc-head-input::placeholder { opacity: 0.55; }
+        .admin-spec-acc-head-input:hover, .admin-spec-acc-head-input:focus {
+          border-color: rgba(122,106,88,0.35); background: rgba(255,255,255,0.35);
+        }
+        .admin-spec-acc-head.is-open .admin-spec-acc-head-input:hover,
+        .admin-spec-acc-head.is-open .admin-spec-acc-head-input:focus {
+          border-color: rgba(255,255,255,0.65); background: rgba(255,255,255,0.14);
+        }
+        .admin-spec-acc-chev {
+          background: transparent; border: none; padding: 0; cursor: pointer;
+          display: inline-flex; opacity: 0.55; color: inherit; transition: transform 0.25s ease, opacity 0.25s ease;
+        }
+        .admin-spec-acc-head.is-open .admin-spec-acc-chev { transform: rotate(180deg); opacity: 1; }
+        .admin-spec-preview { margin-top: 18px; }
+        .admin-spec-edit { display: flex; flex-direction: column; gap: 6px; }
+        .admin-spec-edit-block { position: relative; }
+        .admin-spec-edit-block:hover .admin-spec-edit-block-actions { opacity: 1; }
+        .admin-spec-edit-block-actions {
+          position: absolute; right: 10px; top: 6px; z-index: 3;
+          display: inline-flex; gap: 3px; opacity: 0; transition: opacity .15s ease;
+        }
+        .admin-spec-edit-card { padding: 2px 10px 8px; }
+        .admin-spec-edit-section-input { margin: 16px 0 6px; }
+        .admin-spec-edit-section-input input {
+          width: auto; min-width: 200px; text-align: center;
+          font-family: inherit; font-size: inherit; font-weight: inherit; letter-spacing: inherit; color: inherit;
+          border: 1px dashed transparent; background: transparent; border-radius: 8px; padding: 3px 8px; outline: none;
+        }
+        .admin-spec-edit-section-input input:hover, .admin-spec-edit-section-input input:focus { border-color: #d9bf93; background: #fff; }
+        .admin-spec-add-row { display: flex; align-items: center; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
+        .admin-spec-col-ctrl { display: inline-flex; gap: 6px; margin-left: auto; }
+        .admin-spec-col-ctrl .admin-spec-add { padding: 6px 12px; font-size: 12.5px; }
+        .admin-spec-col-ctrl .admin-spec-add:disabled { opacity: 0.4; cursor: default; }
       `}</style>
       <main style={{ maxWidth: 1100, margin: '0 auto', padding: '24px' }}>
         {items.length === 0 && <p style={{ color: 'var(--text-muted)', textAlign: 'center', marginTop: 40 }}>Пока нет товаров. Нажмите «+ Товар».</p>}
@@ -903,7 +940,7 @@ const AdminPanel: React.FC = () => {
               <div style={{ marginTop: 22, paddingTop: 18, borderTop: '1px dashed #e2d8ca' }}>
                 <div className="admin-label" style={{ color: '#a08a6d' }}>Состав</div>
                     <p style={{ margin: '-2px 0 12px', fontSize: 12.5, color: '#a89a88', lineHeight: 1.55 }}>
-                      Таблица = как на сайте: колонки и их заголовки (например «1 таблетка», «Норма %») показываются на сайте ровно так же. Пустой заголовок колонки на сайте не отображается. Кнопка «вложить» делает строку подчинённой предыдущей. Порядок = порядок на сайте. Пустые строки не сохраняются.
+                      Это ровно то, что увидит покупатель на сайте. Просто кликните по тексту и правьте прямо здесь. Пустые ячейки на сайте скрываются, пустые строки не сохраняются.
                     </p>
                     {(() => {
                       const entries = parseSpecEntries(getSpecLines(editing, tabLang));
@@ -911,97 +948,184 @@ const AdminPanel: React.FC = () => {
                       const blockCount = blocks.length;
                       return (
                         <>
-                          <div className="admin-spec">
+                          <div className="admin-spec-preview admin-spec-edit">
                             {blocks.map((block, bi) => (
-                              <div key={block.kind === 'section' ? 's' + block.entryIdx : 't' + (block.headerIdx ?? block.rows[0]?.entryIdx)} className="admin-spec-card">
-                                {block.kind === 'section' ? (
-                                  <>
-                                    <div className="admin-spec-card-head">
-                                      <span className="admin-spec-tag">Раздел</span>
-                                      <span className="admin-spec-subtag">заголовок группы веществ</span>
-                                      <div style={{ marginLeft: 'auto', display: 'flex', gap: 6 }}>
-                                        <button type="button" disabled={bi === 0} onClick={() => update(editing.id, pr => moveSpecBlock(pr, tabLang, bi, -1))} className="admin-spec-icobtn" title="Выше"><ChevronUp size={15} /></button>
-                                        <button type="button" disabled={bi === blockCount - 1} onClick={() => update(editing.id, pr => moveSpecBlock(pr, tabLang, bi, 1))} className="admin-spec-icobtn" title="Ниже"><ChevronDown size={15} /></button>
-                                        <button type="button" onClick={() => update(editing.id, pr => removeSpecBlock(pr, tabLang, bi))} className="admin-spec-icobtn danger" title="Удалить раздел"><Trash2 size={15} /></button>
-                                      </div>
-                                    </div>
-                                    <div className="admin-spec-card-body">
-                                      <input className="admin-spec-section-input" value={block.text} onChange={e => update(editing.id, pr => setSpecCell(pr, tabLang, block.entryIdx, 0, e.target.value))} placeholder="Например: Состав на 1 порцию (2 таблетки)" />
-                                    </div>
-                                  </>
-                                ) : (
-                                  <>
-                                    <div className="admin-spec-card-head">
-                                      <span className="admin-spec-tag">Таблица</span>
-                                      <span className="admin-spec-subtag">{block.rows.length} {block.rows.length % 10 === 1 && block.rows.length % 100 !== 11 ? 'вещество' : 'веществ'}</span>
-                                      <div style={{ marginLeft: 'auto', display: 'flex', gap: 6 }}>
-                                        <button type="button" disabled={bi === 0} onClick={() => update(editing.id, pr => moveSpecBlock(pr, tabLang, bi, -1))} className="admin-spec-icobtn" title="Выше"><ChevronUp size={15} /></button>
-                                        <button type="button" disabled={bi === blockCount - 1} onClick={() => update(editing.id, pr => moveSpecBlock(pr, tabLang, bi, 1))} className="admin-spec-icobtn" title="Ниже"><ChevronDown size={15} /></button>
-                                        <button type="button" onClick={() => update(editing.id, pr => removeSpecBlock(pr, tabLang, bi))} className="admin-spec-icobtn danger" title="Удалить таблицу"><Trash2 size={15} /></button>
-                                      </div>
-                                    </div>
-                                    <div className="admin-spec-card-body">
-                                      <div className="admin-spec-table-wrap">
-                                      <table className="admin-spec-table">
-                                        <thead>
-                                          <tr>
-                                            <th className="admin-spec-nest-col"></th>
-                                            {Array.from({ length: blockColCount(block) }).map((_, ci) => (
-                                              <th key={ci} style={{ width: ci === 0 ? '30%' : undefined }}>
-                                                <input
-                                                  value={block.headerIdx !== null ? (block.headers[ci] ?? '') : ''}
-                                                  onChange={e => update(editing.id, pr => setSpecHeader(pr, tabLang, block, ci, e.target.value))}
-                                                  placeholder={ci === 0 ? 'Название' : 'Заголовок колонки'}
-                                                />
-                                              </th>
-                                            ))}
-                                            <th className="admin-spec-actions-col"></th>
-                                          </tr>
-                                        </thead>
-                                        <tbody>
-                                          {block.rows.filter(r => !r.note).map((row, ri) => {
-                                            const sub = (row.cells[0] ?? '').trim().startsWith('└');
-                                            return (
-                                              <tr key={row.entryIdx} className={sub ? 'is-sub' : ''}>
-                                                <td className="admin-spec-nest-col">
-                                                  <button type="button" title={sub ? 'Снять вложенность' : 'Вложить под предыдущее'} onClick={() => update(editing.id, pr => toggleSpecSub(pr, tabLang, row.entryIdx))} className={'admin-spec-icobtn' + (sub ? ' active' : '')}><ArrowDownLeft size={15} /></button>
-                                                </td>
-                                                {Array.from({ length: blockColCount(block) }).map((_, ci) => (
-                                                  <td key={ci}>
-                                                    <input value={row.cells[ci] ?? ''} onChange={e => update(editing.id, pr => setSpecCell(pr, tabLang, row.entryIdx, ci, e.target.value))} placeholder={ci === 0 ? 'Название вещества' : 'Значение'} />
-                                                  </td>
-                                                ))}
-                                                <td className="admin-spec-actions-col">
-                                                  <span className="admin-spec-row-actions">
-                                                    <button type="button" disabled={ri === 0} onClick={() => update(editing.id, pr => moveSpecRow(pr, tabLang, row.entryIdx, -1))} className="admin-spec-icobtn" title="Выше"><ChevronUp size={15} /></button>
-                                                    <button type="button" disabled={ri === block.rows.length - 1} onClick={() => update(editing.id, pr => moveSpecRow(pr, tabLang, row.entryIdx, 1))} className="admin-spec-icobtn" title="Ниже"><ChevronDown size={15} /></button>
-                                                    <button type="button" onClick={() => update(editing.id, pr => removeSpecRow(pr, tabLang, row.entryIdx))} className="admin-spec-icobtn danger" title="Удалить"><Trash2 size={15} /></button>
-                                                  </span>
-                                                </td>
-                                              </tr>
-                                            );
-                                          })}
-                                        </tbody>
-                                      </table>
-                                      </div>
-                                      {block.rows.filter(r => r.note).map((row, nri) => (
-                                        <div key={row.entryIdx} className="admin-spec-disclaimer">
-                                          <input className="admin-spec-note-input" value={row.cells[0] ?? ''} onChange={e => update(editing.id, pr => setSpecCell(pr, tabLang, row.entryIdx, 0, e.target.value))} placeholder="Дисклеймер под таблицей" />
-                                          <span className="admin-spec-row-actions">
-                                            <button type="button" onClick={() => update(editing.id, pr => moveSpecRow(pr, tabLang, row.entryIdx, -1))} className="admin-spec-icobtn" title="Выше"><ChevronUp size={15} /></button>
-                                            <button type="button" onClick={() => update(editing.id, pr => moveSpecRow(pr, tabLang, row.entryIdx, 1))} className="admin-spec-icobtn" title="Ниже"><ChevronDown size={15} /></button>
-                                            <button type="button" onClick={() => update(editing.id, pr => removeSpecRow(pr, tabLang, row.entryIdx))} className="admin-spec-icobtn danger" title="Удалить"><Trash2 size={15} /></button>
-                                          </span>
-                                        </div>
-                                      ))}
-                                      <button type="button" className="admin-spec-add" onClick={() => update(editing.id, pr => addSpecRowTo(pr, tabLang, block))}>
-                                        <Plus size={14} style={{ verticalAlign: -2, marginRight: 5 }} />Добавить вещество
-                                      </button>
-                                    </div>
-                                  </>
-                                )}
+                              block.kind === 'section' ? (
+                              <div key={'s' + block.entryIdx} className="admin-spec-edit-block">
+                                <span className="admin-spec-edit-block-actions">
+                                  <button type="button" disabled={bi === 0} onClick={() => update(editing.id, pr => moveSpecBlock(pr, tabLang, bi, -1))} className="admin-spec-icobtn" title="Раздел выше"><ChevronUp size={15} /></button>
+                                  <button type="button" disabled={bi === blockCount - 1} onClick={() => update(editing.id, pr => moveSpecBlock(pr, tabLang, bi, 1))} className="admin-spec-icobtn" title="Раздел ниже"><ChevronDown size={15} /></button>
+                                  <button type="button" onClick={() => update(editing.id, pr => removeSpecBlock(pr, tabLang, bi))} className="admin-spec-icobtn danger" title="Удалить раздел"><Trash2 size={15} /></button>
+                                </span>
+                                <div className="comp-card__section admin-spec-edit-section-input">
+                                  <input value={block.text} onChange={e => update(editing.id, pr => setSpecCell(pr, tabLang, block.entryIdx, 0, e.target.value))} placeholder="Заголовок раздела, напр. «Состав на 1 порцию»" />
+                                </div>
                               </div>
-                            ))}
+                              ) : (
+                              <div key={'t' + (block.headerIdx ?? block.rows[0]?.entryIdx)} className="admin-spec-edit-block">
+                                <span className="admin-spec-edit-block-actions">
+                                  <button type="button" disabled={bi === 0} onClick={() => update(editing.id, pr => moveSpecBlock(pr, tabLang, bi, -1))} className="admin-spec-icobtn" title="Таблица выше"><ChevronUp size={15} /></button>
+                                  <button type="button" disabled={bi === blockCount - 1} onClick={() => update(editing.id, pr => moveSpecBlock(pr, tabLang, bi, 1))} className="admin-spec-icobtn" title="Таблица ниже"><ChevronDown size={15} /></button>
+                                  <button type="button" onClick={() => update(editing.id, pr => removeSpecBlock(pr, tabLang, bi))} className="admin-spec-icobtn danger" title="Удалить таблицу"><Trash2 size={15} /></button>
+                                </span>
+                                <div className="comp-card admin-spec-edit-card">
+                                      {(() => {
+                                          const colCount = blockColCount(block);
+                                          const headers = block.headerIdx !== null ? block.headers : [];
+                                          const headerAt = (ci: number): string => headers[ci] ?? '';
+                                          const valueIdx: number[] = [];
+                                          for (let vi = 1; vi < colCount; vi++) valueIdx.push(vi);
+                                          let pctAbs = valueIdx.find(vi => /%/.test(headerAt(vi))) ?? -1;
+                                          if (pctAbs === -1 && valueIdx.length) {
+                                            const checkRows = block.rows.filter(r => !r.note);
+                                            for (const vi of valueIdx) {
+                                              const vals = checkRows.map(r => (r.cells[vi] ?? '').trim()).filter(v => !!v && v !== '-' && v !== '—');
+                                              if (vals.length && vals.filter(v => /%/.test(v)).length >= vals.length / 2) { pctAbs = vi; break; }
+                                            }
+                                          }
+                                          const doseIdx = valueIdx.filter(vi => vi !== pctAbs);
+                                          const hasValueCols = valueIdx.some(vi => headerAt(vi).trim() !== '');
+                                          const dataRows = block.rows.filter(r => !r.note);
+                                          const cellW = (vi: number) =>
+                                            Math.max(96, Math.ceil(Math.max((headerAt(vi) || '').length, ...dataRows.map(r => ((r.cells[vi] ?? '').trim()).length)) * 9) + 16);
+                                          const brdW = pctAbs === -1 ? 0 :
+                                            Math.max(72, Math.ceil(Math.max(...dataRows.map(r => ((r.cells[pctAbs] ?? '').trim()).length)) * 9) + 16);
+                                          const accKey = 'acc:' + editing.id + ':' + tabLang + ':' + (block.headerIdx ?? block.rows[0]?.entryIdx);
+                                          const openCol = openDoseCols[accKey] ?? 0;
+                                          const setOpenCol = (ci: number) => setOpenDoseCols(prev => ({ ...prev, [accKey]: prev[accKey] === ci ? -1 : ci }));
+                                          const hintRow = (onlyCol?: number) => {
+                                            const cols = onlyCol !== undefined ? [onlyCol] : doseIdx;
+                                            return (
+                                              <div className="comp-rows__hint">
+                                                <span className="comp-rows__hint-name">Вещество</span>
+                                                <span className="comp-card__values">
+                                                  {cols.map(vi => (
+                                                    <span key={vi} className="comp-rows__hint-val" style={{ width: cellW(vi) }}>Дозировка</span>
+                                                  ))}
+                                                  {pctAbs !== -1 && <span className="comp-rows__hint-val comp-rows__hint-val--brd" style={{ width: brdW, display: 'inline-block', textAlign: 'center' }}>BRD</span>}
+                                                </span>
+                                              </div>
+                                            );
+                                          };
+                                          const rowsHtml = (doseOnly?: number) =>
+                                            dataRows.map((row, ri) => {
+                                              const sub = (row.cells[0] ?? '').trim().startsWith('└');
+                                              const doseVals = doseOnly !== undefined ? [doseOnly] : doseIdx;
+                                              return (
+                                                <div key={row.entryIdx} className={'comp-card__row admin-wysiwyg-row' + (sub ? ' is-sub' : '')}>
+                                                  <input
+                                                    className="comp-card__name admin-wysiwyg-name"
+                                                    value={row.cells[0] ?? ''}
+                                                    onChange={e => update(editing.id, pr => setSpecCell(pr, tabLang, row.entryIdx, 0, e.target.value))}
+                                                    placeholder="Название вещества"
+                                                  />
+                                                  <span className="comp-card__values">
+                                                    {doseVals.map(vi => (
+                                                      <input
+                                                        key={vi}
+                                                        className="comp-card__dosage admin-wysiwyg-pill"
+                                                        style={{ width: cellW(vi) }}
+                                                        value={row.cells[vi] ?? ''}
+                                                        onChange={e => update(editing.id, pr => setSpecCell(pr, tabLang, row.entryIdx, vi, e.target.value))}
+                                                        placeholder="—"
+                                                      />
+                                                    ))}
+                                                    {pctAbs !== -1 && (
+                                                      <input
+                                                        className="comp-card__pct admin-wysiwyg-pill"
+                                                        style={{ width: brdW }}
+                                                        value={row.cells[pctAbs] ?? ''}
+                                                        onChange={e => update(editing.id, pr => setSpecCell(pr, tabLang, row.entryIdx, pctAbs, e.target.value))}
+                                                        placeholder="%"
+                                                      />
+                                                    )}
+                                                  </span>
+                                                  <span className="admin-wysiwyg-actions">
+                                                    <button type="button" title={sub ? 'Снять вложенность' : 'Вложить под предыдущее'} onClick={() => update(editing.id, pr => toggleSpecSub(pr, tabLang, row.entryIdx))} className={'admin-spec-icobtn' + (sub ? ' active' : '')}><ArrowDownLeft size={14} /></button>
+                                                    <button type="button" disabled={ri === 0} onClick={() => update(editing.id, pr => moveSpecRow(pr, tabLang, row.entryIdx, -1))} className="admin-spec-icobtn" title="Выше"><ChevronUp size={14} /></button>
+                                                    <button type="button" disabled={ri === dataRows.length - 1} onClick={() => update(editing.id, pr => moveSpecRow(pr, tabLang, row.entryIdx, 1))} className="admin-spec-icobtn" title="Ниже"><ChevronDown size={14} /></button>
+                                                    <button type="button" onClick={() => update(editing.id, pr => removeSpecRow(pr, tabLang, row.entryIdx))} className="admin-spec-icobtn danger" title="Удалить"><Trash2 size={14} /></button>
+                                                  </span>
+                                                </div>
+                                              );
+                                            });
+                                          return (
+                                            <>
+                                              {hasValueCols && doseIdx.length > 0 && (
+                                                <>
+                                                  {pctAbs !== -1 && headerAt(pctAbs) && (
+                                                    <input
+                                                      className="comp-card__pct-caption admin-wysiwyg-caption"
+                                                      value={headerAt(pctAbs)}
+                                                      onChange={e => update(editing.id, pr => setSpecHeader(pr, tabLang, block, pctAbs, e.target.value))}
+                                                      placeholder="% от суточной нормы"
+                                                    />
+                                                  )}
+                                                  <div className="comp-dose">
+                                                    {doseIdx.map((vi, ci) => {
+                                                      const open = openCol === ci;
+                                                      return (
+                                                        <div key={vi} className="comp-acc">
+                                                          <div className={'comp-acc__head admin-spec-acc-head' + (open ? ' is-open' : '')}>
+                                                            <input
+                                                              className="admin-spec-acc-head-input"
+                                                              value={headerAt(vi)}
+                                                              onChange={e => update(editing.id, pr => setSpecHeader(pr, tabLang, block, vi, e.target.value))}
+                                                              placeholder="Дозировка"
+                                                            />
+                                                            <button type="button" className="admin-spec-acc-chev" onClick={() => setOpenCol(ci)}>
+                                                              <ChevronDown size={16} />
+                                                            </button>
+                                                          </div>
+                                                          {open && (
+                                                            <div className="comp-acc__body">
+                                                              <div className="comp-acc__body-inner">
+                                                                {hintRow(vi)}
+                                                                {rowsHtml(vi)}
+                                                              </div>
+                                                            </div>
+                                                          )}
+                                                        </div>
+                                                      );
+                                                    })}
+                                                  </div>
+                                                </>
+                                              )}
+                                              {!(hasValueCols && doseIdx.length > 0) && (
+                                                <>
+                                                  {hintRow()}
+                                                  {rowsHtml()}
+                                                </>
+                                              )}
+                                              {block.rows.filter(r => r.note).map(row => (
+                                                <div key={row.entryIdx} className="admin-spec-disclaimer">
+                                                  <input className="admin-spec-note-input" value={row.cells[0] ?? ''} onChange={e => update(editing.id, pr => setSpecCell(pr, tabLang, row.entryIdx, 0, e.target.value))} placeholder="Примечание под таблицей" />
+                                                  <span className="admin-spec-row-actions">
+                                                    <button type="button" onClick={() => update(editing.id, pr => moveSpecRow(pr, tabLang, row.entryIdx, -1))} className="admin-spec-icobtn" title="Выше"><ChevronUp size={14} /></button>
+                                                    <button type="button" onClick={() => update(editing.id, pr => moveSpecRow(pr, tabLang, row.entryIdx, 1))} className="admin-spec-icobtn" title="Ниже"><ChevronDown size={14} /></button>
+                                                    <button type="button" onClick={() => update(editing.id, pr => removeSpecRow(pr, tabLang, row.entryIdx))} className="admin-spec-icobtn danger" title="Удалить"><Trash2 size={14} /></button>
+                                                  </span>
+                                                </div>
+                                              ))}
+                                              <div className="admin-spec-add-row">
+                                                <button type="button" className="admin-spec-add" onClick={() => update(editing.id, pr => addSpecRowTo(pr, tabLang, block))}>
+                                                  <Plus size={14} style={{ verticalAlign: -2, marginRight: 5 }} />Добавить вещество
+                                                </button>
+                                                <span className="admin-spec-col-ctrl">
+                                                  <button type="button" className="admin-spec-add" title="Добавить колонку" onClick={() => update(editing.id, pr => addSpecColumnTo(pr, tabLang, block))}>
+                                                    <Plus size={14} style={{ verticalAlign: -2, marginRight: 5 }} />Колонка
+                                                  </button>
+                                                  <button type="button" className="admin-spec-add" title="Удалить колонку" disabled={blockColCount(block) <= 2} onClick={() => update(editing.id, pr => removeSpecColumnTo(pr, tabLang, block))}>
+                                                    <Minus size={14} style={{ verticalAlign: -2, marginRight: 5 }} />Колонка
+                                                  </button>
+                                                </span>
+                                              </div>
+                                            </>
+                                          );
+                                        })()}
+                                      </div>
+                                    </div>
+                                )))}
                             {blockCount === 0 && (
                               <div style={{ padding: 22, border: '1px dashed #e0d6c6', borderRadius: 14, textAlign: 'center', color: '#a89a88', fontSize: 13.5 }}>
                                 Состав пуст. Добавьте таблицу с веществами или раздел.

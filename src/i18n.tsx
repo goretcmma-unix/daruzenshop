@@ -48,10 +48,15 @@ const ui = {
     about: {
       titlePre: 'Мы создаем культуру',
       titleAccent: 'заботы о себе',
-      desc: 'Daruzen — это не просто магазин добавок. Это результат многолетнего поиска лучших формул и чистейших ингредиентов из самого сердца Турции. Мы верим, что премиальное качество должно быть доступно каждому.',
+      desc: 'Daruzen — это не просто магазин добавок. Это результат многолетнего поиска лучших формул и чистейших ингредиентов из самого сердца Турции. Мы верим, что премиальное качество должно быть доступно каждому. Само имя «Daruzen» — это дань древнегреческому слову «daru» (δῶρον — «дар», «подарок»). Ведь именно так мы относимся к здоровью: это не обязанность и не роскошь, а дар, который нужно беречь и приумножать каждый день. Два древних корня — dara и zen, где «zen» символизирует гармонию и баланс, — сложились в наше название. Для нас «Daruzen» значит «дар жизни»: мы помогаем людям бережно заботиться о себе, возвращая естественную силу и равновесие.',
+      history: [
+        { title: 'Происхождение имени', text: '«Daruzen» родилось из древнегреческого «daru» (δῶρον — «дар», «подарок») и «zen» — символа гармонии и баланса. Два корня, объединившись, дали имя нашему бренду.' },
+        { title: 'Философия бренда', text: 'Здоровье — это не обязанность и не роскошь, а дар, который нужно беречь каждый день. «Daruzen» значит «дар жизни»: мы помогаем возвращать естественную силу и равновесие.' },
+        { title: 'Путь к совершенству', text: 'Многолетний поиск лучших формул и чистейших ингредиентов из самого сердца Турции. Мы верим, что премиальное качество должно быть доступно каждому.' },
+      ],
       features: [
         { title: 'Чистота состава', desc: 'Все наши продукты проходят строгий лабораторный контроль и не содержат лишних примесей.' },
-        { title: 'Научный подход', desc: 'Мы сотрудничаем с ведущими нутрициологами Турции для разработки эффективных дозировок.' },
+        { title: 'Научный подход', desc: 'Мы сотрудничаем с ведущими нутрициологами Турции и докторами наук для разработки эффективных дозировок.' },
         { title: 'Золотой стандарт', desc: 'Прямые поставки позволяют нам гарантировать оригинальность каждой баночки.' },
       ],
     },
@@ -139,9 +144,14 @@ const ui = {
       titlePre: 'Özgün bir kültür',
       titleAccent: 'yaratıyoruz',
       desc: 'Daruzen sadece bir takviye mağazası değildir. Türkiye\'nin kalbinden en iyi formüllerin ve en saf içeriklerin yıllarca süren arayışının bir sonucudur. Premium kalitenin herkese ulaşabilir olduğuna inanıyoruz.',
+      history: [
+        { title: 'İsmin kökeni', text: '"Daruzen", Antik Yunanca "daru" (δῶρον — hediye, armağan) ve "zen" — uyum ve dengenin sembolü — kelimelerinden doğdu. İki kök birleşerek markamıza ad verdi.' },
+        { title: 'Marka felsefesi', text: 'Sağlık bir görev ya da lüks değil, her gün korunması gereken bir hediyedir. "Daruzen", "yaşam hediyesi" demektir: doğal gücü ve dengeyi geri kazandırmaya yardımcı oluyoruz.' },
+        { title: 'Mükemmelliğe giden yol', text: 'Türkiye\'nin kalbinden en iyi formüllerin ve en saf içeriklerin yıllarca süren arayışı. Premium kalitenin herkese ulaşabilir olduğuna inanıyoruz.' },
+      ],
       features: [
         { title: 'Saf içerik', desc: 'Tüm ürünlerimiz sıkı laboratuvar kontrolünden geçer ve gereksiz katkı madde içermez.' },
-        { title: 'Bilimsel yaklaşım', desc: 'Etkili dozajlar geliştirmek için Türkiye\'nin önde gelen beslenme uzmanlarıyla iş birliği yapıyoruz.' },
+        { title: 'Bilimsel yaklaşım', desc: 'Etkili dozajlar geliştirmek için Türkiye\'nin önde gelen beslenme uzmanları ve bilim doktorlarıyla iş birliği yapıyoruz.' },
         { title: 'Altın standart', desc: 'Doğrudan tedarik, her kutunun orijinalliğini garanti etmemizi sağlar.' },
       ],
     },
@@ -229,9 +239,14 @@ const ui = {
       titlePre: 'We create a culture',
       titleAccent: 'of self-care',
       desc: 'Daruzen is more than just a supplement store. It is the result of a years-long search for the best formulas and purest ingredients from the heart of Turkey. We believe premium quality should be accessible to everyone.',
+      history: [
+        { title: 'Origin of the name', text: '"Daruzen" was born from the Ancient Greek "daru" (δῶρον — gift) and "zen" — a symbol of harmony and balance. Two roots, united, gave the name to our brand.' },
+        { title: 'Brand philosophy', text: 'Health is not a duty or a luxury, but a gift to be cherished every day. "Daruzen" means "gift of life": we help restore natural strength and balance.' },
+        { title: 'The path to excellence', text: 'A years-long search for the best formulas and purest ingredients from the heart of Turkey. We believe premium quality should be accessible to everyone.' },
+      ],
       features: [
         { title: 'Purity of composition', desc: 'All our products undergo strict laboratory control and contain no unnecessary impurities.' },
-        { title: 'Scientific approach', desc: 'We collaborate with leading Turkish nutritionists to develop effective dosages.' },
+        { title: 'Scientific approach', desc: 'We collaborate with leading Turkish nutritionists and doctors of science to develop effective dosages.' },
         { title: 'Gold standard', desc: 'Direct supplies allow us to guarantee the authenticity of every jar.' },
       ],
     },
@@ -319,9 +334,14 @@ const ui = {
       titlePre: 'نحن نصنع ثقافة',
       titleAccent: 'العناية بالذات',
       desc: 'Daruzen ليست مجرد متجر مكملات غذائية. إنها نتيجة سنوات من البحث عن أفضل التركيبات وأنقى المكونات من قلب تركيا. نحن نؤمن بأن الجودة الممتازة يجب أن تكون متاحة للجميع.',
+      history: [
+        { title: 'أصل الاسم', text: 'وُلد "Daruzen" من الكلمة اليونانية القديمة "daru" (δῶρον — هدية) و"zen" — رمز الانسجام والتوازن. جذرا الكلمة، بعد اندماجهما، أعطيا علامتنا اسمها.' },
+        { title: 'فلسفة العلامة', text: 'الصحة ليست واجباً ولا رفاهية، بل هدية يجب الحفاظ عليها كل يوم. "Daruzen" تعني "هدية الحياة": نساعد على استعادة القوة الطبيعية والتوازن.' },
+        { title: 'الطريق إلى الكمال', text: 'سنوات من البحث عن أفضل التركيبات وأنقى المكونات من قلب تركيا. نحن نؤمن بأن الجودة الممتازة يجب أن تكون متاحة للجميع.' },
+      ],
       features: [
         { title: 'نقاء المكونات', desc: 'جميع منتجاتنا تخضع لرقابة مخبرية صارمة ولا تحتوي على شوائب غير ضرورية.' },
-        { title: 'نهج علمي', desc: 'نتعاون مع كبار أخصائيي التغذية في تركيا لتطوير جرعات فعالة.' },
+        { title: 'نهج علمي', desc: 'نتعاون مع كبار أخصائيي التغذية وأطباء العلوم في تركيا لتطوير جرعات فعالة.' },
         { title: 'المعيار الذهبي', desc: 'التوريد المباشر يتيح لنا ضمان أصالة كل عبوة.' },
       ],
     },

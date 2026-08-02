@@ -116,7 +116,7 @@ a:hover {
 .btn-primary:hover {
   background-color: var(--accent-light);
   color: var(--primary-dark);
-  opacity: 0.9;
+  opacity: 0.95;
 }
 
 .btn-ghost {
@@ -662,6 +662,48 @@ a:hover {
   white-space: nowrap;
 }
 
+.comp-card:not(.admin-spec-edit-card) .comp-card__row .comp-card__values {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.comp-card:not(.admin-spec-edit-card) .comp-card__row .comp-card__dosage {
+  flex-shrink: 0;
+  text-align: right;
+}
+
+.comp-card:not(.admin-spec-edit-card) .comp-card__row .comp-card__pct {
+  flex-shrink: 0;
+  width: 84px;
+  text-align: center;
+}
+
+.comp-card:not(.admin-spec-edit-card) .comp-rows__hint .comp-card__values {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.comp-card:not(.admin-spec-edit-card) .comp-rows__hint .comp-rows__hint-val,
+.comp-card:not(.admin-spec-edit-card) .comp-col {
+  flex-shrink: 0;
+  text-align: right;
+}
+
+.comp-card:not(.admin-spec-edit-card) .comp-col {
+  margin-right: 3px;
+}
+
+.comp-card:not(.admin-spec-edit-card) .comp-rows__hint .comp-rows__hint-val--brd,
+.comp-card:not(.admin-spec-edit-card) .comp-col--brd {
+  flex-shrink: 0;
+  width: 84px;
+  text-align: center;
+}
+
 .comp-card__pct-caption {
   margin: 4px 0 10px;
   font-size: 13px;
@@ -694,7 +736,7 @@ a:hover {
   font-weight: 700;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: #b8ac9f;
+  color: #9ca3af;
   white-space: nowrap;
 }
 

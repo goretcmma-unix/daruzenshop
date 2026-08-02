@@ -63,9 +63,9 @@ export const fetchProducts = async (): Promise<Product[]> => {
       return dedupeProducts(products);
     }
     const dbRows = (data as ProductRow[]).map(rowToProduct);
-    const dbIds = new Set(dbRows.map(r => r.id));
-    const localOnly = dedupeProducts(products).filter(p => !dbIds.has(p.id));
-    return dedupeProducts([...dbRows, ...localOnly]);
+    const localProducts = dedupeProducts(products);
+    const dbOnly = dbRows.filter(r => !localProducts.some(l => l.id === r.id));
+    return dedupeProducts([...localProducts, ...dbOnly]);
   } catch {
     return dedupeProducts(products);
   }

@@ -10,17 +10,16 @@ import {
   Trash2,
   Menu as BurgerMenu,
   //ArrowRight,
-  ShieldCheck,
-  Award,
-  FlaskConical,
   MapPin,
   Mail,
   Phone,
-  ChevronDown,
-  //Check
+  //Check,
+  ShieldCheck,
+  FlaskConical,
+  Award
 } from 'lucide-react';
-import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion';
-import { categoryKeys, products, getCategoryLabel, localizeProducts, dedupeProducts, parseCompositionLine, type LocalizedProduct, type CategoryKey, type Product } from './data';
+import { motion, AnimatePresence, useScroll, useTransform, useInView, useAnimationControls } from 'framer-motion';
+import { categoryKeys, products, getCategoryLabel, localizeProducts, dedupeProducts, type LocalizedProduct, type CategoryKey, type Product } from './data';
 import { useLang, LANGS, formatPrice } from './i18n';
 import { fetchProducts, supabase } from './lib/supabase';
 
@@ -29,250 +28,8 @@ import QtyButton from './components/QtyButton';
 import AdminPanel from './components/AdminPanel';
 import RecoveryPage from './components/RecoveryPage';
 import { NormalizedImg } from './components/NormalizedImg';
+import { CompositionPanel } from './components/CompositionView';
 import { useNormalizedImage } from './lib/normalizeImage';
-
-interface CompTableBlock {
-  headers: string[];
-  rows: string[][];
-  notes: string[];
-}
-
-interface SectionGroup {
-  title: string | null;
-  blocks: CompTableBlock[];
-}
-
-const buildSections = (specs: string[]): SectionGroup[] => {
-  const parts = specs.map(s => parseCompositionLine(s));
-  const groups: SectionGroup[] = [];
-  let cur: SectionGroup = { title: null, blocks: [] };
-  for (let i = 0; i < parts.length; i++) {
-    const p = parts[i];
-    if (p.type === 'section') {
-      if (cur.blocks.length) groups.push(cur);
-      cur = { title: p.text, blocks: [] };
-    } else if (p.type === 'note') {
-      if (!cur.blocks.length) cur.blocks.push({ headers: [], rows: [], notes: [] });
-      cur.blocks[cur.blocks.length - 1].notes.push(p.text);
-    } else if (p.type === 'colheader' || (p.type === 'row' && parts[i + 1]?.type === 'sep')) {
-      cur.blocks.push({ headers: p.cells, rows: [], notes: [] });
-    } else if (p.type === 'row') {
-      if (!cur.blocks.length) cur.blocks.push({ headers: [], rows: [], notes: [] });
-      cur.blocks[cur.blocks.length - 1].rows.push(p.cells);
-    }
-  }
-  if (cur.blocks.length) groups.push(cur);
-  return groups;
-};
-
-const CompRows: React.FC<{ block: CompTableBlock; t: ReturnType<typeof useLang>['t'] }> = ({ block, t }) => {
-  const nonEmptyHeaders = block.headers.filter(h => h);
-  const nameLabel = nonEmptyHeaders[0] || t.modal.substance;
-  const valueLabels = nonEmptyHeaders.slice(1);
-  const showHint = valueLabels.length > 0;
-  const [openCol, setOpenCol] = useState<number | null>(0);
-  useEffect(() => { setOpenCol(0); }, [block]);
-
-  if (valueLabels.length > 0) {
-    const pctIdx = valueLabels.findIndex(h => /%/.test(h));
-    const doseLabels = pctIdx !== -1 ? valueLabels.filter((_, i) => i !== pctIdx) : valueLabels;
-    return (
-      <>
-      {pctIdx !== -1 && valueLabels[pctIdx] && (
-        <div className="comp-card__pct-caption">{valueLabels[pctIdx]}</div>
-      )}
-      <div className="comp-dose">
-        {doseLabels.map((label, ci) => {
-          const open = ci === openCol;
-          return (
-            <div key={ci} className="comp-acc">
-              <button type="button" className={`comp-acc__head${open ? ' is-open' : ''}`} onClick={() => setOpenCol(open ? null : ci)}>
-                <span>{label}</span>
-                <ChevronDown size={16} className="comp-acc__chev" />
-              </button>
-              <AnimatePresence initial={false}>
-                {open && (
-                  <motion.div
-                    key="acc-body"
-                    className="comp-acc__body"
-                    initial={{ height: 0, opacity: 0 }}
-                    animate={{ height: 'auto', opacity: 1 }}
-                    exit={{ height: 0, opacity: 0 }}
-                    transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
-                  >
-                    <div className="comp-acc__body-inner">
-                      <div className="comp-rows__hint">
-                        <span className="comp-rows__hint-name">{t.modal.substance}</span>
-                        <span className="comp-card__values">
-                          <span className="comp-rows__hint-val">{t.modal.dosage}</span>
-                          {pctIdx !== -1 && <span className="comp-rows__hint-val comp-rows__hint-val--brd">BRD</span>}
-                        </span>
-                      </div>
-                      {block.rows.map((cells, ri) => {
-                        const name = cells[0];
-                        if (!name) return null;
-                        const sub = name.startsWith('└');
-                        const val = cells[ci + 1];
-                        if (!val || val === '-') return null;
-                        const pct = pctIdx !== -1 ? cells[pctIdx + 1] : null;
-                        const showPct = pct && pct !== '—' && pct !== '-';
-                        return (
-                          <div key={ri} className={'comp-card__row' + (sub ? ' is-sub' : '')}>
-                            <span className="comp-card__name">{sub ? name.replace(/^└\s*/, '') : name}</span>
-                            <span className="comp-card__values">
-                              <span className="comp-card__dosage">{val}</span>
-                              {showPct && <span className="comp-card__pct">{pct}</span>}
-                            </span>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </div>
-          );
-        })}
-      </div>
-      {block.notes.length > 0 && (
-        <div className="comp-table__notes">
-          {block.notes.map((n, i) => (
-            <div key={i} className="comp-table__note">{n}</div>
-          ))}
-        </div>
-      )}
-      </>
-    );
-  }
-
-  return (
-    <>
-      {showHint && (
-        <div className="comp-rows__hint">
-          <span className="comp-rows__hint-name">{nameLabel}</span>
-          <span className="comp-card__values">
-            {valueLabels.map((h, i) => (
-              <span key={i} className="comp-rows__hint-val">{h}</span>
-            ))}
-          </span>
-        </div>
-      )}
-      {block.rows.map((cells, ri) => {
-        const name = cells[0];
-        if (!name) return null;
-        const sub = name.startsWith('└');
-        return (
-          <div key={ri} className={'comp-card__row' + (sub ? ' is-sub' : '')}>
-            <span className="comp-card__name">{sub ? name.replace(/^└\s*/, '') : name}</span>
-            <span className="comp-card__values">
-              {cells.slice(1).map((v, vi) => (v ? <span key={vi} className="comp-card__dosage">{v}</span> : null))}
-            </span>
-          </div>
-        );
-      })}
-      {block.notes.length > 0 && (
-        <div className="comp-table__notes">
-          {block.notes.map((n, i) => (
-            <div key={i} className="comp-table__note">{n}</div>
-          ))}
-        </div>
-      )}
-    </>
-  );
-};
-
-const CompositionPanel: React.FC<{ specs?: string[]; t: ReturnType<typeof useLang>['t'] }> = ({ specs, t }) => {
-  const specLines = specs ?? [];
-  const groups = useMemo(() => buildSections(specLines), [specLines]);
-  const sectioned = groups.filter(g => g.title).length > 1;
-  const [openSection, setOpenSection] = useState(0);
-  const [simpleOpen, setSimpleOpen] = useState(true);
-  useEffect(() => { setOpenSection(0); setSimpleOpen(true); }, [specLines]);
-
-  if (sectioned) {
-    return (
-      <div className="comp-card">
-        {groups.map((g, i) => (
-          <div key={i} className="comp-acc">
-            <button type="button" className={`comp-acc__head${i === openSection ? ' is-open' : ''}`} onClick={() => setOpenSection(i)}>
-              <span>{g.title}</span>
-              <ChevronDown size={16} className="comp-acc__chev" />
-            </button>
-            <AnimatePresence initial={false}>
-              {i === openSection && (
-                <motion.div
-                  key="acc-body"
-                  className="comp-acc__body"
-                  initial={{ height: 0, opacity: 0 }}
-                  animate={{ height: 'auto', opacity: 1 }}
-                  exit={{ height: 0, opacity: 0 }}
-                  transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
-                >
-                  <div className="comp-acc__body-inner">
-                    {g.blocks.map((b, bi) => (
-                      <CompRows key={bi} block={b} t={t} />
-                    ))}
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
-        ))}
-      </div>
-    );
-  }
-
-  const hasValueCols = groups.some(g => g.blocks.some(b => b.headers.filter(h => h).length > 1));
-
-  if (hasValueCols) {
-    return (
-      <div className="comp-card">
-        {groups.map((g, gi) => (
-          <div key={gi}>
-            {g.title && <div className="comp-card__section"><span>{g.title}</span></div>}
-            {g.blocks.map((b, bi) => (
-              <CompRows key={bi} block={b} t={t} />
-            ))}
-          </div>
-        ))}
-      </div>
-    );
-  }
-
-  return (
-    <div className="comp-card">
-      <div className="comp-acc">
-        <button type="button" className={`comp-acc__head${simpleOpen ? ' is-open' : ''}`} onClick={() => setSimpleOpen(o => !o)}>
-          <span>{t.modal.composition}</span>
-          <ChevronDown size={16} className="comp-acc__chev" />
-        </button>
-        <AnimatePresence initial={false}>
-          {simpleOpen && (
-            <motion.div
-              key="acc-body"
-              className="comp-acc__body"
-              initial={{ height: 0, opacity: 0 }}
-              animate={{ height: 'auto', opacity: 1 }}
-              exit={{ height: 0, opacity: 0 }}
-              transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
-            >
-              <div className="comp-acc__body-inner">
-                {groups.map((g, gi) => (
-                  <div key={gi}>
-                    {g.title && <div className="comp-card__section"><span>{g.title}</span></div>}
-                    {g.blocks.map((b, bi) => (
-                      <CompRows key={bi} block={b} t={t} />
-                    ))}
-                  </div>
-                ))}
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </div>
-    </div>
-  );
-};
 
 const App: React.FC = () => {
   const { lang, setLang, t } = useLang();
@@ -554,8 +311,16 @@ const App: React.FC = () => {
   };
 
   const shopOnTelegram = () => {
-    const username = 'Marwa_badi_istanbul'; 
-    window.open(`https://t.me/${username}?text=${generateOrderMessage()}`, '_blank');
+    const appLink = `tg://resolve?domain=vitamini_optom&text=${generateOrderMessage()}`;
+    const webLink = `https://t.me/vitamini_optom?text=${generateOrderMessage()}`;
+    const t0 = Date.now();
+    window.location.href = appLink;
+    setTimeout(() => {
+      const handled = document.hidden || Date.now() - t0 < 1200;
+      if (!handled) {
+        window.location.href = webLink;
+      }
+    }, 1800);
   };
 
   const handleContactSubmit = (e: React.FormEvent) => {
@@ -997,69 +762,71 @@ const App: React.FC = () => {
       </section>
 
       {/* About Us Section */}
-      <section id="about" className="section-padding" style={{ background: '#F9F9FB' }}>
+      <section id="about" className="section-padding" style={{ background: 'linear-gradient(180deg, #FDFBFA 0%, #F6F1EA 100%)' }}>
         <div className="container">
-          <div style={{ maxWidth: '800px', marginBottom: '60px' }}>
-            <h2 className="section-title">{t.about.titlePre} <br /><span style={{ color: 'var(--accent)' }}>{t.about.titleAccent}</span></h2>
-            <p style={{ fontSize: '20px', color: 'var(--text-muted)', lineHeight: '1.6' }}>
-              {t.about.desc}
-            </p>
+          <div style={{ maxWidth: '820px', marginBottom: '70px' }}>
+            <motion.h2
+              className="section-title"
+              style={{ marginBottom: '24px', lineHeight: 1.15 }}
+              initial="hidden"
+              whileInView="show"
+              viewport={{ once: false }}
+              variants={{ hidden: {}, show: { transition: { staggerChildren: 0.04 } } }}
+            >
+              {t.about.titlePre.split(' ').map((word, wi) => (
+                <motion.span
+                  key={wi}
+                  style={{ display: 'inline-block', marginRight: wi === t.about.titlePre.split(' ').length - 1 ? '0.16em' : '0.22em' }}
+                  variants={{ hidden: { opacity: 0, y: 16, filter: 'blur(6px)' }, show: { opacity: 1, y: 0, filter: 'blur(0px)', transition: { duration: 0.5 } } }}
+                >
+                  {word}
+                </motion.span>
+              ))}
+              <span style={{ color: 'var(--accent)' }}>
+                {t.about.titleAccent.split(' ').map((word, wi) => (
+                  <motion.span
+                    key={wi}
+                    style={{ display: 'inline-block', marginRight: wi === t.about.titleAccent.split(' ').length - 1 ? 0 : '0.22em' }}
+                    variants={{ hidden: { opacity: 0, y: 16, filter: 'blur(6px)' }, show: { opacity: 1, y: 0, filter: 'blur(0px)', transition: { duration: 0.5 } } }}
+                  >
+                    {word}
+                  </motion.span>
+                ))}
+              </span>
+            </motion.h2>
+            <motion.p
+              style={{ fontSize: '20px', color: 'var(--text-muted)', lineHeight: '1.7' }}
+              initial="hidden"
+              whileInView="show"
+              viewport={{ once: false }}
+              variants={{ hidden: {}, show: { transition: { staggerChildren: 0.015 } } }}
+            >
+              {t.about.desc.split(' ').map((word, wi) => (
+                <motion.span
+                  key={wi}
+                  style={{ display: 'inline-block', marginRight: '0.3em' }}
+                  variants={{ hidden: { opacity: 0, y: 10 }, show: { opacity: 1, y: 0, transition: { duration: 0.35 } } }}
+                >
+                  {word}
+                </motion.span>
+              ))}
+            </motion.p>
           </div>
-          
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '30px' }}>
+
+          {/* Три принципа: трендовые прогресс-бары */}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '24px' }}>
             {[ShieldCheck, FlaskConical, Award].map((Icon, i) => (
-              <motion.div 
+              <AboutFeatureCard
                 key={i}
-                whileHover={{ scale: 1.02 }}
-                style={{ background: 'white', padding: '40px', borderRadius: '32px', boxShadow: '0 10px 30px rgba(0,0,0,0.02)', border: '1px solid var(--border)' }}
-              >
-                <div style={{ color: 'var(--accent)', marginBottom: '24px' }}><Icon size={32} /></div>
-                <h4 style={{ fontSize: '22px', fontWeight: '700', marginBottom: '16px', color: 'var(--primary-dark)' }}>{t.about.features[i].title}</h4>
-                <p style={{ color: 'var(--text-muted)', lineHeight: '1.6' }}>{t.about.features[i].desc}</p>
-              </motion.div>
+                Icon={Icon}
+                title={t.about.features[i].title}
+                pct={[100, 97, 100][i]}
+                desc={t.about.features[i].desc}
+                delay={i * 0.1}
+              />
             ))}
           </div>
         </div>
-      </section>
-
-      {/* Professor Section */}
-      <section className="section-padding" style={{ background: '#F9F9FB', position: 'relative', overflow: 'hidden' }}>
-        <div className="container">
-          <div style={{ maxWidth: '1000px', margin: '0 auto', display: 'flex', alignItems: 'center', gap: '48px', flexDirection: 'row' }}>
-            <div style={{ flex: '0 0 auto', position: 'relative' }}>
-              <div style={{ width: '180px', height: '180px', borderRadius: '50%', padding: '6px', background: 'linear-gradient(135deg, #e6bd63 0%, #cf9b41 100%)', flexShrink: 0 }}>
-                <div style={{ width: '100%', height: '100%', borderRadius: '50%', overflow: 'hidden', background: '#fff' }}>
-                  <img src="/images/professor.png" alt="Professor" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
-                </div>
-              </div>
-              <div style={{ position: 'absolute', bottom: '8px', right: '8px', width: '36px', height: '36px', borderRadius: '50%', background: 'linear-gradient(135deg, #e6bd63 0%, #cf9b41 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontSize: '18px', fontWeight: '800', border: '3px solid #F9F9FB' }}>✓</div>
-            </div>
-            <div style={{ flex: 1, minWidth: 0, borderLeft: '3px solid rgba(212, 175, 55, 0.3)', paddingLeft: '48px' }}>
-              <p style={{ fontSize: '13px', color: 'var(--accent)', fontWeight: '700', marginBottom: '12px', textTransform: 'uppercase', letterSpacing: '0.1em' }}>{t.professor.subtitle}</p>
-              <h3 style={{ fontSize: '32px', fontWeight: '800', marginBottom: '20px', color: 'var(--primary-dark)', lineHeight: '1.2' }}>{t.professor.title}</h3>
-              <p style={{ fontSize: '17px', color: 'var(--text-muted)', lineHeight: '1.8' }}>
-                {t.professor.description}
-              </p>
-            </div>
-          </div>
-        </div>
-        <style>{`
-          @media (max-width: 720px) {
-            .professor-section-inner {
-              flex-direction: column !important;
-              text-align: center;
-            }
-            .professor-section-inner > div:first-child {
-              margin-bottom: 24px;
-            }
-            .professor-section-inner > div:last-child {
-              border-left: none !important;
-              padding-left: 0 !important;
-              border-top: 3px solid rgba(212, 175, 55, 0.3);
-              padding-top: 24px;
-            }
-          }
-        `}</style>
       </section>
 
       {/* Contacts Section */}
@@ -1067,7 +834,35 @@ const App: React.FC = () => {
         <div className="container">
           <div className="contacts-grid">
             <div>
-              <h2 className="section-title">{t.contacts.titlePre} <br />{t.contacts.titleAccent}</h2>
+              <motion.h2
+                className="section-title"
+                style={{ lineHeight: 1.15 }}
+                initial="hidden"
+                whileInView="show"
+                viewport={{ once: true }}
+                variants={{ hidden: {}, show: { transition: { staggerChildren: 0.04 } } }}
+              >
+                {t.contacts.titlePre.split(' ').map((word, wi) => (
+                  <motion.span
+                    key={wi}
+                    style={{ display: 'inline-block', marginRight: wi === t.contacts.titlePre.split(' ').length - 1 ? '0.16em' : '0.22em' }}
+                    variants={{ hidden: { opacity: 0, y: 16, filter: 'blur(6px)' }, show: { opacity: 1, y: 0, filter: 'blur(0px)', transition: { duration: 0.5 } } }}
+                  >
+                    {word}
+                  </motion.span>
+                ))}
+                <span style={{ color: 'var(--accent)' }}>
+                  {t.contacts.titleAccent.split(' ').map((word, wi) => (
+                    <motion.span
+                      key={wi}
+                      style={{ display: 'inline-block', marginRight: wi === t.contacts.titleAccent.split(' ').length - 1 ? 0 : '0.22em' }}
+                      variants={{ hidden: { opacity: 0, y: 16, filter: 'blur(6px)' }, show: { opacity: 1, y: 0, filter: 'blur(0px)', transition: { duration: 0.5 } } }}
+                    >
+                      {word}
+                    </motion.span>
+                  ))}
+                </span>
+              </motion.h2>
               <p style={{ fontSize: '18px', color: 'var(--text-muted)', marginBottom: '48px' }}>{t.contacts.desc}</p>
               
               <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
@@ -1130,11 +925,11 @@ const App: React.FC = () => {
                   ></textarea>
                 </div>
                 <motion.button 
-                  whileHover={{ scale: 1.02 }}
+                  whileHover={{ scale: 1.02, filter: 'brightness(1.15)' }}
                   whileTap={{ scale: 0.98 }}
                   disabled={isSubmitting || isSubmitted}
                   className="btn btn-primary" 
-                  style={{ width: '100%', height: '60px', marginTop: '10px', background: isSubmitted ? '#25D366' : 'var(--primary)' }}
+                  style={{ width: '100%', height: '60px', marginTop: '10px', ...(isSubmitted ? { background: '#25D366' } : {}) }}
                 >
                   {isSubmitting ? t.contacts.form.submitting : isSubmitted ? t.contacts.form.submitted : t.contacts.form.submit}
                 </motion.button>
@@ -1321,77 +1116,34 @@ const App: React.FC = () => {
               }}
             >
                <Search size={22} color="var(--primary)" style={{ opacity: 0.4 }} />
-               {/* Контейнер с посимвольной анимацией: реальный input (прозрачный текст,
-                   видимый акцентный курсор) лежит поверх слоя с анимированными символами */}
-                <div style={{ position: 'relative', flex: 1, minWidth: 0, height: '100%', display: 'flex', alignItems: 'center' }}>
-                  {searchQuery === '' && (
-                    <span
-                      aria-hidden="true"
-                      style={{
-                        position: 'absolute',
-                        left: 0,
-                        pointerEvents: 'none',
-                        color: 'var(--text-muted)',
-                        opacity: 0.5,
-                        fontSize: '18px',
-                        fontWeight: '500',
-                        fontFamily: 'inherit',
-                        lineHeight: 1,
-                      }}
-                    >
-                      {t.search.placeholder}
-                    </span>
-                  )}
-                  <div
-                    aria-hidden="true"
-                    style={{
-                      position: 'absolute',
-                      inset: 0,
-                      display: 'flex',
-                      alignItems: 'center',
-                      whiteSpace: 'pre',
-                      overflow: 'hidden',
-                      pointerEvents: 'none',
-                      fontSize: '18px',
-                      fontWeight: '500',
-                      color: 'var(--primary)',
-                      fontFamily: 'inherit',
-                      lineHeight: 1,
-                      textShadow: '0 0 1px rgba(212, 175, 55, 0.35)',
-                    }}
-                  >
-                      {searchQuery.split('').map((ch, i) => (
-                        <span key={i} className="search-char">{ch}</span>
-                      ))}
-                   </div>
-                   <input
-                     autoFocus
-                     value={searchQuery}
-                     onChange={(e) => setSearchQuery(e.target.value)}
-                     onKeyDown={(e) => {
-                       if (e.key === 'Enter') {
-                         setIsSearchOpen(false);
-                         scrollToCatalog();
-                       }
-                     }}
-                     style={{
-                       position: 'absolute',
-                       inset: 0,
-                       width: '100%',
-                       height: '100%',
-                       border: 'none',
-                       background: 'transparent',
-                       outline: 'none',
-                       color: 'transparent',
-                       caretColor: 'var(--accent)',
-                       fontFamily: 'inherit',
-                       fontSize: '18px',
-                       fontWeight: '500',
-                       padding: 0,
-                     }}
-                    />
-                  </div>
-                  <button
+               <input
+                 autoFocus
+                 value={searchQuery}
+                 onChange={(e) => setSearchQuery(e.target.value)}
+                 onKeyDown={(e) => {
+                   if (e.key === 'Enter') {
+                     setIsSearchOpen(false);
+                     scrollToCatalog();
+                   }
+                 }}
+                 placeholder={t.search.placeholder}
+                 style={{
+                   flex: 1,
+                   minWidth: 0,
+                   width: '100%',
+                   height: '100%',
+                   border: 'none',
+                   background: 'transparent',
+                   outline: 'none',
+                   color: 'var(--primary)',
+                   caretColor: 'var(--accent)',
+                   fontFamily: 'inherit',
+                   fontSize: '18px',
+                   fontWeight: '500',
+                   padding: 0,
+                 }}
+               />
+               <button
                     type="button"
                     aria-label="Close search"
                     onClick={() => {
@@ -1582,7 +1334,7 @@ const App: React.FC = () => {
       <footer style={{ 
         background: 'rgba(62, 39, 35, 0.96)', 
         color: 'white', 
-        padding: '80px 0 40px' 
+        padding: '80px 0 40px'
       }}>
         <div className="container">
           <div className="footer-grid">
@@ -1590,13 +1342,13 @@ const App: React.FC = () => {
               <img 
                 src="/images/dr.svg.png" 
                 alt="Daruzen Logo" 
-                style={{ 
-                  width: '80px', 
-                  height: '80px', 
-                  objectFit: 'contain', 
-                  marginBottom: '24px',
-                  opacity: 0.85 /* Полупрозрачность для логотипа внизу */
-                }} 
+                  style={{ 
+                    width: '80px', 
+                    height: '80px', 
+                    objectFit: 'contain', 
+                    marginBottom: '24px',
+                    filter: 'brightness(0) invert(1)'
+                  }} 
               />
               <p style={{ opacity: 0.6, maxWidth: '300px', lineHeight: '1.8' }}>
                 {t.footer.desc}
@@ -1636,4 +1388,51 @@ const App: React.FC = () => {
     </div>
   );
 };
+
+const AboutFeatureCard = ({ Icon, title, pct, desc, delay }: { Icon: any; title: string; pct: number; desc: string; delay: number }) => {
+  const ref = useRef<HTMLDivElement>(null);
+  const inView = useInView(ref, { once: false });
+  const barControls = useAnimationControls();
+  const pctControls = useAnimationControls();
+
+  useEffect(() => {
+    if (!inView) return;
+    barControls.set({ width: '0%' });
+    barControls.start({
+      width: ['0%', `${pct}%`],
+      transition: { duration: 3.5, ease: 'easeInOut', delay: 0.3 + delay },
+    });
+    pctControls.start({
+      scale: [1, 1.12, 1],
+      transition: { duration: 2.2, repeat: Infinity, repeatDelay: 2, ease: 'easeInOut', delay: 0.6 + delay },
+    });
+  }, [inView, pct, barControls, pctControls, delay]);
+
+  return (
+    <motion.div
+      ref={ref}
+      initial={{ opacity: 0, y: 24 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.45, delay }}
+      className="about-card"
+    >
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '18px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+          <div style={{ width: '48px', height: '48px', borderRadius: '50%', background: 'rgba(207,155,65,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--accent)', flexShrink: 0 }}><Icon size={22} /></div>
+          <h4 style={{ fontSize: '18px', fontWeight: '700', color: 'var(--primary-dark)', margin: 0 }}>{title}</h4>
+        </div>
+        <motion.span animate={pctControls} style={{ fontSize: '26px', fontWeight: '700', color: 'var(--accent)', lineHeight: 1, display: 'inline-block' }}>{pct}%</motion.span>
+      </div>
+      <div style={{ height: '10px', borderRadius: '999px', background: 'rgba(207,155,65,0.15)', overflow: 'hidden' }}>
+        <motion.div
+          animate={barControls}
+          style={{ height: '100%', borderRadius: '999px', background: 'linear-gradient(90deg, var(--accent-light), var(--accent))' }}
+        />
+      </div>
+      <p style={{ color: 'var(--text-muted)', lineHeight: '1.6', fontSize: '14px', marginTop: '18px', marginBottom: 0 }}>{desc}</p>
+    </motion.div>
+  );
+};
+
 export default App;

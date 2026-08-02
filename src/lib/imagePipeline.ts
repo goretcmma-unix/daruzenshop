@@ -4,8 +4,17 @@ export const IMG_H = 800;
 // кадра, со всех сторон остаётся небольшое пустое пространство.
 export const IMG_PAD = 0.105;
 
+// Вписывает исходное фото в стандартный кадр. Обрезаются только однотонные
+// поля по краям (чтобы товар занимал кадр), без удаления фона внутри — никаких
+// артефактов заливки и «экспозиции».
 export const cropToStandard = (img: HTMLImageElement): HTMLCanvasElement => {
   let iw = img.naturalWidth, ih = img.naturalHeight;
+  if (!iw || !ih) {
+    const empty = document.createElement('canvas');
+    empty.width = IMG_W;
+    empty.height = IMG_H;
+    return empty;
+  }
   const MAX_DIM = 1600;
   const s = Math.min(1, MAX_DIM / Math.max(iw, ih));
   iw = Math.round(iw * s);
@@ -18,8 +27,8 @@ export const cropToStandard = (img: HTMLImageElement): HTMLCanvasElement => {
   tctx.drawImage(img, 0, 0, iw, ih);
   const imageData = tctx.getImageData(0, 0, iw, ih);
   const px = imageData.data;
-  const N = iw * ih;
 
+  // Цвет фона = медиана по рамке изображения
   const border: number[] = [];
   for (let x = 0; x < iw; x++) border.push(x, (ih - 1) * iw + x);
   for (let y = 0; y < ih; y++) border.push(y * iw, y * iw + iw - 1);
@@ -30,78 +39,41 @@ export const cropToStandard = (img: HTMLImageElement): HTMLCanvasElement => {
   const bgG = sorted(gs)[Math.floor(gs.length / 2)];
   const bgB = sorted(bs)[Math.floor(bs.length / 2)];
 
-  const diff = new Float32Array(N);
-  for (let p = 0; p < N; p++) {
-    const i = p * 4;
-    diff[p] = Math.max(Math.abs(px[i] - bgR), Math.abs(px[i + 1] - bgG), Math.abs(px[i + 2] - bgB));
-  }
+  const THRESH = 48;
+  const isBg = (i: number) =>
+    Math.max(Math.abs(px[i] - bgR), Math.abs(px[i + 1] - bgG), Math.abs(px[i + 2] - bgB)) < THRESH;
 
-  const hist = new Float64Array(256);
-  for (let p = 0; p < N; p++) hist[Math.min(255, Math.round(diff[p]))]++;
-  let sum = 0;
-  for (let t = 0; t < 256; t++) sum += t * hist[t];
-  let sumB = 0, wB = 0, best = 0, bestVar = 0;
-  for (let t = 0; t < 256; t++) {
-    wB += hist[t];
-    if (wB === 0) continue;
-    const wF = N - wB;
-    if (wF === 0) break;
-    sumB += t * hist[t];
-    const mB = sumB / wB, mF = (sum - sumB) / wF;
-    const v = wB * wF * (mB - mF) * (mB - mF);
-    if (v > bestVar) { bestVar = v; best = t; }
-  }
-  const distThreshold = best;
+  const rowBg = (y: number): boolean => {
+    const o = y * iw;
+    for (let x = 0; x < iw; x++) if (!isBg((o + x) * 4)) return false;
+    return true;
+  };
+  const colBg = (x: number): boolean => {
+    for (let y = 0; y < ih; y++) if (!isBg((y * iw + x) * 4)) return false;
+    return true;
+  };
 
-  const removed = new Uint8Array(N);
-  const queue = new Int32Array(N);
-  let qHead = 0, qTail = 0;
-  const pushP = (p: number) => { if (removed[p]) return; removed[p] = 1; queue[qTail++] = p; };
-  for (let x = 0; x < iw; x++) {
-    if (diff[x] <= distThreshold) pushP(x);
-    const b = (ih - 1) * iw + x;
-    if (diff[b] <= distThreshold) pushP(b);
-  }
-  for (let y = 0; y < ih; y++) {
-    const l = y * iw, r = y * iw + iw - 1;
-    if (diff[l] <= distThreshold) pushP(l);
-    if (diff[r] <= distThreshold) pushP(r);
-  }
-  while (qHead < qTail) {
-    const p = queue[qHead++];
-    const x = p % iw, y = (p / iw) | 0;
-    if (x > 0 && !removed[p - 1] && diff[p - 1] <= distThreshold) pushP(p - 1);
-    if (x < iw - 1 && !removed[p + 1] && diff[p + 1] <= distThreshold) pushP(p + 1);
-    if (y > 0 && !removed[p - iw] && diff[p - iw] <= distThreshold) pushP(p - iw);
-    if (y < ih - 1 && !removed[p + iw] && diff[p + iw] <= distThreshold) pushP(p + iw);
-  }
+  let top = 0; while (top < ih - 1 && rowBg(top)) top++;
+  let bottom = ih - 1; while (bottom > top && rowBg(bottom)) bottom--;
+  let left = 0; while (left < iw - 1 && colBg(left)) left++;
+  let right = iw - 1; while (right > left && colBg(right)) right--;
 
-  let top = ih, bottom = 0, left = iw, right = 0;
-  for (let p = 0; p < N; p++) {
-    if (removed[p]) continue;
-    const x = p % iw, y = (p / iw) | 0;
-    if (y < top) top = y;
-    if (y > bottom) bottom = y;
-    if (x < left) left = x;
-    if (x > right) right = x;
-  }
-  if (!(bottom > top && right > left)) { top = 0; bottom = ih; left = 0; right = iw; }
-  const cw = right - left, ch = bottom - top;
+  // Фото полностью однотонное — оставляем как есть
+  if (right <= left || bottom <= top) { left = 0; top = 0; right = iw - 1; bottom = ih - 1; }
 
-  for (let p = 0; p < N; p++) {
-    if (removed[p]) { const i = p * 4; px[i] = 255; px[i + 1] = 255; px[i + 2] = 255; px[i + 3] = 255; }
-  }
-  tctx.putImageData(imageData, 0, 0);
+  const cw = right - left + 1, ch = bottom - top + 1;
 
-  const drawW = IMG_W * (1 - 2 * IMG_PAD);
-  const drawH = IMG_H * (1 - 2 * IMG_PAD);
-  const scale = Math.min(drawW / cw, drawH / ch);
-  const sw = cw * scale, sh = ch * scale;
   const c = document.createElement('canvas');
   c.width = IMG_W; c.height = IMG_H;
   const ctx = c.getContext('2d')!;
   ctx.fillStyle = '#fff';
   ctx.fillRect(0, 0, IMG_W, IMG_H);
+
+  const drawW = IMG_W * (1 - 2 * IMG_PAD);
+  const drawH = IMG_H * (1 - 2 * IMG_PAD);
+  const scale = Math.min(drawW / cw, drawH / ch);
+  const sw = cw * scale, sh = ch * scale;
+
   ctx.imageSmoothingEnabled = true;
   ctx.imageSmoothingQuality = 'high';
   ctx.drawImage(tmp, left, top, cw, ch, (IMG_W - sw) / 2, (IMG_H - sh) / 2, sw, sh);

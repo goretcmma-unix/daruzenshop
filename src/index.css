@@ -463,12 +463,17 @@ a:hover {
 
 .modal-buy-actions {
   display: grid;
-  grid-template-columns: auto 1fr 1fr;
+  grid-template-columns: auto 1fr 1.35fr;
   gap: 12px;
 }
 
 .modal-buy-actions > * {
   min-width: 0;
+}
+
+.modal-buy-actions .btn,
+.modal-buy-actions .modal-buy-btn {
+  white-space: nowrap;
 }
 
 .modal-buy-qty {
@@ -1113,7 +1118,7 @@ a:hover {
 }
 
 [dir="rtl"] .header-cart-btn {
-  transform: translateY(-3px);
+  transform: translateY(-1px);
 }
 
 /* ==================== DESKTOP (769px+) ==================== */

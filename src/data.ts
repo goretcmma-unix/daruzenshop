@@ -10,7 +10,30 @@ export interface Product {
   image: string;
   descriptions: Record<Lang, string>;
   specs?: Record<Lang, string[]>;
+  createdAt?: number;
+  inStock?: boolean;
 }
+
+export const STOCK_SPECS_KEY = '_stock';
+
+export const isNewProduct = (p: Product, days = 7): boolean => {
+  if (!p.createdAt) return false;
+  const age = Math.floor(Date.now() / 1000) - p.createdAt;
+  return age >= 0 && age <= days * 24 * 60 * 60;
+};
+
+export const getInStock = (p: Product): boolean => {
+  if (typeof p.inStock === 'boolean') return p.inStock;
+  const raw = p.specs?.[STOCK_SPECS_KEY]?.[0];
+  return raw !== '0';
+};
+
+export const setInStock = (p: Product, inStock: boolean): Product => {
+  const specs = { ...(p.specs ?? {}) } as Record<Lang, string[]>;
+  if (inStock) delete specs[STOCK_SPECS_KEY as Lang];
+  else specs[STOCK_SPECS_KEY as Lang] = ['0'];
+  return { ...p, inStock, specs };
+};
 
 export const categoryLabels = {
   ru: {
@@ -583,10 +606,10 @@ export const products: Product[] = [
   {
     id: 'prod-11',
     names: {
-      ru: 'Оптима Комплекс с Омега-3',
-      tr: 'Omega-3 İçeren Optima Kompleks',
-      en: 'Optima Complex with Omega-3',
-      ar: 'مجمّع أوبتيما مع أوميغا 3',
+      ru: 'Оптима Комплекс',
+      tr: 'Optima Kompleks',
+      en: 'Optima Complex',
+      ar: 'أوبتيما كومبلكس',
     },
     categoryKey: 'vitamins',
     price: 1650,
@@ -907,6 +930,8 @@ export interface LocalizedProduct {
   image: string;
   description: string;
   specs?: string[];
+  createdAt?: number;
+  inStock?: boolean;
 }
 
 export const localizeProducts = (lang: Lang, source: Product[] = products): LocalizedProduct[] =>
@@ -919,6 +944,8 @@ export const localizeProducts = (lang: Lang, source: Product[] = products): Loca
     image: p.image,
     description: p.descriptions[lang] || p.descriptions.ru,
     specs: p.specs ? (p.specs[lang] || p.specs.ru) : undefined,
+    createdAt: p.createdAt,
+    inStock: getInStock(p),
   }));
 
 // Ключи категорий (первый — «все»)

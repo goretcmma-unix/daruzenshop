@@ -438,8 +438,9 @@ const AppStyles = () => (
 
     .product-card-price {
       font-size: clamp(18px, 3vw, 20px);
-      font-weight: 700;
-      color: var(--primary);
+      font-weight: 800;
+      color: var(--primary-dark);
+      letter-spacing: -0.01em;
     }
 
     .hero-actions {

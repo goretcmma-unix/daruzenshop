@@ -10,7 +10,7 @@ import { supabase, fetchProducts, upsertProduct, deleteProduct, uploadProductIma
 import { autoTranslateFromRu } from '../lib/translate';
 import { cropToStandard } from '../lib/imagePipeline';
 import { NormalizedImg } from './NormalizedImg';
-import { parseCompositionLine, dedupeProducts, products, type Product, type CategoryKey } from '../data';
+import { parseCompositionLine, dedupeProducts, isNewProduct, products, getInStock, setInStock, type Product, type CategoryKey } from '../data';
 
 const CATEGORIES: { key: CategoryKey; label: string; icon: React.ReactNode; desc: string }[] = [
   { key: 'supplements', label: 'Добавки', icon: <Pill size={20} />, desc: 'БАДы и спортивные добавки' },
@@ -41,6 +41,8 @@ const emptyProduct = (): Product => ({
   image: '',
   descriptions: { ru: '', tr: '', en: '', ar: '' },
   specs: undefined,
+  createdAt: Math.floor(Date.now() / 1000),
+  inStock: true,
 });
 
 /* ------------------------------------------------------------------ */
@@ -228,7 +230,8 @@ const AdminPanel: React.FC = () => {
     setSavingId(draft.id);
     setNotice('');
     try {
-      const final = { ...draft, specs: { ...(draft.specs ?? {}), ru: serializeSpecs(specRows) } };
+      const withStock = setInStock(draft, getInStock(draft));
+      const final = { ...withStock, specs: { ...(withStock.specs ?? {}), ru: serializeSpecs(specRows) } };
       await upsertProduct(final);
       setItems(prev => {
         const i = prev.findIndex(x => x.id === final.id);
@@ -271,6 +274,21 @@ const AdminPanel: React.FC = () => {
     setSpecRows(parseSpecs(p.specs?.ru ?? []));
     setStep(0);
     setShowHelp(true);
+  };
+
+  const [stockSavingId, setStockSavingId] = useState<string | null>(null);
+
+  const toggleStock = async (p: Product) => {
+    const next = setInStock(p, !getInStock(p));
+    setItems(prev => prev.map(x => (x.id === p.id ? next : x)));
+    setStockSavingId(p.id);
+    try {
+      await upsertProduct(next);
+    } catch {
+      setItems(prev => prev.map(x => (x.id === p.id ? p : x)));
+    } finally {
+      setStockSavingId(null);
+    }
   };
 
   const translate = async () => {
@@ -455,8 +473,18 @@ const AdminPanel: React.FC = () => {
                 whileHover={{ y: -4 }}
                 style={{ background: '#fff', borderRadius: 22, border: '1px solid rgba(99,67,49,0.08)', overflow: 'hidden', boxShadow: '0 2px 12px rgba(99,67,49,0.05)', transition: 'box-shadow .25s ease' }}
               >
-                <div style={{ aspectRatio: '3 / 4', background: 'linear-gradient(180deg, #fdfcfa, #f5f1ea)', overflow: 'hidden' }}>
+                <div style={{ aspectRatio: '3 / 4', background: 'linear-gradient(180deg, #fdfcfa, #f5f1ea)', overflow: 'hidden', position: 'relative' }}>
                   {p.image ? <NormalizedImg src={p.image} alt="" style={imgCardStyle} /> : <div style={{ height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#c9bfb2' }}><ImageIcon size={44} /></div>}
+                  {isNewProduct(p) && (
+                    <span style={{ position: 'absolute', top: 12, right: 12, background: '#e5484d', color: '#fff', fontSize: 11, fontWeight: 900, letterSpacing: '0.06em', textTransform: 'uppercase', padding: '5px 10px', borderRadius: 100, boxShadow: '0 4px 14px rgba(229,72,77,0.45)' }}>
+                      Новое
+                    </span>
+                  )}
+                  {!getInStock(p) && (
+                    <span style={{ position: 'absolute', bottom: 12, right: 12, background: 'rgba(80, 80, 80, 0.9)', color: '#fff', fontSize: 11, fontWeight: 700, letterSpacing: '0.05em', textTransform: 'uppercase', padding: '5px 11px', borderRadius: 100, boxShadow: '0 2px 8px rgba(0,0,0,0.18)', zIndex: 2 }}>
+                      Нет в наличии
+                    </span>
+                  )}
                 </div>
                 <div style={{ padding: '16px 18px 18px' }}>
                   <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, fontSize: 12, fontWeight: 800, color: '#9a7b3f', background: '#fbf3e2', padding: '4px 10px', borderRadius: 100, marginBottom: 8 }}>
@@ -473,6 +501,20 @@ const AdminPanel: React.FC = () => {
                       <Pencil size={14} /> Изменить
                     </motion.button>
                   </div>
+                  <button
+                    type="button"
+                    onClick={() => toggleStock(p)}
+                    disabled={stockSavingId === p.id}
+                    title={getInStock(p) ? 'В наличии — нажмите, чтобы выключить' : 'Нет в наличии — нажмите, чтобы включить'}
+                    style={{ display: 'flex', alignItems: 'center', gap: 10, width: '100%', marginTop: 12, padding: '9px 12px', borderRadius: 12, border: '1px solid ' + (getInStock(p) ? '#cde9d5' : '#e7e2db'), background: getInStock(p) ? '#f0faf3' : '#fff', cursor: stockSavingId === p.id ? 'default' : 'pointer', fontFamily: 'inherit', transition: 'all .2s ease', opacity: stockSavingId === p.id ? 0.6 : 1 }}
+                  >
+                    <span style={{ position: 'relative', width: 38, height: 22, borderRadius: 99, flexShrink: 0, background: getInStock(p) ? '#2f9e58' : '#d5cfc6', transition: 'background .2s ease' }}>
+                      <span style={{ position: 'absolute', top: 3, left: getInStock(p) ? 18 : 3, width: 16, height: 16, borderRadius: '50%', background: '#fff', boxShadow: '0 1px 3px rgba(0,0,0,0.25)', transition: 'left .2s ease' }} />
+                    </span>
+                    <span style={{ fontSize: 13, fontWeight: 700, color: getInStock(p) ? '#1f7a3d' : '#b0433a' }}>
+                      {getInStock(p) ? 'В наличии' : 'Нет в наличии'}
+                    </span>
+                  </button>
                 </div>
               </motion.div>
             ))}
@@ -671,6 +713,22 @@ const AdminPanel: React.FC = () => {
                             <input style={{ ...field, paddingLeft: 40 }} type="number" value={draft.price} onChange={e => updateDraft(pr => ({ ...pr, price: Number(e.target.value) }))} placeholder="Например: 2500" />
                             <span style={{ position: 'absolute', left: 16, top: '50%', transform: 'translateY(-50%)', fontWeight: 800, color: 'var(--accent)' }}>₺</span>
                           </div>
+
+                          <div style={{ ...fieldLabel, marginTop: 24 }}>Наличие</div>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 14, padding: '12px 16px', borderRadius: 14, border: '1px solid #e7e2db', background: '#fff' }}>
+                            <button
+                              type="button"
+                              role="switch"
+                              aria-checked={getInStock(draft)}
+                              onClick={() => updateDraft(pr => setInStock(pr, !getInStock(pr)))}
+                              style={{ position: 'relative', width: 46, height: 26, borderRadius: 99, border: 'none', cursor: 'pointer', background: getInStock(draft) ? '#2f9e58' : '#d5cfc6', transition: 'background .2s ease', flexShrink: 0, padding: 0 }}
+                            >
+                              <span style={{ position: 'absolute', top: 3, left: getInStock(draft) ? 22 : 3, width: 20, height: 20, borderRadius: '50%', background: '#fff', boxShadow: '0 1px 4px rgba(0,0,0,0.25)', transition: 'left .2s ease' }} />
+                            </button>
+                            <span style={{ fontWeight: 700, fontSize: 15, color: getInStock(draft) ? '#1f7a3d' : '#b0433a' }}>
+                              {getInStock(draft) ? 'В наличии' : 'Нет в наличии'}
+                            </span>
+                          </div>
                         </div>
                       )}
 
@@ -772,8 +830,13 @@ const AdminPanel: React.FC = () => {
                     <Eye size={14} /> Так увидит покупатель
                   </div>
                   <div style={{ borderRadius: 20, overflow: 'hidden', border: '1px solid rgba(99,67,49,0.1)', boxShadow: '0 16px 40px rgba(99,67,49,0.12)' }}>
-                    <div style={{ aspectRatio: '3 / 4', background: 'linear-gradient(180deg, #fdfcfa, #f2ede5)', overflow: 'hidden' }}>
+                    <div style={{ aspectRatio: '3 / 4', background: 'linear-gradient(180deg, #fdfcfa, #f2ede5)', overflow: 'hidden', position: 'relative' }}>
                       {draft.image ? <NormalizedImg src={draft.image} alt="" style={imgCardStyle} /> : <div style={{ height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#d4c9bb' }}><ImageIcon size={40} /></div>}
+                      {!getInStock(draft) && (
+                        <span style={{ position: 'absolute', bottom: 12, right: 12, background: 'rgba(80, 80, 80, 0.9)', color: '#fff', fontSize: 11, fontWeight: 700, letterSpacing: '0.05em', textTransform: 'uppercase', padding: '5px 11px', borderRadius: 100, boxShadow: '0 2px 8px rgba(0,0,0,0.18)' }}>
+                          Нет в наличии
+                        </span>
+                      )}
                     </div>
                     <div style={{ padding: '14px 16px 16px', background: '#fff' }}>
                       <span style={{ display: 'inline-block', fontSize: 11, fontWeight: 800, color: '#9a7b3f', background: '#fbf3e2', padding: '3px 9px', borderRadius: 100, marginBottom: 8 }}>
@@ -782,7 +845,9 @@ const AdminPanel: React.FC = () => {
                       <div style={{ fontWeight: 800, fontSize: 15, lineHeight: 1.3, color: 'var(--primary-dark)', minHeight: 40 }}>
                         {draft.names.ru || 'Название товара'}
                       </div>
-                      <div style={{ marginTop: 8, fontWeight: 800, fontSize: 18, color: 'var(--primary)' }}>{draft.price ? draft.price.toLocaleString('ru-RU') + ' ₺' : '0 ₺'}</div>
+                      <div style={{ marginTop: 8, fontWeight: 800, fontSize: 18, color: getInStock(draft) ? 'var(--primary)' : '#8a8a8a' }}>
+                        {draft.price ? draft.price.toLocaleString('ru-RU') + ' ₺' : '0 ₺'}
+                      </div>
                     </div>
                   </div>
                   <div style={{ fontSize: 12, color: '#b0a797', marginTop: 10, lineHeight: 1.5 }}>

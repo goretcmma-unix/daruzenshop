@@ -41,6 +41,7 @@ const rowToProduct = (r: ProductRow): Product => {
     image: r.image,
     descriptions,
     specs: r.specs ?? undefined,
+    createdAt: r.sort_order ?? undefined,
   };
 };
 
@@ -52,7 +53,7 @@ export const fetchProducts = async (): Promise<Product[]> => {
     const { data, error } = await supabase
       .from('products')
       .select('*')
-      .order('sort_order', { ascending: true, nullsFirst: false });
+      .order('sort_order', { ascending: false, nullsFirst: false });
     if (error || !data || data.length === 0) {
       if (!seeded) {
         seeded = true;
@@ -63,9 +64,8 @@ export const fetchProducts = async (): Promise<Product[]> => {
       return dedupeProducts(products);
     }
     const dbRows = (data as ProductRow[]).map(rowToProduct);
-    const localProducts = dedupeProducts(products);
-    const dbOnly = dbRows.filter(r => !localProducts.some(l => l.id === r.id));
-    return dedupeProducts([...localProducts, ...dbOnly]);
+    const merged = dedupeProducts([...dbRows, ...products]);
+    return merged.sort((a, b) => (b.createdAt ?? 0) - (a.createdAt ?? 0) || (b.id < a.id ? -1 : b.id > a.id ? 1 : 0));
   } catch {
     return dedupeProducts(products);
   }
@@ -85,7 +85,7 @@ const productToRow = (p: Product) => ({
   desc_en: p.descriptions.en,
   desc_ar: p.descriptions.ar,
   specs: p.specs ?? null,
-  sort_order: 0,
+  sort_order: p.createdAt ?? Math.floor(Date.now() / 1000),
 });
 
 export const upsertProduct = async (p: Product): Promise<void> => {

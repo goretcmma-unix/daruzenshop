@@ -5,16 +5,15 @@ type Props = {
   onClick: () => void;
   label: string;
   withRotate?: boolean;
+  disabled?: boolean;
   children: React.ReactNode;
 };
 
-const QtyButton: React.FC<Props> = ({ onClick, label, withRotate = false, children }) => {
+const QtyButton: React.FC<Props> = ({ onClick, label, withRotate = false, disabled = false, children }) => {
   const controls = useAnimationControls();
 
-  // Короткая золотая вспышка ровно по клику: подсветились и сразу вернулись,
-  // без «зажатого» состояния (whileTap на тач-устройствах залипает, а фокус
-  // после тапа держится, пока не ткнёшь в другое место).
   const handleClick = () => {
+    if (disabled) return;
     controls.start(
       {
         scale: [1, 0.82, 1],
@@ -33,12 +32,11 @@ const QtyButton: React.FC<Props> = ({ onClick, label, withRotate = false, childr
       type="button"
       className="qty-btn"
       aria-label={label}
+      disabled={disabled}
       onClick={(e) => {
         handleClick();
         e.currentTarget.blur();
       }}
-      // Не даём кнопке получать фокус при тапе/клике — иначе браузерный
-      // жёлтый фокус «залипает» до следующего касания. Клик при этом работает.
       onMouseDown={(e) => e.preventDefault()}
       onPointerDown={release}
       onPointerUp={release}
@@ -48,10 +46,11 @@ const QtyButton: React.FC<Props> = ({ onClick, label, withRotate = false, childr
       animate={controls}
       style={{
         border: 'none',
-        cursor: 'pointer',
+        cursor: disabled ? 'not-allowed' : 'pointer',
         display: 'flex',
         outline: 'none',
         WebkitTapHighlightColor: 'transparent',
+        opacity: disabled ? 0.4 : 1,
       }}
     >
       {children}

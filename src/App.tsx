@@ -19,7 +19,7 @@ import {
   Award
 } from 'lucide-react';
 import { motion, AnimatePresence, useScroll, useTransform, useInView, useAnimationControls } from 'framer-motion';
-import { categoryKeys, products, getCategoryLabel, localizeProducts, dedupeProducts, type LocalizedProduct, type CategoryKey, type Product } from './data';
+import { categoryKeys, products, getCategoryLabel, localizeProducts, dedupeProducts, isNewProduct, type LocalizedProduct, type CategoryKey, type Product } from './data';
 import { useLang, LANGS, formatPrice } from './i18n';
 import { fetchProducts, supabase } from './lib/supabase';
 
@@ -677,6 +677,42 @@ const App: React.FC = () => {
                     }}>
                       {product.category}
                     </div>
+                    {isNewProduct(product) && (
+                      <span style={{
+                        position: 'absolute',
+                        top: '12px',
+                        right: '12px',
+                        background: '#e5484d',
+                        color: '#fff',
+                        padding: '6px 12px',
+                        borderRadius: '8px',
+                        fontSize: '10px',
+                        fontWeight: '900',
+                        letterSpacing: '0.06em',
+                        textTransform: 'uppercase',
+                        boxShadow: '0 4px 14px rgba(229,72,77,0.45)'
+                      }}>
+                        Новое
+                      </span>
+                    )}
+                    {product.inStock === false && (
+                      <span style={{
+                        position: 'absolute',
+                        bottom: '12px',
+                        right: '12px',
+                        background: 'rgba(80, 80, 80, 0.9)',
+                        color: '#fff',
+                        padding: '6px 12px',
+                        borderRadius: '8px',
+                        fontSize: '10px',
+                        fontWeight: '700',
+                        letterSpacing: '0.05em',
+                        textTransform: 'uppercase',
+                        boxShadow: '0 2px 8px rgba(0,0,0,0.18)'
+                      }}>
+                        Нет в наличии
+                      </span>
+                    )}
                   </div>
                   <div style={{ padding: '16px', display: 'flex', flexDirection: 'column', flex: 1 }}>
                      <h3 className="product-card-title">
@@ -692,10 +728,10 @@ const App: React.FC = () => {
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
-                          addToCart(product);
+                          if (product.inStock !== false) addToCart(product);
                         }}
                         className="btn-primary"
-                        style={{ padding: '10px 16px', borderRadius: '12px', border: 'none', cursor: 'pointer' }}
+                        style={{ padding: '10px 16px', borderRadius: '12px', border: 'none', cursor: product.inStock === false ? 'not-allowed' : 'pointer', opacity: product.inStock === false ? 0.4 : 1 }}
                       >
                         <Plus size={20} />
                       </button>
@@ -1214,11 +1250,12 @@ const App: React.FC = () => {
               >
                  <motion.img 
                   initial={{ scale: 0.8, opacity: 0 }}
-                  animate={{ scale: 1, opacity: 1 }}
+                  animate={{ scale: 1, opacity: selectedProduct.inStock === false ? 0.3 : 1 }}
                   src={selectedProductImage}
                   loading="lazy"
                   decoding="async"
                   className="modal-image"
+                  style={{ filter: selectedProduct.inStock === false ? 'grayscale(1)' : 'none' }}
                 />
                   <motion.button 
                     whileHover={{ scale: 1.1, background: 'rgba(255, 255, 255, 0.9)', boxShadow: '0 8px 20px rgba(0,0,0,0.1)' }}
@@ -1237,7 +1274,12 @@ const App: React.FC = () => {
                     <X size={16} color="var(--text-muted)" />
                    </motion.button>
                  </motion.div>
-                  <div className="modal-buy-under">
+                    <div className="modal-buy-under">
+                    {selectedProduct.inStock === false ? (
+                      <div style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', padding: '0 24px', height: '54px', borderRadius: '14px', border: '2px solid #d5cfc6', color: '#8a8a8a', fontWeight: '600', fontSize: '15px', letterSpacing: '0.01em', background: 'transparent' }}>
+                        Нет в наличии
+                      </div>
+                    ) : (
                     <div className="modal-buy-actions">
                        <div className="modal-buy-qty">
                          <QtyButton label="-" onClick={() => setModalQuantity(q => Math.max(1, q - 1))}>
@@ -1267,6 +1309,7 @@ const App: React.FC = () => {
                         {t.cart.buyNow}
                       </motion.button>
                     </div>
+                    )}
                   </div>
               </motion.div>
               <div className="modal-info-wrapper">

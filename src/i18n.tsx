@@ -46,9 +46,9 @@ const ui = {
       buyNow: 'Купить сейчас',
     },
     about: {
-      titlePre: 'Мы создаем культуру',
-      titleAccent: 'заботы о себе',
-      desc: 'Daruzen — это не просто магазин добавок. Это результат многолетнего поиска лучших формул и чистейших ингредиентов из самого сердца Турции. Мы верим, что премиальное качество должно быть доступно каждому. Само имя «Daruzen» — это дань древнегреческому слову «daru» (δῶρον — «дар», «подарок»). Ведь именно так мы относимся к здоровью: это не обязанность и не роскошь, а дар, который нужно беречь и приумножать каждый день. Два древних корня — dara и zen, где «zen» символизирует гармонию и баланс, — сложились в наше название. Для нас «Daruzen» значит «дар жизни»: мы помогаем людям бережно заботиться о себе, возвращая естественную силу и равновесие.',
+      titlePre: 'Что такое',
+      titleAccent: 'Daruzen?',
+      desc: 'Daruzen — это современный бренд премиальных пищевых добавок, созданный для людей, которые выбирают качество, безопасность и эффективность. Мы тщательно подбираем ингредиенты, сотрудничаем с надежными производителями и придерживаемся высоких стандартов качества на каждом этапе. Наша миссия — помогать людям заботиться о своем здоровье с помощью современных научных разработок, инновационных технологий и тщательно отобранных компонентов. Мы стремимся заслужить доверие каждого клиента, предлагая продукцию, сочетающую эффективность, безопасность и безупречное качество. Для нас Daruzen — это не просто бренд. Это философия заботы о здоровье, жизненной энергии и внутреннем балансе. Каждая наша формула создается с одной целью — помогать людям поддерживать активную, полноценную и здоровую жизнь, сохраняя высокие стандарты качества и доверия.',
       history: [
         { title: 'Происхождение имени', text: '«Daruzen» родилось из древнегреческого «daru» (δῶρον — «дар», «подарок») и «zen» — символа гармонии и баланса. Два корня, объединившись, дали имя нашему бренду.' },
         { title: 'Философия бренда', text: 'Здоровье — это не обязанность и не роскошь, а дар, который нужно беречь каждый день. «Daruzen» значит «дар жизни»: мы помогаем возвращать естественную силу и равновесие.' },
@@ -59,6 +59,29 @@ const ui = {
         { title: 'Научный подход', desc: 'Мы сотрудничаем с ведущими нутрициологами Турции и докторами наук для разработки эффективных дозировок.' },
         { title: 'Золотой стандарт', desc: 'Прямые поставки позволяют нам гарантировать оригинальность каждой баночки.' },
       ],
+      brand: {
+        title: 'Философия бренда',
+        intro: 'Daruzen — это не просто бренд. Это философия заботы о здоровье, жизненной энергии и внутреннем балансе.',
+        items: [
+          {
+            title: 'Качество и безопасность',
+            text: 'Daruzen — это современный бренд премиальных пищевых добавок, созданный для людей, которые выбирают качество, безопасность и эффективность. Мы тщательно подбираем ингредиенты, сотрудничаем с надежными производителями и придерживаемся высоких стандартов качества на каждом этапе.',
+          },
+          {
+            title: 'Наша миссия',
+            text: 'Наша миссия — помогать людям заботиться о своем здоровье с помощью современных научных разработок, инновационных технологий и тщательно отобранных компонентов. Мы стремимся заслужить доверие каждого клиента, предлагая продукцию, сочетающую эффективность, безопасность и безупречное качество.',
+          },
+          {
+            title: 'Наша философия',
+            text: 'Для нас Daruzen — это не просто бренд. Это философия заботы о здоровье, жизненной энергии и внутреннем балансе. Каждая наша формула создается с одной целью — помогать людям поддерживать активную, полноценную и здоровую жизнь, сохраняя высокие стандарты качества и доверия.',
+          },
+        ],
+      },
+      why: {
+        title: 'Почему Daruzen?',
+        p1: 'Название Daruzen вдохновлено богатым наследием Османской цивилизации, где медицина, знания и забота о здоровье занимали особое место. Мы создали имя, которое отражает связь с традициями прошлого и стремление к современным стандартам качества.',
+        p2: 'Для нас Daruzen — это символ доверия, гармонии и заботы о человеке. Наш бренд объединяет уважение к историческому наследию с инновационными технологиями, создавая продукцию, которая помогает людям поддерживать здоровье, жизненную энергию и высокое качество жизни.',
+      },
     },
     contacts: {
       titlePre: 'Свяжитесь',
@@ -141,8 +164,8 @@ const ui = {
       buyNow: 'Hemen Al',
     },
     about: {
-      titlePre: 'Özgün bir kültür',
-      titleAccent: 'yaratıyoruz',
+      titlePre: 'Hakkımızda',
+      titleAccent: '',
       desc: 'Daruzen sadece bir takviye mağazası değildir. Türkiye\'nin kalbinden en iyi formüllerin ve en saf içeriklerin yıllarca süren arayışının bir sonucudur. Premium kalitenin herkese ulaşabilir olduğuna inanıyoruz.',
       history: [
         { title: 'İsmin kökeni', text: '"Daruzen", Antik Yunanca "daru" (δῶρον — hediye, armağan) ve "zen" — uyum ve dengenin sembolü — kelimelerinden doğdu. İki kök birleşerek markamıza ad verdi.' },
@@ -154,6 +177,29 @@ const ui = {
         { title: 'Bilimsel yaklaşım', desc: 'Etkili dozajlar geliştirmek için Türkiye\'nin önde gelen beslenme uzmanları ve bilim doktorlarıyla iş birliği yapıyoruz.' },
         { title: 'Altın standart', desc: 'Doğrudan tedarik, her kutunun orijinalliğini garanti etmemizi sağlar.' },
       ],
+      brand: {
+        title: 'Marka Felsefesi',
+        intro: 'Daruzen sadece bir marka değil. Sağlık, yaşam enerjisi ve iç denge konusunda bir özen felsefesidir.',
+        items: [
+          {
+            title: 'Kalite ve Güvenlik',
+            text: 'Daruzen, kaliteyi, güvenliği ve etkinliği seçen insanlar için yaratılmış modern bir premium gıda takviyesi markasıdır. İçerikleri özenle seçiyor, güvenilir üreticilerle iş birliği yapıyor ve her aşamada yüksek kalite standartlarına bağlı kalıyoruz.',
+          },
+          {
+            title: 'Misyonumuz',
+            text: 'Misyonumuz, modern bilimsel gelişmeler, yenilikçi teknolojiler ve özenle seçilmiş bileşenlerle insanların sağlıklarına dikkat etmelerine yardımcı olmaktır. Etkinlik, güvenlik ve kusursuz kaliteyi birleştiren ürünler sunarak her müşterinin güvenini kazanmayı hedefliyoruz.',
+          },
+          {
+            title: 'Felsefemiz',
+            text: 'Bizim için Daruzen sadece bir marka değil. Sağlık, yaşam enerjisi ve iç denge konusunda bir özen felsefesidir. Her formülümüz tek bir amaçla oluşturulur — insanların aktif, dolu dolu ve sağlıklı bir yaşam sürmelerine yardımcı olmak, yüksek kalite ve güven standartlarını korumak.',
+          },
+        ],
+      },
+      why: {
+        title: 'Neden Daruzen?',
+        p1: 'Daruzen adı, tıbbın, bilginin ve sağlığa özenin özel bir yer tuttuğu zengin Osmanlı medeniyeti mirasından ilham almıştır. Geçmişin gelenekleriyle bağlantıyı ve modern kalite standartlarına yönelik çabayı yansıtan bir isim yarattık.',
+        p2: 'Bizim için Daruzen, güven, uyum ve insana özen sembolüdür. Markamız, tarihsel mirasa saygıyı yenilikçi teknolojilerle birleştirerek insanların sağlıklarını, yaşam enerjilerini ve yüksek yaşam kalitelerini sürdürmelerine yardımcı olan ürünler yaratır.',
+      },
     },
     contacts: {
       titlePre: 'Bizimle',
@@ -236,8 +282,8 @@ const ui = {
       buyNow: 'Buy Now',
     },
     about: {
-      titlePre: 'We create a culture',
-      titleAccent: 'of self-care',
+      titlePre: 'About',
+      titleAccent: '',
       desc: 'Daruzen is more than just a supplement store. It is the result of a years-long search for the best formulas and purest ingredients from the heart of Turkey. We believe premium quality should be accessible to everyone.',
       history: [
         { title: 'Origin of the name', text: '"Daruzen" was born from the Ancient Greek "daru" (δῶρον — gift) and "zen" — a symbol of harmony and balance. Two roots, united, gave the name to our brand.' },
@@ -249,6 +295,29 @@ const ui = {
         { title: 'Scientific approach', desc: 'We collaborate with leading Turkish nutritionists and doctors of science to develop effective dosages.' },
         { title: 'Gold standard', desc: 'Direct supplies allow us to guarantee the authenticity of every jar.' },
       ],
+      brand: {
+        title: 'Brand Philosophy',
+        intro: 'For us, Daruzen is more than just a brand. It is a philosophy of caring for health, vital energy and inner balance.',
+        items: [
+          {
+            title: 'Quality & Safety',
+            text: 'Daruzen is a modern premium dietary supplement brand created for people who choose quality, safety and effectiveness. We carefully select ingredients, work with reliable manufacturers and maintain high quality standards at every stage.',
+          },
+          {
+            title: 'Our Mission',
+            text: 'Our mission is to help people take care of their health through modern scientific developments, innovative technologies and carefully selected components. We strive to earn the trust of every customer by offering products that combine effectiveness, safety and impeccable quality.',
+          },
+          {
+            title: 'Our Philosophy',
+            text: 'For us, Daruzen is more than just a brand. It is a philosophy of caring for health, vital energy and inner balance. Every formula we create has one goal — to help people lead an active, fulfilling and healthy life while maintaining high standards of quality and trust.',
+          },
+        ],
+      },
+      why: {
+        title: 'Why Daruzen?',
+        p1: 'The name Daruzen is inspired by the rich heritage of Ottoman civilization, where medicine, knowledge and care for health held a special place. We created a name that reflects a connection with the traditions of the past and a commitment to modern quality standards.',
+        p2: 'For us, Daruzen is a symbol of trust, harmony and care for people. Our brand combines respect for historical heritage with innovative technologies, creating products that help people maintain health, vital energy and a high quality of life.',
+      },
     },
     contacts: {
       titlePre: 'Get in',
@@ -331,8 +400,8 @@ const ui = {
       buyNow: 'اشترِ الآن',
     },
     about: {
-      titlePre: 'نحن نصنع ثقافة',
-      titleAccent: 'العناية بالذات',
+      titlePre: 'من نحن',
+      titleAccent: '',
       desc: 'Daruzen ليست مجرد متجر مكملات غذائية. إنها نتيجة سنوات من البحث عن أفضل التركيبات وأنقى المكونات من قلب تركيا. نحن نؤمن بأن الجودة الممتازة يجب أن تكون متاحة للجميع.',
       history: [
         { title: 'أصل الاسم', text: 'وُلد "Daruzen" من الكلمة اليونانية القديمة "daru" (δῶρον — هدية) و"zen" — رمز الانسجام والتوازن. جذرا الكلمة، بعد اندماجهما، أعطيا علامتنا اسمها.' },
@@ -344,6 +413,29 @@ const ui = {
         { title: 'نهج علمي', desc: 'نتعاون مع كبار أخصائيي التغذية وأطباء العلوم في تركيا لتطوير جرعات فعالة.' },
         { title: 'المعيار الذهبي', desc: 'التوريد المباشر يتيح لنا ضمان أصالة كل عبوة.' },
       ],
+      brand: {
+        title: 'فلسفة العلامة التجارية',
+        intro: 'بالنسبة لنا، Daruzen ليست مجرد علامة تجارية. إنها فلسفة العناية بالصحة والطاقة الحيوية والتوازن الداخلي.',
+        items: [
+          {
+            title: 'الجودة والسلامة',
+            text: 'Daruzen هي علامة تجارية حديثة للمكملات الغذائية المتميزة، صُممت للأشخاص الذين يختارون الجودة والسلامة والفعالية. نختار المكونات بعناية، ونتعاون مع مصنّعين موثوقين ونلتزم بمعايير الجودة العالية في كل مرحلة.',
+          },
+          {
+            title: 'المهمة والابتكار',
+            text: 'مهمتنا هي مساعدة الناس على العناية بصحتهم من خلال التطورات العلمية الحديثة والتقنيات المبتكرة والمكونات المختارة بعناية. نسعى لكسب ثقة كل عميل من خلال تقديم منتجات تجمع بين الفعالية والسلامة والجودة التي لا تشوبها شائبة.',
+          },
+          {
+            title: 'فلسفتنا',
+            text: 'بالنسبة لنا، Daruzen ليست مجرد علامة تجارية. إنها فلسفة العناية بالصحة والطاقة الحيوية والتوازن الداخلي. كل تركيبة نصنعها تهدف إلى هدف واحد — مساعدة الناس على عيش حياة نشطة وكاملة وصحية مع الحفاظ على معايير عالية من الجودة والثقة.',
+          },
+        ],
+      },
+      why: {
+        title: 'لماذا Daruzen؟',
+        p1: 'اسم Daruzen مستوحى من التراث الغني للحضارة العثمانية، حيث احتلت الطب والمعرفة والرعاية الصحية مكانة خاصة. لقد أنشأنا اسماً يعكس الارتباط بتقاليد الماضي والسعي نحو معايير الجودة الحديثة.',
+        p2: 'بالنسبة لنا، Daruzen هو رمز الثقة والانسجام والرعاية للإنسان. تجمع علامتنا بين احترام التراث التاريخي والتقنيات المبتكرة، مما يخلق منتجات تساعد الناس على الحفاظ على صحتهم وطاقتهم الحياتية وجودة حياتهم العالية.',
+      },
     },
     contacts: {
       titlePre: 'تواصل',

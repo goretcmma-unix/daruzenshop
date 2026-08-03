@@ -16,7 +16,8 @@ import {
   //Check,
   ShieldCheck,
   FlaskConical,
-  Award
+  Award,
+  Sparkles
 } from 'lucide-react';
 import { motion, AnimatePresence, useScroll, useTransform, useInView, useAnimationControls } from 'framer-motion';
 import { categoryKeys, products, getCategoryLabel, localizeProducts, dedupeProducts, isNewProduct, type LocalizedProduct, type CategoryKey, type Product } from './data';
@@ -607,13 +608,13 @@ const App: React.FC = () => {
       <section id="catalog" className="section-padding" style={{ paddingTop: '20px' }}>
         <div className="container">
           <div className="catalog-header">
-              <motion.h2
-                className="section-title"
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-50px" }}
-                transition={{ duration: 0.5 }}
-              >
+            <motion.h2
+              style={{ fontSize: 'clamp(28px, 4vw, 40px)', fontWeight: '700', color: 'var(--primary-dark)', lineHeight: 1.2, letterSpacing: '-0.02em', marginBottom: '24px' }}
+              initial="hidden"
+              whileInView="show"
+              viewport={{ once: false, margin: '-80px' }}
+              variants={{ hidden: {}, show: { transition: { staggerChildren: 0.03 } } }}
+            >
                 {t.catalog.title}
               </motion.h2>
               <div className="category-filter-container">
@@ -798,12 +799,12 @@ const App: React.FC = () => {
       </section>
 
       {/* About Us Section */}
-      <section id="about" className="section-padding" style={{ background: 'linear-gradient(180deg, #FDFBFA 0%, #F6F1EA 100%)' }}>
+      <section id="about" className="section-padding" style={{ background: 'linear-gradient(180deg, #FDFBFA 0%, #F6F1EA 100%)', paddingTop: '80px' }}>
         <div className="container">
-          <div style={{ maxWidth: '820px', marginBottom: '70px' }}>
+          <div style={{ maxWidth: '820px', margin: '-20px auto 40px', textAlign: 'center' }}>
             <motion.h2
               className="section-title"
-              style={{ marginBottom: '24px', lineHeight: 1.15 }}
+              style={{ marginBottom: '24px', lineHeight: 1.15, display: 'inline-block' }}
               initial="hidden"
               whileInView="show"
               viewport={{ once: false }}
@@ -850,7 +851,7 @@ const App: React.FC = () => {
           </div>
 
           {/* Три принципа: трендовые прогресс-бары */}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '24px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '24px', marginTop: '100px' }}>
             {[ShieldCheck, FlaskConical, Award].map((Icon, i) => (
               <AboutFeatureCard
                 key={i}
@@ -861,6 +862,222 @@ const App: React.FC = () => {
                 delay={i * 0.1}
               />
             ))}
+          </div>
+
+        </div>
+      </section>
+
+      {/* Секция: Качество и безопасность */}
+      <section className="section-padding" style={{ background: 'linear-gradient(135deg, #FDF9F2 0%, #FFFFFF 50%, #FAF3E7 100%)' }}>
+        <div className="container">
+          <div style={{ textAlign: 'center', maxWidth: '800px', margin: '0 auto' }}>
+              <motion.h2
+              style={{ fontSize: 'clamp(28px, 4vw, 40px)', fontWeight: '700', color: 'var(--primary-dark)', lineHeight: 1.2, letterSpacing: '-0.02em', marginBottom: '24px' }}
+              initial="hidden"
+              whileInView="show"
+              viewport={{ once: false, margin: '-80px' }}
+              variants={{ hidden: {}, show: { transition: { staggerChildren: 0.03 } } }}
+            >
+              {t.about.brand.items[0].title.split(' ').map((word, wi) => (
+                <motion.span
+                  key={wi}
+                  style={{ display: 'inline-block', marginRight: '0.25em' }}
+                  variants={{ hidden: { opacity: 0, y: 20, filter: 'blur(8px)' }, show: { opacity: 1, y: 0, filter: 'blur(0px)', transition: { duration: 0.6, ease: 'easeOut' } } }}
+                >
+                  {word}
+                </motion.span>
+              ))}
+            </motion.h2>
+            <motion.div
+              style={{ width: '64px', height: '3px', borderRadius: '999px', background: 'linear-gradient(90deg, var(--accent-light), var(--accent))', margin: '0 auto 36px' }}
+              initial={{ scaleX: 0 }}
+              whileInView={{ scaleX: 1 }}
+              viewport={{ once: false }}
+              transition={{ duration: 0.8, delay: 0.3, ease: 'easeOut' }}
+            />
+            <motion.p
+              style={{ fontSize: 'clamp(16px, 1.8vw, 20px)', lineHeight: 1.85, color: 'var(--text-muted)', fontWeight: '400' }}
+              initial="hidden"
+              whileInView="show"
+              viewport={{ once: false, margin: '-40px' }}
+              variants={{ hidden: {}, show: { transition: { staggerChildren: 0.012 } } }}
+            >
+              {t.about.brand.items[0].text.split(' ').map((word, wi) => (
+                <motion.span
+                  key={wi}
+                  style={{ display: 'inline-block', marginRight: '0.3em' }}
+                  variants={{ hidden: { opacity: 0, y: 12 }, show: { opacity: 1, y: 0, transition: { duration: 0.4 } } }}
+                >
+                  {word}
+                </motion.span>
+              ))}
+            </motion.p>
+          </div>
+        </div>
+      </section>
+
+      {/* Секция: Наша Миссия */}
+      <section className="section-padding" style={{ background: 'linear-gradient(180deg, #FAF3E7 0%, #FDF9F2 50%, #FFFFFF 100%)', position: 'relative', overflow: 'hidden' }}>
+        <div style={{ position: 'absolute', top: '10%', right: '-5%', width: '300px', height: '300px', borderRadius: '50%', background: 'radial-gradient(circle, rgba(207,155,65,0.08) 0%, transparent 70%)', pointerEvents: 'none' }} />
+        <div className="container" style={{ position: 'relative' }}>
+          <div style={{ textAlign: 'center', maxWidth: '800px', margin: '0 auto' }}>
+            <motion.h2
+              style={{ fontSize: 'clamp(28px, 4vw, 40px)', fontWeight: '700', color: 'var(--primary-dark)', lineHeight: 1.2, letterSpacing: '-0.02em', marginBottom: '24px' }}
+              initial="hidden"
+              whileInView="show"
+              viewport={{ once: false, margin: '-80px' }}
+              variants={{ hidden: {}, show: { transition: { staggerChildren: 0.03 } } }}
+            >
+              {t.about.brand.items[1].title.split(' ').map((word, wi) => (
+                <motion.span
+                  key={wi}
+                  style={{ display: 'inline-block', marginRight: '0.25em' }}
+                  variants={{ hidden: { opacity: 0, y: 20, filter: 'blur(8px)' }, show: { opacity: 1, y: 0, filter: 'blur(0px)', transition: { duration: 0.6, ease: 'easeOut' } } }}
+                >
+                  {word}
+                </motion.span>
+              ))}
+            </motion.h2>
+            <motion.div
+              style={{ width: '64px', height: '3px', borderRadius: '999px', background: 'linear-gradient(90deg, var(--accent-light), var(--accent))', margin: '0 auto 32px' }}
+              initial={{ scaleX: 0 }}
+              whileInView={{ scaleX: 1 }}
+              viewport={{ once: false }}
+              transition={{ duration: 0.8, delay: 0.3, ease: 'easeOut' }}
+            />
+            <motion.p
+              style={{ fontSize: 'clamp(16px, 1.8vw, 20px)', lineHeight: 1.85, color: 'var(--text-muted)', fontWeight: '400' }}
+              initial="hidden"
+              whileInView="show"
+              viewport={{ once: false, margin: '-40px' }}
+              variants={{ hidden: {}, show: { transition: { staggerChildren: 0.012 } } }}
+            >
+              {t.about.brand.items[1].text.split(' ').map((word, wi) => (
+                <motion.span
+                  key={wi}
+                  style={{ display: 'inline-block', marginRight: '0.3em' }}
+                  variants={{ hidden: { opacity: 0, y: 12 }, show: { opacity: 1, y: 0, transition: { duration: 0.4 } } }}
+                >
+                  {word}
+                </motion.span>
+              ))}
+            </motion.p>
+          </div>
+        </div>
+      </section>
+
+      {/* Секция: Наша Философия */}
+      <section className="section-padding" style={{ background: 'linear-gradient(225deg, #FFFFFF 0%, #FDF9F2 50%, #FAF3E7 100%)' }}>
+        <div className="container">
+          <div style={{ textAlign: 'center', maxWidth: '800px', margin: '0 auto' }}>
+            <motion.h2
+              style={{ fontSize: 'clamp(28px, 4vw, 40px)', fontWeight: '700', color: 'var(--primary-dark)', lineHeight: 1.2, letterSpacing: '-0.02em', marginBottom: '24px' }}
+              initial="hidden"
+              whileInView="show"
+              viewport={{ once: false, margin: '-80px' }}
+              variants={{ hidden: {}, show: { transition: { staggerChildren: 0.03 } } }}
+            >
+              {t.about.brand.items[2].title.split(' ').map((word, wi) => (
+                <motion.span
+                  key={wi}
+                  style={{ display: 'inline-block', marginRight: '0.25em' }}
+                  variants={{ hidden: { opacity: 0, y: 20, filter: 'blur(8px)' }, show: { opacity: 1, y: 0, filter: 'blur(0px)', transition: { duration: 0.6, ease: 'easeOut' } } }}
+                >
+                  {word}
+                </motion.span>
+              ))}
+            </motion.h2>
+            <motion.div
+              style={{ width: '64px', height: '3px', borderRadius: '999px', background: 'linear-gradient(90deg, var(--accent-light), var(--accent))', margin: '0 auto 32px' }}
+              initial={{ scaleX: 0 }}
+              whileInView={{ scaleX: 1 }}
+              viewport={{ once: false }}
+              transition={{ duration: 0.8, delay: 0.3, ease: 'easeOut' }}
+            />
+            <motion.p
+              style={{ fontSize: 'clamp(16px, 1.8vw, 20px)', lineHeight: 1.85, color: 'var(--text-muted)', fontWeight: '400' }}
+              initial="hidden"
+              whileInView="show"
+              viewport={{ once: false, margin: '-40px' }}
+              variants={{ hidden: {}, show: { transition: { staggerChildren: 0.012 } } }}
+            >
+              {t.about.brand.items[2].text.split(' ').map((word, wi) => (
+                <motion.span
+                  key={wi}
+                  style={{ display: 'inline-block', marginRight: '0.3em' }}
+                  variants={{ hidden: { opacity: 0, y: 12 }, show: { opacity: 1, y: 0, transition: { duration: 0.4 } } }}
+                >
+                  {word}
+                </motion.span>
+              ))}
+            </motion.p>
+          </div>
+        </div>
+      </section>
+
+      {/* Секция: Почему Daruzen? */}
+      <section className="section-padding" style={{ background: 'linear-gradient(180deg, #FAF3E7 0%, #FDF9F2 50%, #FFFFFF 100%)', position: 'relative', overflow: 'hidden' }}>
+        <div style={{ position: 'absolute', bottom: '10%', left: '-5%', width: '320px', height: '320px', borderRadius: '50%', background: 'radial-gradient(circle, rgba(207,155,65,0.06) 0%, transparent 70%)', pointerEvents: 'none' }} />
+        <div className="container" style={{ position: 'relative' }}>
+          <div style={{ textAlign: 'center', maxWidth: '820px', margin: '0 auto' }}>
+            <motion.h2
+              style={{ fontSize: 'clamp(28px, 4vw, 40px)', fontWeight: '700', color: 'var(--primary-dark)', lineHeight: 1.2, letterSpacing: '-0.02em', marginBottom: '24px' }}
+              initial="hidden"
+              whileInView="show"
+              viewport={{ once: false, margin: '-80px' }}
+              variants={{ hidden: {}, show: { transition: { staggerChildren: 0.03 } } }}
+            >
+              {t.about.why.title.split(' ').map((word, wi) => (
+                <motion.span
+                  key={wi}
+                  style={{ display: 'inline-block', marginRight: '0.25em' }}
+                  variants={{ hidden: { opacity: 0, y: 20, filter: 'blur(8px)' }, show: { opacity: 1, y: 0, filter: 'blur(0px)', transition: { duration: 0.6, ease: 'easeOut' } } }}
+                >
+                  {word}
+                </motion.span>
+              ))}
+            </motion.h2>
+            <motion.div
+              style={{ width: '64px', height: '3px', borderRadius: '999px', background: 'linear-gradient(90deg, var(--accent-light), var(--accent))', margin: '0 auto 36px' }}
+              initial={{ scaleX: 0 }}
+              whileInView={{ scaleX: 1 }}
+              viewport={{ once: false }}
+              transition={{ duration: 0.8, delay: 0.3, ease: 'easeOut' }}
+            />
+            <motion.p
+              style={{ fontSize: 'clamp(16px, 1.8vw, 20px)', lineHeight: 1.85, color: 'var(--text-muted)', fontWeight: '400', marginBottom: '24px' }}
+              initial="hidden"
+              whileInView="show"
+              viewport={{ once: false, margin: '-40px' }}
+              variants={{ hidden: {}, show: { transition: { staggerChildren: 0.012 } } }}
+            >
+              {t.about.why.p1.split(' ').map((word, wi) => (
+                <motion.span
+                  key={wi}
+                  style={{ display: 'inline-block', marginRight: '0.3em' }}
+                  variants={{ hidden: { opacity: 0, y: 12 }, show: { opacity: 1, y: 0, transition: { duration: 0.4 } } }}
+                >
+                  {word}
+                </motion.span>
+              ))}
+            </motion.p>
+            <motion.p
+              style={{ fontSize: 'clamp(16px, 1.8vw, 20px)', lineHeight: 1.85, color: 'var(--text-muted)', fontWeight: '400' }}
+              initial="hidden"
+              whileInView="show"
+              viewport={{ once: false, margin: '-40px' }}
+              variants={{ hidden: {}, show: { transition: { staggerChildren: 0.012 } } }}
+            >
+              {t.about.why.p2.split(' ').map((word, wi) => (
+                <motion.span
+                  key={wi}
+                  style={{ display: 'inline-block', marginRight: '0.3em' }}
+                  variants={{ hidden: { opacity: 0, y: 12 }, show: { opacity: 1, y: 0, transition: { duration: 0.4 } } }}
+                >
+                  {word}
+                </motion.span>
+              ))}
+            </motion.p>
           </div>
         </div>
       </section>
@@ -1429,6 +1646,126 @@ const App: React.FC = () => {
       {/* CSS for components not using inline styles */}
       <AppStyles />
     </div>
+  );
+};
+
+const HIGHLIGHT_WORDS = [
+  'качество', 'безопасность', 'эффективность', 'миссия', 'доверие', 'философия',
+  'kalite', 'güvenlik', 'etkinlik', 'misyon', 'güven', 'felsefe',
+  'quality', 'safety', 'effectiveness', 'mission', 'trust', 'philosophy',
+  'الجودة', 'السلامة', 'الفعالية', 'المهمة', 'الثقة', 'الفلسفة',
+];
+
+const HighlightLead = ({ text }: { text: string }) => {
+  const words = text.split(' ');
+  return (
+    <>
+      {words.map((word, wi) => {
+        const cleanWord = word.replace(/[.,;:!?()«»""—–-]/g, '').toLowerCase();
+        const isHighlight = cleanWord.length >= 4 && HIGHLIGHT_WORDS.some(hw => cleanWord.includes(hw));
+        return (
+          <span
+            key={wi}
+            style={isHighlight ? { fontWeight: 700, color: 'var(--accent)' } : undefined}
+          >
+            {word}{wi < words.length - 1 ? ' ' : ''}
+          </span>
+        );
+      })}
+    </>
+  );
+};
+
+const BrandBlock = ({ index, title, text }: { index: number; title: string; text: string }) => {
+  const isEven = index % 2 === 0;
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 30 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: '-50px' }}
+      transition={{ duration: 0.5, delay: index * 0.1, ease: 'easeOut' }}
+      style={{
+        position: 'relative',
+        display: 'flex',
+        flexDirection: 'row',
+        gap: '32px',
+        alignItems: 'flex-start',
+        padding: '40px 44px',
+        borderRadius: '28px',
+        background: isEven
+          ? 'linear-gradient(135deg, #FFFFFF 0%, #FDF9F2 60%, #FAF3E7 100%)'
+          : 'linear-gradient(135deg, #FAF3E7 0%, #FDF9F2 40%, #FFFFFF 100%)',
+        border: '1px solid rgba(207, 155, 65, 0.18)',
+        overflow: 'hidden',
+        boxShadow: '0 12px 32px rgba(94, 51, 18, 0.07)',
+      }}
+    >
+      {/* Декоративная золотая полоса слева */}
+      <div style={{
+        position: 'absolute',
+        top: '15%',
+        left: 0,
+        width: '4px',
+        height: '70%',
+        borderRadius: '0 8px 8px 0',
+        background: 'linear-gradient(180deg, transparent, var(--accent), var(--accent-light), var(--accent), transparent)',
+      }} />
+
+      {/* Мягкое золотое свечение */}
+      <div style={{
+        position: 'absolute',
+        top: -60,
+        right: -60,
+        width: '180px',
+        height: '180px',
+        borderRadius: '50%',
+        background: 'radial-gradient(circle, rgba(207,155,65,0.10) 0%, transparent 70%)',
+        pointerEvents: 'none',
+      }} />
+
+      {/* Номер блока */}
+      <div style={{
+        flexShrink: 0,
+        width: '56px',
+        height: '56px',
+        borderRadius: '18px',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        background: 'linear-gradient(135deg, rgba(207,155,65,0.14) 0%, rgba(237,196,77,0.22) 100%)',
+        color: 'var(--accent)',
+        fontSize: '22px',
+        fontWeight: '700',
+        letterSpacing: '0.02em',
+        fontFamily: 'inherit',
+        boxShadow: 'inset 0 0 0 1px rgba(207,155,65,0.25)',
+      }}>
+        {String(index + 1).padStart(2, '0')}
+      </div>
+
+      {/* Контент */}
+      <div style={{ flex: 1, minWidth: 0 }}>
+        <h4 style={{
+          fontSize: 'clamp(20px, 2.5vw, 26px)',
+          fontWeight: '600',
+          color: 'var(--primary-dark)',
+          margin: '0 0 16px',
+          lineHeight: 1.3,
+          letterSpacing: '-0.01em',
+        }}>
+          {title}
+        </h4>
+        <p style={{
+          color: 'var(--text-muted)',
+          lineHeight: 1.85,
+          fontSize: 'clamp(15px, 1.6vw, 18px)',
+          margin: 0,
+          fontWeight: '400',
+        }}>
+          <HighlightLead text={text} />
+        </p>
+      </div>
+    </motion.div>
   );
 };
 

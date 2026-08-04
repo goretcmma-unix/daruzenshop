@@ -575,6 +575,27 @@ const AppStyles = () => (
         padding-right: 0;
       }
     }
+
+    /* Mobile menu styles */
+    .mobile-menu-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 2500;
+    }
+    .mobile-menu-content {
+      position: fixed;
+      top: 0;
+      bottom: 0;
+      width: 100%;
+      max-width: 420px;
+      z-index: 2501;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+    }
+    .mobile-menu-link {
+      cursor: pointer;
+    }
   `}</style>
 );
 

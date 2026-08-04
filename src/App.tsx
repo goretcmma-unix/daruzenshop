@@ -8,7 +8,6 @@ import {
   Plus,
   Minus,
   Trash2,
-  Menu as BurgerMenu,
   //ArrowRight,
   MapPin,
   Mail,
@@ -17,7 +16,10 @@ import {
   ShieldCheck,
   FlaskConical,
   Award,
-  Sparkles
+  Sparkles,
+  LayoutGrid,
+  ChevronRight,
+  ChevronDown
 } from 'lucide-react';
 import { motion, AnimatePresence, useScroll, useTransform, useInView, useAnimationControls } from 'framer-motion';
 import { categoryKeys, products, getCategoryLabel, localizeProducts, dedupeProducts, isNewProduct, type LocalizedProduct, type CategoryKey, type Product } from './data';
@@ -38,6 +40,7 @@ const App: React.FC = () => {
   const [cart, setCart] = useState<{ product: LocalizedProduct; quantity: number }[]>([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isMenuCatalogOpen, setIsMenuCatalogOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<'all' | CategoryKey>('all');
   const [scrolled, setScrolled] = useState(false);
@@ -65,6 +68,7 @@ const App: React.FC = () => {
   const [isSubmitted, setIsSubmitted] = useState(false);
 
   const trainCategories = useMemo(() => categoryKeys.filter(cat => cat !== 'all'), []);
+
   const [productsData, setProductsData] = useState<Product[]>(() => dedupeProducts(products));
   useEffect(() => {
     let active = true;
@@ -360,8 +364,12 @@ const App: React.FC = () => {
       <header className={`header ${scrolled ? 'scrolled' : ''}`}>
          <div className="container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%', maxWidth: 'none', paddingLeft: '40px', paddingRight: '40px' }}>
           <div className="header-left-group" style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <button className="md-hidden burger-btn" onClick={() => setIsMobileMenuOpen(true)}>
-              <BurgerMenu size={22} color="var(--primary)" />
+            <button className="md-hidden burger-btn" onClick={() => setIsMobileMenuOpen(true)} aria-label="Menu">
+              <svg viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="var(--primary)" strokeWidth="2.4" strokeLinecap="round" style={{ display: 'block' }}>
+                <line className="b-line b-line-top" x1="3.5" y1="6" x2="20.5" y2="6" />
+                <line className="b-line b-line-mid" x1="3.5" y1="12" x2="20.5" y2="12" />
+                <line className="b-line b-line-bot" x1="3.5" y1="18" x2="20.5" y2="18" />
+              </svg>
             </button>
             <div 
               onClick={(e) => handleNavClick(e, 'top')}
@@ -1538,10 +1546,10 @@ const App: React.FC = () => {
                      <div className="desc-card__content">
                        <p>{selectedProduct.description}</p>
                      </div>
-                     <CompositionPanel specs={selectedProduct.specs} t={t} />
-                   </motion.div>
-                  </div>
-                </motion.div>
+                      <CompositionPanel specs={selectedProduct.specs} t={t} />
+                    </motion.div>
+                   </div>
+              </motion.div>
               </div>
           )}
         </AnimatePresence>
@@ -1549,45 +1557,264 @@ const App: React.FC = () => {
       {/* Mobile Nav Drawer */}
       <AnimatePresence>
         {isMobileMenuOpen && (
-          <div>
             <motion.div 
+              key="mobile-menu-overlay"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              transition={{ duration: 0.25 }}
+              transition={{ duration: 0.25, ease: 'easeOut' }}
               className="mobile-menu-overlay" 
               onClick={() => setIsMobileMenuOpen(false)} 
             />
+        )}
+        {isMobileMenuOpen && (
             <motion.div 
+              key="mobile-menu-content"
               initial={{ x: isRtl ? '100%' : '-100%' }}
-              animate={{ x: 0, opacity: 1 }}
+              animate={{ x: 0 }}
               exit={{ x: isRtl ? '100%' : '-100%' }}
-              transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
-              style={{ willChange: 'transform', backfaceVisibility: 'hidden' }}
+              transition={{ duration: 0.38, ease: [0.22, 1, 0.36, 1] }}
+              style={{ 
+                willChange: 'transform', 
+                backfaceVisibility: 'hidden',
+                background: '#FFFFFF',
+                overflow: 'hidden',
+                boxShadow: '0 20px 60px rgba(0,0,0,0.12)',
+                display: 'flex',
+                flexDirection: 'column'
+              }}
               className="mobile-menu-content"
             >
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <span style={{ fontSize: '24px', fontWeight: '900', color: 'var(--primary)' }}>DARUZEN</span>
-                <button onClick={() => setIsMobileMenuOpen(false)} style={{ background: 'none', border: 'none' }}><X size={28} /></button>
+              {/* Шапка — всегда на месте */}
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', position: 'relative', zIndex: 2, padding: '22px 20px 0', flexShrink: 0 }}>
+                <motion.div
+                  style={{ display: 'flex', alignItems: 'center', gap: '10px' }}
+                  initial={{ opacity: 0, y: -8, scale: 0.97 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  transition={{ duration: 0.3, delay: 0.05, ease: [0.22, 1, 0.36, 1] }}
+                >
+                  <img 
+                    src="/images/dr.svg.png" 
+                    alt="Daruzen Logo"
+                    style={{ width: '40px', height: '40px', objectFit: 'contain', flexShrink: 0, marginLeft: '-4px' }}
+                  />
+                </motion.div>
+                <motion.button 
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  whileTap={{ scale: 0.88 }}
+                  style={{ 
+                    background: '#F2F0EE',
+                    border: 'none',
+                    borderRadius: '50%',
+                    width: '36px',
+                    height: '36px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    cursor: 'pointer',
+                    color: '#6B6B6B',
+                    flexShrink: 0
+                  }}
+                  initial={{ opacity: 0, rotate: -45, scale: 0.8 }}
+                  animate={{ opacity: 1, rotate: 0, scale: 1 }}
+                  transition={{ duration: 0.3, delay: 0.05, ease: [0.22, 1, 0.36, 1] }}
+                >
+                  <X size={18} />
+                </motion.button>
               </div>
-               <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', marginTop: '40px' }}>
-                {[
-                  { id: 'top', label: t.nav.home },
-                  { id: 'catalog', label: t.nav.catalog },
-                  { id: 'about', label: t.nav.about },
-                  { id: 'contacts', label: t.nav.contacts }
-                 ].map((link) => (() => (
-                   <a
-                     key={link.id}
-                     className="mobile-menu-link"
-                     onClick={(e) => handleNavClick(e, link.id)}
-                   >
-                     {link.label}
-                   </a>
-                 ))())}
+
+              {/* Скролл-область */}
+              <div style={{ flex: 1, overflowY: 'auto', overscrollBehaviorY: 'contain', WebkitOverflowScrolling: 'touch', paddingBottom: '8px' }}>
+                {/* Каталог — свернутая категория */}
+                <div style={{ padding: '0 20px', marginTop: '18px' }}>
+                  <motion.button
+                    onClick={() => setIsMenuCatalogOpen(o => !o)}
+                    initial={{ opacity: 0, y: -8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.3, delay: 0.12, ease: [0.22, 1, 0.36, 1] }}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      width: '100%',
+                      background: '#F7F5F3',
+                      border: 'none',
+                      borderRadius: '12px',
+                      padding: '13px 14px',
+                      cursor: 'pointer',
+                      color: '#1A1A1A'
+                    }}
+                  >
+                    <span style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '16px', fontWeight: '700' }}>
+                      <span style={{ display: 'flex', color: 'var(--primary)' }}>
+                        <LayoutGrid size={17} strokeWidth={1.9} />
+                      </span>
+                      {t.nav.catalog}
+                    </span>
+                    <motion.span
+                      animate={{ rotate: isMenuCatalogOpen ? 180 : 0 }}
+                      transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
+                      style={{ display: 'flex', color: '#8A857F' }}
+                    >
+                      <ChevronDown size={18} />
+                    </motion.span>
+                  </motion.button>
+
+                  <AnimatePresence initial={false}>
+                    {isMenuCatalogOpen && (
+                      <motion.div
+                        key="menu-catalog-list"
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: 'auto', opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
+                        style={{ overflow: 'hidden' }}
+                      >
+                        <div style={{ paddingTop: '10px' }}>
+                          {/* Все товары */}
+                          <motion.a
+                            onClick={() => { handleCategorySelect('all'); setIsMobileMenuOpen(false); }}
+                            initial={{ opacity: 0, x: isRtl ? 20 : -20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            exit={{ opacity: 0, x: isRtl ? 20 : -20 }}
+                            transition={{ duration: 0.25, delay: 0.03, ease: [0.22, 1, 0.36, 1] }}
+                            style={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'space-between',
+                              padding: '12px 14px',
+                              borderRadius: '10px',
+                              background: selectedCategory === 'all' ? 'rgba(99,67,49,0.07)' : 'transparent',
+                              color: selectedCategory === 'all' ? 'var(--primary)' : '#1A1A1A',
+                              fontWeight: selectedCategory === 'all' ? '700' : '500',
+                              fontSize: '15px',
+                              textDecoration: 'none',
+                              cursor: 'pointer',
+                              marginBottom: '2px'
+                            }}
+                          >
+                            <span style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                              {selectedCategory === 'all' && (
+                                <span style={{
+                                  width: '6px', height: '6px', borderRadius: '50%',
+                                  background: 'var(--primary)', flexShrink: 0
+                                }} />
+                              )}
+                              {getCategoryLabel(lang, 'all')}
+                            </span>
+                            <span style={{ color: '#C0B8AE', fontSize: '13px', fontWeight: '600' }}>{productsData.length}</span>
+                          </motion.a>
+
+                          {/* Категории */}
+                          {categoryKeys.filter(k => k !== 'all').map((cat, idx) => {
+                            const isActive = selectedCategory === cat;
+                            const count = productsData.filter(p => p.categoryKey === cat).length;
+                            return (
+                              <motion.a
+                                key={cat}
+                                onClick={() => { handleCategorySelect(cat); setIsMobileMenuOpen(false); }}
+                                initial={{ opacity: 0, x: isRtl ? 20 : -20 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                exit={{ opacity: 0, x: isRtl ? 20 : -20 }}
+                                transition={{ duration: 0.25, delay: 0.06 + idx * 0.03, ease: [0.22, 1, 0.36, 1] }}
+                                style={{
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  justifyContent: 'space-between',
+                                  padding: '12px 14px',
+                                  borderRadius: '10px',
+                                  background: isActive ? 'rgba(99,67,49,0.07)' : 'transparent',
+                                  color: isActive ? 'var(--primary)' : '#1A1A1A',
+                                  fontWeight: isActive ? '700' : '500',
+                                  fontSize: '15px',
+                                  textDecoration: 'none',
+                                  cursor: 'pointer',
+                                  marginBottom: '2px'
+                                }}
+                              >
+                                <span style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                                  {isActive && (
+                                    <span style={{
+                                      width: '6px', height: '6px', borderRadius: '50%',
+                                      background: 'var(--primary)', flexShrink: 0
+                                    }} />
+                                  )}
+                                  {getCategoryLabel(lang, cat)}
+                                </span>
+                                <span style={{ color: '#C0B8AE', fontSize: '13px', fontWeight: '600' }}>{count}</span>
+                              </motion.a>
+                            );
+                          })}
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+
+                {/* Разделитель */}
+                <motion.div
+                  style={{ height: '1px', background: '#ECEAE7', margin: '16px 20px 0' }}
+                  initial={{ scaleX: 0 }}
+                  animate={{ scaleX: 1 }}
+                  transition={{ duration: 0.4, delay: 0.35, ease: [0.22, 1, 0.36, 1] }}
+                />
+
+                {/* Навигация */}
+                <div style={{ display: 'flex', flexDirection: 'column', padding: '0 20px', marginTop: '6px' }}>
+                  {[
+                    { id: 'top', label: t.nav.home },
+                    { id: 'about', label: t.nav.about },
+                    { id: 'contacts', label: t.nav.contacts }
+                   ].map((link, idx) => (
+                     <motion.a
+                       key={link.id}
+                       className="mobile-menu-link"
+                       onClick={(e) => handleNavClick(e, link.id)}
+                       initial={{ opacity: 0, x: isRtl ? 20 : -20 }}
+                       animate={{ opacity: 1, x: 0 }}
+                       exit={{ opacity: 0, x: isRtl ? 20 : -20 }}
+                       transition={{ duration: 0.28, delay: 0.35 + idx * 0.05, ease: [0.22, 1, 0.36, 1] }}
+                       style={{
+                         display: 'flex',
+                         alignItems: 'center',
+                         justifyContent: 'space-between',
+                         gap: '12px',
+                         padding: '13px 4px',
+                         color: activeSection === link.id ? 'var(--primary)' : '#1A1A1A',
+                         fontWeight: activeSection === link.id ? '700' : '500',
+                         fontSize: '15px',
+                         textDecoration: 'none',
+                         cursor: 'pointer'
+                       }}
+                     >
+                       <span>{link.label}</span>
+                       <ChevronRight size={16} color="#C0B8AE" style={{ transform: isRtl ? 'scaleX(-1)' : 'none' }} />
+                     </motion.a>
+                   ))}
+                </div>
+
+                {/* Контакты внизу — компактно */}
+                <div style={{ padding: '8px 20px 16px' }}>
+                  <motion.div
+                    style={{
+                      borderTop: '1px solid #ECEAE7',
+                      paddingTop: '14px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '10px'
+                    }}
+                    initial={{ opacity: 0, y: 12 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.3, delay: 0.45, ease: [0.22, 1, 0.36, 1] }}
+                  >
+                    <a href="tel:+9054496791012" style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#8A857F', fontSize: '14px', fontWeight: '600', textDecoration: 'none' }}>
+                      <Phone size={14} color="#8A857F" />
+                      {t.contacts.phoneNum}
+                    </a>
+                  </motion.div>
+                </div>
               </div>
             </motion.div>
-            </div>
         )}
       </AnimatePresence>
 

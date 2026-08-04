@@ -131,12 +131,43 @@ a:hover {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(93, 64, 55, 0.05);
-  border-radius: 50%;
+  background: transparent;
   border: none;
   cursor: pointer;
-  transition: background 0.2s ease;
+  padding: 0;
   flex-shrink: 0;
+  transition: transform 0.2s ease;
+}
+
+.burger-btn:active {
+  transform: scale(0.9);
+}
+
+.burger-btn .b-line {
+  transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+  transform-box: fill-box;
+}
+
+.burger-btn .b-line-mid {
+  transform: scaleX(0.62);
+  transform-origin: left center;
+}
+
+.burger-btn .b-line-bot {
+  transform: scaleX(0.84);
+  transform-origin: left center;
+}
+
+.burger-btn:hover .b-line-top {
+  transform: translateY(-1px) scaleX(0.92);
+}
+
+.burger-btn:hover .b-line-mid {
+  transform: scaleX(1);
+}
+
+.burger-btn:hover .b-line-bot {
+  transform: translateY(1px) scaleX(0.72);
 }
 
 /* Navigation */

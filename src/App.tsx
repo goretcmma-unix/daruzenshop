@@ -1640,14 +1640,79 @@ const App: React.FC = () => {
                           style={{ transform: `translateX(${(isRtl ? 1 : -1) * getAvailableTabs(selectedProduct).indexOf(activeMobileTab) * 100}%)` }}
                         >
                         <div className={`modal-tab-pane${activeMobileTab === 'product' ? ' is-active' : ''}`} data-tab="product" onScroll={handlePaneScroll}>
+                            <div className="modal-product-media">
+                              <img src={selectedProductImage} className="modal-product-media__img" alt={selectedProduct.name} loading="lazy" decoding="async" />
+                              <motion.button
+                                whileHover={{ scale: 1.1, background: 'rgba(255, 255, 255, 0.95)', boxShadow: '0 8px 20px rgba(0,0,0,0.1)' }}
+                                whileTap={{ scale: 0.95 }}
+                                onClick={() => { setSelectedProduct(null); setModalQuantity(1); }}
+                                className="modal-tab-close"
+                                aria-label="Close"
+                              >
+                                <X size={16} color="var(--text-muted)" />
+                              </motion.button>
+                            </div>
+
+                            <div className="modal-product-head">
+                              <h3 className="modal-note-title">{selectedProduct.name}</h3>
+                              <div className="modal-product-price" style={{ color: 'var(--primary)', fontWeight: '800', fontSize: '20px', marginTop: '6px' }}>{formatPrice(selectedProduct.price, lang)}</div>
+                            </div>
+
                             <div className="desc-card__content">
                               <p>{selectedProduct.description}</p>
+                            </div>
+
+                            <div className="modal-tab-buy">
+                              {selectedProduct.inStock === false ? (
+                                <div style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', padding: '0 24px', height: '54px', borderRadius: '14px', border: '2px solid #d5cfc6', color: '#8a8a8a', fontWeight: '600', fontSize: '15px', letterSpacing: '0.01em', background: 'transparent' }}>
+                                  Нет в наличии
+                                </div>
+                              ) : (
+                                <div className="modal-buy-actions">
+                                  <div className="modal-buy-qty">
+                                    <QtyButton label="-" onClick={() => setModalQuantity(q => Math.max(1, q - 1))}>
+                                      <Minus size={18} />
+                                    </QtyButton>
+                                    <span className="modal-buy-qty__value">{modalQuantity}</span>
+                                    <QtyButton label="+" withRotate onClick={() => setModalQuantity(q => q + 1)}>
+                                      <Plus size={18} />
+                                    </QtyButton>
+                                  </div>
+                                  <motion.button
+                                    whileHover={{ scale: 1.02 }}
+                                    whileTap={{ scale: 0.98 }}
+                                    onClick={() => addToCart(selectedProduct, modalQuantity)}
+                                    className="btn btn-primary"
+                                    style={{ height: '54px', borderRadius: '14px', fontSize: '16px', boxShadow: '0 4px 12px rgba(93, 64, 55, 0.1)' }}
+                                  >
+                                    <ShoppingCart size={20} /> {t.cart.inCart}
+                                  </motion.button>
+                                  <motion.button
+                                    whileHover={{ scale: 1.02, filter: 'brightness(1.08)' }}
+                                    whileTap={{ scale: 0.98 }}
+                                    onClick={() => buyNow(selectedProduct, modalQuantity)}
+                                    className="modal-buy-btn"
+                                    style={{ background: 'linear-gradient(135deg, #25D366 0%, #128C7E 100%)', color: 'white', border: 'none', height: '54px', borderRadius: '14px', fontWeight: '700', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', boxShadow: '0 10px 20px rgba(37, 211, 102, 0.15)' }}
+                                  >
+                                    {t.cart.buyNow}
+                                  </motion.button>
+                                </div>
+                              )}
                             </div>
                         </div>
                         {selectedProduct.specs && selectedProduct.specs.length > 0 && (
                         <div className={`modal-tab-pane${activeMobileTab === 'composition' ? ' is-active' : ''}`} data-tab="composition" onScroll={handlePaneScroll}>
                             <div className="modal-note-media">
                               <img src={selectedProductImage} className="modal-note-media__img" alt={selectedProduct.name} loading="lazy" decoding="async" />
+                              <motion.button
+                                whileHover={{ scale: 1.1, background: 'rgba(255, 255, 255, 0.95)', boxShadow: '0 8px 20px rgba(0,0,0,0.1)' }}
+                                whileTap={{ scale: 0.95 }}
+                                onClick={() => { setSelectedProduct(null); setModalQuantity(1); }}
+                                className="modal-tab-close"
+                                aria-label="Close"
+                              >
+                                <X size={16} color="var(--text-muted)" />
+                              </motion.button>
                             </div>
                             <CompositionPanel specs={selectedProduct.specs} t={t} />
                         </div>
@@ -1656,6 +1721,15 @@ const App: React.FC = () => {
                         <div className={`modal-tab-pane${activeMobileTab === 'note' ? ' is-active' : ''}`} data-tab="note" onScroll={handlePaneScroll}>
                             <div className="modal-note-media">
                               <img src={selectedProductImage} className="modal-note-media__img" alt={selectedProduct.name} loading="lazy" decoding="async" />
+                              <motion.button
+                                whileHover={{ scale: 1.1, background: 'rgba(255, 255, 255, 0.95)', boxShadow: '0 8px 20px rgba(0,0,0,0.1)' }}
+                                whileTap={{ scale: 0.95 }}
+                                onClick={() => { setSelectedProduct(null); setModalQuantity(1); }}
+                                className="modal-tab-close"
+                                aria-label="Close"
+                              >
+                                <X size={16} color="var(--text-muted)" />
+                              </motion.button>
                             </div>
 
                           <div className="modal-note-head">

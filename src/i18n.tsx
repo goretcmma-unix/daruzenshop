@@ -56,7 +56,7 @@ const ui = {
       ],
       features: [
         { title: 'Чистота состава', desc: 'Все наши продукты проходят строгий лабораторный контроль и не содержат лишних примесей.' },
-        { title: 'Научный подход', desc: 'Мы сотрудничаем с ведущими нутрициологами Турции и докторами наук для разработки эффективных дозировок.' },
+        { title: 'Научный подход', desc: 'Мы сотрудничаем с сильнейшим профессором для разработки эффективных дозировок.' },
         { title: 'Золотой стандарт', desc: 'Прямые поставки позволяют нам гарантировать оригинальность каждой баночки.' },
       ],
       brand: {
@@ -116,6 +116,14 @@ const ui = {
       substance: 'Вещество',
       dosage: 'Дозировка',
       daily: 'Норма',
+      tabProduct: 'Описание',
+      tabComposition: 'Состав',
+      tabNote: 'Примечание',
+      noteDosage: 'Дозировка',
+      noteStorage: 'Хранение',
+      noteWarning: 'Важно',
+      noteInfo: 'Примечание',
+      noteScrollHint: 'Свайп вниз',
     },
     footer: {
       desc: 'Натуральные биодобавки и витамины из лучших ингредиентов. Качество, проверенное временем.',
@@ -174,7 +182,7 @@ const ui = {
       ],
       features: [
         { title: 'Saf içerik', desc: 'Tüm ürünlerimiz sıkı laboratuvar kontrolünden geçer ve gereksiz katkı madde içermez.' },
-        { title: 'Bilimsel yaklaşım', desc: 'Etkili dozajlar geliştirmek için Türkiye\'nin önde gelen beslenme uzmanları ve bilim doktorlarıyla iş birliği yapıyoruz.' },
+        { title: 'Bilimsel yaklaşım', desc: 'Etkili dozajlar geliştirmek için en güçlü profesörle iş birliği yapıyoruz.' },
         { title: 'Altın standart', desc: 'Doğrudan tedarik, her kutunun orijinalliğini garanti etmemizi sağlar.' },
       ],
       brand: {
@@ -234,6 +242,14 @@ const ui = {
       substance: 'Madde',
       dosage: 'Dozaj',
       daily: 'Günlük değer',
+      tabProduct: 'Açıklama',
+      tabComposition: 'İçindekiler',
+      tabNote: 'Not',
+      noteDosage: 'Doz',
+      noteStorage: 'Saklama',
+      noteWarning: 'Önemli',
+      noteInfo: 'Not',
+      noteScrollHint: 'Aşağı kaydırın',
     },
     footer: {
       desc: 'En iyi içeriklerden doğal takviyeler ve vitaminler. Zamanın sınadığı kalite.',
@@ -292,7 +308,7 @@ const ui = {
       ],
       features: [
         { title: 'Purity of composition', desc: 'All our products undergo strict laboratory control and contain no unnecessary impurities.' },
-        { title: 'Scientific approach', desc: 'We collaborate with leading Turkish nutritionists and doctors of science to develop effective dosages.' },
+        { title: 'Scientific approach', desc: 'We collaborate with the strongest professor to develop effective dosages.' },
         { title: 'Gold standard', desc: 'Direct supplies allow us to guarantee the authenticity of every jar.' },
       ],
       brand: {
@@ -352,6 +368,14 @@ const ui = {
       substance: 'Substance',
       dosage: 'Dosage',
       daily: 'Daily value',
+      tabProduct: 'Description',
+      tabComposition: 'Composition',
+      tabNote: 'Note',
+      noteDosage: 'Dosage',
+      noteStorage: 'Storage',
+      noteWarning: 'Important',
+      noteInfo: 'Note',
+      noteScrollHint: 'Swipe down',
     },
     footer: {
       desc: 'Natural supplements and vitamins made from the finest ingredients. Quality tested by time.',
@@ -410,7 +434,7 @@ const ui = {
       ],
       features: [
         { title: 'نقاء المكونات', desc: 'جميع منتجاتنا تخضع لرقابة مخبرية صارمة ولا تحتوي على شوائب غير ضرورية.' },
-        { title: 'نهج علمي', desc: 'نتعاون مع كبار أخصائيي التغذية وأطباء العلوم في تركيا لتطوير جرعات فعالة.' },
+        { title: 'نهج علمي', desc: 'نتعاون مع أقوى أستاذ لتطوير جرعات فعالة.' },
         { title: 'المعيار الذهبي', desc: 'التوريد المباشر يتيح لنا ضمان أصالة كل عبوة.' },
       ],
       brand: {
@@ -470,6 +494,14 @@ const ui = {
       substance: 'المادة',
       dosage: 'الجرعة',
       daily: 'القيمة اليومية',
+      tabProduct: 'الوصف',
+      tabComposition: 'المكونات',
+      tabNote: 'ملاحظة',
+      noteDosage: 'الجرعة',
+      noteStorage: 'التخزين',
+      noteWarning: 'مهم',
+      noteInfo: 'ملاحظة',
+      noteScrollHint: 'اسحب لأسفل',
     },
     footer: {
       desc: 'مكملات غذائية طبيعية وفيتامينات مصنوعة من أفضل المكونات. جودة اختبرها الزمن.',

@@ -21,6 +21,10 @@ interface ProductRow {
   desc_en: string;
   desc_ar: string;
   specs: Partial<Record<Lang, string[]>> | null;
+  notes_ru: string | null;
+  notes_tr: string | null;
+  notes_en: string | null;
+  notes_ar: string | null;
   sort_order: number | null;
 }
 
@@ -33,6 +37,11 @@ const rowToProduct = (r: ProductRow): Product => {
     names[l] = r[`name_${l}` as keyof ProductRow] as unknown as string;
     descriptions[l] = r[`desc_${l}` as keyof ProductRow] as unknown as string;
   });
+  const notes = {} as Record<Lang, string>;
+  LANGS.forEach(l => {
+    const n = r[`notes_${l}` as keyof ProductRow] as unknown as string | null;
+    if (n) notes[l] = n;
+  });
   return {
     id: r.id,
     names,
@@ -41,6 +50,7 @@ const rowToProduct = (r: ProductRow): Product => {
     image: r.image,
     descriptions,
     specs: r.specs ?? undefined,
+    notes: Object.keys(notes).length ? notes : undefined,
     createdAt: r.sort_order ?? undefined,
   };
 };
@@ -64,7 +74,12 @@ export const fetchProducts = async (): Promise<Product[]> => {
       return dedupeProducts(products);
     }
     const dbRows = (data as ProductRow[]).map(rowToProduct);
-    const merged = dedupeProducts([...dbRows, ...products]);
+    const backfilled = dbRows.map(dbP => {
+      if (dbP.notes) return dbP;
+      const localP = products.find(p => p.id === dbP.id);
+      return localP?.notes ? { ...dbP, notes: localP.notes } : dbP;
+    });
+    const merged = dedupeProducts([...backfilled, ...products]);
     return merged.sort((a, b) => (b.createdAt ?? 0) - (a.createdAt ?? 0) || (b.id < a.id ? -1 : b.id > a.id ? 1 : 0));
   } catch {
     return dedupeProducts(products);
@@ -85,6 +100,10 @@ const productToRow = (p: Product) => ({
   desc_en: p.descriptions.en,
   desc_ar: p.descriptions.ar,
   specs: p.specs ?? null,
+  notes_ru: p.notes?.ru ?? null,
+  notes_tr: p.notes?.tr ?? null,
+  notes_en: p.notes?.en ?? null,
+  notes_ar: p.notes?.ar ?? null,
   sort_order: p.createdAt ?? Math.floor(Date.now() / 1000),
 });
 

@@ -19,7 +19,10 @@ import {
   Sparkles,
   LayoutGrid,
   ChevronRight,
-  ChevronDown
+  ChevronDown,
+  Pill,
+  Snowflake,
+  AlertTriangle
 } from 'lucide-react';
 import { motion, AnimatePresence, useScroll, useTransform, useInView, useAnimationControls } from 'framer-motion';
 import { categoryKeys, products, getCategoryLabel, localizeProducts, dedupeProducts, isNewProduct, type LocalizedProduct, type CategoryKey, type Product } from './data';
@@ -33,6 +36,12 @@ import RecoveryPage from './components/RecoveryPage';
 import { NormalizedImg } from './components/NormalizedImg';
 import { CompositionPanel } from './components/CompositionView';
 import { useNormalizedImage } from './lib/normalizeImage';
+
+const getAvailableTabs = (p: { specs?: unknown[]; note?: string } | null): ('product' | 'composition' | 'note')[] => [
+  'product',
+  ...(p?.specs && p.specs.length > 0 ? (['composition'] as const) : []),
+  ...(p?.note ? (['note'] as const) : []),
+];
 
 const App: React.FC = () => {
   const { lang, setLang, t } = useLang();
@@ -49,6 +58,23 @@ const App: React.FC = () => {
   const [activeSection, setActiveSection] = useState('top');
   const [selectedProduct, setSelectedProduct] = useState<LocalizedProduct | null>(null);
   const [modalQuantity, setModalQuantity] = useState(1);
+  const [activeMobileTab, setActiveMobileTab] = useState<'product' | 'composition' | 'note'>('product');
+  const [hideModalBuy, setHideModalBuy] = useState(false);
+  const switchTab = (next: 'product' | 'composition' | 'note') => {
+    if (next === 'product') setHideModalBuy(false);
+    setActiveMobileTab(next);
+  };
+  const modalSwipeRef = useRef<HTMLDivElement>(null);
+  const modalTabsTrackRef = useRef<HTMLDivElement>(null);
+  const lastModalScrollRef = useRef(0);
+  const handlePaneScroll = (e: React.UIEvent<HTMLDivElement>) => {
+    const st = e.currentTarget.scrollTop;
+    const delta = st - lastModalScrollRef.current;
+    lastModalScrollRef.current = st;
+    if (delta > 1) setHideModalBuy(true);
+    else if (delta < -1) setHideModalBuy(false);
+  };
+  const modalTouchYRef = useRef<number | null>(null);
   const selectedProductImage = useNormalizedImage(selectedProduct?.image);
   const navClickRef = useRef(false);
 
@@ -59,7 +85,21 @@ const App: React.FC = () => {
     if (selectedProduct === null) {
       setModalQuantity(1);
     }
+    setActiveMobileTab('product');
+    setHideModalBuy(false);
+    lastModalScrollRef.current = 0;
   }, [selectedProduct]);
+
+  useEffect(() => {
+    setHideModalBuy(false);
+    lastModalScrollRef.current = 0;
+    if (modalSwipeRef.current) modalSwipeRef.current.scrollTop = 0;
+    const track = modalTabsTrackRef.current;
+    if (track) {
+      const pane = track.querySelector<HTMLElement>('.modal-tab-pane.is-active');
+      if (pane) pane.scrollTop = 0;
+    }
+  }, [activeMobileTab]);
   //const [lastAddedItem, setLastAddedItem] = useState<string | null>(null);
 
   // Состояния для формы контактов (ИСПРАВЛЯЮТ БЕЛЫЙ ЭКРАН)
@@ -1449,9 +1489,10 @@ const App: React.FC = () => {
              <motion.div 
               initial={{ scale: 0.95, opacity: 0, x: '-50%', y: '-55%' }} 
               animate={{ scale: 1, opacity: 1, x: '-50%', y: '-50%' }} 
-              exit={{ scale: 0.95, opacity: 0, x: '-50%', y: '-55%' }}
-              transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+              exit={{ scale: 0.97, opacity: 0, x: '-50%', y: '-52%', transition: { type: 'tween', duration: 0.2, ease: 'easeIn' } }}
+              transition={{ type: 'tween', duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
               className="modal-layout"
+              data-active-tab={activeMobileTab}
               style={{ 
                 position: 'fixed', 
                 top: '50%',
@@ -1499,7 +1540,7 @@ const App: React.FC = () => {
                     <X size={16} color="var(--text-muted)" />
                    </motion.button>
                  </motion.div>
-                    <div className="modal-buy-under">
+                    <div className={'modal-buy-under' + (hideModalBuy ? ' is-hidden' : '')}>
                     {selectedProduct.inStock === false ? (
                       <div style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', padding: '0 24px', height: '54px', borderRadius: '14px', border: '2px solid #d5cfc6', color: '#8a8a8a', fontWeight: '600', fontSize: '15px', letterSpacing: '0.01em', background: 'transparent' }}>
                         Нет в наличии
@@ -1540,13 +1581,154 @@ const App: React.FC = () => {
               <div className="modal-info-wrapper">
                   <span className="modal-category" style={{ color: 'var(--accent)', fontWeight: '800', fontSize: '12px', textTransform: 'uppercase', letterSpacing: '0.18em', marginBottom: '20px' }}>{selectedProduct.category}</span>
                   <h2 className="modal-title" style={{ fontWeight: '700', marginBottom: '16px', lineHeight: '1.15', color: 'var(--primary-dark)', letterSpacing: '-0.03em' }}>{selectedProduct.name}</h2>
-                   <div className="modal-price" style={{ fontWeight: '700', marginBottom: '32px', color: 'var(--primary)' }}>{formatPrice(selectedProduct.price, lang)}</div>
-                  
-                   <motion.div className="modal-swipe" style={{ position: 'relative' }}>
-                     <div className="desc-card__content">
-                       <p>{selectedProduct.description}</p>
-                     </div>
-                      <CompositionPanel specs={selectedProduct.specs} t={t} />
+                    <div className="modal-price" style={{ fontWeight: '700', marginBottom: '32px', color: 'var(--primary)' }}>{formatPrice(selectedProduct.price, lang)}</div>
+                   
+                      {/* Mobile tab bar - fixed above the scrollable content */}
+                      <div className="modal-mobile-tabs">
+                        <button
+                          type="button"
+                          className={`modal-mobile-tab${activeMobileTab === 'product' ? ' active' : ''}`}
+                          onClick={() => switchTab('product')}
+                        >
+                          {t.modal.tabProduct}
+                        </button>
+                        {selectedProduct.specs && selectedProduct.specs.length > 0 && (
+                          <button
+                            type="button"
+                            className={`modal-mobile-tab${activeMobileTab === 'composition' ? ' active' : ''}`}
+                            onClick={() => switchTab('composition')}
+                          >
+                            {t.modal.tabComposition}
+                          </button>
+                        )}
+                        {selectedProduct.note && (
+                          <button
+                            type="button"
+                            className={`modal-mobile-tab${activeMobileTab === 'note' ? ' active' : ''}`}
+                            onClick={() => switchTab('note')}
+                          >
+                            {t.modal.tabNote}
+                          </button>
+                        )}
+                      </div>
+                     <motion.div className="modal-swipe" ref={modalSwipeRef} style={{ position: 'relative' }} data-active-tab={activeMobileTab}
+                         onWheel={(e) => {
+                           if (activeMobileTab !== 'product') return;
+                           if (e.deltaY > 0) setHideModalBuy(true);
+                           else if (e.deltaY < 0) setHideModalBuy(false);
+                         }}
+                         onTouchStart={(e) => {
+                           modalTouchYRef.current = e.touches[0]?.clientY ?? null;
+                         }}
+                         onTouchMove={(e) => {
+                           if (activeMobileTab !== 'product') return;
+                           const y = e.touches[0]?.clientY;
+                           const start = modalTouchYRef.current;
+                           if (y == null || start == null) return;
+                           const dy = y - start;
+                           if (dy < -6) setHideModalBuy(true);
+                           else if (dy > 6) setHideModalBuy(false);
+                         }}
+                         onTouchEnd={() => {
+                           modalTouchYRef.current = null;
+                         }}
+                      >
+                        {/* Tab content - horizontal track, slide-through transition */}
+                        <div
+                          ref={modalTabsTrackRef}
+                          className="modal-tabs-track"
+                          style={{ transform: `translateX(${(isRtl ? 1 : -1) * getAvailableTabs(selectedProduct).indexOf(activeMobileTab) * 100}%)` }}
+                        >
+                        <div className={`modal-tab-pane${activeMobileTab === 'product' ? ' is-active' : ''}`} data-tab="product" onScroll={handlePaneScroll}>
+                            <div className="desc-card__content">
+                              <p>{selectedProduct.description}</p>
+                            </div>
+                        </div>
+                        {selectedProduct.specs && selectedProduct.specs.length > 0 && (
+                        <div className={`modal-tab-pane${activeMobileTab === 'composition' ? ' is-active' : ''}`} data-tab="composition" onScroll={handlePaneScroll}>
+                            <div className="modal-note-media">
+                              <img src={selectedProductImage} className="modal-note-media__img" alt={selectedProduct.name} loading="lazy" decoding="async" />
+                            </div>
+                            <CompositionPanel specs={selectedProduct.specs} t={t} />
+                        </div>
+                        )}
+                        {selectedProduct.note && (
+                        <div className={`modal-tab-pane${activeMobileTab === 'note' ? ' is-active' : ''}`} data-tab="note" onScroll={handlePaneScroll}>
+                            <div className="modal-note-media">
+                              <img src={selectedProductImage} className="modal-note-media__img" alt={selectedProduct.name} loading="lazy" decoding="async" />
+                            </div>
+
+                          <div className="modal-note-head">
+                            <h3 className="modal-note-title">{selectedProduct.name}</h3>
+                          </div>
+                          <div className="modal-note-hint">
+                            <span>{t.modal.noteScrollHint}</span>
+                            <ChevronDown size={14} className="modal-note-hint__icon" />
+                          </div>
+                          {(() => {
+                            const paragraphs = selectedProduct.note.split('\n\n').map((paragraph, pi) => {
+                              const trimmed = paragraph.trim();
+                              const isWarning = /^(ЭТО НЕ|НЕ ЯВЛЯЕТСЯ|BU BİR|THIS IS NOT|هذا ليس)/.test(trimmed);
+                              const isCaution = /^(Внимание|Dikkat|Caution|Attention|انتبه|انتباه|تحذير)/.test(trimmed);
+                              const isNegated = /^(Не |НЕ |No |Do not |Don'?t |Dont |لا )/.test(trimmed);
+                              const isDosage = !isNegated && /дозировк|суточная доз|способ применени|Günlük önerilen|Recommended daily|الجرعة|önerilen doz|daily dose/i.test(trimmed);
+                              const isStorage = /хранени|хранить|Saklama|Storage conditions|ظروف التخزين|saklama koşulları|Store in/i.test(trimmed);
+                              const type = isWarning ? 'warning' : isCaution ? 'info' : isDosage ? 'dosage' : isStorage ? 'storage' : 'info';
+                              const label = isWarning ? t.modal.noteWarning : isDosage ? t.modal.noteDosage : isStorage ? t.modal.noteStorage : t.modal.noteInfo;
+                              const body = isWarning ? trimmed : trimmed.replace(/^[^:]+:\s*/, '');
+                              return { pi, type, label, body, isWarning };
+                            });
+                            const items = paragraphs.filter(p => !p.isWarning);
+                            const warnings = paragraphs.filter(p => p.isWarning);
+                            return (
+                              <>
+                              <div className="modal-note-content">
+                                {items.length > 0 && (
+                                  <div className="modal-note-table">
+                                    {items.map(({ pi, type, label, body }) => (
+                                      <div key={pi} className={`modal-note-item is-${type}`}>
+                                        {type !== 'info' && (
+                                          <span className="modal-note-item__icon" aria-hidden="true">
+                                            {type === 'dosage' && <Pill size={18} strokeWidth={2.2} />}
+                                            {type === 'storage' && <Snowflake size={18} strokeWidth={2.2} />}
+                                          </span>
+                                        )}
+                                        <p className="modal-note-paragraph">{body}</p>
+                                      </div>
+                                    ))}
+                                  </div>
+                                )}
+                                {warnings.map(({ pi, body }) => {
+                                  const m = body.match(/^([^!.!؟\n]+[!.!؟])\s*(.*)$/s);
+                                  const head = (m && m[1] ? m[1] : '').trim();
+                                  const rest = (m && m[2] ? m[2] : '').trim();
+                                  const isUpper = /[A-ZА-ЯЁ]/.test(head) && !/[a-zа-яё]/.test(head);
+                                  return (
+                                    <div key={pi} className="modal-note-alert">
+                                      {isUpper ? (
+                                        <>
+                                          <div className="modal-note-alert__plate">
+                                            <AlertTriangle size={14} strokeWidth={2.6} aria-hidden="true" />
+                                            {head}
+                                          </div>
+                                          {rest && <p className="modal-note-paragraph">{rest}</p>}
+                                        </>
+                                      ) : (
+                                        <>
+                                          <div className="modal-note-alert__label">{t.modal.noteWarning}</div>
+                                          <p className="modal-note-paragraph">{body}</p>
+                                        </>
+                                      )}
+                                    </div>
+                                  );
+                                })}
+                              </div>
+                              </>
+                            );
+                           })()}
+                        </div>
+                        )}
+                        </div>
                     </motion.div>
                    </div>
               </motion.div>

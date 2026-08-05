@@ -3,6 +3,12 @@
 -- Запустите этот скрипт в Supabase Dashboard → SQL Editor
 -- ============================================================
 
+-- 0. Добавить колонки примечаний, если их ещё нет
+alter table public.products add column if not exists notes_ru text;
+alter table public.products add column if not exists notes_tr text;
+alter table public.products add column if not exists notes_en text;
+alter table public.products add column if not exists notes_ar text;
+
 -- 1. Обновить существующие и вставить новые товары
 insert into public.products (id, category_key, price, image, name_ru, name_tr, name_en, name_ar, desc_ru, desc_tr, desc_en, desc_ar, specs, sort_order) values
 

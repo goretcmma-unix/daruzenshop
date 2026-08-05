@@ -13,8 +13,18 @@ create table if not exists public.products (
   desc_en      text not null default '',
   desc_ar      text not null default '',
   specs        jsonb,
+  notes_ru     text,
+  notes_tr     text,
+  notes_en     text,
+  notes_ar     text,
   sort_order   integer
 );
+
+-- Дополнить колонки, если таблица уже существует (для продуктов без примечаний)
+alter table public.products add column if not exists notes_ru text;
+alter table public.products add column if not exists notes_tr text;
+alter table public.products add column if not exists notes_en text;
+alter table public.products add column if not exists notes_ar text;
 
 -- 2. Доступ (публичное чтение + запись для авторизованного админа)
 alter table public.products enable row level security;

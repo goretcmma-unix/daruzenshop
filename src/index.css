@@ -544,16 +544,12 @@ a:hover {
   flex: 1 1 auto;
   min-width: 0;
   min-height: 0;
+  display: flex;
+  flex-direction: column;
   overflow-y: auto;
   overflow-x: hidden;
   touch-action: pan-y;
   overscroll-behavior-y: contain;
-  padding-right: 12px;
-}
-
-[dir="rtl"] .modal-swipe {
-  padding-right: 0;
-  padding-left: 12px;
 }
 
 .modal-swipe,
@@ -780,10 +776,6 @@ a:hover {
   color: #a08a6d;
 }
 
-.comp-card__row.is-sub {
-  padding-left: 24px;
-}
-
 .comp-card__row.is-sub::before {
   display: none;
 }
@@ -792,11 +784,6 @@ a:hover {
   color: #7a6a5a;
   font-weight: 500;
   font-size: 14px;
-}
-
-[dir="rtl"] .comp-card__row.is-sub {
-  padding-left: 0;
-  padding-right: 24px;
 }
 
 .comp-card__section {
@@ -937,9 +924,21 @@ a:hover {
   .modal-image-wrapper {
     flex: none !important;
     min-height: 0;
-    height: 38vh !important;
+    height: 28vh !important;
     padding: 12px !important;
     align-items: center !important;
+  }
+
+  .modal-category {
+    margin-bottom: 10px !important;
+  }
+
+  .modal-title {
+    margin-bottom: 10px !important;
+  }
+
+  .modal-price {
+    margin-bottom: 16px !important;
   }
   .modal-buy-under {
     position: absolute;
@@ -953,7 +952,19 @@ a:hover {
     border-radius: 20px 20px 0 0;
     border-top: 1px solid rgba(0, 0, 0, 0.05);
     box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.08);
+    transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.3s ease;
   }
+
+  .modal-buy-under.is-hidden {
+    transform: translateY(110%);
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .modal-swipe {
+    padding-bottom: calc(130px + env(safe-area-inset-bottom));
+  }
+
   .modal-buy-actions {
     grid-template-columns: auto 1fr;
     gap: 10px;
@@ -963,9 +974,6 @@ a:hover {
   }
   .modal-buy-qty {
     min-width: 0;
-  }
-  .modal-swipe {
-    padding-bottom: calc(130px + env(safe-area-inset-bottom));
   }
   .modal-image {
     width: auto !important;
@@ -1003,7 +1011,7 @@ a:hover {
   }
   .modal-image-wrapper {
     flex: none !important;
-    height: 45vh !important;
+    height: 34vh !important;
     padding: 8px;
   }
   .modal-image {
@@ -1021,6 +1029,351 @@ a:hover {
     padding: 8px 10px !important;
     font-size: 12px !important;
   }
+}
+
+/* ==================== MOBILE TABS IN PRODUCT MODAL ==================== */
+@keyframes modalTabIn {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes modalTabLine {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+.modal-mobile-tabs {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  margin-bottom: 16px;
+  border-bottom: 2px solid var(--border);
+  padding: 0 4px;
+}
+
+.modal-mobile-tab {
+  flex: 1;
+  padding: 12px 8px;
+  border: none;
+  background: none;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-muted);
+  cursor: pointer;
+  position: relative;
+  transition: color 0.2s ease;
+  text-align: center;
+  margin-bottom: -2px;
+  border-bottom: 2px solid transparent;
+}
+
+.modal-mobile-tab.active {
+  color: var(--primary);
+}
+
+.modal-mobile-tab.active::after {
+  content: '';
+  position: absolute;
+  left: 20%;
+  right: 20%;
+  bottom: -2px;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--accent);
+  transform-origin: center;
+  animation: modalTabLine 0.32s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.modal-mobile-tab:active {
+  color: var(--primary-dark);
+}
+
+/* Tab content - horizontal track with slide-through transition */
+.modal-tabs-track {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: stretch;
+  width: 100%;
+  flex: 1 1 auto;
+  min-height: 0;
+  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform;
+}
+
+.modal-tabs-track .modal-tab-pane {
+  display: block;
+  flex: 0 0 100%;
+  width: 100%;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  overscroll-behavior-y: contain;
+  touch-action: pan-y;
+  padding-bottom: 24px;
+  padding-inline-end: 12px;
+  animation: none !important;
+  scrollbar-width: none;
+}
+
+.modal-tabs-track .modal-tab-pane::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
+}
+
+/* Hide category, title and price when Composition/Note tab is active */
+@media (max-width: 768px) {
+  .modal-layout[data-active-tab="composition"] .modal-category,
+  .modal-layout[data-active-tab="note"] .modal-category,
+  .modal-layout[data-active-tab="composition"] .modal-title,
+  .modal-layout[data-active-tab="note"] .modal-title,
+  .modal-layout[data-active-tab="composition"] .modal-price,
+  .modal-layout[data-active-tab="note"] .modal-price {
+    display: none !important;
+  }
+}
+
+@media (max-width: 768px) {
+  /* When Composition or Note tab is active — hide photo and buy buttons,
+     the content takes the full screen */
+  .modal-layout[data-active-tab="composition"] .modal-image-col,
+  .modal-layout[data-active-tab="note"] .modal-image-col {
+    display: none !important;
+  }
+
+  .modal-layout[data-active-tab="composition"] .modal-buy-under,
+  .modal-layout[data-active-tab="note"] .modal-buy-under {
+    display: none !important;
+  }
+
+  .modal-layout[data-active-tab="composition"] .modal-info-wrapper,
+  .modal-layout[data-active-tab="note"] .modal-info-wrapper {
+    flex: 1 1 100% !important;
+    padding-top: 16px !important;
+  }
+
+  .modal-layout[data-active-tab="composition"] .modal-swipe,
+  .modal-layout[data-active-tab="note"] .modal-swipe {
+    padding-bottom: 0 !important;
+  }
+}
+
+/* ==================== NOTE SECTION STYLING ==================== */
+.modal-note-head {
+  display: none;
+}
+
+.modal-note-title {
+  margin: 0;
+  font-size: 19px;
+  font-weight: 700;
+  line-height: 1.3;
+  color: var(--primary-dark);
+  letter-spacing: -0.02em;
+}
+
+.modal-note-media {
+  display: none;
+}
+
+.modal-note-media__img {
+  display: block;
+  width: 100%;
+  max-height: 300px;
+  object-fit: contain;
+  border-radius: 16px;
+  background: #fff;
+}
+
+.modal-note-hint {
+  display: none;
+}
+
+.modal-note-hint__icon {
+  animation: noteHintBounce 1.4s ease-in-out infinite;
+}
+
+@keyframes noteHintBounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(4px);
+  }
+}
+
+@media (max-width: 768px) {
+  .modal-note-hint {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin: -6px 2px 16px auto;
+    width: fit-content;
+    padding: 7px 12px;
+    border-radius: 999px;
+    background: rgba(245, 243, 241, 0.92);
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1;
+  }
+
+  .modal-note-media {
+    display: block;
+    margin-bottom: 18px;
+  }
+
+  .modal-note-head {
+    display: block;
+    margin: 6px 2px 18px;
+  }
+}
+
+.modal-note-content {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.modal-note-table {
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: #fff;
+  overflow: hidden;
+}
+
+.modal-note-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 14px 16px;
+  animation: modalTabIn 0.35s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.modal-note-item + .modal-note-item {
+  border-top: 1px solid var(--border);
+}
+
+.modal-note-item:nth-child(2) {
+  animation-delay: 0.06s;
+}
+
+.modal-note-item:nth-child(3) {
+  animation-delay: 0.12s;
+}
+
+.modal-note-item__icon {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 2px;
+  width: 20px;
+  height: 20px;
+  color: var(--text-muted);
+}
+
+.modal-note-item.is-dosage .modal-note-item__icon {
+  color: #1F8A5B;
+}
+
+.modal-note-item.is-storage .modal-note-item__icon {
+  color: #2B6CB0;
+}
+
+.modal-note-paragraph {
+  flex: 1 1 auto;
+  margin: 0;
+  font-size: 14.5px;
+  font-weight: 400;
+  line-height: 1.7;
+  color: var(--text-main);
+  letter-spacing: 0.005em;
+  word-break: break-word;
+  overflow-wrap: break-word;
+}
+
+.modal-note-alert {
+  position: relative;
+  padding: 14px 16px 14px 20px;
+  border-radius: 12px;
+  background: #FFF8F5;
+  overflow: hidden;
+  animation: modalTabIn 0.35s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.modal-note-alert::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background: #C84B31;
+}
+
+.modal-note-alert__plate {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #C84B31;
+  color: #fff;
+  font-size: 12.5px;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  border-radius: 8px;
+  padding: 6px 12px;
+  margin-bottom: 10px;
+}
+
+.modal-note-alert__label {
+  font-size: 13px;
+  font-weight: 700;
+  color: #B43E26;
+  margin-bottom: 4px;
+}
+
+.modal-note-alert .modal-note-paragraph {
+  color: #6B3A28;
+  font-weight: 500;
+}
+
+@media (max-width: 480px) {
+  .modal-note-item {
+    flex-direction: row;
+    gap: 8px;
+    padding: 12px 14px;
+  }
+}
+
+[dir="rtl"] .modal-note-item,
+[dir="rtl"] .modal-note-alert {
+  text-align: right;
+}
+
+[dir="rtl"] .modal-note-alert {
+  padding: 14px 20px 14px 16px;
+}
+
+[dir="rtl"] .modal-note-alert::before {
+  left: auto;
+  right: 0;
+}
+
+[dir="rtl"] .modal-note-hint {
+  margin: -6px auto 16px 2px;
 }
 
 /* Language switcher in header */

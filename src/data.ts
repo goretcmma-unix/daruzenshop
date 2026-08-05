@@ -10,6 +10,7 @@ export interface Product {
   image: string;
   descriptions: Record<Lang, string>;
   specs?: Record<Lang, string[]>;
+  notes?: Record<Lang, string>;
   createdAt?: number;
   inStock?: boolean;
 }
@@ -74,19 +75,19 @@ export const products: Product[] = [
   {
     id: 'prod-1',
     names: {
-      ru: 'BSO Жевательные конфеты',
-      tr: 'BSO Çiğneme Şekeri',
-      en: 'BSO Chewing Candies',
-      ar: 'حلوى بذور السوداء القابلة للمضغ',
+      ru: 'BSO Жевательные мармеладки',
+      tr: 'BSO Çiğneme Jölesi',
+      en: 'BSO Chewing Gummies',
+      ar: 'أقراص بذور السوداء للمضغ',
     },
     categoryKey: 'supplements',
     price: 1800,
     image: '/images/bso.webp',
     descriptions: {
-      ru: 'Жевательные конфеты с маслом черного тмина для иммунитета и общего самочувствия. Качественный препарат для поддержания вашего здоровья. Натуральный состав и высокая эффективность.',
-      tr: 'Bağışıklık ve genel sağlık için siyah kimyon yağı içeren çiğneme şekerleri. Sağlığınızı destekleyen kaliteli bir ürün. Doğal içerik ve yüksek etkililik.',
-      en: 'Chewing candies with black seed oil for immunity and overall well-being. A quality product to support your health. Natural composition and high effectiveness.',
-      ar: 'حلوى قابلة للمضغ بزيت الحبة السوداء لتعزيز المناعة والعافية العامة. منتج عالي الجودة لدعم صحتك. تركيبة طبيعية وفعالية عالية.',
+      ru: 'Жевательные мармеладки с маслом черного тмина для иммунитета и общего самочувствия. Качественный препарат для поддержания вашего здоровья. Натуральный состав и высокая эффективность.',
+      tr: 'Bağışıklık ve genel sağlık için siyah kimyon yağı içeren çiğneme jölesi. Sağlığınızı destekleyen kaliteli bir ürün. Doğal içerik ve yüksek etkililik.',
+      en: 'Chewing gummies with black seed oil for immunity and overall well-being. A quality product to support your health. Natural composition and high effectiveness.',
+      ar: 'أقراص قابلة للمضغ بزيت الحبة السوداء لتعزيز المناعة والعافية العامة. منتج عالي الجودة لدعم صحتك. تركيبة طبيعية وفعالية عالية.',
     },
     specs: {
       ru: [
@@ -206,6 +207,12 @@ export const products: Product[] = [
         '| └ DHA (حمض الدوكوساهيكسانويك) | 400 ملغ | — |',
       ],
     },
+    notes: {
+      ru: 'Рекомендуемая суточная доза: взрослым в возрасте 11 лет и старше рекомендуется принимать по 1 капсуле утром и 1 капсуле вечером (два раза в день) после еды, запивая большим количеством воды.\n\nУсловия хранения: хранить в прохладном, сухом месте, вдали от солнечных лучей и в недоступном для детей месте, плотно закрыв крышку.\n\nНЕ ЯВЛЯЕТСЯ ЛЕКАРСТВЕННЫМ СРЕДСТВОМ! Не используется для профилактики или лечения заболеваний. Проконсультируйтесь с врачом, если вы беременны, кормите грудью, имеете какое-либо заболевание или принимаете лекарства.',
+      tr: 'Günlük önerilen doz: 11 yaş ve üzeri yetişkinlerin sabah 1 kapsül ve akşam 1 kapsül (günde iki kez) yemeklerden sonra bol miktarda su ile alması önerilir.\n\nSaklama koşulları: Serin ve kuru bir yerde, güneş ışığından uzakta ve çocukların erişemeyeceği bir yerde, kapağı sıkıca kapatılmış olarak saklayınız.\n\nBU BİR İLAÇ DEĞİLDİR! Hastalıkların önlenmesi veya tedavisi için kullanılmaz. Hamileyseniz, emziriyorsanız, herhangi bir hastalığınız varsa veya ilaç kullanıyorsanız doktorunuza danışınız.',
+      en: 'Recommended daily dose: For adults aged 11 and over, take 1 capsule in the morning and 1 capsule in the evening (twice a day) after meals, with plenty of water.\n\nStorage conditions: Store in a cool, dry place, away from sunlight and out of reach of children, with the lid tightly closed.\n\nTHIS IS NOT A MEDICINAL PRODUCT! It is not used for the prevention or treatment of diseases. Consult your doctor if you are pregnant, breastfeeding, have any disease, or are taking medication.',
+      ar: 'الجرعة اليومية الموصى بها: بالنسبة للبالغين الذين تبلغ أعمارهم 11 عامًا وما فوق، يُنصح بتناول كبسولة واحدة في الصباح وكبسولة واحدة في المساء (مرتين يوميًا) بعد الوجبات، مع الكثير من الماء.\n\nظروف التخزين: يُخزن في مكان بارد وجاف، بعيدًا عن أشعة الشمس وبعيدًا عن متناول الأطفال، مع إغلاق الغطاء بإحكام.\n\nهذا ليس منتجًا طبيًا! لا يُستخدم للوقاية من الأمراض أو علاجها. استشر طبيبك إذا كنت حاملاً أو ترضعين أو تعاني من أي مرض أو تتناول أدوية.',
+    },
   },
   {
     id: 'prod-3',
@@ -322,23 +329,29 @@ export const products: Product[] = [
         '~~يُحسب BRD لقرصين. لم يتم تحديد الكمية اليومية الموصى بها للأشكال الفردية من المغنيسيوم.',
       ],
     },
+    notes: {
+      ru: 'Рекомендуемая суточная доза: взрослым в возрасте 11 лет и старше рекомендуется принимать по 2 таблетки один раз в день, запивая большим количеством воды.\n\nУсловия хранения: хранить в прохладном, сухом месте, вдали от солнечных лучей и в недоступном для детей месте, плотно закрыв крышку.\n\nНЕ ЯВЛЯЕТСЯ ЛЕКАРСТВЕННЫМ СРЕДСТВОМ! Не используется для профилактики или лечения заболеваний. Проконсультируйтесь с врачом, если вы беременны, кормите грудью, имеете какое-либо заболевание или принимаете лекарства.',
+      tr: 'Günlük önerilen doz: 11 yaş ve üzeri yetişkinlerin günde bir kez 2 tablet, bol miktarda su ile alması önerilir.\n\nSaklama koşulları: Serin ve kuru bir yerde, güneş ışığından uzakta ve çocukların erişemeyeceği bir yerde, kapağı sıkıca kapatılmış olarak saklayınız.\n\nBU BİR İLAÇ DEĞİLDİR! Hastalıkların önlenmesi veya tedavisi için kullanılmaz. Hamileyseniz, emziriyorsanız, herhangi bir hastalığınız varsa veya ilaç kullanıyorsanız doktorunuza danışınız.',
+      en: 'Recommended daily dose: Adults aged 11 and over are recommended to take 2 tablets once a day, with plenty of water.\n\nStorage conditions: Store in a cool, dry place, away from sunlight and out of reach of children, with the lid tightly closed.\n\nTHIS IS NOT A MEDICINAL PRODUCT! It is not used for the prevention or treatment of diseases. Consult your doctor if you are pregnant, breastfeeding, have any disease, or are taking medication.',
+      ar: 'الجرعة اليومية الموصى بها: يُنصح البالغون الذين تبلغ أعمارهم 11 عامًا وما فوق بتناول قرصين مرة واحدة يوميًا مع الكثير من الماء.\n\nظروف التخزين: يُخزن في مكان بارد وجاف، بعيدًا عن أشعة الشمس وبعيدًا عن متناول الأطفال، مع إغلاق الغطاء بإحكام.\n\nهذا ليس منتجًا طبيًا! لا يُستخدم للوقاية من الأمراض أو علاجها. استشر طبيبك إذا كنت حاملاً أو ترضعين أو تعاني من أي مرض أو تتناول أدوية.',
+    },
   },
   {
     id: 'prod-5',
     names: {
-      ru: 'DNL Фитокомплекс',
-      tr: 'DNL Fito Kompleks',
-      en: 'DNL Phyto Complex',
-      ar: 'المجمّع النباتي DNL',
+      ru: 'DNL — Антистресс фитокомплекс',
+      tr: 'DNL — Anti-stres Bitkisel Kompleks',
+      en: 'DNL — Anti-Stress Phyto Complex',
+      ar: 'DNL — المركب النباتي المضاد للإجهاد',
     },
     categoryKey: 'supplements',
     price: 2200,
     image: '/images/dnl__.webp',
     descriptions: {
-      ru: 'Натуральный фитокомплекс для поддержки организма и общего укрепления здоровья. Качественный препарат на основе растительных компонентов.',
-      tr: 'Vücudu desteklemek ve genel sağlığı güçlendirmek için doğal bitkisel kompleks. Bitkisel bileşenlere dayalı kaliteli bir ürün.',
-      en: 'Natural phyto-complex to support the body and strengthen overall health. A quality product based on plant components.',
-      ar: 'مجمّع نباتي طبيعي لدعم الجسم وتعزيز الصحة العامة. منتج عالي الجودة مبني على مكونات نباتية.',
+      ru: 'Натуральный комплекс на основе боярышника, сельдерея, кошачьего когтя и базилика для поддержки нервной системы, эмоционального равновесия и общего самочувствия.',
+      tr: 'Alıç, kereviz, kedi pençesi ve fesleğen bazlı, sinir sistemi, duygusal denge ve genel sağlık desteği için doğal bir kompleks.',
+      en: 'A natural complex based on hawthorn, celery, cat\'s claw and basil to support the nervous system, emotional balance and overall well-being.',
+      ar: 'مجمّع طبيعي يعتمد على الزعرور والكرفس ومخلب القط والريحان لدعم الجهاز العصبي والتوازن العاطفي والعافية العامة.',
     },
     specs: {
       ru: [
@@ -402,23 +415,29 @@ export const products: Product[] = [
         '| الأكاسيا العربية (*Acacia arabica*) | 20,02 ملغ |',
       ],
     },
+    notes: {
+      ru: 'Рекомендуемая суточная дозировка: Взрослым в возрасте 11 лет и старше рекомендуется принимать по 1 капсуле два раза в день, утром и вечером, после еды, запивая большим количеством воды.\n\nУсловия хранения: Хранить в прохладном, сухом месте, вдали от солнечных лучей, с плотно закрытой крышкой и в недоступном для детей месте.\n\nЭТО НЕ ЛЕКАРСТВЕННОЕ СРЕДСТВО! Оно не используется для профилактики или лечения заболеваний. Проконсультируйтесь с врачом, если вы беременны, кормите грудью, имеете какое-либо заболевание или принимаете лекарства.',
+      tr: 'Günlük önerilen doz: 11 yaş ve üzeri yetişkinler için günde 2 kapsül, sabah ve akşam, yemekten sonra, bol miktarda su ile birlikte alınmalıdır.\n\nSaklama koşulları: Serin, kuru bir yerde, güneş ışığından uzakta, sıkı kapatılmış bir kapakla ve çocukların erişemediği bir yerde saklayınız.\n\nBU BİR İLAÇ DEĞİLDİR! Hastalıkların önlenmesi veya tedavisi için kullanılmaz. Hamileyseniz, emziriyorsanız, herhangi bir hastalığınız varsa veya ilaç kullanıyorsanız doktorunuza danışın.',
+      en: 'Recommended daily dose: For adults aged 11 and over, take 1 capsule twice a day, in the morning and evening, after meals, with plenty of water.\n\nStorage conditions: Store in a cool, dry place, away from sunlight, with a tightly closed lid and out of reach of children.\n\nTHIS IS NOT A MEDICINAL PRODUCT! It is not used for the prevention or treatment of diseases. Consult your doctor if you are pregnant, breastfeeding, have any disease, or are taking medication.',
+      ar: 'الجرعة اليومية الموصى بها: بالنسبة للبالغين الذين تبلغ أعمارهم 11 عامًا وما فوق، يُنصح بأخذ كبسولة مرتين يوميًا، في الصباح والمساء، بعد الوجبات، مع شربة كمية كبيرة من الماء.\n\nظروف التخزين: يتم التخزين في مكان بارد وجاف، بعيدًا عن أشعة الشمس، مع غطاء مغلق تمامًا وفي مكان غير قابل للوصول إلى الأطفال.\n\nهذا ليس منتجًا طبيًا! لا يتم استخدامه لمنع أو علاج الأمراض. استشر طبيبك إذا كنت حاملاً، ترضيح الأطفال، تعاني من أي مرض، أو تتناول أدوية.',
+    },
   },
   {
     id: 'prod-6',
     names: {
-      ru: 'Цинк Защита',
-      tr: 'Çinko Koruma',
-      en: 'Zinc Protection',
-      ar: 'حماية الزنك',
+      ru: 'DARUZEN Цинк Комплекс',
+      tr: 'DARUZEN Çinko Kompleks',
+      en: 'DARUZEN Zinc Complex',
+      ar: 'DARUZEN مركب الزنك',
     },
     categoryKey: 'minerals',
     price: 1100,
     image: '/images/zincpng.webp',
     descriptions: {
-      ru: 'Максимально сильная добавка цинка для сезонного иммунитета. Качественный препарат для поддержания вашего здоровья. Натуральный состав и высокая эффективность.',
-      tr: 'Mevsimsel bağışıklık için güçlü çinko takviyesi. Sağlığınızı destekleyen kaliteli bir ürün. Doğal içerik ve yüksek etkililik.',
-      en: 'Maximum-strength zinc supplement for seasonal immunity. A quality product to support your health. Natural composition and high effectiveness.',
-      ar: 'مكمّل زنك بأقصى قوة للمناعة الموسمية. منتج عالي الجودة لدعم صحتك. تركيبة طبيعية وفعالية عالية.',
+      ru: 'Цинк, селен и медь для ежедневной поддержки организма.',
+      tr: 'Vücudun günlük desteği için çinko, selenyum ve bakır.',
+      en: 'Zinc, selenium and copper for daily body support.',
+      ar: 'الزنك والسيلينيوم والنحاس لدعم الجسم يوميًا.',
     },
     specs: {
       ru: ['Цинк | 15 мг', 'Медь | 2000 мкг', 'Селен | 55 мкг'],
@@ -426,14 +445,20 @@ export const products: Product[] = [
       en: ['Zinc | 15 mg', 'Copper | 2000 mcg', 'Selenium | 55 mcg'],
       ar: ['زنك | 15 ملغ', 'نحاس | 2000 مكغ', 'سيلينيوم | 55 مكغ'],
     },
+    notes: {
+      ru: 'Рекомендуемая суточная доза: взрослым от 11 лет и старше рекомендуется принимать по 1 капсуле один раз в день, запивая большим количеством воды.\n\nУсловия хранения: хранить в прохладном, сухом месте, вдали от солнечных лучей и в недоступном для детей месте, плотно закрыв крышку.\n\nНЕ ЯВЛЯЕТСЯ ЛЕКАРСТВЕННЫМ СРЕДСТВОМ! Не используется для профилактики или лечения заболеваний. Проконсультируйтесь с врачом, если вы беременны, кормите грудью, имеете какое-либо заболевание или принимаете лекарства.',
+      tr: 'Günlük önerilen doz: 11 yaş ve üzeri yetişkinlerin günde 1 kapsül, bol miktarda su ile alması önerilir.\n\nSaklama koşulları: Serin ve kuru bir yerde, güneş ışığından uzakta ve çocukların erişemeyeceği bir yerde, kapağı sıkıca kapatılmış olarak saklayınız.\n\nBU BİR İLAÇ DEĞİLDİR! Hastalıkların önlenmesi veya tedavisi için kullanılmaz. Hamileyseniz, emziriyorsanız, herhangi bir hastalığınız varsa veya ilaç kullanıyorsanız doktorunuza danışınız.',
+      en: 'Recommended daily dose: Adults aged 11 and over are recommended to take 1 capsule once a day, with plenty of water.\n\nStorage conditions: Store in a cool, dry place, away from sunlight and out of reach of children, with the lid tightly closed.\n\nTHIS IS NOT A MEDICINAL PRODUCT! It is not used for the prevention or treatment of diseases. Consult your doctor if you are pregnant, breastfeeding, have any disease, or are taking medication.',
+      ar: 'الجرعة اليومية الموصى بها: يُنصح البالغون الذين تبلغ أعمارهم 11 عامًا وما فوق بتناول كبسولة واحدة مرة واحدة يوميًا مع الكثير من الماء.\n\nظروف التخزين: يُخزن في مكان بارد وجاف، بعيدًا عن أشعة الشمس وبعيدًا عن متناول الأطفال، مع إغلاق الغطاء بإحكام.\n\nهذا ليس منتجًا طبيًا! لا يُستخدم للوقاية من الأمراض أو علاجها. استشر طبيبك إذا كنت حاملاً أو ترضعين أو تعاني من أي مرض أو تتناول أدوية.',
+    },
   },
   {
     id: 'prod-7',
     names: {
-      ru: 'Экстракт расторопши и одуванчика',
-      tr: 'Devedikeni ve Karahindiba Ekstresi',
-      en: 'Milk Thistle & Dandelion Extract',
-      ar: 'مستخلص شوك الحليب والهندباء',
+      ru: 'Артишок + расторопша + одуванчик',
+      tr: 'Enginar + Devedikeni + Karahindiba',
+      en: 'Artichoke + Milk Thistle + Dandelion',
+      ar: 'خرشوف + شوك الحليب + هندباء',
     },
     categoryKey: 'supplements',
     price: 2100,
@@ -473,6 +498,12 @@ export const products: Product[] = [
         '| **فيتامين C** | 20 ملغ | **%22** |',
         '| **زنك** | 10 ملغ | **%100** |',
       ],
+    },
+    notes: {
+      ru: 'Рекомендуемая суточная доза: взрослым от 11 лет и старше рекомендуется принимать по 1 капсуле два раза в день, утром и вечером.\n\nУсловия хранения: хранить в прохладном, сухом месте, вдали от солнечных лучей и недоступном для детей месте, плотно закрыв крышку.\n\nНЕ ЯВЛЯЕТСЯ ЛЕКАРСТВЕННЫМ СРЕДСТВОМ! Не используется для профилактики или лечения заболеваний. Проконсультируйтесь с врачом, если вы беременны, кормите грудью, имеете какое-либо заболевание или принимаете лекарства.',
+      tr: 'Günlük önerilen doz: 11 yaş ve üzeri yetişkinlerin sabah ve akşam olmak üzere günde 2 kez 1 kapsül alması önerilir.\n\nSaklama koşulları: Serin ve kuru bir yerde, güneş ışığından uzakta, çocukların erişemeyeceği bir yerde, kapağı sıkıca kapatılmış olarak saklayınız.\n\nBU BİR İLAÇ DEĞİLDİR! Hastalıkların önlenmesi veya tedavisi için kullanılmaz. Hamileyseniz, emziriyorsanız, herhangi bir hastalığınız varsa veya ilaç kullanıyorsanız doktorunuza danışınız.',
+      en: 'Recommended daily dose: Adults aged 11 and over are recommended to take 1 capsule twice a day, in the morning and in the evening.\n\nStorage conditions: Store in a cool, dry place, away from sunlight and out of reach of children, with the lid tightly closed.\n\nTHIS IS NOT A MEDICINAL PRODUCT! It is not used for the prevention or treatment of diseases. Consult your doctor if you are pregnant, breastfeeding, have any disease, or are taking medication.',
+      ar: 'الجرعة اليومية الموصى بها: يُنصح البالغون الذين تبلغ أعمارهم 11 عامًا وما فوق بتناول كبسولة واحدة مرتين يوميًا، صباحًا ومساءً.\n\nظروف التخزين: يُخزن في مكان بارد وجاف، بعيدًا عن أشعة الشمس وبعيدًا عن متناول الأطفال، مع إغلاق الغطاء بإحكام.\n\nهذا ليس منتجًا طبيًا! لا يُستخدم للوقاية من الأمراض أو علاجها. استشر طبيبك إذا كنت حاملاً أو ترضعين أو تعاني من أي مرض أو تتناول أدوية.',
     },
   },
   {
@@ -534,6 +565,12 @@ export const products: Product[] = [
         '| سيانوكوبالامين (فيتامين B12) | 2,50 مكغ | 100% |',
       ],
     },
+    notes: {
+      ru: 'Не является лекарственным средством.\n\nБиологически активная добавка к пище (БАД).\n\nНе превышайте рекомендуемую суточную дозировку.\n\nБиологически активные добавки не заменяют полноценное и сбалансированное питание.\n\nНе рекомендуется детям до 11 лет.\n\nБеременным и кормящим женщинам, а также лицам с хроническими заболеваниями перед применением рекомендуется проконсультироваться с врачом.\n\nПри индивидуальной непереносимости компонентов применение следует прекратить.\n\nУсловия хранения: Хранить в сухом, прохладном месте при температуре до 25 °C, вдали от прямых солнечных лучей и в недоступном для детей месте.\n\nНа упаковке также указано способ применения: Взрослым и детям старше 11 лет принимать по 2 жевательные пастилки (gummies) в день.',
+      tr: 'İlaç değildir.\n\nBir gıda takviyesidir (besin desteği).\n\nÖnerilen günlük dozu aşmayın.\n\nBesin takviyeleri, yeterli ve dengeli beslenmenin yerine geçmez.\n\n11 yaşından küçük çocuklara önerilmez.\n\nHamileler, emziren kadınlar ve kronik hastalığı olan kişilerin kullanmadan önce doktora danışması önerilir.\n\nBileşenlere karşı bireysel intolerans durumunda kullanımı bırakın.\n\nSaklama koşulları: 25 °C\'yi aşmayan serin ve kuru bir yerde, doğrudan güneş ışığından uzakta ve çocukların erişemeyeceği bir yerde saklayın.\n\nGünlük önerilen doz: 11 yaş üzeri yetişkinler ve çocuklar günde 2 çiğneme pastili (gummies) almalıdır.',
+      en: 'It is not a medicine.\n\nIt is a food supplement (dietary supplement).\n\nDo not exceed the recommended daily dose.\n\nDietary supplements do not replace a complete and balanced diet.\n\nNot recommended for children under 11 years of age.\n\nPregnant and breastfeeding women, as well as persons with chronic diseases, are advised to consult a doctor before use.\n\nIn case of individual intolerance to the components, stop use.\n\nStorage conditions: Store in a dry, cool place at a temperature of up to 25 °C, away from direct sunlight and out of reach of children.\n\nRecommended daily dose: Adults and children over 11 should take 2 chewable pastilles (gummies) per day.',
+      ar: 'ليس دواءً.\n\nإنه مكمل غذائي.\n\nلا تتجاوز الجرعة اليومية الموصى بها.\n\nلا تحل المكملات الغذائية محل نظام غذائي كامل ومتوازن.\n\nلا يُنصح به للأطفال دون سن 11 عامًا.\n\nيُنصح النساء الحوامل والمرضعات والأشخاص المصابين بأمراض مزمنة باستشارة الطبيب قبل الاستخدام.\n\nفي حالة عدم تحمل المكونات بشكل فردي، يجب التوقف عن الاستخدام.\n\nظروف التخزين: يُخزن في مكان جاف وبارد عند درجة حرارة تصل إلى 25 درجة مئوية، بعيدًا عن أشعة الشمس المباشرة وبعيدًا عن متناول الأطفال.\n\nالجرعة اليومية الموصى بها: يجب أن يتناول البالغون والأطفال فوق 11 عامًا حبتين من أقراص المضغ (gummies) يوميًا.',
+    },
   },
   {
     id: 'prod-9',
@@ -578,14 +615,20 @@ export const products: Product[] = [
         '| **الكروم** | 65 مكغ | 162.5% |',
       ],
     },
+    notes: {
+      ru: 'Рекомендуемая суточная доза: Взрослым в возрасте 11 лет и старше рекомендуется принимать по 1 таблетке утром, 1 в полдень и 1 вечером (3 таблетки в день).\n\nУсловия хранения: Хранить в прохладном, сухом месте при температуре ниже 25 градусов Цельсия, вдали от солнечных лучей и в недоступном для детей месте, плотно закрыв крышку.\n\nЭТО НЕ ЛЕКАРСТВЕННОЕ СРЕДСТВО! Оно не используется для профилактики или лечения заболеваний. Проконсультируйтесь с врачом, если вы беременны, кормите грудью, имеете какое-либо заболевание или принимаете лекарства.',
+      tr: 'Günlük önerilen doz: 11 yaş ve üzeri yetişkinlerin sabah 1, öğlen 1 ve akşam 1 tablet olmak üzere günde 3 tablet alması önerilir.\n\nSaklama koşulları: 25 santigrat derecenin altındaki serin ve kuru bir yerde, güneş ışığından uzakta ve çocukların erişemeyeceği bir yerde, kapağı sıkıca kapatılmış olarak saklayınız.\n\nBU BİR İLAÇ DEĞİLDİR! Hastalıkların önlenmesi veya tedavisi için kullanılmaz. Hamileyseniz, emziriyorsanız, herhangi bir hastalığınız varsa veya ilaç kullanıyorsanız doktorunuza danışınız.',
+      en: 'Recommended daily dose: Adults aged 11 and over are recommended to take 1 tablet in the morning, 1 at noon and 1 in the evening (3 tablets per day).\n\nStorage conditions: Store in a cool, dry place at a temperature below 25 degrees Celsius, away from sunlight and out of reach of children, with the lid tightly closed.\n\nTHIS IS NOT A MEDICINAL PRODUCT! It is not used for the prevention or treatment of diseases. Consult your doctor if you are pregnant, breastfeeding, have any disease, or are taking medication.',
+      ar: 'الجرعة اليومية الموصى بها: يُنصح البالغون الذين تبلغ أعمارهم 11 عامًا وما فوق بتناول قرص واحد صباحًا وقرص واحد ظهرًا وقرص واحد مساءً (3 أقراص يوميًا).\n\nظروف التخزين: يُخزن في مكان بارد وجاف عند درجة حرارة أقل من 25 درجة مئوية، بعيدًا عن أشعة الشمس وبعيدًا عن متناول الأطفال، مع إغلاق الغطاء بإحكام.\n\nهذا ليس منتجًا طبيًا! لا يُستخدم للوقاية من الأمراض أو علاجها. استشر طبيبك إذا كنت حاملاً أو ترضعين أو تعاني من أي مرض أو تتناول أدوية.',
+    },
   },
   {
     id: 'prod-10',
     names: {
-      ru: 'Джинко Фитокомплекс',
-      tr: 'Ginkgo Fito Kompleks',
-      en: 'Ginkgo Phyto Complex',
-      ar: 'المجمّع النباتي جينكو',
+      ru: 'Комплекс с гинкго билоба, женьшенем и цитиколином',
+      tr: 'Ginkgo biloba, ginseng ve sitikolin kompleksi',
+      en: 'Complex with Ginkgo biloba, ginseng and citicoline',
+      ar: 'مركب يحتوي على الجنكو بيلوبا والجنسنغ والسيتيكولين',
     },
     categoryKey: 'herbs',
     price: 2300,
@@ -601,6 +644,12 @@ export const products: Product[] = [
       tr: ['# 5 ml başına', 'Ginkgo biloba ekstresi | 375 mg', 'Kore ginsengi ekstresi | 20 mg', 'Sitikolin | 15 mg', '# 10 ml başına', 'Ginkgo biloba ekstresi | 750 mg', 'Kore ginsengi ekstresi | 40 mg', 'Sitikolin | 30 mg'],
       en: ['# Per 5 ml', 'Ginkgo biloba extract | 375 mg', 'Korean ginseng extract | 20 mg', 'Citicoline | 15 mg', '# Per 10 ml', 'Ginkgo biloba extract | 750 mg', 'Korean ginseng extract | 40 mg', 'Citicoline | 30 mg'],
       ar: ['# لكل 5 مل', 'مستخلص الجنكو بيلوبا | 375 ملغ', 'مستخلص الجنسنغ الكوري | 20 ملغ', 'سيتيكولين | 15 ملغ', '# لكل 10 مل', 'مستخلص الجنكو بيلوبا | 750 ملغ', 'مستخلص الجنسنغ الكوري | 40 ملغ', 'سيتيكولين | 30 ملغ'],
+    },
+    notes: {
+      ru: 'Рекомендуемая суточная доза: Детям в возрасте от 4 до 10 лет рекомендуется принимать 1 мерную ложку (5 мл) в день, а взрослым старше 11 лет — 2 мерные ложки (10 мл) в день.\n\nУсловия хранения: Хранить в прохладном, сухом месте, вдали от солнечных лучей, с плотно закрытой крышкой и в недоступном для детей месте.\n\nНЕ ЯВЛЯЕТСЯ ЛЕКАРСТВЕННЫМ СРЕДСТВОМ! Не используется для профилактики или лечения заболеваний. Не применять во время беременности, кормления грудью, а также при наличии заболеваний или приеме лекарств. В этом случае проконсультируйтесь с врачом.',
+      tr: 'Günlük önerilen doz: 4 ila 10 yaş arası çocukların günde 1 ölçek (5 ml) alması, 11 yaş üzeri yetişkinlerin ise günde 2 ölçek (10 ml) alması önerilir.\n\nSaklama koşulları: Serin ve kuru bir yerde, güneş ışığından uzakta, kapağı sıkıca kapatılmış ve çocukların erişemeyeceği bir yerde saklayınız.\n\nBU BİR İLAÇ DEĞİLDİR! Hastalıkların önlenmesi veya tedavisi için kullanılmaz. Hamilelik, emzirme döneminde veya herhangi bir hastalık ya da ilaç kullanımı durumunda kullanmayın. Bu durumda doktorunuza danışınız.',
+      en: 'Recommended daily dose: Children aged 4 to 10 are recommended to take 1 measuring spoon (5 ml) per day, and adults over 11 — 2 measuring spoons (10 ml) per day.\n\nStorage conditions: Store in a cool, dry place, away from sunlight, with the lid tightly closed and out of reach of children.\n\nTHIS IS NOT A MEDICINAL PRODUCT! It is not used for the prevention or treatment of diseases. Do not use during pregnancy, breastfeeding, or if you have any disease or are taking medication. In this case, consult your doctor.',
+      ar: 'الجرعة اليومية الموصى بها: يُنصح الأطفال من عمر 4 إلى 10 سنوات بتناول ملعقة قياس واحدة (5 مل) يوميًا، أما البالغون فوق 11 عامًا فيُنصحون بتناول ملعقتين (10 مل) يوميًا.\n\nظروف التخزين: يُخزن في مكان بارد وجاف، بعيدًا عن أشعة الشمس، مع إغلاق الغطاء بإحكام وبعيدًا عن متناول الأطفال.\n\nهذا ليس منتجًا طبيًا! لا يُستخدم للوقاية من الأمراض أو علاجها. لا يُستخدم أثناء الحمل والرضاعة، وكذلك في حال وجود أمراض أو تناول أدوية. في هذه الحالة استشر طبيبك.',
     },
   },
   {
@@ -698,10 +747,10 @@ export const products: Product[] = [
   {
     id: 'prod-12',
     names: {
-      ru: 'Мультивитамин Специальный',
-      tr: 'Özel Multivitamin',
-      en: 'Special Multivitamin',
-      ar: 'فيتامينات متعددة خاصة',
+      ru: 'MultiGummy Мультивитаминные жевательные мармеладки',
+      tr: 'MultiGummy Çoklu Vitamin Çiğneme Jölesi',
+      en: 'MultiGummy',
+      ar: 'فيتامينات متعددة للمضغ',
     },
     categoryKey: 'vitamins',
     price: 2900,
@@ -814,6 +863,12 @@ export const products: Product[] = [
         '| السيلينيوم | 200 مكغ | 364% |',
       ],
     },
+    notes: {
+      ru: 'Способ применения: Женский комплекс Хайит&Тысячелистник&КоэнзимQ10 пьётся натощак утром и вечером по одной капсуле.\n\nВажное примечание: на период менструального цикла приём необходимо прекратить. По окончании менструального цикла возобновить.\n\nМенструальный цикл - имеется в виду столько, сколько он обычно продолжается (3-5-7 дней).\n\nЕсли же цикл идёт дольше обычного, то приём капсул необходимо возобновить, отсчитав обычное количество дней цикла.\n\nПример: ваш цикл 3 дня, но он сбился и продолжается дольше обычного, в этом случае, по прошествии трёх дней возобновляете приём несмотря на то, что цикл ещё не завершился.',
+      tr: 'Günlük önerilen doz: Kadın Kompleksi Hayıt&Civanperçemi&KoenzimQ10, sabah ve akşam aç karnına birer kapsül olarak alınır.\n\nÖnemli not: Adet döngüsü süresince kullanıma ara verilmelidir. Adet döngüsü bittikten sonra kullanıma devam edilir.\n\nAdet döngüsü - genellikle sürdüğü süre kadar kastedilmektedir (3-5-7 gün).\n\nDöngü normalden uzun sürerse, normal döngü günü sayısı kadar bekleyerek kapsül kullanımına devam edilmelidir.\n\nÖrnek: döngünüz 3 gün ama uzadı ve normalden daha uzun sürüyor; bu durumda üç gün geçtikten sonra döngü henüz bitmemiş olsa bile kullanıma devam edersiniz.',
+      en: 'Recommended daily dose: The Women\'s Complex Hayıt&Yarrow&Coenzyme Q10 is taken on an empty stomach, one capsule in the morning and one in the evening.\n\nImportant note: Stop taking it during the menstrual cycle and resume after it ends.\n\nMenstrual cycle - this means as long as it usually lasts (3-5-7 days).\n\nIf the cycle lasts longer than usual, resume taking the capsules after the usual number of cycle days has passed.\n\nExample: your cycle is 3 days, but it got disrupted and lasts longer than usual; in this case, resume taking it after three days have passed, even if the cycle has not ended yet.',
+      ar: 'الجرعة اليومية الموصى بها: يُؤخذ المركب النسائي Hayıt واليارو والإنزيم المساعد Q10 على معدة فارغة، كبسولة واحدة صباحًا وكبسولة واحدة مساءً.\n\nملاحظة مهمة: يجب التوقف عن الاستخدام خلال فترة الدورة الشهرية، واستئنافه بعد انتهائها.\n\nالدورة الشهرية - أي للمدة التي تستمر فيها عادة (3-5-7 أيام).\n\nإذا استمرت الدورة أطول من المعتاد، فيجب استئناف تناول الكبسولات بعد احتساب العدد المعتاد من أيام الدورة.\n\nمثال: دورتك 3 أيام، لكنها تعطلت واستمرت أطول من المعتاد؛ في هذه الحالة تستأنفين الاستخدام بعد مرور ثلاثة أيام حتى لو لم تنتهِ الدورة بعد.',
+    },
   },
   {
     id: 'prod-1785672176662',
@@ -857,6 +912,12 @@ export const products: Product[] = [
         '| فيتامين C | 100 ملغ | 125% |',
         '| الحديد | 17 ملغ | 121% |',
       ],
+    },
+    notes: {
+      ru: 'Рекомендуемая суточная доза: взрослым в возрасте 11 лет и старше рекомендуется принимать по 1 капсуле один раз в день, запивая большим количеством воды.\n\nУсловия хранения: хранить в прохладном, сухом месте, вдали от солнечных лучей и в недоступном для детей месте, плотно закрыв крышку.\n\nНЕ ЯВЛЯЕТСЯ ЛЕКАРСТВЕННЫМ СРЕДСТВОМ! Не используется для профилактики или лечения заболеваний. Проконсультируйтесь с врачом, если вы беременны, кормите грудью, имеете какое-либо заболевание или принимаете лекарства.',
+      tr: 'Günlük önerilen doz: 11 yaş ve üzeri yetişkinlerin günde 1 kapsül, bol miktarda su ile alması önerilir.\n\nSaklama koşulları: Serin ve kuru bir yerde, güneş ışığından uzakta ve çocukların erişemeyeceği bir yerde, kapağı sıkıca kapatılmış olarak saklayınız.\n\nBU BİR İLAÇ DEĞİLDİR! Hastalıkların önlenmesi veya tedavisi için kullanılmaz. Hamileyseniz, emziriyorsanız, herhangi bir hastalığınız varsa veya ilaç kullanıyorsanız doktorunuza danışınız.',
+      en: 'Recommended daily dose: For adults aged 11 and over, take 1 capsule once a day, with plenty of water.\n\nStorage conditions: Store in a cool, dry place, away from sunlight and out of reach of children, with the lid tightly closed.\n\nTHIS IS NOT A MEDICINAL PRODUCT! It is not used for the prevention or treatment of diseases. Consult your doctor if you are pregnant, breastfeeding, have any disease, or are taking medication.',
+      ar: 'الجرعة اليومية الموصى بها: بالنسبة للبالغين الذين تبلغ أعمارهم 11 عامًا وما فوق، يُنصح بتناول كبسولة واحدة مرة واحدة يوميًا مع الكثير من الماء.\n\nظروف التخزين: يُخزن في مكان بارد وجاف، بعيدًا عن أشعة الشمس وبعيدًا عن متناول الأطفال، مع إغلاق الغطاء بإحكام.\n\nهذا ليس منتجًا طبيًا! لا يُستخدم للوقاية من الأمراض أو علاجها. استشر طبيبك إذا كنت حاملاً أو ترضعين أو تعاني من أي مرض أو تتناول أدوية.',
     },
   },
 ];
@@ -930,6 +991,7 @@ export interface LocalizedProduct {
   image: string;
   description: string;
   specs?: string[];
+  note?: string;
   createdAt?: number;
   inStock?: boolean;
 }
@@ -944,6 +1006,7 @@ export const localizeProducts = (lang: Lang, source: Product[] = products): Loca
     image: p.image,
     description: p.descriptions[lang] || p.descriptions.ru,
     specs: p.specs ? (p.specs[lang] || p.specs.ru) : undefined,
+    note: p.notes ? (p.notes[lang] || p.notes.ru) : undefined,
     createdAt: p.createdAt,
     inStock: getInStock(p),
   }));

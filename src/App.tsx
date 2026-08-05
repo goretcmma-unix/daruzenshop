@@ -59,21 +59,10 @@ const App: React.FC = () => {
   const [selectedProduct, setSelectedProduct] = useState<LocalizedProduct | null>(null);
   const [modalQuantity, setModalQuantity] = useState(1);
   const [activeMobileTab, setActiveMobileTab] = useState<'product' | 'composition' | 'note'>('product');
-  const [hideModalBuy, setHideModalBuy] = useState(false);
   const switchTab = (next: 'product' | 'composition' | 'note') => {
-    if (next === 'product') setHideModalBuy(false);
     setActiveMobileTab(next);
   };
-  const modalSwipeRef = useRef<HTMLDivElement>(null);
   const modalTabsTrackRef = useRef<HTMLDivElement>(null);
-  const lastModalScrollRef = useRef(0);
-  const handlePaneScroll = (e: React.UIEvent<HTMLDivElement>) => {
-    const st = e.currentTarget.scrollTop;
-    const delta = st - lastModalScrollRef.current;
-    lastModalScrollRef.current = st;
-    if (delta > 1) setHideModalBuy(true);
-    else if (delta < -1) setHideModalBuy(false);
-  };
   const modalTouchYRef = useRef<number | null>(null);
   const selectedProductImage = useNormalizedImage(selectedProduct?.image);
   const navClickRef = useRef(false);
@@ -86,14 +75,9 @@ const App: React.FC = () => {
       setModalQuantity(1);
     }
     setActiveMobileTab('product');
-    setHideModalBuy(false);
-    lastModalScrollRef.current = 0;
   }, [selectedProduct]);
 
   useEffect(() => {
-    setHideModalBuy(false);
-    lastModalScrollRef.current = 0;
-    if (modalSwipeRef.current) modalSwipeRef.current.scrollTop = 0;
     const track = modalTabsTrackRef.current;
     if (track) {
       const pane = track.querySelector<HTMLElement>('.modal-tab-pane.is-active');
@@ -123,17 +107,19 @@ const App: React.FC = () => {
     let active = true;
     const channel = supabase
       .channel('products-changes')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'products' }, async () => {
+      .on('postgres_changes', { event: '*' as const, schema: 'public', table: 'products' }, async () => {
         if (!active) return;
         try {
           const data = await fetchProducts();
           if (active && data.length) setProductsData(dedupeProducts(data));
-        } catch {}
+        } catch { /* ignore */ }
       })
       .subscribe();
     return () => {
       active = false;
-      supabase.removeChannel(channel);
+      if (channel) {
+        try { supabase.removeChannel(channel); } catch { /* ignore */ }
+      }
     };
   }, []);
 
@@ -252,13 +238,29 @@ const App: React.FC = () => {
   }, []);
 
   const filteredProducts = useMemo(() => {
-    return localizedProducts.filter(p => {
+    const filtered = localizedProducts.filter(p => {
       const query = searchQuery.toLowerCase();
       const matchesSearch = query === '' || 
         p.name.toLowerCase().includes(query) ||
         p.category.toLowerCase().includes(query);
       const matchesCategory = selectedCategory === 'all' || p.categoryKey === selectedCategory;
       return matchesSearch && matchesCategory;
+    });
+    // Новые товары (созданные за последние 7 дней) показываем первыми
+    const isNew = (p: LocalizedProduct): boolean => {
+      if (!p.createdAt) return false;
+      const age = Math.floor(Date.now() / 1000) - p.createdAt;
+      return age >= 0 && age <= 7 * 24 * 60 * 60;
+    };
+    return [...filtered].sort((a, b) => {
+      const aNew = isNew(a) ? 1 : 0;
+      const bNew = isNew(b) ? 1 : 0;
+      if (aNew !== bNew) return bNew - aNew;
+      // Остальные — по дате создания (новые выше), затем по имени
+      const aDate = a.createdAt ?? 0;
+      const bDate = b.createdAt ?? 0;
+      if (aDate !== bDate) return bDate - aDate;
+      return a.name.localeCompare(b.name);
     });
   }, [searchQuery, selectedCategory, localizedProducts]);
 
@@ -340,7 +342,8 @@ const App: React.FC = () => {
 
   const buyNow = (product: LocalizedProduct, quantity: number) => {
     const name = product.name;
-    const message = encodeURIComponent(`${t.cart.buyNowGreeting}\n\n• ${name} x${quantity} - ${formatPrice(product.price * quantity, lang)}\n\n${t.cart.orderTotal}: ${formatPrice(product.price * quantity, lang)}`);
+    const price = product.price;
+    const message = encodeURIComponent(`${t.cart.buyNowGreeting}\n\n• ${name} x${quantity} - ${formatPrice(price * quantity, lang)}\n\n${t.cart.orderTotal}: ${formatPrice(price * quantity, lang)}`);
     const phone = '905510485725'; 
     window.open(`https://wa.me/${phone}?text=${message}`, '_blank');
   };
@@ -1482,11 +1485,8 @@ const App: React.FC = () => {
               exit={{ opacity: 0 }}
               onClick={() => setSelectedProduct(null)}
               style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 4000 }}
-              onTap={() => { 
-                setSelectedProduct(null);
-                setModalQuantity(1);
-              }}/>
-             <motion.div 
+            />
+            <motion.div 
               initial={{ scale: 0.95, opacity: 0, x: '-50%', y: '-55%' }} 
               animate={{ scale: 1, opacity: 1, x: '-50%', y: '-50%' }} 
               exit={{ scale: 0.97, opacity: 0, x: '-50%', y: '-52%', transition: { type: 'tween', duration: 0.2, ease: 'easeIn' } }}
@@ -1510,19 +1510,19 @@ const App: React.FC = () => {
               }}
             >
               <motion.div className="modal-image-col">
-              <motion.div 
-                className="modal-image-wrapper"
-                style={{ flex: '1 1 auto', display: 'flex', alignItems: 'flex-start', justifyContent: 'center', position: 'relative' }}
-              >
-                 <motion.img 
-                  initial={{ scale: 0.8, opacity: 0 }}
-                  animate={{ scale: 1, opacity: selectedProduct.inStock === false ? 0.3 : 1 }}
-                  src={selectedProductImage}
-                  loading="lazy"
-                  decoding="async"
-                  className="modal-image"
-                  style={{ filter: selectedProduct.inStock === false ? 'grayscale(1)' : 'none' }}
-                />
+                <motion.div 
+                  className="modal-image-wrapper"
+                  style={{ flex: '1 1 auto', display: 'flex', alignItems: 'flex-start', justifyContent: 'center', position: 'relative' }}
+                >
+                  <motion.img 
+                    initial={{ scale: 0.8, opacity: 0 }}
+                    animate={{ scale: 1, opacity: selectedProduct.inStock === false ? 0.3 : 1 }}
+                    src={selectedProductImage}
+                    loading="lazy"
+                    decoding="async"
+                    className="modal-image"
+                    style={{ filter: selectedProduct.inStock === false ? 'grayscale(1)' : 'none' }}
+                  />
                   <motion.button 
                     whileHover={{ scale: 1.1, background: 'rgba(255, 255, 255, 0.9)', boxShadow: '0 8px 20px rgba(0,0,0,0.1)' }}
                     whileTap={{ scale: 0.95 }}
@@ -1538,277 +1538,196 @@ const App: React.FC = () => {
                       transition: 'all 0.2s ease'
                     }}>
                     <X size={16} color="var(--text-muted)" />
-                   </motion.button>
-                 </motion.div>
-                    <div className={'modal-buy-under' + (hideModalBuy ? ' is-hidden' : '')}>
-                    {selectedProduct.inStock === false ? (
-                      <div style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', padding: '0 24px', height: '54px', borderRadius: '14px', border: '2px solid #d5cfc6', color: '#8a8a8a', fontWeight: '600', fontSize: '15px', letterSpacing: '0.01em', background: 'transparent' }}>
-                        Нет в наличии
-                      </div>
-                    ) : (
-                    <div className="modal-buy-actions">
-                       <div className="modal-buy-qty">
-                         <QtyButton label="-" onClick={() => setModalQuantity(q => Math.max(1, q - 1))}>
-                           <Minus size={18} />
-                         </QtyButton>
-                         <span className="modal-buy-qty__value">{modalQuantity}</span>
-                         <QtyButton label="+" withRotate onClick={() => setModalQuantity(q => q + 1)}>
-                           <Plus size={18} />
-                         </QtyButton>
-                       </div>
-                      <motion.button 
-                        whileHover={{ scale: 1.02 }}
-                        whileTap={{ scale: 0.98 }}
-                        onClick={() => addToCart(selectedProduct, modalQuantity)}
-                        className="btn btn-primary"
-                        style={{ height: '54px', borderRadius: '14px', fontSize: '16px', boxShadow: '0 4px 12px rgba(93, 64, 55, 0.1)' }}
-                      >
-                        <ShoppingCart size={20} /> {t.cart.inCart}
-                      </motion.button>
-                      <motion.button 
-                        whileHover={{ scale: 1.02, filter: 'brightness(1.08)' }}
-                        whileTap={{ scale: 0.98 }}
-                        onClick={() => buyNow(selectedProduct, modalQuantity)} 
-                        className="modal-buy-btn"
-                        style={{ background: 'linear-gradient(135deg, #25D366 0%, #128C7E 100%)', color: 'white', border: 'none', height: '54px', borderRadius: '14px', fontWeight: '700', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', boxShadow: '0 10px 20px rgba(37, 211, 102, 0.15)' }}
-                      >
-                        {t.cart.buyNow}
-                      </motion.button>
-                    </div>
-                    )}
-                  </div>
+                  </motion.button>
+                </motion.div>
               </motion.div>
               <div className="modal-info-wrapper">
-                  <span className="modal-category" style={{ color: 'var(--accent)', fontWeight: '800', fontSize: '12px', textTransform: 'uppercase', letterSpacing: '0.18em', marginBottom: '20px' }}>{selectedProduct.category}</span>
-                  <h2 className="modal-title" style={{ fontWeight: '700', marginBottom: '16px', lineHeight: '1.15', color: 'var(--primary-dark)', letterSpacing: '-0.03em' }}>{selectedProduct.name}</h2>
-                    <div className="modal-price" style={{ fontWeight: '700', marginBottom: '32px', color: 'var(--primary)' }}>{formatPrice(selectedProduct.price, lang)}</div>
-                   
-                      {/* Mobile tab bar - fixed above the scrollable content */}
-                      <div className="modal-mobile-tabs">
-                        <button
-                          type="button"
-                          className={`modal-mobile-tab${activeMobileTab === 'product' ? ' active' : ''}`}
-                          onClick={() => switchTab('product')}
-                        >
-                          {t.modal.tabProduct}
-                        </button>
-                        {selectedProduct.specs && selectedProduct.specs.length > 0 && (
-                          <button
-                            type="button"
-                            className={`modal-mobile-tab${activeMobileTab === 'composition' ? ' active' : ''}`}
-                            onClick={() => switchTab('composition')}
-                          >
-                            {t.modal.tabComposition}
-                          </button>
-                        )}
-                        {selectedProduct.note && (
-                          <button
-                            type="button"
-                            className={`modal-mobile-tab${activeMobileTab === 'note' ? ' active' : ''}`}
-                            onClick={() => switchTab('note')}
-                          >
-                            {t.modal.tabNote}
-                          </button>
-                        )}
+                <span className="modal-category" style={{ color: 'var(--accent)', fontWeight: '800', fontSize: '12px', textTransform: 'uppercase', letterSpacing: '0.18em', marginBottom: '20px' }}>{selectedProduct.category}</span>
+                <h2 className="modal-title" style={{ fontWeight: '700', marginBottom: '16px', lineHeight: '1.15', color: 'var(--primary-dark)', letterSpacing: '-0.03em' }}>{selectedProduct.name}</h2>
+                <div className="modal-price" style={{ fontWeight: '700', marginBottom: '32px', color: 'var(--primary)' }}>{formatPrice(selectedProduct.price, lang)}</div>
+                
+                {/* Mobile tab bar */}
+                <div className="modal-mobile-tabs">
+                  <button type="button" className={`modal-mobile-tab${activeMobileTab === 'product' ? ' active' : ''}`} onClick={() => switchTab('product')}>
+                    {t.modal.tabProduct}
+                  </button>
+                  {selectedProduct.specs && selectedProduct.specs.length > 0 && (
+                    <button type="button" className={`modal-mobile-tab${activeMobileTab === 'composition' ? ' active' : ''}`} onClick={() => switchTab('composition')}>
+                      {t.modal.tabComposition}
+                    </button>
+                  )}
+                  {selectedProduct.note && (
+                    <button type="button" className={`modal-mobile-tab${activeMobileTab === 'note' ? ' active' : ''}`} onClick={() => switchTab('note')}>
+                      {t.modal.tabNote}
+                    </button>
+                  )}
+                </div>
+
+                {/* Tab content track */}
+                <div ref={modalTabsTrackRef} className="modal-tabs-track" style={{ transform: `translateX(${(isRtl ? 1 : -1) * getAvailableTabs(selectedProduct).indexOf(activeMobileTab) * 100}%)` }}>
+                  {/* Product tab */}
+                  <div className={`modal-tab-pane${activeMobileTab === 'product' ? ' is-active' : ''}`} data-tab="product">
+                    <div className="modal-product-media">
+                      <NormalizedImg src={selectedProduct.image} className="modal-product-media__img" alt={selectedProduct.name} loading="lazy" decoding="async" />
+                      <motion.button whileHover={{ scale: 1.1, background: 'rgba(255, 255, 255, 0.95)', boxShadow: '0 8px 20px rgba(0,0,0,0.1)' }} whileTap={{ scale: 0.95 }} onClick={() => { setSelectedProduct(null); setModalQuantity(1); }} className="modal-tab-close" aria-label="Close">
+                        <X size={16} color="var(--text-muted)" />
+                      </motion.button>
+                    </div>
+                    <div className="modal-product-head">
+                      <h3 className="modal-note-title">{selectedProduct.name}</h3>
+                      <div className="modal-product-price" style={{ color: 'var(--primary)', fontWeight: '800', fontSize: '20px', marginTop: '6px' }}>{formatPrice(selectedProduct.price, lang)}</div>
+                    </div>
+                    <div className="desc-card__content">
+                      <p>{selectedProduct.description}</p>
+                    </div>
+                  </div>
+
+                  {/* Composition tab */}
+                  {selectedProduct.specs && selectedProduct.specs.length > 0 && (
+                    <div className={`modal-tab-pane${activeMobileTab === 'composition' ? ' is-active' : ''}`} data-tab="composition">
+                      <div className="modal-note-media">
+                        <NormalizedImg src={selectedProduct.image} className="modal-note-media__img" alt={selectedProduct.name} loading="lazy" decoding="async" />
+                        <motion.button whileHover={{ scale: 1.1, background: 'rgba(255, 255, 255, 0.9)', boxShadow: '0 8px 20px rgba(0,0,0,0.1)' }} whileTap={{ scale: 0.95 }} onClick={() => { setSelectedProduct(null); setModalQuantity(1); }} className="modal-tab-close" aria-label="Close" style={{ position: 'absolute', top: '16px', left: '16px', background: 'rgba(255, 255, 255, 0.7)', border: 'none', borderRadius: '50%', width: '36px', height: '36px', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 2px 8px rgba(0,0,0,0.08)', cursor: 'pointer', zIndex: 10, transition: 'all 0.2s ease' }}>
+                          <X size={16} color="var(--text-muted)" />
+                        </motion.button>
                       </div>
-                     <motion.div className="modal-swipe" ref={modalSwipeRef} style={{ position: 'relative' }} data-active-tab={activeMobileTab}
-                         onWheel={(e) => {
-                           if (activeMobileTab !== 'product') return;
-                           if (e.deltaY > 0) setHideModalBuy(true);
-                           else if (e.deltaY < 0) setHideModalBuy(false);
-                         }}
-                         onTouchStart={(e) => {
-                           modalTouchYRef.current = e.touches[0]?.clientY ?? null;
-                         }}
-                         onTouchMove={(e) => {
-                           if (activeMobileTab !== 'product') return;
-                           const y = e.touches[0]?.clientY;
-                           const start = modalTouchYRef.current;
-                           if (y == null || start == null) return;
-                           const dy = y - start;
-                           if (dy < -6) setHideModalBuy(true);
-                           else if (dy > 6) setHideModalBuy(false);
-                         }}
-                         onTouchEnd={() => {
-                           modalTouchYRef.current = null;
-                         }}
-                      >
-                        {/* Tab content - horizontal track, slide-through transition */}
-                        <div
-                          ref={modalTabsTrackRef}
-                          className="modal-tabs-track"
-                          style={{ transform: `translateX(${(isRtl ? 1 : -1) * getAvailableTabs(selectedProduct).indexOf(activeMobileTab) * 100}%)` }}
-                        >
-                        <div className={`modal-tab-pane${activeMobileTab === 'product' ? ' is-active' : ''}`} data-tab="product" onScroll={handlePaneScroll}>
-                            <div className="modal-product-media">
-                              <img src={selectedProductImage} className="modal-product-media__img" alt={selectedProduct.name} loading="lazy" decoding="async" />
-                              <motion.button
-                                whileHover={{ scale: 1.1, background: 'rgba(255, 255, 255, 0.95)', boxShadow: '0 8px 20px rgba(0,0,0,0.1)' }}
-                                whileTap={{ scale: 0.95 }}
-                                onClick={() => { setSelectedProduct(null); setModalQuantity(1); }}
-                                className="modal-tab-close"
-                                aria-label="Close"
-                              >
-                                <X size={16} color="var(--text-muted)" />
-                              </motion.button>
-                            </div>
+                      <CompositionPanel specs={selectedProduct.specs} t={t} />
+                    </div>
+                  )}
 
-                            <div className="modal-product-head">
-                              <h3 className="modal-note-title">{selectedProduct.name}</h3>
-                              <div className="modal-product-price" style={{ color: 'var(--primary)', fontWeight: '800', fontSize: '20px', marginTop: '6px' }}>{formatPrice(selectedProduct.price, lang)}</div>
-                            </div>
-
-                            <div className="desc-card__content">
-                              <p>{selectedProduct.description}</p>
-                            </div>
-
-                            <div className="modal-tab-buy">
-                              {selectedProduct.inStock === false ? (
-                                <div style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', padding: '0 24px', height: '54px', borderRadius: '14px', border: '2px solid #d5cfc6', color: '#8a8a8a', fontWeight: '600', fontSize: '15px', letterSpacing: '0.01em', background: 'transparent' }}>
-                                  Нет в наличии
-                                </div>
-                              ) : (
-                                <div className="modal-buy-actions">
-                                  <div className="modal-buy-qty">
-                                    <QtyButton label="-" onClick={() => setModalQuantity(q => Math.max(1, q - 1))}>
-                                      <Minus size={18} />
-                                    </QtyButton>
-                                    <span className="modal-buy-qty__value">{modalQuantity}</span>
-                                    <QtyButton label="+" withRotate onClick={() => setModalQuantity(q => q + 1)}>
-                                      <Plus size={18} />
-                                    </QtyButton>
+                  {/* Note tab */}
+                  {selectedProduct.note && (
+                    <div className={`modal-tab-pane${activeMobileTab === 'note' ? ' is-active' : ''}`} data-tab="note">
+                      <div className="modal-note-media">
+                        <NormalizedImg src={selectedProduct.image} className="modal-note-media__img" alt={selectedProduct.name} loading="lazy" decoding="async" />
+                        <motion.button whileHover={{ scale: 1.1, background: 'rgba(255, 255, 255, 0.9)', boxShadow: '0 8px 20px rgba(0,0,0,0.1)' }} whileTap={{ scale: 0.95 }} onClick={() => { setSelectedProduct(null); setModalQuantity(1); }} className="modal-tab-close" aria-label="Close" style={{ position: 'absolute', top: '16px', left: '16px', background: 'rgba(255, 255, 255, 0.7)', border: 'none', borderRadius: '50%', width: '36px', height: '36px', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 2px 8px rgba(0,0,0,0.08)', cursor: 'pointer', zIndex: 10, transition: 'all 0.2s ease' }}>
+                          <X size={16} color="var(--text-muted)" />
+                        </motion.button>
+                      </div>
+                      <div className="modal-note-head">
+                        <h3 className="modal-note-title">{selectedProduct.name}</h3>
+                      </div>
+                      <div className="modal-note-hint">
+                        <span>{t.modal.noteScrollHint}</span>
+                        <ChevronDown size={14} className="modal-note-hint__icon" />
+                      </div>
+                      {(() => {
+                        const paragraphs = selectedProduct.note.split('\n\n').map((paragraph, pi) => {
+                          const trimmed = paragraph.trim();
+                          const isWarning = /^(ЭТО НЕ|НЕ ЯВЛЯЕТСЯ|BU BİR|THIS IS NOT|هذا ليس)/.test(trimmed);
+                          const isCaution = /^(Внимание|Dikkat|Caution|Attention|انتبه|انتباه|تحذير)/.test(trimmed);
+                          const isNegated = /^(Не |НЕ |No |Do not |Don'?t |Dont |لا )/.test(trimmed);
+                          const isDosage = !isNegated && /дозировк|суточная доз|способ применени|Günlük önerilen|Recommended daily|الجرعة|önerilen doz|daily dose/i.test(trimmed);
+                          const isStorage = /хранени|хранить|Saklama|Storage conditions|ظروف التخزين|saklama koşulları|Store in/i.test(trimmed);
+                          const type = isWarning ? 'warning' : isCaution ? 'info' : isDosage ? 'dosage' : isStorage ? 'storage' : 'info';
+                          const label = isWarning ? t.modal.noteWarning : isDosage ? t.modal.noteDosage : isStorage ? t.modal.noteStorage : t.modal.noteInfo;
+                          const body = isWarning ? trimmed : trimmed.replace(/^[^:]+:\s*/, '');
+                          return { pi, type, label, body, isWarning };
+                        });
+                        const items = paragraphs.filter(p => !p.isWarning);
+                        const warnings = paragraphs.filter(p => p.isWarning);
+                        return (
+                          <div className="modal-note-content">
+                            {items.length > 0 && (
+                              <div className="modal-note-table">
+                                {items.map(({ pi, type, label, body }) => (
+                                  <div key={pi} className={`modal-note-item is-${type}`}>
+                                    {type !== 'info' && (
+                                      <span className="modal-note-item__icon" aria-hidden="true">
+                                        {type === 'dosage' && <Pill size={18} strokeWidth={2.2} />}
+                                        {type === 'storage' && <Snowflake size={18} strokeWidth={2.2} />}
+                                      </span>
+                                    )}
+                                    <p className="modal-note-paragraph">{body}</p>
                                   </div>
-                                  <motion.button
-                                    whileHover={{ scale: 1.02 }}
-                                    whileTap={{ scale: 0.98 }}
-                                    onClick={() => addToCart(selectedProduct, modalQuantity)}
-                                    className="btn btn-primary"
-                                    style={{ height: '54px', borderRadius: '14px', fontSize: '16px', boxShadow: '0 4px 12px rgba(93, 64, 55, 0.1)' }}
-                                  >
-                                    <ShoppingCart size={20} /> {t.cart.inCart}
-                                  </motion.button>
-                                  <motion.button
-                                    whileHover={{ scale: 1.02, filter: 'brightness(1.08)' }}
-                                    whileTap={{ scale: 0.98 }}
-                                    onClick={() => buyNow(selectedProduct, modalQuantity)}
-                                    className="modal-buy-btn"
-                                    style={{ background: 'linear-gradient(135deg, #25D366 0%, #128C7E 100%)', color: 'white', border: 'none', height: '54px', borderRadius: '14px', fontWeight: '700', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', boxShadow: '0 10px 20px rgba(37, 211, 102, 0.15)' }}
-                                  >
-                                    {t.cart.buyNow}
-                                  </motion.button>
-                                </div>
-                              )}
-                            </div>
-                        </div>
-                        {selectedProduct.specs && selectedProduct.specs.length > 0 && (
-                        <div className={`modal-tab-pane${activeMobileTab === 'composition' ? ' is-active' : ''}`} data-tab="composition" onScroll={handlePaneScroll}>
-                            <div className="modal-note-media">
-                              <img src={selectedProductImage} className="modal-note-media__img" alt={selectedProduct.name} loading="lazy" decoding="async" />
-                              <motion.button
-                                whileHover={{ scale: 1.1, background: 'rgba(255, 255, 255, 0.95)', boxShadow: '0 8px 20px rgba(0,0,0,0.1)' }}
-                                whileTap={{ scale: 0.95 }}
-                                onClick={() => { setSelectedProduct(null); setModalQuantity(1); }}
-                                className="modal-tab-close"
-                                aria-label="Close"
-                              >
-                                <X size={16} color="var(--text-muted)" />
-                              </motion.button>
-                            </div>
-                            <CompositionPanel specs={selectedProduct.specs} t={t} />
-                        </div>
-                        )}
-                        {selectedProduct.note && (
-                        <div className={`modal-tab-pane${activeMobileTab === 'note' ? ' is-active' : ''}`} data-tab="note" onScroll={handlePaneScroll}>
-                            <div className="modal-note-media">
-                              <img src={selectedProductImage} className="modal-note-media__img" alt={selectedProduct.name} loading="lazy" decoding="async" />
-                              <motion.button
-                                whileHover={{ scale: 1.1, background: 'rgba(255, 255, 255, 0.95)', boxShadow: '0 8px 20px rgba(0,0,0,0.1)' }}
-                                whileTap={{ scale: 0.95 }}
-                                onClick={() => { setSelectedProduct(null); setModalQuantity(1); }}
-                                className="modal-tab-close"
-                                aria-label="Close"
-                              >
-                                <X size={16} color="var(--text-muted)" />
-                              </motion.button>
-                            </div>
-
-                          <div className="modal-note-head">
-                            <h3 className="modal-note-title">{selectedProduct.name}</h3>
-                          </div>
-                          <div className="modal-note-hint">
-                            <span>{t.modal.noteScrollHint}</span>
-                            <ChevronDown size={14} className="modal-note-hint__icon" />
-                          </div>
-                          {(() => {
-                            const paragraphs = selectedProduct.note.split('\n\n').map((paragraph, pi) => {
-                              const trimmed = paragraph.trim();
-                              const isWarning = /^(ЭТО НЕ|НЕ ЯВЛЯЕТСЯ|BU BİR|THIS IS NOT|هذا ليس)/.test(trimmed);
-                              const isCaution = /^(Внимание|Dikkat|Caution|Attention|انتبه|انتباه|تحذير)/.test(trimmed);
-                              const isNegated = /^(Не |НЕ |No |Do not |Don'?t |Dont |لا )/.test(trimmed);
-                              const isDosage = !isNegated && /дозировк|суточная доз|способ применени|Günlük önerilen|Recommended daily|الجرعة|önerilen doz|daily dose/i.test(trimmed);
-                              const isStorage = /хранени|хранить|Saklama|Storage conditions|ظروف التخزين|saklama koşulları|Store in/i.test(trimmed);
-                              const type = isWarning ? 'warning' : isCaution ? 'info' : isDosage ? 'dosage' : isStorage ? 'storage' : 'info';
-                              const label = isWarning ? t.modal.noteWarning : isDosage ? t.modal.noteDosage : isStorage ? t.modal.noteStorage : t.modal.noteInfo;
-                              const body = isWarning ? trimmed : trimmed.replace(/^[^:]+:\s*/, '');
-                              return { pi, type, label, body, isWarning };
-                            });
-                            const items = paragraphs.filter(p => !p.isWarning);
-                            const warnings = paragraphs.filter(p => p.isWarning);
-                            return (
-                              <>
-                              <div className="modal-note-content">
-                                {items.length > 0 && (
-                                  <div className="modal-note-table">
-                                    {items.map(({ pi, type, label, body }) => (
-                                      <div key={pi} className={`modal-note-item is-${type}`}>
-                                        {type !== 'info' && (
-                                          <span className="modal-note-item__icon" aria-hidden="true">
-                                            {type === 'dosage' && <Pill size={18} strokeWidth={2.2} />}
-                                            {type === 'storage' && <Snowflake size={18} strokeWidth={2.2} />}
-                                          </span>
-                                        )}
-                                        <p className="modal-note-paragraph">{body}</p>
-                                      </div>
-                                    ))}
-                                  </div>
-                                )}
-                                {warnings.map(({ pi, body }) => {
-                                  const m = body.match(/^([^!.!؟\n]+[!.!؟])\s*(.*)$/s);
-                                  const head = (m && m[1] ? m[1] : '').trim();
-                                  const rest = (m && m[2] ? m[2] : '').trim();
-                                  const isUpper = /[A-ZА-ЯЁ]/.test(head) && !/[a-zа-яё]/.test(head);
-                                  return (
-                                    <div key={pi} className="modal-note-alert">
-                                      {isUpper ? (
-                                        <>
-                                          <div className="modal-note-alert__plate">
-                                            <AlertTriangle size={14} strokeWidth={2.6} aria-hidden="true" />
-                                            {head}
-                                          </div>
-                                          {rest && <p className="modal-note-paragraph">{rest}</p>}
-                                        </>
-                                      ) : (
-                                        <>
-                                          <div className="modal-note-alert__label">{t.modal.noteWarning}</div>
-                                          <p className="modal-note-paragraph">{body}</p>
-                                        </>
-                                      )}
-                                    </div>
-                                  );
-                                })}
+                                ))}
                               </div>
-                              </>
-                            );
-                           })()}
-                        </div>
-                        )}
-                        </div>
-                    </motion.div>
-                   </div>
-              </motion.div>
+                            )}
+                            {warnings.map(({ pi, body }) => {
+                              const m = body.match(/^([^!.!؟\n]+[!.!؟])\s*(.*)$/s);
+                              const head = (m && m[1] ? m[1] : '').trim();
+                              const rest = (m && m[2] ? m[2] : '').trim();
+                              const isUpper = /[A-ZА-ЯЁ]/.test(head) && !/[a-zа-яё]/.test(head);
+                              return (
+                                <div key={pi} className="modal-note-alert">
+                                  {isUpper ? (
+                                    <>
+                                      <div className="modal-note-alert__plate">
+                                        <AlertTriangle size={14} strokeWidth={2.6} aria-hidden="true" />
+                                        {head}
+                                      </div>
+                                      {rest && <p className="modal-note-paragraph">{rest}</p>}
+                                    </>
+                                  ) : (
+                                    <>
+                                      <div className="modal-note-alert__label">{t.modal.noteWarning}</div>
+                                      <p className="modal-note-paragraph">{body}</p>
+                                    </>
+                                  )}
+                                </div>
+                              );
+                            })}
+                          </div>
+                        );
+                      })()}
+                    </div>
+                  )}
+                </div>
               </div>
-          )}
-        </AnimatePresence>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* Buy bar rendered as a separate fixed layer outside the modal so it is not clipped by modal overflow */}
+      <AnimatePresence>
+        {selectedProduct && activeMobileTab === 'product' && (
+          <motion.div
+            key="modal-tab-buy"
+            initial={{ y: '100%' }}
+            animate={{ y: 0 }}
+            exit={{ y: '100%' }}
+            transition={{ type: 'tween', duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+            className="modal-tab-buy"
+          >
+            {selectedProduct.inStock === false ? (
+              <div style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', padding: '0 24px', height: '54px', borderRadius: '14px', border: '2px solid #d5cfc6', color: '#8a8a8a', fontWeight: '600', fontSize: '15px', letterSpacing: '0.01em', background: 'transparent' }}>
+                Нет в наличии
+              </div>
+            ) : (
+              <div className="modal-buy-actions">
+                <div className="modal-buy-qty">
+                  <QtyButton label="-" onClick={() => setModalQuantity(q => Math.max(1, q - 1))}>
+                    <Minus size={18} />
+                  </QtyButton>
+                  <span className="modal-buy-qty__value">{modalQuantity}</span>
+                  <QtyButton label="+" withRotate onClick={() => setModalQuantity(q => q + 1)}>
+                    <Plus size={18} />
+                  </QtyButton>
+                </div>
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={() => addToCart(selectedProduct, modalQuantity)}
+                  className="btn btn-primary"
+                  style={{ height: '54px', borderRadius: '14px', fontSize: '16px', boxShadow: '0 4px 12px rgba(93, 64, 55, 0.1)' }}
+                >
+                  <ShoppingCart size={20} /> {t.cart.inCart}
+                </motion.button>
+                <motion.button
+                  whileHover={{ scale: 1.02, filter: 'brightness(1.08)' }}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={() => buyNow(selectedProduct, modalQuantity)}
+                  className="modal-buy-btn"
+                  style={{ background: 'linear-gradient(135deg, #25D366 0%, #128C7E 100%)', color: 'white', border: 'none', height: '54px', borderRadius: '14px', fontWeight: '700', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', boxShadow: '0 10px 20px rgba(37, 211, 102, 0.15)' }}
+                >
+                  {t.cart.buyNow}
+                </motion.button>
+              </div>
+            )}
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Mobile Nav Drawer */}
       <AnimatePresence>

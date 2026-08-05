@@ -880,21 +880,10 @@ a:hover {
 }
 
 .desc-card__content {
-  padding: 8px 0 4px 20px;
-  position: relative;
-  margin-bottom: 18px;
-}
-
-.desc-card__content::before {
-  content: '';
-  position: absolute;
-  top: 16px;
-  left: 0;
-  width: 3px;
-  height: calc(100% - 32px);
-  border-radius: 0 3px 3px 0;
-  background: linear-gradient(180deg, var(--accent) 0%, var(--accent-light) 100%);
-  opacity: 0.5;
+  padding: 4px 0 18px;
+  margin-bottom: 0;
+  border-left: 2px solid var(--border);
+  padding-left: 16px;
 }
 
 .desc-card__content p {
@@ -928,9 +917,12 @@ a:hover {
     margin-bottom: 10px !important;
   }
 
-  .modal-layout[data-active-tab="product"] .modal-tab-pane:not(.is-active) {
+  .modal-layout[data-active-tab="product"] .modal-tab-pane:not(.is-active),
+  .modal-layout[data-active-tab="composition"] .modal-tab-pane:not(.is-active),
+  .modal-layout[data-active-tab="note"] .modal-tab-pane:not(.is-active) {
     height: 0 !important;
     min-height: 0 !important;
+    overflow: hidden !important;
   }
   .modal-image-col {
     flex: none !important;
@@ -1135,8 +1127,8 @@ a:hover {
   overflow-x: hidden;
   overscroll-behavior-y: contain;
   touch-action: pan-y;
-  padding-bottom: 40px;
-  padding-inline-end: 12px;
+  padding-bottom: 120px;
+  padding-inline-end: 4px;
   animation: none !important;
   scrollbar-width: none;
 }
@@ -1198,6 +1190,14 @@ a:hover {
   }
 }
 
+/* On desktop, the buy buttons live in the left column under the image,
+   so hide the mobile tab buy bar to avoid duplication. */
+@media (min-width: 769px) {
+  .modal-tab-buy {
+    display: none !important;
+  }
+}
+
 /* ==================== PRODUCT TAB ON MOBILE ==================== */
 /* Photo, title and description scroll together inside the pane (like the Note tab);
    the fixed top photo/header are replaced by the in-pane copies. */
@@ -1229,7 +1229,7 @@ a:hover {
 .modal-tab-close {
   position: absolute;
   top: 12px;
-  right: 12px;
+  left: 12px;
   background: rgba(255, 255, 255, 0.85);
   border: none;
   border-radius: 50%;
@@ -1244,14 +1244,20 @@ a:hover {
   transition: all 0.2s ease;
 }
 
-/* White rounded card with the buy buttons at the bottom of the Description tab */
+/* Bottom bar with the buy buttons in the Description tab.
+   Fixed: pinned to the very bottom of the screen, full width,
+   with all corners rounded and shadow. */
 .modal-tab-buy {
-  margin-top: 20px;
-  padding: 16px;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 9999;
+  margin: 0;
+  padding: 16px 20px calc(16px + env(safe-area-inset-bottom));
   background: #fff;
-  border-radius: 20px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
-  border: 1px solid rgba(0, 0, 0, 0.04);
+  border-radius: 20px 20px 0 0;
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.1);
 }
 
 @media (max-width: 768px) {

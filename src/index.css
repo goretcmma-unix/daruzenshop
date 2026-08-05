@@ -1126,6 +1126,13 @@ a:hover {
   scrollbar-width: none;
 }
 
+.modal-tabs-track .modal-tab-pane[data-tab="product"] {
+  align-self: flex-start;
+  height: auto !important;
+  min-height: 0;
+  overflow: visible !important;
+}
+
 .modal-tabs-track .modal-tab-pane::-webkit-scrollbar {
   display: none;
   width: 0;

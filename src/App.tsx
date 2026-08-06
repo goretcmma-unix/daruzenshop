@@ -775,17 +775,20 @@ const App: React.FC = () => {
                     {isNewProduct(product) && (
                       <span style={{
                         position: 'absolute',
-                        top: '12px',
-                        right: '12px',
-                        background: '#e5484d',
+                        top: '10px',
+                        right: '10px',
+                        background: 'linear-gradient(135deg, #e5484d 0%, #c0392b 100%)',
                         color: '#fff',
-                        padding: '6px 12px',
-                        borderRadius: '8px',
-                        fontSize: '10px',
+                        padding: '8px 14px',
+                        borderRadius: '12px',
+                        fontSize: '12px',
                         fontWeight: '900',
-                        letterSpacing: '0.06em',
+                        letterSpacing: '0.08em',
                         textTransform: 'uppercase',
-                        boxShadow: '0 4px 14px rgba(229,72,77,0.45)'
+                        boxShadow: '0 6px 18px rgba(229,72,77,0.6)',
+                        zIndex: 10,
+                        border: '2px solid rgba(255,255,255,0.4)',
+                        backdropFilter: 'blur(2px)'
                       }}>
                         Новое
                       </span>

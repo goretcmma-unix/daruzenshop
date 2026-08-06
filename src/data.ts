@@ -25,7 +25,7 @@ export const isNewProduct = (p: Product, days = 7): boolean => {
 
 export const getInStock = (p: Product): boolean => {
   if (typeof p.inStock === 'boolean') return p.inStock;
-  const raw = p.specs?.[STOCK_SPECS_KEY]?.[0];
+  const raw = p.specs?.[STOCK_SPECS_KEY as Lang]?.[0];
   return raw !== '0';
 };
 
@@ -818,130 +818,6 @@ export const products: Product[] = [
       tr: 'Hedef kitle: 11 yaş ve üzeri yetişkinler ve çocuklar için uygundur.\n\nKullanım şekli ve önerilen günlük doz: Günde 1 kez 2 çiğneme pastili (gummies) alın, tercihen yemek sırasında veya sonrasında.\n\nUyarı: Önerilen günlük dozu aşmayın. Tam ve dengeli bir beslenmenin yerine kullanmayın. Hamilelikte, emzirme döneminde, kronik hastalıklarda veya ilaç kullanımında doktorunuza danışmanız önerilir.\n\nSaklama koşulları: 25 santigrat derecenin altındaki kuru ve serin bir yerde, doğrudan güneş ışığından uzakta ve çocukların erişemeyeceği bir yerde saklayınız.\n\nBU BİR İLAÇ DEĞİLDİR.',
       en: 'Target audience: suitable for adults and children aged 11 and over.\n\nDirections for use and recommended daily dose: Take 2 chewable pastilles (gummies) once a day, preferably during or after meals.\n\nWarning: Do not exceed the recommended daily dose. Do not use as a substitute for a complete and balanced diet. Consult your doctor if you are pregnant, breastfeeding, have chronic diseases, or are taking medication.\n\nStorage conditions: Store in a dry, cool place at up to 25 °C, away from direct sunlight and out of reach of children.\n\nTHIS IS NOT A MEDICINAL PRODUCT.',
       ar: 'الفئة المستهدفة: مناسب للبالغين والأطفال من سن 11 عامًا فما فوق.\n\nطريقة الاستخدام والجرعة اليومية الموصى بها: تناول حبتين للمضغ (gummies) مرة واحدة يوميًا، ويفضل أثناء أو بعد الوجبات.\n\nتحذير: لا تتجاوز الجرعة اليومية الموصى بها. لا تستخدم كبديل عن التغذية الكاملة والمتوازنة. يُنصح باستشارة الطبيب أثناء الحمل والرضاعة وعند وجود أمراض مزمنة أو تناول أدوية.\n\nظروف التخزين: يُخزن في مكان جاف وبارد عند درجة حرارة تصل إلى 25 درجة مئوية، بعيدًا عن أشعة الشمس المباشرة وبعيدًا عن متناول الأطفال.\n\nهذا ليس منتجًا طبيًا!',
-    },
-  },
-  {
-    id: 'prod-1785669452074',
-    names: {
-      ru: 'Экстракт витекса священного с коэнзимом Q10',
-      tr: 'Koenzim Q10 içeren Hayıt Özü',
-      en: 'Chasteberry Extract with Coenzyme Q10',
-      ar: 'مستخلص تشاستيبيري مع الإنزيم المساعد Q10',
-    },
-    categoryKey: 'herbs',
-    price: 1400,
-    image: 'https://fstihxljqljhfyubptsk.supabase.co/storage/v1/object/public/product_image/prod-1785669452074/1785669463531.webp',
-    descriptions: {
-      ru: 'Комплекс с экстрактами витекса и тысячелистника, коэнзимом Q10, L-аргинином, женьшенем, цинком, селеном и фолиевой кислотой — способствует поддержанию женского гормонального баланса, репродуктивного здоровья и регулярности менструального цикла. Помогает уменьшить проявления ПМС, поддерживает энергию, антиоксидантную защиту и общее самочувствие.',
-      tr: 'Hayıt özü bazlı, koenzim Q10, ginseng, çinko, folik asit ve selenyum içeren kadın kompleksi. Hormonal dengeyi ve kadın sağlığını destekler, PMS belirtilerinin hafiflemesine yardımcı olur.',
-      en: 'A women\'s complex based on chasteberry (Vitex agnus-castus) extract with coenzyme Q10, ginseng, zinc, folic acid and selenium. Supports hormonal balance and women\'s health, and helps ease PMS symptoms.',
-      ar: 'مركب نسائي يعتمد على مستخلص تشاستيبيري (Vitex agnus-castus) مع الإنزيم المساعد Q10 والجنسنغ والزنك وحمض الفوليك والسيلينيوم. يدعم التوازن الهرموني وصحة المرأة ويساعد في تخفيف أعراض متلازمة ما قبل الحيض.',
-    },
-    specs: {
-      ru: [
-        '| **Активный компонент** | **Состав на 2 капсулы** | **% от суточной нормы** |',
-        '| --- | ---: | ---: |',
-        '| Экстракт витекса священного | 400 мг | — |',
-        '| Экстракт кайенского перца | 100 мг | — |',
-        '| Коэнзим Q10 | 100 мг | — |',
-        '| L-аргинин | 100 мг | — |',
-        '| Экстракт корейского женьшеня | 80 мг | — |',
-        '| Цинк | 15 мг | 150% |',
-        '| Фолиевая кислота | 600 мкг | 300% |',
-        '| Селен | 200 мкг | 364% |',
-      ],
-      tr: [
-        '| **Aktif bileşen** | **2 kapsül için içerik** | **% günlük ihtiyaç** |',
-        '| --- | ---: | ---: |',
-        '| Hayıt özü | 400 mg | — |',
-        '| Cayenne biberi özü | 100 mg | — |',
-        '| Koenzim Q10 | 100 mg | — |',
-        '| L-arginin | 100 mg | — |',
-        '| Kore ginsengi özü | 80 mg | — |',
-        '| Çinko | 15 mg | %150 |',
-        '| Folik asit | 600 mcg | %300 |',
-        '| Selenyum | 200 mcg | %364 |',
-      ],
-      en: [
-        '| **Active ingredient** | **Composition per 2 capsules** | **% of daily value** |',
-        '| --- | ---: | ---: |',
-        '| Chasteberry extract | 400 mg | — |',
-        '| Cayenne pepper extract | 100 mg | — |',
-        '| Coenzyme Q10 | 100 mg | — |',
-        '| L-arginine | 100 mg | — |',
-        '| Korean ginseng extract | 80 mg | — |',
-        '| Zinc | 15 mg | 150% |',
-        '| Folic acid | 600 mcg | 300% |',
-        '| Selenium | 200 mcg | 364% |',
-      ],
-      ar: [
-        '| **المكون النشط** | **مكونات كبسولتين** | **% من الاحتياج اليومي** |',
-        '| --- | ---: | ---: |',
-        '| مستخلص تشاستيبيري | 400 ملغ | — |',
-        '| مستخلص الفلفل الحار | 100 ملغ | — |',
-        '| الإنزيم المساعد Q10 | 100 ملغ | — |',
-        '| L-أرجينين | 100 ملغ | — |',
-        '| مستخلص الجنسنغ الكوري | 80 ملغ | — |',
-        '| الزنك | 15 ملغ | 150% |',
-        '| حمض الفوليك | 600 مكغ | 300% |',
-        '| السيلينيوم | 200 مكغ | 364% |',
-      ],
-    },
-    notes: {
-      ru: 'Способ применения: Женский комплекс Хайит&Тысячелистник&КоэнзимQ10 пьётся натощак утром и вечером по одной капсуле.\n\nВажное примечание: на период менструального цикла приём необходимо прекратить. По окончании менструального цикла возобновить.\n\nМенструальный цикл - имеется в виду столько, сколько он обычно продолжается (3-5-7 дней).\n\nЕсли же цикл идёт дольше обычного, то приём капсул необходимо возобновить, отсчитав обычное количество дней цикла.\n\nПример: ваш цикл 3 дня, но он сбился и продолжается дольше обычного, в этом случае, по прошествии трёх дней возобновляете приём несмотря на то, что цикл ещё не завершился.',
-      tr: 'Günlük önerilen doz: Kadın Kompleksi Hayıt&Civanperçemi&KoenzimQ10, sabah ve akşam aç karnına birer kapsül olarak alınır.\n\nÖnemli not: Adet döngüsü süresince kullanıma ara verilmelidir. Adet döngüsü bittikten sonra kullanıma devam edilir.\n\nAdet döngüsü - genellikle sürdüğü süre kadar kastedilmektedir (3-5-7 gün).\n\nDöngü normalden uzun sürerse, normal döngü günü sayısı kadar bekleyerek kapsül kullanımına devam edilmelidir.\n\nÖrnek: döngünüz 3 gün ama uzadı ve normalden daha uzun sürüyor; bu durumda üç gün geçtikten sonra döngü henüz bitmemiş olsa bile kullanıma devam edersiniz.',
-      en: 'Recommended daily dose: The Women\'s Complex Hayıt&Yarrow&Coenzyme Q10 is taken on an empty stomach, one capsule in the morning and one in the evening.\n\nImportant note: Stop taking it during the menstrual cycle and resume after it ends.\n\nMenstrual cycle - this means as long as it usually lasts (3-5-7 days).\n\nIf the cycle lasts longer than usual, resume taking the capsules after the usual number of cycle days has passed.\n\nExample: your cycle is 3 days, but it got disrupted and lasts longer than usual; in this case, resume taking it after three days have passed, even if the cycle has not ended yet.',
-      ar: 'الجرعة اليومية الموصى بها: يُؤخذ المركب النسائي Hayıt واليارو والإنزيم المساعد Q10 على معدة فارغة، كبسولة واحدة صباحًا وكبسولة واحدة مساءً.\n\nملاحظة مهمة: يجب التوقف عن الاستخدام خلال فترة الدورة الشهرية، واستئنافه بعد انتهائها.\n\nالدورة الشهرية - أي للمدة التي تستمر فيها عادة (3-5-7 أيام).\n\nإذا استمرت الدورة أطول من المعتاد، فيجب استئناف تناول الكبسولات بعد احتساب العدد المعتاد من أيام الدورة.\n\nمثال: دورتك 3 أيام، لكنها تعطلت واستمرت أطول من المعتاد؛ في هذه الحالة تستأنفين الاستخدام بعد مرور ثلاثة أيام حتى لو لم تنتهِ الدورة بعد.',
-    },
-  },
-  {
-    id: 'prod-1785672176662',
-    names: {
-      ru: 'Железо бисглицинат + Витамин C',
-      tr: 'Demir bisglisinat + C Vitamini',
-      en: 'Iron bisglycinate + Vitamin C',
-      ar: 'بيسجليسينات الحديد + فيتامين سي',
-    },
-    categoryKey: 'supplements',
-    price: 3350,
-    image: '/images/ironbis_soft.webp',
-    descriptions: {
-      ru: 'Железо бисглицинат + Витамин C — способствует восполнению дефицита железа, поддерживает нормальный уровень гемоглобина и снижает риск усталости и слабости. Витамин C улучшает усвоение железа, повышая эффективность комплекса.',
-      tr: 'Demir Bisglisinat + C Vitamini, demir bisglisinat ve C vitaminini birleştiren bir besin takviyesidir. Demir, hemoglobin ve kırmızı kan hücrelerinin normal oluşumuna katkıda bulunur ve C vitamini, demirin emilimini artırır ve bağışıklık sisteminin normal işleyişini destekler. Günlük demir ihtiyacının karşılanması için uygundur.',
-      en: 'Iron Bisglycinate + Vitamin C is a dietary supplement that combines iron bisglycinate and vitamin C. Iron contributes to the normal formation of hemoglobin and red blood cells, and vitamin C improves the absorption of iron and supports the normal functioning of the immune system.',
-      ar: 'بيسجليسينات الحديد + فيتامين سي هو مكمل غذائي يجمع بين بيسجليسينات الحديد وفيتامين سي. يساهم الحديد في التكوين الطبيعي للهيموجلوبين وخلايا الدم الحمراء، ويحسن فيتامين سي امتصاص الحديد ويدعم الأداء الطبيعي لجهاز المناعة. مناسبة للتجديد اليومي لاحتياجات الحديد.',
-    },
-    specs: {
-      ru: [
-        '| **Активный компонент** | **Состав на 1 капсулу** | **% от суточной нормы** |',
-        '| --- | ---: | ---: |',
-        '| Витамин C | 100 мг | 125% |',
-        '| Железо | 17 мг | 121% |',
-      ],
-      tr: [
-        '| **Aktif bileşen** | **1 kapsül için içerik** | **% günlük ihtiyaç** |',
-        '| --- | ---: | ---: |',
-        '| C vitamini | 100 mg | %125 |',
-        '| Demir | 17 mg | %121 |',
-      ],
-      en: [
-        '| **Active ingredient** | **Composition per 1 capsule** | **% of daily value** |',
-        '| --- | ---: | ---: |',
-        '| Vitamin C | 100 mg | 125% |',
-        '| Iron | 17 mg | 121% |',
-      ],
-      ar: [
-        '| **المكون النشط** | **مكونات كبسولة واحدة** | **% من الاحتياج اليومي** |',
-        '| --- | ---: | ---: |',
-        '| فيتامين C | 100 ملغ | 125% |',
-        '| الحديد | 17 ملغ | 121% |',
-      ],
-    },
-    notes: {
-      ru: 'Рекомендуемая суточная доза: взрослым в возрасте 11 лет и старше рекомендуется принимать по 1 капсуле один раз в день, запивая большим количеством воды.\n\nУсловия хранения: хранить в прохладном, сухом месте, вдали от солнечных лучей и в недоступном для детей месте, плотно закрыв крышку.\n\nНЕ ЯВЛЯЕТСЯ ЛЕКАРСТВЕННЫМ СРЕДСТВОМ! Не используется для профилактики или лечения заболеваний. Проконсультируйтесь с врачом, если вы беременны, кормите грудью, имеете какое-либо заболевание или принимаете лекарства.',
-      tr: 'Günlük önerilen doz: 11 yaş ve üzeri yetişkinlerin günde 1 kapsül, bol miktarda su ile alması önerilir.\n\nSaklama koşulları: Serin ve kuru bir yerde, güneş ışığından uzakta ve çocukların erişemeyeceği bir yerde, kapağı sıkıca kapatılmış olarak saklayınız.\n\nBU BİR İLAÇ DEĞİLDİR! Hastalıkların önlenmesi veya tedavisi için kullanılmaz. Hamileyseniz, emziriyorsanız, herhangi bir hastalığınız varsa veya ilaç kullanıyorsanız doktorunuza danışınız.',
-      en: 'Recommended daily dose: For adults aged 11 and over, take 1 capsule once a day, with plenty of water.\n\nStorage conditions: Store in a cool, dry place, away from sunlight and out of reach of children, with the lid tightly closed.\n\nTHIS IS NOT A MEDICINAL PRODUCT! It is not used for the prevention or treatment of diseases. Consult your doctor if you are pregnant, breastfeeding, have any disease, or are taking medication.',
-      ar: 'الجرعة اليومية الموصى بها: بالنسبة للبالغين الذين تبلغ أعمارهم 11 عامًا وما فوق، يُنصح بتناول كبسولة واحدة مرة واحدة يوميًا مع الكثير من الماء.\n\nظروف التخزين: يُخزن في مكان بارد وجاف، بعيدًا عن أشعة الشمس وبعيدًا عن متناول الأطفال، مع إغلاق الغطاء بإحكام.\n\nهذا ليس منتجًا طبيًا! لا يُستخدم للوقاية من الأمراض أو علاجها. استشر طبيبك إذا كنت حاملاً أو ترضعين أو تعاني من أي مرض أو تتناول أدوية.',
     },
   },
 ];

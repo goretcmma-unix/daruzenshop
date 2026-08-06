@@ -84,10 +84,10 @@ export const products: Product[] = [
     price: 1800,
     image: '/images/bso.webp',
     descriptions: {
-      ru: 'Жевательные мармеладки с маслом черного тмина для иммунитета и общего самочувствия. Качественный препарат для поддержания вашего здоровья. Натуральный состав и высокая эффективность.',
-      tr: 'Bağışıklık ve genel sağlık için siyah kimyon yağı içeren çiğneme jölesi. Sağlığınızı destekleyen kaliteli bir ürün. Doğal içerik ve yüksek etkililik.',
-      en: 'Chewing gummies with black seed oil for immunity and overall well-being. A quality product to support your health. Natural composition and high effectiveness.',
-      ar: 'أقراص قابلة للمضغ بزيت الحبة السوداء لتعزيز المناعة والعافية العامة. منتج عالي الجودة لدعم صحتك. تركيبة طبيعية وفعالية عالية.',
+      ru: 'Daruzen BSO Gummy (60 жевательных пастилок) — комплекс с маслом черного тмина (BSO), витамином D3, тимохиноном и цинком для поддержки иммунитета. Способствует укреплению защитных сил организма, общему оздоровлению и повышению жизненного тонуса в удобной форме жевательных мармеладок.',
+      tr: 'Siyah kimyon yağı, D3 vitamini ve çinko içeren çiğneme jölesi. Bağışıklığı, kemik ve cilt sağlığını destekler; D vitamini ve çinko eksikliğinin giderilmesine lezzetli bir şekilde yardımcı olur.',
+      en: 'Chewing gummies with black seed oil, vitamin D3 and zinc. Support immunity, bone and skin health, and help replenish vitamin D and zinc in a convenient, tasty form.',
+      ar: 'أقراص قابلة للمضغ بزيت الحبة السوداء وفيتامين D3 والزنك. تدعم المناعة وصحة العظام والجلد، وتساعد على تعويض نقص فيتامين D والزنك بشكل سهل ولذيذ.',
     },
     specs: {
       ru: [
@@ -155,6 +155,12 @@ export const products: Product[] = [
         '| فوسفات الكالسيوم | 833.33 ملغ | — |',
       ],
     },
+    notes: {
+      ru: 'Рекомендуется для взрослых и детей с 11 лет.\n\nСпособ применения: принимать по 2 жевательные пастилки (gummies) 1 раз в день.\n\nВажно: не превышайте рекомендуемую суточную дозу. Биологически активная добавка к пище. Не является лекарственным средством. Не может использоваться в качестве замены полноценного и сбалансированного питания. При беременности, в период грудного вскармливания, а также при наличии хронических заболеваний перед применением рекомендуется проконсультироваться с врачом. Хранить в сухом, прохладном месте, недоступном для детей.',
+      tr: '11 yaş ve üzeri yetişkinler ve çocuklar için önerilir.\n\nKullanım şekli: Günde 1 kez 2 çiğneme pastili (gummies) alın.\n\nÖnemli: Önerilen günlük dozu aşmayın. Gıda takviyesidir. İlaç değildir. Tam ve dengeli bir beslenmenin yerine kullanılamaz. Hamilelikte, emzirme döneminde ve kronik hastalıklarda kullanmadan önce doktorunuza danışmanız önerilir. Serin ve kuru yerde, çocukların erişemeyeceği yerlerde saklayınız.',
+      en: 'Recommended for adults and children aged 11 and over.\n\nDirections for use: Take 2 chewable pastilles (gummies) once a day.\n\nImportant: Do not exceed the recommended daily dose. This is a food supplement. It is not a medicinal product and cannot be used as a substitute for a complete and balanced diet. Consult your doctor before use if you are pregnant, breastfeeding, or have chronic diseases. Store in a dry, cool place out of reach of children.',
+      ar: 'يُنصح به للبالغين والأطفال من سن 11 عامًا فما فوق.\n\nطريقة الاستخدام: تناول حبتين للمضغ (gummies) مرة واحدة يوميًا.\n\nهام: لا تتجاوز الجرعة اليومية الموصى بها. هذا مكمل غذائي وليس دواءً. لا يمكن استخدامه كبديل عن التغذية الكاملة والمتوازنة. يُنصح باستشارة الطبيب قبل الاستخدام أثناء الحمل والرضاعة وعند وجود أمراض مزمنة. يُخزن في مكان جاف وبارد بعيدًا عن متناول الأطفال.',
+    },
   },
   {
     id: 'prod-2',
@@ -168,10 +174,10 @@ export const products: Product[] = [
     price: 2400,
     image: '/images/omg.webp',
     descriptions: {
-      ru: 'Высокочистые капсулы рыбьего жира Омега-3 для здоровья сердца и мозга. Качественный препарат для поддержания вашего здоровья. Натуральный состав и высокая эффективность.',
-      tr: 'Kalp ve beyin sağlığı için yüksek saflıkta balık yağı kapsülleri. Sağlığınızı destekleyen kaliteli bir ürün. Doğal içerik ve yüksek etkililik.',
-      en: 'High-purity fish oil Omega-3 capsules for heart and brain health. A quality product to support your health. Natural composition and high effectiveness.',
-      ar: 'كبسولات زيت السمك أوميغا 3 فائقة النقاء لصحة القلب والدماغ. منتج عالي الجودة لدعم صحتك. تركيبة طبيعية وفعالية عالية.',
+      ru: 'Высококачественный источник омега-3 жирных кислот (EPA — 600 мг, DHA — 400 мг), полученных из норвежской рыбы. Способствует поддержанию здоровья сердца, мозга и зрения, укреплению иммунной системы, улучшению памяти и концентрации, а также помогает поддерживать общий тонус и хорошее самочувствие.',
+      tr: 'İki kapsülde 1000 mg Omega-3 (600 mg EPA, 400 mg DHA) içeren yüksek saflıkta balık yağı. Kalp, beyin ve göz sağlığını destekler, trigliserit seviyesinin normal kalmasına yardımcı olur.',
+      en: 'High-purity fish oil providing 1000 mg of Omega-3 per two capsules (600 mg EPA, 400 mg DHA). Supports heart, brain and eye health and helps maintain normal triglyceride levels.',
+      ar: 'زيت سمك فائق النقاء يوفر 1000 ملغ من أوميغا 3 في كبسولتين (600 ملغ EPA، 400 ملغ DHA). يدعم صحة القلب والدماغ والعينين ويساعد في الحفاظ على مستويات طبيعية من الدهون الثلاثية.',
     },
     specs: {
       ru: [
@@ -226,10 +232,10 @@ export const products: Product[] = [
     price: 1500,
     image: '/images/acv.webp',
     descriptions: {
-      ru: 'Жевательный мармелад на основе яблочного уксуса для поддержки обмена веществ, детоксикации и здорового пищеварения.',
-      tr: 'Metabolizma desteği, detoks ve sağlıklı sindirim için elma sirkesi bazlı çiğneme jölesi.',
-      en: 'Apple cider vinegar-based chewing gummies to support metabolism, detox and healthy digestion.',
-      ar: 'أقراص قابلة للمضغ على أساس خل التفاح لدعم الأيض وإزالة السموم والهضم الصحي.',
+      ru: 'Daruzen ACV Gummy (60 жевательных пастилок) — комплекс с яблочным уксусом, фолиевой кислотой, витамином B12 и экстрактом граната для детоксикации и контроля веса. Способствует улучшению пищеварения, обмена веществ, повышению энергии и общему оздоровлению организма.',
+      tr: 'Elma sirkesi, pancar, nar ekstresi ve B9-B12 vitaminleri içeren çiğneme jölesi. Metabolizmayı, sindirimi ve vücudun doğal detoks süreçlerini destekler.',
+      en: 'Chewing gummies with apple cider vinegar, beetroot, pomegranate extract and vitamins B9 and B12. Support metabolism, digestion and natural detoxification of the body.',
+      ar: 'أقراص قابلة للمضغ تحتوي على خل التفاح والشمندر ومستخلص الرمان وفيتاميني B9 وB12. تدعم الأيض والهضم وعمليات إزالة السموم الطبيعية من الجسم.',
     },
     specs: {
       ru: [
@@ -265,6 +271,12 @@ export const products: Product[] = [
         '| **سيانوكوبالامين (فيتامين B12)** | 10 مكغ | 100% |',
       ],
     },
+    notes: {
+      ru: 'Рекомендуется для взрослых и детей с 11 лет.\n\nСпособ применения: принимать по 2 жевательные пастилки (gummies) 1 раз в день.\n\nВажно: не превышайте рекомендуемую суточную дозу. Биологически активная добавка к пище. Не является лекарственным средством. Не может использоваться в качестве замены полноценного и сбалансированного питания. При беременности, в период грудного вскармливания, а также при наличии хронических заболеваний перед применением рекомендуется проконсультироваться с врачом. Хранить в сухом, прохладном месте, недоступном для детей.',
+      tr: '11 yaş ve üzeri yetişkinler ve çocuklar için önerilir.\n\nKullanım şekli: Günde 1 kez 2 çiğneme pastili (gummies) alın.\n\nÖnemli: Önerilen günlük dozu aşmayın. Gıda takviyesidir. İlaç değildir. Tam ve dengeli bir beslenmenin yerine kullanılamaz. Hamilelikte, emzirme döneminde ve kronik hastalıklarda kullanmadan önce doktorunuza danışmanız önerilir. Serin ve kuru yerde, çocukların erişemeyeceği yerlerde saklayınız.',
+      en: 'Recommended for adults and children aged 11 and over.\n\nDirections for use: Take 2 chewable pastilles (gummies) once a day.\n\nImportant: Do not exceed the recommended daily dose. This is a food supplement. It is not a medicinal product and cannot be used as a substitute for a complete and balanced diet. Consult your doctor before use if you are pregnant, breastfeeding, or have chronic diseases. Store in a dry, cool place out of reach of children.',
+      ar: 'يُنصح به للبالغين والأطفال من سن 11 عامًا فما فوق.\n\nطريقة الاستخدام: تناول حبتين للمضغ (gummies) مرة واحدة يوميًا.\n\nهام: لا تتجاوز الجرعة اليومية الموصى بها. هذا مكمل غذائي وليس دواءً. لا يمكن استخدامه كبديل عن التغذية الكاملة والمتوازنة. يُنصح باستشارة الطبيب قبل الاستخدام أثناء الحمل والرضاعة وعند وجود أمراض مزمنة. يُخزن في مكان جاف وبارد بعيدًا عن متناول الأطفال.',
+    },
   },
   {
     id: 'prod-4',
@@ -278,10 +290,10 @@ export const products: Product[] = [
     price: 1950,
     image: '/images/magnez.webp',
     descriptions: {
-      ru: 'Тройная смесь магния для расслабления мышц и улучшения сна. Качественный препарат для поддержания вашего здоровья. Натуральный состав и высокая эффективность.',
-      tr: 'Kas gevşemesi ve uyku kalitesi için üçlü magnezyum karışımı. Sağlığınızı destekleyen kaliteli bir ürün. Doğal içerik ve yüksek etkililik.',
-      en: 'Triple magnesium blend for muscle relaxation and better sleep. A quality product to support your health. Natural composition and high effectiveness.',
-      ar: 'مزيج ثلاثي المغنيسيوم لاسترخاء العضلات وتحسين النوم. منتج عالي الجودة لدعم صحتك. تركيبة طبيعية وفعالية عالية.',
+      ru: 'Магний Complex 4 + Витамин B6 — сочетает четыре высокоусвояемые формы магния для поддержки нервной системы, мышц и сердца. Способствует снижению усталости, улучшению качества сна, уменьшению мышечных спазмов и поддержанию эмоционального баланса.',
+      tr: 'Dört kolay emilen magnezyum formu (asetiltaurat, bisglisinat, malat ve sitrat) ve B6 vitamini. Kas ve sinir sisteminin normal işleyişini destekler, rahatlamaya yardımcı olur ve uyku kalitesini artırır.',
+      en: 'Four highly absorbable forms of magnesium (acetyltaurate, bisglycinate, malate and citrate) with vitamin B6. Supports normal muscle and nervous system function, promotes relaxation and improves sleep quality.',
+      ar: 'أربع صور سريعة الامتصاص من المغنيسيوم (أسيتيل تورات، بيسغليسينات، مالات وسيترات) مع فيتامين B6. يدعم الوظيفة الطبيعية للعضلات والجهاز العصبي، ويساعد على الاسترخاء ويحسّن جودة النوم.',
     },
     specs: {
       ru: [
@@ -348,10 +360,10 @@ export const products: Product[] = [
     price: 2200,
     image: '/images/dnl__.webp',
     descriptions: {
-      ru: 'Натуральный комплекс на основе боярышника, сельдерея, кошачьего когтя и базилика для поддержки нервной системы, эмоционального равновесия и общего самочувствия.',
-      tr: 'Alıç, kereviz, kedi pençesi ve fesleğen bazlı, sinir sistemi, duygusal denge ve genel sağlık desteği için doğal bir kompleks.',
-      en: 'A natural complex based on hawthorn, celery, cat\'s claw and basil to support the nervous system, emotional balance and overall well-being.',
-      ar: 'مجمّع طبيعي يعتمد على الزعرور والكرفس ومخلب القط والريحان لدعم الجهاز العصبي والتوازن العاطفي والعافية العامة.',
+      ru: 'Комплекс растительных экстрактов (включая лаванду, базилик, боярышник и др.) помогает организму справляться с повседневным стрессом и нервным напряжением. Способствует расслаблению, улучшению эмоционального состояния и поддержанию общего тонуса нервной системы.',
+      tr: 'Alıç, kereviz, kedi pençesi, fesleğen, lavanta, hibiskus ve diğerleri olmak üzere 11 bitkisel bileşenden oluşan kompleks. Sinir gerginliğini azaltmaya yardımcı olur, duygusal dengeyi ve sakin uykuyu destekler.',
+      en: 'A phyto-complex of 11 plant ingredients including hawthorn, celery, cat\'s claw, basil, lavender and hibiscus. Helps reduce nervous tension, supports emotional balance and restful sleep.',
+      ar: 'مركب نباتي من 11 مكونًا نباتيًا منها الزعرور والكرفس ومخلب القط والريحان والخزامى والكركديه. يساعد على تخفيف التوتر العصبي ويدعم التوازن العاطفي والنوم الهادئ.',
     },
     specs: {
       ru: [
@@ -434,10 +446,10 @@ export const products: Product[] = [
     price: 1100,
     image: '/images/zincpng.webp',
     descriptions: {
-      ru: 'Цинк, селен и медь для ежедневной поддержки организма.',
-      tr: 'Vücudun günlük desteği için çinko, selenyum ve bakır.',
-      en: 'Zinc, selenium and copper for daily body support.',
-      ar: 'الزنك والسيلينيوم والنحاس لدعم الجسم يوميًا.',
+      ru: 'Цинк + Медь + Селен — комплекс для поддержки иммунной системы, антиоксидантной защиты и общего здоровья организма. Способствует поддержанию здоровья кожи, волос и ногтей, а также нормальной работе щитовидной железы и репродуктивной функции.',
+      tr: 'Çinko, bakır ve selenyum kompleksi. Çinko bağışıklığı, cilt, saç ve tırnak sağlığını destekler; selenyum ve bakır hücreleri oksidatif strese karşı korur.',
+      en: 'A complex of zinc, copper and selenium. Zinc supports immunity and the health of skin, hair and nails, while selenium and copper protect cells from oxidative stress.',
+      ar: 'مركب من الزنك والنحاس والسيلينيوم. يدعم الزنك المناعة وصحة الجلد والشعر والأظافر، بينما يحمي السيلينيوم والنحاس الخلايا من الإجهاد التأكسدي.',
     },
     specs: {
       ru: ['Цинк | 15 мг', 'Медь | 2000 мкг', 'Селен | 55 мкг'],
@@ -464,10 +476,10 @@ export const products: Product[] = [
     price: 2100,
     image: '/images/enginar__.webp',
     descriptions: {
-      ru: 'Натуральные жевательные конфеты с экстрактом бузины, витамином С и цинком. Качественный препарат для поддержания вашего здоровья. Натуральный состав и высокая эффективность.',
-      tr: 'Kuş üzümü ekstresi, C vitamini ve çinko içeren doğal çiğneme şekerleri. Sağlığınızı destekleyen kaliteli bir ürün. Doğal içerik ve yüksek etkililik.',
-      en: 'Natural chewing candies with elderberry extract, vitamin C and zinc. A quality product to support your health. Natural composition and high effectiveness.',
-      ar: 'حلوى طبيعية قابلة للمضغ بمستخلص البلسان وفيتامين C والزنك. منتج عالي الجودة لدعم صحتك. تركيبة طبيعية وفعالية عالية.',
+      ru: 'Экстракты артишока, расторопши и одуванчика — поддерживают здоровье печени, способствуют естественному очищению организма и нормальному желчеотделению. Помогают улучшить пищеварение, обмен веществ и защитить клетки печени от окислительного стресса.',
+      tr: 'Enginar, devedikeni ve karahindiba ekstrelerinden oluşan doğal kompleks. Karaciğer fonksiyonunu, safra atılımını ve sindirimi destekler, vücudun yumuşak detoksuna katkı sağlar.',
+      en: 'A natural complex of artichoke, milk thistle and dandelion extracts. Supports liver function, bile flow and digestion, and contributes to gentle detoxification of the body.',
+      ar: 'مركب طبيعي من مستخلصات الخرشوف وشوك الحليب والهندباء. يدعم وظائف الكبد وتدفق الصفراء والهضم، ويساهم في إزالة السموم بلطف.',
     },
     specs: {
       ru: [
@@ -518,10 +530,10 @@ export const products: Product[] = [
     price: 3500,
     image: '/images/nadh_gummy.webp',
     descriptions: {
-      ru: 'Гидролизованные пептиды коллагена для эластичности кожи и здоровья суставов. Качественный препарат для поддержания вашего здоровья. Натуральный состав и высокая эффективность.',
-      tr: 'Cilt esnekliği ve eklem sağlığı için hidrolize kolajen peptitleri. Sağlığınızı destekleyen kaliteli bir ürün. Doğal içerik ve yüksek etkililik.',
-      en: 'Hydrolyzed collagen peptides for skin elasticity and joint health. A quality product to support your health. Natural composition and high effectiveness.',
-      ar: 'ببتيدات الكولاجين المتحللة مائياً لمرونة البشرة وصحة المفاصل. منتج عالي الجودة لدعم صحتك. تركيبة طبيعية وفعالية عالية.',
+      ru: 'Daruzen NADH Gummy (60 жевательных пастилок) — мощный антивозрастной комплекс в форме жевательных мармеладок с ежевичным вкусом. Содержит NADH, коэнзим Q10, глутатион и ресвератрол для повышения энергии, улучшения работы мозга и поддержки клеточного здоровья.',
+      tr: 'Glutatyon, resveratrol, koenzim Q10 ve NADH ile B6-B12 vitaminlerinden oluşan güçlü antioksidan kompleks. Hücreleri serbest radikallere karşı korur, enerjiyi ve gençliği destekler.',
+      en: 'A powerful antioxidant complex of glutathione, resveratrol, coenzyme Q10 and NADH with vitamins B6 and B12. Protects cells from free radicals, supports energy and youthful vitality.',
+      ar: 'مركب مضاد للأكسدة قوي من الجلوتاثيون والريسفيراترول والإنزيم المساعد Q10 وNADH مع فيتاميني B6 وB12. يحمي الخلايا من الجذور الحرة ويدعم الطاقة والحيوية.',
     },
     specs: {
       ru: [
@@ -584,10 +596,10 @@ export const products: Product[] = [
     price: 2800,
     image: '/images/gimne.webp',
     descriptions: {
-      ru: 'Травяной экстракт с хромом для поддержания уровня сахара в крови и метаболизма. Качественный препарат для поддержания вашего здоровья. Натуральный состав и высокая эффективность.',
-      tr: 'Kan şekeri seviyesi ve metabolizma desteği için krom içeren bitkisel ekstre. Sağlığınızı destekleyen kaliteli bir ürün. Doğal içerik ve yüksek etkililik.',
-      en: 'Herbal extract with chromium to support blood sugar levels and metabolism. A quality product to support your health. Natural composition and high effectiveness.',
-      ar: 'مستخلص عشبي بالكروم لدعم مستويات سكر الدم والأيض. منتج عالي الجودة لدعم صحتك. تركيبة طبيعية وفعالية عالية.',
+      ru: 'Комплекс экстракта джимнемы (500 мг) и хрома разработан для снижения тяги к сладкому и контроля уровня сахара в крови. Способствует нормализации обмена веществ, снижению аппетита и эффективному контролю веса при похудении.',
+      tr: 'Krom içeren gymnema ekstresi. Kan şekerinin normal seviyede kalmasına yardımcı olur, karbonhidrat metabolizmasına katkı sağlar ve tatlı isteğini azaltır.',
+      en: 'Gymnema extract with chromium. Helps maintain normal blood sugar levels, supports carbohydrate metabolism and reduces sugar cravings.',
+      ar: 'مستخلص جيمنيما مع الكروم. يساعد في الحفاظ على مستويات طبيعية من سكر الدم، ويدعم أيض الكربوهيدرات ويقلل الرغبة في تناول السكريات.',
     },
     specs: {
       ru: [
@@ -634,10 +646,10 @@ export const products: Product[] = [
     price: 2300,
     image: '/images/ginko_ginseng.webp',
     descriptions: {
-      ru: 'Натуральный фитокомплекс на основе гинкго билоба и женьшеня для поддержки мозговой активности, улучшения памяти и концентрации.',
-      tr: 'Beyin aktivitesi, hafıza ve konsantrasyon desteği için ginkgo biloba ve ginseng bazlı doğal bitkisel kompleks.',
-      en: 'Natural phyto-complex based on ginkgo biloba and ginseng to support brain activity, improve memory and concentration.',
-      ar: 'مجمّع نباتي طبيعي على أساس الجنكو بيلوبا والجنسنغ لدعم النشاط الذهني وتحسين الذاكرة والتركيز.',
+      ru: 'Гинкго билоба, женьшень и цитиколин — комплекс для поддержки памяти, концентрации внимания и когнитивных функций. Способствует улучшению мозгового кровообращения, повышению умственной работоспособности, энергии и снижению умственной усталости.',
+      tr: 'Ginkgo biloba, Kore ginsengi ve sitikolin içeren sıvı kompleks. Hafızayı, konsantrasyonu ve beyin dolaşımını geliştirir, zihinsel performansı destekler.',
+      en: 'A liquid complex of ginkgo biloba, Korean ginseng and citicoline. Improves memory, concentration and cerebral circulation, and supports mental performance.',
+      ar: 'مركب سائل من الجنكو بيلوبا والجنسنغ الكوري والسيتيكولين. يحسّن الذاكرة والتركيز والدورة الدموية الدماغية ويدعم الأداء الذهني.',
     },
     specs: {
       ru: ['# На 5 мл', 'Экстракт гинкго билоба | 375 мг', 'Экстракт корейского женьшеня | 20 мг', 'Цитиколин | 15 мг', '# На 10 мл', 'Экстракт гинкго билоба | 750 мг', 'Экстракт корейского женьшеня | 40 мг', 'Цитиколин | 30 мг'],
@@ -664,10 +676,10 @@ export const products: Product[] = [
     price: 1650,
     image: '/images/optimacomplex.webp',
     descriptions: {
-      ru: 'Полный комплекс витаминов группы B для энергетического обмена и поддержки нервной системы. Качественный препарат для поддержания вашего здоровья. Натуральный состав и высокая эффективность.',
-      tr: 'Enerji metabolizması ve sinir sistemi desteği için tam B vitamini kompleksi. Sağlığınızı destekleyen kaliteli bir ürün. Doğal içerik ve yüksek etkililik.',
-      en: 'Complete B-group vitamin complex for energy metabolism and nervous system support. A quality product to support your health. Natural composition and high effectiveness.',
-      ar: 'مجمّع فيتامينات B الكامل لدعم الأيض والجهاز العصبي. منتج عالي الجودة لدعم صحتك. تركيبة طبيعية وفعالية عالية.',
+      ru: 'Сбалансированный комплекс с лютеином, зеаксантином, омега-3, антиоксидантами и витаминами создан специально для поддержки остроты зрения и защиты сетчатки. Способствует снижению усталости глаз при нагрузках и сохранению здоровья зрительной системы.',
+      tr: 'Balık yağı Omega-3, kurkumin, koenzim Q10, C vitamini, çinko, lutein, astaksantin ve diğer aktif bileşenleri içeren çok bileşenli formül. Kalp, görme, eklem ve bağışıklık için kapsamlı destek.',
+      en: 'A multi-ingredient formula with fish oil Omega-3, curcumin, coenzyme Q10, vitamin C, zinc, lutein, astaxanthin and other active compounds. Comprehensive support for heart, vision, joints and immunity.',
+      ar: 'تركيبة متعددة المكونات تحتوي على زيت السمك وأوميغا 3 والكركمين والإنزيم المساعد Q10 وفيتامين C والزنك واللوتين والأستازانتين ومركبات نشطة أخرى. دعم شامل للقلب والرؤية والمفاصل والمناعة.',
     },
     specs: {
       ru: [
@@ -743,6 +755,12 @@ export const products: Product[] = [
         '| فيتامين D3 | 5 مكغ |',
       ],
     },
+    notes: {
+      ru: 'Группа пользователей и суточная дозировка: Взрослым в возрасте 11 лет и старше рекомендуется принимать по 1 мягкой капсуле в день.\n\nВнимание: это пищевая добавка. Не превышайте рекомендуемую суточную дозу.\n\nЭТО НЕ ЛЕКАРСТВЕННОЕ СРЕДСТВО. Оно не используется для лечения заболеваний. Проконсультируйтесь с врачом, если вы беременны, кормите грудью, имеете какое-либо заболевание или принимаете лекарства.',
+      tr: 'Kullanıcı grubu ve günlük doz: 11 yaş ve üzeri yetişkinlerin günde 1 yumuşak kapsül alması önerilir.\n\nDikkat: Bu bir besin takviyesidir. Önerilen günlük dozu aşmayın.\n\nBU BİR İLAÇ DEĞİLDİR. Hastalıkların tedavisi için kullanılmaz. Hamileyseniz, emziriyorsanız, herhangi bir hastalığınız varsa veya ilaç kullanıyorsanız doktorunuza danışınız.',
+      en: 'User group and daily dosage: For adults aged 11 and over, take 1 soft capsule per day.\n\nCaution: This is a dietary supplement. Do not exceed the recommended daily dose.\n\nTHIS IS NOT A MEDICINAL PRODUCT. It is not used to treat diseases. Consult your doctor if you are pregnant, breastfeeding, have any disease, or are taking medication.',
+      ar: 'الفئة المستهدفة والجرعة اليومية: للبالغين في سن 11 عامًا فما فوق، يُنصح بتناول كبسولة لينة واحدة يوميًا.\n\nتنبيه: هذا مكمل غذائي. لا تتجاوز الجرعة اليومية الموصى بها.\n\nهذا ليس منتجًا طبيًا! لا يُستخدم لعلاج الأمراض. استشر طبيبك إذا كنتِ حاملاً أو مرضعًا أو لديك أي مرض أو تتناول أدوية.',
+    },
   },
   {
     id: 'prod-12',
@@ -756,10 +774,10 @@ export const products: Product[] = [
     price: 2900,
     image: '/images/multigummy.webp',
     descriptions: {
-      ru: 'Премиальная мультивитаминная формула для активного образа жизни и иммунитета. Качественный препарат для поддержания вашего здоровья. Натуральный состав и высокая эффективность.',
-      tr: 'Aktif yaşam ve bağışıklık için premium multivitamin formülü. Sağlığınızı destekleyen kaliteli bir ürün. Doğal içerik ve yüksek etkililik.',
-      en: 'Premium multivitamin formula for an active lifestyle and immunity. A quality product to support your health. Natural composition and high effectiveness.',
-      ar: 'تركيبة فيتامينات متعددة متميزة لنمط حياة نشط والمناعة. منتج عالي الجودة لدعم صحتك. تركيبة طبيعية وفعالية عالية.',
+      ru: 'Daruzen MultiGummy (60 жевательных пастилок) — сбалансированный витаминный комплекс в форме жевательных мармеладок (со вкусом микса фруктов) для ежедневной поддержки организма. Содержит основные витамины C, E, B12 и A для укрепления иммунитета, повышения жизненного тонуса и общего здоровья взрослых.',
+      tr: 'C, E, A ve B12 vitaminleri içeren çoklu vitamin çiğneme jölesi. Bağışıklığı, enerjiyi ve cilt sağlığını gün boyu destekler. Vitamin ihtiyacını karşılamanın lezzetli yolu.',
+      en: 'Multivitamin chewing gummies with vitamins C, E, A and B12. Support immunity, energy and skin health throughout the day. A tasty way to cover your daily vitamin needs.',
+      ar: 'أقراص فيتامينات متعددة قابلة للمضغ تحتوي على فيتامينات C وE وA وB12. تدعم المناعة والطاقة وصحة الجلد طوال اليوم. طريقة لذيذة لتغطية احتياجك اليومي من الفيتامينات.',
     },
     specs: {
       ru: [
@@ -795,6 +813,12 @@ export const products: Product[] = [
         '| فيتامين A | 0.12 ملغ | 15% |',
       ],
     },
+    notes: {
+      ru: 'Целевая аудитория: подходит для взрослых и детей с 11 лет.\n\nСпособ применения и рекомендуемая суточная доза: принимать по 2 жевательные пастилки (гумми) 1 раз в день, желательно во время или после еды.\n\nПредупреждение: не превышайте рекомендуемую суточную дозу. Не использовать в качестве замены полноценного и сбалансированного питания. При беременности, в период грудного вскармливания, а также при наличии хронических заболеваний или приёме лекарственных препаратов рекомендуется проконсультироваться с врачом.\n\nУсловия хранения: хранить в сухом, прохладном месте при температуре до 25 °C, вдали от прямых солнечных лучей и в недоступном для детей месте.\n\nНЕ ЯВЛЯЕТСЯ ЛЕКАРСТВЕННЫМ СРЕДСТВОМ.',
+      tr: 'Hedef kitle: 11 yaş ve üzeri yetişkinler ve çocuklar için uygundur.\n\nKullanım şekli ve önerilen günlük doz: Günde 1 kez 2 çiğneme pastili (gummies) alın, tercihen yemek sırasında veya sonrasında.\n\nUyarı: Önerilen günlük dozu aşmayın. Tam ve dengeli bir beslenmenin yerine kullanmayın. Hamilelikte, emzirme döneminde, kronik hastalıklarda veya ilaç kullanımında doktorunuza danışmanız önerilir.\n\nSaklama koşulları: 25 santigrat derecenin altındaki kuru ve serin bir yerde, doğrudan güneş ışığından uzakta ve çocukların erişemeyeceği bir yerde saklayınız.\n\nBU BİR İLAÇ DEĞİLDİR.',
+      en: 'Target audience: suitable for adults and children aged 11 and over.\n\nDirections for use and recommended daily dose: Take 2 chewable pastilles (gummies) once a day, preferably during or after meals.\n\nWarning: Do not exceed the recommended daily dose. Do not use as a substitute for a complete and balanced diet. Consult your doctor if you are pregnant, breastfeeding, have chronic diseases, or are taking medication.\n\nStorage conditions: Store in a dry, cool place at up to 25 °C, away from direct sunlight and out of reach of children.\n\nTHIS IS NOT A MEDICINAL PRODUCT.',
+      ar: 'الفئة المستهدفة: مناسب للبالغين والأطفال من سن 11 عامًا فما فوق.\n\nطريقة الاستخدام والجرعة اليومية الموصى بها: تناول حبتين للمضغ (gummies) مرة واحدة يوميًا، ويفضل أثناء أو بعد الوجبات.\n\nتحذير: لا تتجاوز الجرعة اليومية الموصى بها. لا تستخدم كبديل عن التغذية الكاملة والمتوازنة. يُنصح باستشارة الطبيب أثناء الحمل والرضاعة وعند وجود أمراض مزمنة أو تناول أدوية.\n\nظروف التخزين: يُخزن في مكان جاف وبارد عند درجة حرارة تصل إلى 25 درجة مئوية، بعيدًا عن أشعة الشمس المباشرة وبعيدًا عن متناول الأطفال.\n\nهذا ليس منتجًا طبيًا!',
+    },
   },
   {
     id: 'prod-1785669452074',
@@ -808,10 +832,10 @@ export const products: Product[] = [
     price: 1400,
     image: 'https://fstihxljqljhfyubptsk.supabase.co/storage/v1/object/public/product_image/prod-1785669452074/1785669463531.webp',
     descriptions: {
-      ru: 'Hayıt — это витекс священный (Vitex agnus-castus, также известен как «авраамово дерево»).',
-      tr: 'Hayıt, İbrahim\'in ağacı olarak da bilinen Vitex agnus-castus\'tur.',
-      en: 'Hayıt is Vitex agnus-castus, also known as Abraham\'s tree.',
-      ar: 'الحياة هي Vitex agnus-castus، والمعروفة أيضًا باسم شجرة إبراهيم.',
+      ru: 'Комплекс с экстрактами витекса и тысячелистника, коэнзимом Q10, L-аргинином, женьшенем, цинком, селеном и фолиевой кислотой — способствует поддержанию женского гормонального баланса, репродуктивного здоровья и регулярности менструального цикла. Помогает уменьшить проявления ПМС, поддерживает энергию, антиоксидантную защиту и общее самочувствие.',
+      tr: 'Hayıt özü bazlı, koenzim Q10, ginseng, çinko, folik asit ve selenyum içeren kadın kompleksi. Hormonal dengeyi ve kadın sağlığını destekler, PMS belirtilerinin hafiflemesine yardımcı olur.',
+      en: 'A women\'s complex based on chasteberry (Vitex agnus-castus) extract with coenzyme Q10, ginseng, zinc, folic acid and selenium. Supports hormonal balance and women\'s health, and helps ease PMS symptoms.',
+      ar: 'مركب نسائي يعتمد على مستخلص تشاستيبيري (Vitex agnus-castus) مع الإنزيم المساعد Q10 والجنسنغ والزنك وحمض الفوليك والسيلينيوم. يدعم التوازن الهرموني وصحة المرأة ويساعد في تخفيف أعراض متلازمة ما قبل الحيض.',
     },
     specs: {
       ru: [
@@ -882,7 +906,7 @@ export const products: Product[] = [
     price: 3350,
     image: '/images/ironbis_soft.webp',
     descriptions: {
-      ru: 'Железо бисглицинат + Витамин C — пищевая добавка, сочетающая железо в форме бисглицината и витамин C. Железо способствует нормальному образованию гемоглобина и эритроцитов, а витамин C улучшает усвоение железа и поддерживает нормальную работу иммунной системы. Подходит для ежедневного восполнения потребности в железе.',
+      ru: 'Железо бисглицинат + Витамин C — способствует восполнению дефицита железа, поддерживает нормальный уровень гемоглобина и снижает риск усталости и слабости. Витамин C улучшает усвоение железа, повышая эффективность комплекса.',
       tr: 'Demir Bisglisinat + C Vitamini, demir bisglisinat ve C vitaminini birleştiren bir besin takviyesidir. Demir, hemoglobin ve kırmızı kan hücrelerinin normal oluşumuna katkıda bulunur ve C vitamini, demirin emilimini artırır ve bağışıklık sisteminin normal işleyişini destekler. Günlük demir ihtiyacının karşılanması için uygundur.',
       en: 'Iron Bisglycinate + Vitamin C is a dietary supplement that combines iron bisglycinate and vitamin C. Iron contributes to the normal formation of hemoglobin and red blood cells, and vitamin C improves the absorption of iron and supports the normal functioning of the immune system.',
       ar: 'بيسجليسينات الحديد + فيتامين سي هو مكمل غذائي يجمع بين بيسجليسينات الحديد وفيتامين سي. يساهم الحديد في التكوين الطبيعي للهيموجلوبين وخلايا الدم الحمراء، ويحسن فيتامين سي امتصاص الحديد ويدعم الأداء الطبيعي لجهاز المناعة. مناسبة للتجديد اليومي لاحتياجات الحديد.',

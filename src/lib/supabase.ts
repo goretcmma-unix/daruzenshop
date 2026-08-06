@@ -74,7 +74,11 @@ export const fetchProducts = async (): Promise<Product[]> => {
       return dedupeProducts(products);
     }
     const dbRows = (data as ProductRow[]).map(rowToProduct);
-    const backfilled = dbRows.map(dbP => {
+    // Показываем ТОЛЬКО товары которые есть в data.ts
+    // База дополняет заметками, но не добавляет лишние товары
+    const localIds = new Set(products.map(p => p.id));
+    const filteredDb = dbRows.filter(dbP => localIds.has(dbP.id));
+    const backfilled = filteredDb.map(dbP => {
       if (dbP.notes) return dbP;
       const localP = products.find(p => p.id === dbP.id);
       return localP?.notes ? { ...dbP, notes: localP.notes } : dbP;

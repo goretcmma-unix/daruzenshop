@@ -831,7 +831,7 @@ export const products: Product[] = [
     categoryKey: 'herbs',
     price: 1400,
     image: 'https://fstihxljqljhfyubptsk.supabase.co/storage/v1/object/public/product_image/prod-1785669452074/1785669463531.webp',
-    createdAt: 1750000000,
+    createdAt: 1779000000,
     descriptions: {
       ru: 'Комплекс с экстрактами витекса и тысячелистника, коэнзимом Q10, L-аргинином, женьшенем, цинком, селеном и фолиевой кислотой — способствует поддержанию женского гормонального баланса, репродуктивного здоровья и регулярности менструального цикла. Помогает уменьшить проявления ПМС, поддерживает энергию, антиоксидантную защиту и общее самочувствие.',
       tr: 'Hayıt özü bazlı, koenzim Q10, ginseng, çinko, folik asit ve selenyum içeren kadın kompleksi. Hormonal dengeyi ve kadın sağlığını destekler, PMS belirtilerinin hafiflemesine yardımcı olur.',
@@ -906,7 +906,7 @@ export const products: Product[] = [
     categoryKey: 'supplements',
     price: 3350,
     image: '/images/ironbis_soft.webp',
-    createdAt: 1751000000,
+    createdAt: 1779500000,
     descriptions: {
       ru: 'Железо бисглицинат + Витамин C — способствует восполнению дефицита железа, поддерживает нормальный уровень гемоглобина и снижает риск усталости и слабости. Витамин C улучшает усвоение железа, повышая эффективность комплекса.',
       tr: 'Demir Bisglisinat + C Vitamini, demir bisglisinat ve C vitaminini birleştiren bir besin takviyesidir. Demir, hemoglobin ve kırmızı kan hücrelerinin normal oluşumuna katkıda bulunur ve C vitamini, demirin emilimini artırır ve bağışıklık sisteminin normal işleyişini destekler. Günlük demir ihtiyacının karşılanması için uygundur.',

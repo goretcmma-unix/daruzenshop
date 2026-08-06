@@ -412,6 +412,16 @@ a:hover {
 }
 
 /* Responsive Modal styles */
+.modal-shell {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 4001;
+  pointer-events: none;
+}
+
 .modal-layout {
   display: flex;
   flex-direction: row;
@@ -896,15 +906,16 @@ a:hover {
 }
 
 @media (max-width: 768px) {
+  .modal-shell {
+    align-items: stretch !important;
+    justify-content: stretch !important;
+  }
+
   .modal-layout {
     flex-direction: column;
     width: 100vw !important;
-    height: auto !important;
+    height: 100vh !important;
     max-height: none !important;
-    top: 0 !important;
-    bottom: 0 !important;
-    left: 50% !important;
-    transform: translateX(-50%) !important;
     border-radius: 0 !important;
     gap: 0 !important;
     padding: 0 !important;
@@ -1107,12 +1118,22 @@ a:hover {
 }
 
 /* Tab content - horizontal track with slide-through transition */
+.modal-tabs-viewport {
+  flex: 1 1 auto;
+  min-height: 0;
+  position: relative;
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(to bottom, black calc(100% - 40px), transparent 100%);
+  mask-image: linear-gradient(to bottom, black calc(100% - 40px), transparent 100%);
+}
+
 .modal-tabs-track {
   display: flex;
   flex-wrap: nowrap;
   align-items: stretch;
   width: 100%;
-  flex: 1 1 auto;
+  height: 100%;
+  flex: none;
   min-height: 0;
   transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
   will-change: transform;
@@ -1127,7 +1148,6 @@ a:hover {
   overflow-x: hidden;
   overscroll-behavior-y: contain;
   touch-action: pan-y;
-  padding-bottom: 120px;
   padding-inline-end: 4px;
   animation: none !important;
   scrollbar-width: none;
@@ -1137,6 +1157,21 @@ a:hover {
   display: none;
   width: 0;
   height: 0;
+}
+
+/* The fixed buy bar overlays the bottom of the screen on mobile, so the pane
+   needs bottom clearance there (it is a no-op on desktop where the bar is hidden). */
+@media (max-width: 768px) {
+  .modal-tabs-track .modal-tab-pane {
+    padding-bottom: 110px;
+  }
+}
+
+/* Keep the last line of content above the bottom fade zone of the viewport */
+@media (min-width: 769px) {
+  .modal-tabs-track .modal-tab-pane {
+    padding-bottom: 48px;
+  }
 }
 
 /* Hide category, title and price when Composition/Note tab is active */
@@ -1196,6 +1231,15 @@ a:hover {
   .modal-tab-buy {
     display: none !important;
   }
+
+  /* The modal has bottom padding (clamp(28px, 4vw, 52px)), which shortens the
+     scroll column and clips content well above the card's bottom rounding.
+     Counteract it so the tab content scrolls down to the card's bottom edge,
+     but keep a 24px gap (the modal's border-radius) so the cut line sits
+     inside the card and the rounded corners absorb it. */
+  .modal-tabs-viewport {
+    margin-bottom: calc(clamp(28px, 4vw, 52px) * -1 + 24px);
+  }
 }
 
 /* ==================== PRODUCT TAB ON MOBILE ==================== */
@@ -1203,6 +1247,7 @@ a:hover {
    the fixed top photo/header are replaced by the in-pane copies. */
 .modal-product-media {
   display: none;
+  position: relative;
 }
 
 .modal-product-media__img {
@@ -1229,7 +1274,7 @@ a:hover {
 .modal-tab-close {
   position: absolute;
   top: 12px;
-  left: 12px;
+  right: 12px;
   background: rgba(255, 255, 255, 0.85);
   border: none;
   border-radius: 50%;
@@ -1246,7 +1291,8 @@ a:hover {
 
 /* Bottom bar with the buy buttons in the Description tab.
    Fixed: pinned to the very bottom of the screen, full width,
-   with all corners rounded and shadow. */
+   with all corners rounded and shadow. Its height is adjusted in JS:
+   it grows upward to sit right under the description when it is short. */
 .modal-tab-buy {
   position: fixed;
   bottom: 0;
@@ -1254,6 +1300,9 @@ a:hover {
   right: 0;
   z-index: 9999;
   margin: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
   padding: 16px 20px calc(16px + env(safe-area-inset-bottom));
   background: #fff;
   border-radius: 20px 20px 0 0;
@@ -1298,6 +1347,7 @@ a:hover {
 
 .modal-note-media {
   display: none;
+  position: relative;
 }
 
 .modal-note-media__img {

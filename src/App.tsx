@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useMemo, startTransition } from 'react';
+import React, { useState, useEffect, useLayoutEffect, useRef, useMemo, startTransition } from 'react';
 import { 
   ShoppingCart, 
   Search, 
@@ -63,6 +63,7 @@ const App: React.FC = () => {
     setActiveMobileTab(next);
   };
   const modalTabsTrackRef = useRef<HTMLDivElement>(null);
+  const tabBuyRef = useRef<HTMLDivElement>(null);
   const modalTouchYRef = useRef<number | null>(null);
   const selectedProductImage = useNormalizedImage(selectedProduct?.image);
   const navClickRef = useRef(false);
@@ -84,6 +85,48 @@ const App: React.FC = () => {
       if (pane) pane.scrollTop = 0;
     }
   }, [activeMobileTab]);
+
+  useLayoutEffect(() => {
+    if (!selectedProduct || activeMobileTab !== 'product') return;
+    const pane = document.querySelector<HTMLElement>('.modal-tab-pane[data-tab="product"]');
+    const panel = tabBuyRef.current;
+    const viewport = document.querySelector<HTMLElement>('.modal-tabs-viewport');
+    if (!pane || !panel) return;
+    const desc = pane.querySelector<HTMLElement>('.desc-card__content');
+    const update = () => {
+      if (!pane || !panel) return;
+      panel.style.height = '';
+      const natural = panel.scrollHeight;
+      const descBottom = desc ? Math.round(desc.getBoundingClientRect().top + pane.scrollTop + desc.offsetHeight) : Math.round(pane.getBoundingClientRect().bottom);
+      const gap = 24;
+      const target = Math.max(natural, Math.round(window.innerHeight - descBottom - gap));
+      panel.style.height = target + 'px';
+      if (viewport) {
+        const scrollable = pane.scrollHeight > pane.clientHeight + 1;
+        viewport.style.maskImage = scrollable ? '' : 'none';
+        viewport.style.webkitMaskImage = scrollable ? '' : 'none';
+      }
+    };
+    update();
+    const onResize = () => update();
+    window.addEventListener('resize', onResize);
+    const timers = [350, 700, 1400].map((ms) => window.setTimeout(update, ms));
+    const img = pane.querySelector<HTMLImageElement>('img');
+    const onImgLoad = () => update();
+    if (img) {
+      if (!img.complete) img.addEventListener('load', onImgLoad, { once: true });
+      else onImgLoad();
+    }
+    return () => {
+      window.removeEventListener('resize', onResize);
+      timers.forEach((t) => window.clearTimeout(t));
+      if (img) img.removeEventListener('load', onImgLoad);
+      if (viewport) {
+        viewport.style.maskImage = '';
+        viewport.style.webkitMaskImage = '';
+      }
+    };
+  }, [selectedProduct, activeMobileTab]);
   //const [lastAddedItem, setLastAddedItem] = useState<string | null>(null);
 
   // Состояния для формы контактов (ИСПРАВЛЯЮТ БЕЛЫЙ ЭКРАН)
@@ -1482,30 +1525,28 @@ const App: React.FC = () => {
             <motion.div 
               initial={{ opacity: 0 }} 
               animate={{ opacity: 1 }} 
-              exit={{ opacity: 0 }}
+              exit={{ opacity: 0, transition: { duration: 0.3, ease: 'easeIn' } }}
               onClick={() => setSelectedProduct(null)}
               style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 4000 }}
             />
+            <div className="modal-shell">
             <motion.div 
-              initial={{ scale: 0.95, opacity: 0, x: '-50%', y: '-55%' }} 
-              animate={{ scale: 1, opacity: 1, x: '-50%', y: '-50%' }} 
-              exit={{ scale: 0.97, opacity: 0, x: '-50%', y: '-52%', transition: { type: 'tween', duration: 0.2, ease: 'easeIn' } }}
-              transition={{ type: 'tween', duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+              initial={{ opacity: 0 }} 
+              animate={{ opacity: 1 }} 
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
               className="modal-layout"
               data-active-tab={activeMobileTab}
               style={{ 
-                position: 'fixed', 
-                top: '50%',
-                left: '50%', 
                 width: 'clamp(320px, 94vw, 1280px)', 
                 height: '90vh',
                 maxHeight: '90vh', 
                 background: 'white', 
-                zIndex: 4001, 
                 borderRadius: '24px', 
                 overflowY: 'auto',
                 overflowX: 'hidden',
                 overscrollBehaviorY: 'contain',
+                pointerEvents: 'auto',
                 boxShadow: '0 25px 50px -12px rgba(0,0,0,0.25)'
               }}
             >
@@ -1528,7 +1569,7 @@ const App: React.FC = () => {
                     whileTap={{ scale: 0.95 }}
                     onClick={() => { setSelectedProduct(null); setModalQuantity(1); }} 
                     style={{ 
-                      position: 'absolute', top: '16px', ...(isRtl ? { right: '16px' } : { left: '16px' }),
+                      position: 'absolute', top: '16px', left: '16px',
                       background: 'rgba(255, 255, 255, 0.7)',
                       border: 'none', borderRadius: '50%', 
                       width: '36px', height: '36px',
@@ -1540,6 +1581,43 @@ const App: React.FC = () => {
                     <X size={16} color="var(--text-muted)" />
                   </motion.button>
                 </motion.div>
+                {selectedProduct.inStock === false ? (
+                  <div style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', padding: '0 24px', height: '54px', borderRadius: '14px', border: '2px solid #d5cfc6', color: '#8a8a8a', fontWeight: '600', fontSize: '15px', letterSpacing: '0.01em', background: 'transparent' }}>
+                    Нет в наличии
+                  </div>
+                ) : (
+                  <div className="modal-buy-under">
+                    <div className="modal-buy-actions">
+                      <div className="modal-buy-qty">
+                        <QtyButton label="-" onClick={() => setModalQuantity(q => Math.max(1, q - 1))}>
+                          <Minus size={18} />
+                        </QtyButton>
+                        <span className="modal-buy-qty__value">{modalQuantity}</span>
+                        <QtyButton label="+" withRotate onClick={() => setModalQuantity(q => q + 1)}>
+                          <Plus size={18} />
+                        </QtyButton>
+                      </div>
+                      <motion.button
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                        onClick={() => addToCart(selectedProduct, modalQuantity)}
+                        className="btn btn-primary"
+                        style={{ height: '54px', borderRadius: '14px', fontSize: '16px', boxShadow: '0 4px 12px rgba(93, 64, 55, 0.1)' }}
+                      >
+                        <ShoppingCart size={20} /> {t.cart.inCart}
+                      </motion.button>
+                      <motion.button
+                        whileHover={{ scale: 1.02, filter: 'brightness(1.08)' }}
+                        whileTap={{ scale: 0.98 }}
+                        onClick={() => buyNow(selectedProduct, modalQuantity)}
+                        className="modal-buy-btn"
+                        style={{ background: 'linear-gradient(135deg, #25D366 0%, #128C7E 100%)', color: 'white', border: 'none', height: '54px', borderRadius: '14px', fontWeight: '700', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', boxShadow: '0 10px 20px rgba(37, 211, 102, 0.15)' }}
+                      >
+                        {t.cart.buyNow}
+                      </motion.button>
+                    </div>
+                  </div>
+                )}
               </motion.div>
               <div className="modal-info-wrapper">
                 <span className="modal-category" style={{ color: 'var(--accent)', fontWeight: '800', fontSize: '12px', textTransform: 'uppercase', letterSpacing: '0.18em', marginBottom: '20px' }}>{selectedProduct.category}</span>
@@ -1564,6 +1642,7 @@ const App: React.FC = () => {
                 </div>
 
                 {/* Tab content track */}
+                <div className="modal-tabs-viewport">
                 <div ref={modalTabsTrackRef} className="modal-tabs-track" style={{ transform: `translateX(${(isRtl ? 1 : -1) * getAvailableTabs(selectedProduct).indexOf(activeMobileTab) * 100}%)` }}>
                   {/* Product tab */}
                   <div className={`modal-tab-pane${activeMobileTab === 'product' ? ' is-active' : ''}`} data-tab="product">
@@ -1587,7 +1666,7 @@ const App: React.FC = () => {
                     <div className={`modal-tab-pane${activeMobileTab === 'composition' ? ' is-active' : ''}`} data-tab="composition">
                       <div className="modal-note-media">
                         <NormalizedImg src={selectedProduct.image} className="modal-note-media__img" alt={selectedProduct.name} loading="lazy" decoding="async" />
-                        <motion.button whileHover={{ scale: 1.1, background: 'rgba(255, 255, 255, 0.9)', boxShadow: '0 8px 20px rgba(0,0,0,0.1)' }} whileTap={{ scale: 0.95 }} onClick={() => { setSelectedProduct(null); setModalQuantity(1); }} className="modal-tab-close" aria-label="Close" style={{ position: 'absolute', top: '16px', left: '16px', background: 'rgba(255, 255, 255, 0.7)', border: 'none', borderRadius: '50%', width: '36px', height: '36px', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 2px 8px rgba(0,0,0,0.08)', cursor: 'pointer', zIndex: 10, transition: 'all 0.2s ease' }}>
+                        <motion.button whileHover={{ scale: 1.1, background: 'rgba(255, 255, 255, 0.9)', boxShadow: '0 8px 20px rgba(0,0,0,0.1)' }} whileTap={{ scale: 0.95 }} onClick={() => { setSelectedProduct(null); setModalQuantity(1); }} className="modal-tab-close" aria-label="Close" style={{ position: 'absolute', top: '16px', right: '16px', background: 'rgba(255, 255, 255, 0.7)', border: 'none', borderRadius: '50%', width: '36px', height: '36px', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 2px 8px rgba(0,0,0,0.08)', cursor: 'pointer', zIndex: 10, transition: 'all 0.2s ease' }}>
                           <X size={16} color="var(--text-muted)" />
                         </motion.button>
                       </div>
@@ -1600,7 +1679,7 @@ const App: React.FC = () => {
                     <div className={`modal-tab-pane${activeMobileTab === 'note' ? ' is-active' : ''}`} data-tab="note">
                       <div className="modal-note-media">
                         <NormalizedImg src={selectedProduct.image} className="modal-note-media__img" alt={selectedProduct.name} loading="lazy" decoding="async" />
-                        <motion.button whileHover={{ scale: 1.1, background: 'rgba(255, 255, 255, 0.9)', boxShadow: '0 8px 20px rgba(0,0,0,0.1)' }} whileTap={{ scale: 0.95 }} onClick={() => { setSelectedProduct(null); setModalQuantity(1); }} className="modal-tab-close" aria-label="Close" style={{ position: 'absolute', top: '16px', left: '16px', background: 'rgba(255, 255, 255, 0.7)', border: 'none', borderRadius: '50%', width: '36px', height: '36px', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 2px 8px rgba(0,0,0,0.08)', cursor: 'pointer', zIndex: 10, transition: 'all 0.2s ease' }}>
+                        <motion.button whileHover={{ scale: 1.1, background: 'rgba(255, 255, 255, 0.9)', boxShadow: '0 8px 20px rgba(0,0,0,0.1)' }} whileTap={{ scale: 0.95 }} onClick={() => { setSelectedProduct(null); setModalQuantity(1); }} className="modal-tab-close" aria-label="Close" style={{ position: 'absolute', top: '16px', right: '16px', background: 'rgba(255, 255, 255, 0.7)', border: 'none', borderRadius: '50%', width: '36px', height: '36px', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 2px 8px rgba(0,0,0,0.08)', cursor: 'pointer', zIndex: 10, transition: 'all 0.2s ease' }}>
                           <X size={16} color="var(--text-muted)" />
                         </motion.button>
                       </div>
@@ -1673,8 +1752,10 @@ const App: React.FC = () => {
                     </div>
                   )}
                 </div>
+                </div>
               </div>
             </motion.div>
+            </div>
           </div>
         )}
       </AnimatePresence>
@@ -1684,6 +1765,7 @@ const App: React.FC = () => {
         {selectedProduct && activeMobileTab === 'product' && (
           <motion.div
             key="modal-tab-buy"
+            ref={tabBuyRef}
             initial={{ y: '100%' }}
             animate={{ y: 0 }}
             exit={{ y: '100%' }}

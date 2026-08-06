@@ -75,13 +75,17 @@ export const fetchProducts = async (): Promise<Product[]> => {
     }
     const dbRows = (data as ProductRow[]).map(rowToProduct);
     // Показываем ТОЛЬКО товары которые есть в data.ts
-    // База дополняет заметками, но не добавляет лишние товары
+    // Локальные данные из data.ts полностью перезаписывают данные из базы
     const localIds = new Set(products.map(p => p.id));
     const filteredDb = dbRows.filter(dbP => localIds.has(dbP.id));
     const backfilled = filteredDb.map(dbP => {
-      if (dbP.notes) return dbP;
       const localP = products.find(p => p.id === dbP.id);
-      return localP?.notes ? { ...dbP, notes: localP.notes } : dbP;
+      if (!localP) return dbP;
+      // Локальные данные имеют приоритет, но сохраняем notes из базы если есть
+      return {
+        ...localP,
+        notes: localP.notes ?? dbP.notes,
+      };
     });
     // Локальные данные из data.ts имеют приоритет над базой
     const merged = dedupeProducts([...products, ...backfilled]);

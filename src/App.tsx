@@ -325,7 +325,7 @@ const App: React.FC = () => {
       if (existing) {
         return prev.map(item => item.product.id === product.id ? { ...item, quantity: item.quantity + quantity } : item);
       }
-      return [...prev, { product, quantity }];
+      return [...prev, { product: product as any, quantity }];
     });
     setSelectedProduct(null);
   };
@@ -1620,9 +1620,33 @@ const App: React.FC = () => {
                 )}
               </motion.div>
               <div className="modal-info-wrapper">
-                <span className="modal-category" style={{ color: 'var(--accent)', fontWeight: '800', fontSize: '12px', textTransform: 'uppercase', letterSpacing: '0.18em', marginBottom: '20px' }}>{selectedProduct.category}</span>
-                <h2 className="modal-title" style={{ fontWeight: '700', marginBottom: '16px', lineHeight: '1.15', color: 'var(--primary-dark)', letterSpacing: '-0.03em' }}>{selectedProduct.name}</h2>
-                <div className="modal-price" style={{ fontWeight: '700', marginBottom: '32px', color: 'var(--primary)' }}>{formatPrice(selectedProduct.price, lang)}</div>
+                <motion.span 
+                  className="modal-category"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.3, delay: 0.1 }}
+                  style={{ color: 'var(--accent)', fontWeight: '800', fontSize: '12px', textTransform: 'uppercase', letterSpacing: '0.18em', marginBottom: '20px', display: 'inline-block' }}
+                >
+                  {selectedProduct.category}
+                </motion.span>
+                <motion.h2 
+                  className="modal-title"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.3, delay: 0.15 }}
+                  style={{ fontWeight: '700', marginBottom: '16px', lineHeight: '1.15', color: 'var(--primary-dark)', letterSpacing: '-0.03em' }}
+                >
+                  {selectedProduct.name}
+                </motion.h2>
+                <motion.div 
+                  className="modal-price"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.3, delay: 0.2 }}
+                  style={{ fontWeight: '700', marginBottom: '32px', color: 'var(--primary)' }}
+                >
+                  {formatPrice(selectedProduct.price, lang)}
+                </motion.div>
                 
                 {/* Mobile tab bar */}
                 <div className="modal-mobile-tabs">

@@ -79,7 +79,8 @@ export const fetchProducts = async (): Promise<Product[]> => {
       const localP = products.find(p => p.id === dbP.id);
       return localP?.notes ? { ...dbP, notes: localP.notes } : dbP;
     });
-    const merged = dedupeProducts([...backfilled, ...products]);
+    // Локальные данные из data.ts имеют приоритет над базой
+    const merged = dedupeProducts([...products, ...backfilled]);
     return merged.sort((a, b) => (b.createdAt ?? 0) - (a.createdAt ?? 0) || (b.id < a.id ? -1 : b.id > a.id ? 1 : 0));
   } catch {
     return dedupeProducts(products);

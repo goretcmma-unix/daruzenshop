@@ -56,7 +56,7 @@ const ui = {
       ],
       features: [
         { title: 'Чистота состава', desc: 'Все наши продукты проходят строгий лабораторный контроль и не содержат лишних примесей.' },
-        { title: 'Научный подход', desc: 'Мы сотрудничаем с сильнейшим профессором для разработки эффективных дозировок.' },
+        { title: 'Научный подход', desc: 'Мы сотрудничаем с профессором в области разработки БАДов и витаминов для создания эффективных и безопасных дозировок.' },
         { title: 'Золотой стандарт', desc: 'Прямые поставки позволяют нам гарантировать оригинальность каждой баночки.' },
       ],
       brand: {
@@ -182,7 +182,7 @@ const ui = {
       ],
       features: [
         { title: 'Saf içerik', desc: 'Tüm ürünlerimiz sıkı laboratuvar kontrolünden geçer ve gereksiz katkı madde içermez.' },
-        { title: 'Bilimsel yaklaşım', desc: 'Etkili dozajlar geliştirmek için en güçlü profesörle iş birliği yapıyoruz.' },
+        { title: 'Bilimsel yaklaşım', desc: 'Besin takviyeleri ve vitaminler alanında uzman bir profesörle iş birliği yaparak etkili ve güvenli dozajlar geliştiriyoruz.' },
         { title: 'Altın standart', desc: 'Doğrudan tedarik, her kutunun orijinalliğini garanti etmemizi sağlar.' },
       ],
       brand: {
@@ -308,7 +308,7 @@ const ui = {
       ],
       features: [
         { title: 'Purity of composition', desc: 'All our products undergo strict laboratory control and contain no unnecessary impurities.' },
-        { title: 'Scientific approach', desc: 'We collaborate with the strongest professor to develop effective dosages.' },
+        { title: 'Scientific approach', desc: 'We collaborate with a professor specializing in supplements and vitamins to develop effective and safe dosages.' },
         { title: 'Gold standard', desc: 'Direct supplies allow us to guarantee the authenticity of every jar.' },
       ],
       brand: {
@@ -434,7 +434,7 @@ const ui = {
       ],
       features: [
         { title: 'نقاء المكونات', desc: 'جميع منتجاتنا تخضع لرقابة مخبرية صارمة ولا تحتوي على شوائب غير ضرورية.' },
-        { title: 'نهج علمي', desc: 'نتعاون مع أقوى أستاذ لتطوير جرعات فعالة.' },
+        { title: 'نهج علمي', desc: 'نتعاون مع أستاذ متخصص في مجال تطوير المكملات الغذائية والفيتامينات لتطوير جرعات فعالة وآمنة.' },
         { title: 'المعيار الذهبي', desc: 'التوريد المباشر يتيح لنا ضمان أصالة كل عبوة.' },
       ],
       brand: {

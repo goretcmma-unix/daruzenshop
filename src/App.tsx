@@ -289,15 +289,10 @@ const App: React.FC = () => {
       const matchesCategory = selectedCategory === 'all' || p.categoryKey === selectedCategory;
       return matchesSearch && matchesCategory;
     });
-    // Новые товары (созданные за последние 7 дней) показываем первыми
-    const isNew = (p: LocalizedProduct): boolean => {
-      if (!p.createdAt) return false;
-      const age = Math.floor(Date.now() / 1000) - p.createdAt;
-      return age >= 0 && age <= 7 * 24 * 60 * 60;
-    };
+    // Новые товары показываем первыми
     return [...filtered].sort((a, b) => {
-      const aNew = isNew(a) ? 1 : 0;
-      const bNew = isNew(b) ? 1 : 0;
+      const aNew = isNewProduct(a) ? 1 : 0;
+      const bNew = isNewProduct(b) ? 1 : 0;
       if (aNew !== bNew) return bNew - aNew;
       // Остальные — по дате создания (новые выше), затем по имени
       const aDate = a.createdAt ?? 0;

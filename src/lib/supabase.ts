@@ -75,7 +75,7 @@ export const fetchProducts = async (): Promise<Product[]> => {
     }
     const dbRows = (data as ProductRow[]).map(rowToProduct);
     // Показываем ТОЛЬКО товары которые есть в data.ts
-    // Локальные данные из data.ts полностью перезаписывают данные из базы
+    // Локальные данные из data.ts имеют приоритет над базой
     const localIds = new Set(products.map(p => p.id));
     const filteredDb = dbRows.filter(dbP => localIds.has(dbP.id));
     const backfilled = filteredDb.map(dbP => {

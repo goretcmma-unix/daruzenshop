@@ -12,12 +12,14 @@ export interface Product {
   specs?: Record<Lang, string[]>;
   notes?: Record<Lang, string>;
   createdAt?: number;
+  isNew?: boolean;
   inStock?: boolean;
 }
 
 export const STOCK_SPECS_KEY = '_stock';
 
-export const isNewProduct = (p: Product, days = 7): boolean => {
+export const isNewProduct = (p: { isNew?: boolean; createdAt?: number }, days = 7): boolean => {
+  if (p.isNew) return true;
   if (!p.createdAt) return false;
   const age = Math.floor(Date.now() / 1000) - p.createdAt;
   return age >= 0 && age <= days * 24 * 60 * 60;
@@ -437,10 +439,10 @@ export const products: Product[] = [
   {
     id: 'prod-6',
     names: {
-      ru: 'DARUZEN Цинк Комплекс',
-      tr: 'DARUZEN Çinko Kompleks',
-      en: 'DARUZEN Zinc Complex',
-      ar: 'DARUZEN مركب الزنك',
+      ru: 'Цинк Комплекс',
+      tr: 'Çinko Kompleks',
+      en: 'Zinc Complex',
+      ar: 'مركب الزنك',
     },
     categoryKey: 'minerals',
     price: 1100,
@@ -458,7 +460,7 @@ export const products: Product[] = [
       ar: ['زنك | 15 ملغ', 'نحاس | 2000 مكغ', 'سيلينيوم | 55 مكغ'],
     },
     notes: {
-      ru: 'Рекомендуемая суточная доза: взрослым от 11 лет и старше рекомендуется принимать по 1 капсуле один раз в день, запивая большим количеством воды.\n\nУсловия хранения: хранить в прохладном, сухом месте, вдали от солнечных лучей и в недоступном для детей месте, плотно закрыв крышку.\n\nНЕ ЯВЛЯЕТСЯ ЛЕКАРСТВЕННЫМ СРЕДСТВОМ! Не используется для профилактики или лечения заболеваний. Проконсультируйтесь с врачом, если вы беременны, кормите грудью, имеете какое-либо заболевание или принимаете лекарства.',
+      ru: 'Рекомендуемая суточная доза: взрослым от 11 лет и старше рекомендуется принимать по 1 капсуле один раз в день, запивая большим количеством воды.\n\nПринимайте через один час после завтрака.\n\nУсловия хранения: хранить в прохладном, сухом месте, вдали от солнечных лучей и в недоступном для детей месте, плотно закрыв крышку.\n\nНЕ ЯВЛЯЕТСЯ ЛЕКАРСТВЕННЫМ СРЕДСТВОМ! Не используется для профилактики или лечения заболеваний. Проконсультируйтесь с врачом, если вы беременны, кормите грудью, имеете какое-либо заболевание или принимаете лекарства.',
       tr: 'Günlük önerilen doz: 11 yaş ve üzeri yetişkinlerin günde 1 kapsül, bol miktarda su ile alması önerilir.\n\nSaklama koşulları: Serin ve kuru bir yerde, güneş ışığından uzakta ve çocukların erişemeyeceği bir yerde, kapağı sıkıca kapatılmış olarak saklayınız.\n\nBU BİR İLAÇ DEĞİLDİR! Hastalıkların önlenmesi veya tedavisi için kullanılmaz. Hamileyseniz, emziriyorsanız, herhangi bir hastalığınız varsa veya ilaç kullanıyorsanız doktorunuza danışınız.',
       en: 'Recommended daily dose: Adults aged 11 and over are recommended to take 1 capsule once a day, with plenty of water.\n\nStorage conditions: Store in a cool, dry place, away from sunlight and out of reach of children, with the lid tightly closed.\n\nTHIS IS NOT A MEDICINAL PRODUCT! It is not used for the prevention or treatment of diseases. Consult your doctor if you are pregnant, breastfeeding, have any disease, or are taking medication.',
       ar: 'الجرعة اليومية الموصى بها: يُنصح البالغون الذين تبلغ أعمارهم 11 عامًا وما فوق بتناول كبسولة واحدة مرة واحدة يوميًا مع الكثير من الماء.\n\nظروف التخزين: يُخزن في مكان بارد وجاف، بعيدًا عن أشعة الشمس وبعيدًا عن متناول الأطفال، مع إغلاق الغطاء بإحكام.\n\nهذا ليس منتجًا طبيًا! لا يُستخدم للوقاية من الأمراض أو علاجها. استشر طبيبك إذا كنت حاملاً أو ترضعين أو تعاني من أي مرض أو تتناول أدوية.',
@@ -467,48 +469,48 @@ export const products: Product[] = [
   {
     id: 'prod-7',
     names: {
-      ru: 'Артишок + расторопша + одуванчик',
-      tr: 'Enginar + Devedikeni + Karahindiba',
-      en: 'Artichoke + Milk Thistle + Dandelion',
-      ar: 'خرشوف + شوك الحليب + هندباء',
+      ru: 'Enginar',
+      tr: 'Enginar',
+      en: 'Enginar',
+      ar: 'Enginar',
     },
     categoryKey: 'supplements',
     price: 2100,
     image: '/images/enginar__.webp',
     descriptions: {
-      ru: 'Экстракты артишока, расторопши и одуванчика — поддерживают здоровье печени, способствуют естественному очищению организма и нормальному желчеотделению. Помогают улучшить пищеварение, обмен веществ и защитить клетки печени от окислительного стресса.',
+      ru: 'ENGINAR — натуральный комплекс с экстрактами артишока, расторопши и одуванчика для ежедневной поддержки печени и пищеварительной системы. Способствует нормальному оттоку желчи, поддерживает естественные процессы очищения организма и помогает сохранить здоровье печени. Содержит 60 капсул и подходит для регулярного применения в рамках сбалансированного рациона.',
       tr: 'Enginar, devedikeni ve karahindiba ekstrelerinden oluşan doğal kompleks. Karaciğer fonksiyonunu, safra atılımını ve sindirimi destekler, vücudun yumuşak detoksuna katkı sağlar.',
       en: 'A natural complex of artichoke, milk thistle and dandelion extracts. Supports liver function, bile flow and digestion, and contributes to gentle detoxification of the body.',
       ar: 'مركب طبيعي من مستخلصات الخرشوف وشوك الحليب والهندباء. يدعم وظائف الكبد وتدفق الصفراء والهضم، ويساهم في إزالة السموم بلطف.',
     },
     specs: {
       ru: [
-        '| **Активный компонент** | **Состав на 2 капсулы в день** | **% от суточной нормы (BRD) на 2 капсулы** |',
-        '| --- | ---: | ---: | ---: |',
-        '| **Экстракт бузины** | 150 мг | — |',
-        '| **Витамин C** | 20 мг | **22%** |',
-        '| **Цинк** | 10 мг | **100%** |',
+        '| **Активный компонент** | **Состав на 2 капсулы** |',
+        '| --- | ---: |',
+        '| **Экстракт расторопши** | 500 мг |',
+        '| **Экстракт артишока** | 300 мг |',
+        '| **Экстракт одуванчика** | 120 мг |',
       ],
       tr: [
-        '| **Aktif bileşen** | **Günde 2 kapsül** | **% günlük ihtiyaç (BRD) 2 kapsül için** |',
-        '| --- | ---: | ---: | ---: |',
-        '| **Kuş üzümü ekstresi** | 150 mg | — |',
-        '| **C vitamini** | 20 mg | **%22** |',
-        '| **Çinko** | 10 mg | **%100** |',
+        '| **Aktif bileşen** | **2 kapsül için içerik** |',
+        '| --- | ---: |',
+        '| **Devedikeni ekstresi** | 500 mg |',
+        '| **Enginar ekstresi** | 300 mg |',
+        '| **Karahindiba ekstresi** | 120 mg |',
       ],
       en: [
-        '| **Active ingredient** | **2 capsules per day** | **% of daily value (BRD) per 2 capsules** |',
-        '| --- | ---: | ---: | ---: |',
-        '| **Elderberry extract** | 150 mg | — |',
-        '| **Vitamin C** | 20 mg | **22%** |',
-        '| **Zinc** | 10 mg | **100%** |',
+        '| **Active ingredient** | **Composition per 2 capsules** |',
+        '| --- | ---: |',
+        '| **Milk thistle extract** | 500 mg |',
+        '| **Artichoke extract** | 300 mg |',
+        '| **Dandelion extract** | 120 mg |',
       ],
       ar: [
-        '| **المكون النشط** | **كبسولتين يوميا** | **% من الاحتياج اليومي (BRD) لكبسولتين** |',
-        '| --- | ---: | ---: | ---: |',
-        '| **مستخلص البلسان** | 150 ملغ | — |',
-        '| **فيتامين C** | 20 ملغ | **%22** |',
-        '| **زنك** | 10 ملغ | **%100** |',
+        '| **المكون النشط** | **مكونات كبسولتين** |',
+        '| --- | ---: |',
+        '| **مستخلص شوك الحليب** | 500 ملغ |',
+        '| **مستخلص الخرشوف** | 300 ملغ |',
+        '| **مستخلص الهندباء** | 120 ملغ |',
       ],
     },
     notes: {
@@ -832,6 +834,7 @@ export const products: Product[] = [
     price: 1400,
     image: 'https://fstihxljqljhfyubptsk.supabase.co/storage/v1/object/public/product_image/prod-1785669452074/1785669463531.webp',
     createdAt: 1754496000,
+    isNew: true,
     descriptions: {
       ru: 'Комплекс с экстрактами витекса и тысячелистника, коэнзимом Q10, L-аргинином, женьшенем, цинком, селеном и фолиевой кислотой — способствует поддержанию женского гормонального баланса, репродуктивного здоровья и регулярности менструального цикла. Помогает уменьшить проявления ПМС, поддерживает энергию, антиоксидантную защиту и общее самочувствие.',
       tr: 'Hayıt özü bazlı, koenzim Q10, ginseng, çinko, folik asit ve selenyum içeren kadın kompleksi. Hormonal dengeyi ve kadın sağlığını destekler, PMS belirtilerinin hafiflemesine yardımcı olur.',
@@ -907,6 +910,7 @@ export const products: Product[] = [
     price: 3350,
     image: '/images/ironbis_soft.webp',
     createdAt: 1754582400,
+    isNew: true,
     descriptions: {
       ru: 'Железо бисглицинат + Витамин C — способствует восполнению дефицита железа, поддерживает нормальный уровень гемоглобина и снижает риск усталости и слабости. Витамин C улучшает усвоение железа, повышая эффективность комплекса.',
       tr: 'Demir Bisglisinat + C Vitamini, demir bisglisinat ve C vitaminini birleştiren bir besin takviyesidir. Demir, hemoglobin ve kırmızı kan hücrelerinin normal oluşumuna katkıda bulunur ve C vitamini, demirin emilimini artırır ve bağışıklık sisteminin normal işleyişini destekler. Günlük demir ihtiyacının karşılanması için uygundur.',
@@ -1019,6 +1023,7 @@ export interface LocalizedProduct {
   specs?: string[];
   note?: string;
   createdAt?: number;
+  isNew?: boolean;
   inStock?: boolean;
 }
 
@@ -1034,6 +1039,7 @@ export const localizeProducts = (lang: Lang, source: Product[] = products): Loca
     specs: p.specs ? (p.specs[lang] || p.specs.ru) : undefined,
     note: p.notes ? (p.notes[lang] || p.notes.ru) : undefined,
     createdAt: p.createdAt,
+    isNew: p.isNew,
     inStock: getInStock(p),
   }));
 

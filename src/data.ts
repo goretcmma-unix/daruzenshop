@@ -831,10 +831,10 @@ export const products: Product[] = [
   {
     id: 'prod-1785669452074',
     names: {
-      ru: 'Экстракт витекса священного с коэнзимом Q10',
-      tr: 'Koenzim Q10 içeren Hayıt Özü',
-      en: 'Chasteberry Extract with Coenzyme Q10',
-      ar: 'مستخلص تشاستيبيري مع الإنزيم المساعد Q10',
+      ru: 'Экстракт витекса священного',
+      tr: 'Hayıt Ekstresi',
+      en: 'Chasteberry Extract',
+      ar: 'مستخلص تشاستيبيري',
     },
     categoryKey: 'herbs',
     price: 1400,

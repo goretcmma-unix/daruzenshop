@@ -734,8 +734,9 @@ a:hover {
   text-align: right;
 }
 
-.comp-card:not(.admin-spec-edit-card) .comp-col {
-  margin-right: 3px;
+.comp-card:not(.admin-spec-edit-card) .comp-rows__hint .comp-col,
+.comp-card:not(.admin-spec-edit-card) .comp-rows__hint .comp-rows__hint-val:not(.comp-rows__hint-val--brd) {
+  text-align: center;
 }
 
 .comp-card:not(.admin-spec-edit-card) .comp-rows__hint .comp-rows__hint-val--brd,

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useLayoutEffect, useRef, useMemo } from 'react';
 import { ChevronDown } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { parseCompositionLine } from '../data';
@@ -45,11 +45,33 @@ const CompRows: React.FC<{ block: CompTableBlock; t: ReturnType<typeof useLang>[
   const [openCol, setOpenCol] = useState<number | null>(0);
   useEffect(() => { setOpenCol(0); }, [block]);
 
+  const rootRef = useRef<HTMLDivElement>(null);
+
+  useLayoutEffect(() => {
+    const root = rootRef.current;
+    if (!root) return;
+    const align = () => {
+      root.querySelectorAll<HTMLElement>('.comp-rows__hint').forEach(hint => {
+        const container = hint.parentElement;
+        if (!container) return;
+        const pills = [...container.querySelectorAll('.comp-card__row .comp-card__dosage')];
+        const w = pills.reduce((m, p) => Math.max(m, p.getBoundingClientRect().width), 0);
+        if (!w) return;
+        const hdr = hint.querySelector<HTMLElement>('.comp-col, .comp-rows__hint-val:not(.comp-rows__hint-val--brd)');
+        if (hdr) hdr.style.minWidth = `${w}px`;
+      });
+    };
+    align();
+    window.addEventListener('resize', align);
+    if (document.fonts?.ready) document.fonts.ready.then(align).catch(() => {});
+    return () => window.removeEventListener('resize', align);
+  }, [block, openCol]);
+
   if (valueLabels.length > 0) {
     const pctIdx = valueLabels.findIndex(h => /%/.test(h));
     const doseLabels = pctIdx !== -1 ? valueLabels.filter((_, i) => i !== pctIdx) : valueLabels;
     return (
-      <>
+      <div ref={rootRef}>
       {pctIdx !== -1 && valueLabels[pctIdx] && (
         <div className="comp-card__pct-caption">{valueLabels[pctIdx]}</div>
       )}
@@ -117,7 +139,7 @@ const CompRows: React.FC<{ block: CompTableBlock; t: ReturnType<typeof useLang>[
           ))}
         </div>
       )}
-      </>
+      </div>
     );
   }
 
@@ -131,7 +153,7 @@ const CompRows: React.FC<{ block: CompTableBlock; t: ReturnType<typeof useLang>[
   }
 
   return (
-    <>
+    <div ref={rootRef}>
       {valueCount > 0 && (
         <div className="comp-rows__hint">
           <span className="comp-rows__hint-name">{nameLabel || t.modal.substance}</span>
@@ -164,7 +186,7 @@ const CompRows: React.FC<{ block: CompTableBlock; t: ReturnType<typeof useLang>[
           ))}
         </div>
       )}
-    </>
+    </div>
   );
 };
 

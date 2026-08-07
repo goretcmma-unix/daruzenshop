@@ -16,7 +16,7 @@ const pageStyle: React.CSSProperties = {
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-  fontFamily: 'Outfit, sans-serif',
+  fontFamily: 'Outfit, Cairo, Manrope, sans-serif',
   background: '#F9F9FB',
   padding: '20px',
 };

@@ -619,7 +619,7 @@ export const products: Product[] = [
       tr: [
         '| **Aktif Bileşen** | **Miktar (1 Tablet)** | **%BRD** |',
         '| --- | ---: | ---: |',
-        '| **Gimneya Ekstresi** | 500 mg | ** |',
+        '| **Gimneya Ekstresi** | 500 mg | — |',
         '| **Krom** | 65 mcg | 162.5% |',
       ],
       en: [
@@ -863,11 +863,11 @@ export const products: Product[] = [
       tr: [
         '| **Aktif Bileşen** | **Miktar (2 Kapsül)** | **%BRD** |',
         '| --- | ---: | ---: |',
-        '| Hayıt ekstresi | 400 mg | ** |',
-        '| Civanperçemi ekstresi | 100 mg | ** |',
-        '| Koenzim Q10 | 100 mg | ** |',
-        '| L-Arjinin | 100 mg | ** |',
-        '| Kore ginsengi ekstresi | 80 mg | ** |',
+        '| Hayıt ekstresi | 400 mg | — |',
+        '| Civanperçemi ekstresi | 100 mg | — |',
+        '| Koenzim Q10 | 100 mg | — |',
+        '| L-Arjinin | 100 mg | — |',
+        '| Kore ginsengi ekstresi | 80 mg | — |',
         '| Çinko | 15 mg | 150% |',
         '| Folik asit | 600 µg | 300% |',
         '| Selenyum | 200 µg | 364% |',

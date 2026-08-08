@@ -160,7 +160,7 @@ const App: React.FC = () => {
       .subscribe();
     return () => {
       active = false;
-      if (channel) {
+      if (channel && supabase) {
         try { supabase.removeChannel(channel); } catch { /* ignore */ }
       }
     };
@@ -949,7 +949,7 @@ const App: React.FC = () => {
                 key={i}
                 Icon={Icon}
                 title={t.about.features[i].title}
-                pct={[100, 97, 100][i]}
+                pct={100}
                 desc={t.about.features[i].desc}
                 delay={i * 0.1}
               />

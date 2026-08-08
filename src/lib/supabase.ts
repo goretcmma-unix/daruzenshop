@@ -1,5 +1,5 @@
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
-import { products, dedupeProducts, type Product, type Lang } from '../data';
+import { products, dedupeProducts, STOCK_SPECS_KEY, type Product, type Lang } from '../data';
 
 const url = import.meta.env.VITE_SUPABASE_URL;
 const anonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
@@ -82,13 +82,21 @@ export const fetchProducts = async (): Promise<Product[]> => {
       const localP = products.find(p => p.id === dbP.id);
       if (!localP) return dbP;
       // Локальные данные имеют приоритет, но сохраняем notes из базы если есть
-      return {
+      const merged: Product = {
         ...localP,
         notes: localP.notes ?? dbP.notes,
       };
+      // Наличие хранится в базе (specs._stock) — переносим его в локальный товар,
+      // чтобы тумблер «В наличии» сохранялся после перезагрузки
+      const stockSpec = dbP.specs?.[STOCK_SPECS_KEY as Lang];
+      if (stockSpec) {
+        merged.specs = { ...(localP.specs ?? {}), [STOCK_SPECS_KEY as Lang]: stockSpec };
+      }
+      return merged;
     });
     // Локальные данные из data.ts имеют приоритет над базой
-    const merged = dedupeProducts([...products, ...backfilled]);
+    // (backfilled = локальный товар + примечания и наличие из базы)
+    const merged = dedupeProducts([...backfilled, ...products]);
     return merged.sort((a, b) => (b.createdAt ?? 0) - (a.createdAt ?? 0) || (b.id < a.id ? -1 : b.id > a.id ? 1 : 0));
   } catch {
     return dedupeProducts(products);
@@ -118,8 +126,18 @@ const productToRow = (p: Product) => ({
 
 export const upsertProduct = async (p: Product): Promise<void> => {
   if (!supabase) return;
-  const { error } = await supabase.from('products').upsert(productToRow(p));
-  if (error) throw error;
+  const row = productToRow(p);
+  const { data } = await supabase.from('products').select('id').eq('id', p.id).maybeSingle();
+  if (data) {
+    const { data: updated, error } = await supabase.from('products').update(row).eq('id', p.id).select('id');
+    if (error) throw error;
+    if (!updated || updated.length === 0) {
+      throw new Error('Нет прав на изменение товара — проверьте права админа в базе');
+    }
+  } else {
+    const { error } = await supabase.from('products').insert(row);
+    if (error) throw error;
+  }
 };
 
 export const uploadProductImage = async (productId: string, blob: Blob): Promise<string> => {

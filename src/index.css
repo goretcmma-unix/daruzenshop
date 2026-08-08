@@ -845,6 +845,26 @@ a:hover {
   margin-top: 4px;
 }
 
+/* Редактируемый состав в админке: поля выглядят как текст на сайте */
+.admin-spec-input {
+  background: transparent;
+  border-radius: 8px;
+  transition: background 0.15s ease, box-shadow 0.15s ease;
+}
+.admin-spec-input:hover {
+  background: #f6f3ee;
+}
+.admin-spec-input:focus {
+  background: #fdf7ec;
+  box-shadow: inset 0 0 0 1.5px #e8d5ae;
+}
+.admin-spec-input::placeholder {
+  color: #d0c6b8;
+  font-weight: 400;
+  opacity: 1;
+}
+
+
 .comp-dose {
   display: flex;
   flex-direction: column;

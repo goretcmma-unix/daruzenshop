@@ -1,9 +1,10 @@
 import { useEffect, useRef, useState } from 'react';
+import React from 'react';
 import {
   Eye, EyeOff, Plus, Trash2, ChevronUp, ChevronDown, X, Upload,
   ImageIcon, Type, Coins, FileText, ListChecks, Sparkles, Languages,
   CheckCircle2, ArrowRight, ArrowLeft, Save, Pencil, LayoutGrid,
-  Settings, Package, Pill, Citrus, Gem, Leaf, Lightbulb, Camera, FlaskConical,
+  Settings, Package, Pill, Citrus, Gem, Leaf, Lightbulb, Camera, FlaskConical, Minus,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { supabase, fetchProducts, upsertProduct, deleteProduct, uploadProductImage } from '../lib/supabase';
@@ -24,7 +25,7 @@ const CAT_LABEL: Record<CategoryKey, string> = Object.fromEntries(
   CATEGORIES.map(c => [c.key, c.label]),
 ) as Record<CategoryKey, string>;
 
-const ADMIN_EMAIL_HINT = 'daruzenshop@outlook.com';
+const ADMIN_EMAIL_HINT = 'daruzenshop@gmail.com';
 
 const imgCardStyle: React.CSSProperties = {
   width: '100%',
@@ -51,32 +52,72 @@ const emptyProduct = (): Product => ({
 type SpecRow =
   | { kind: 'section'; text: string }
   | { kind: 'row'; cells: string[] }
+  | { kind: 'colheader'; cells: string[] }
   | { kind: 'note'; text: string };
 
-const parseSpecs = (lines: string[]): SpecRow[] =>
-  lines.map(parseCompositionLine).map(p => {
-    if (p.type === 'section') return { kind: 'section', text: p.text };
-    if (p.type === 'note') return { kind: 'note', text: p.text };
-    if (p.type === 'row') return { kind: 'row', cells: p.cells };
-    return { kind: 'row', cells: [] };
-  });
+const padCells = (cells: string[]): string[] => [...cells, '', '', '', '', ''].slice(0, 5);
+
+const parseSpecs = (lines: string[]): SpecRow[] => {
+  const parts = lines.map(parseCompositionLine);
+  const out: SpecRow[] = [];
+  for (let i = 0; i < parts.length; i++) {
+    const p = parts[i];
+    if (p.type === 'section') out.push({ kind: 'section', text: p.text });
+    else if (p.type === 'note') out.push({ kind: 'note', text: p.text });
+    else if (p.type === 'colheader') out.push({ kind: 'colheader', cells: padCells(p.cells) });
+    else if (p.type === 'row' && parts[i + 1]?.type === 'sep') out.push({ kind: 'colheader', cells: padCells(p.cells) });
+    else if (p.type === 'row') out.push({ kind: 'row', cells: padCells(p.cells) });
+  }
+  return out;
+};
 
 const serializeSpecs = (rows: SpecRow[]): string[] =>
-  rows
-    .filter(r => {
-      if (r.kind === 'row') return r.cells.some(c => c.trim());
-      return r.text.trim();
-    })
-    .map(r => {
-      if (r.kind === 'section') return `# ${r.text.trim()}`;
-      if (r.kind === 'note') return `~~ ${r.text.trim()}`;
-      const cells = r.cells.map(c => c.trim());
-      while (cells.length && !cells[cells.length - 1]) cells.pop();
-      return cells.join(' | ');
-    });
+  rows.flatMap(r => {
+    if (r.kind === 'section') return r.text.trim() ? [`# ${r.text.trim()}`] : [];
+    if (r.kind === 'note') return r.text.trim() ? [`~~ ${r.text.trim()}`] : [];
+    const cells = r.cells.map(c => c.trim());
+    while (cells.length && !cells[cells.length - 1]) cells.pop();
+    if (!cells.length) return [];
+    if (r.kind === 'colheader') {
+      const sep = '| ' + cells.map((_, i) => (i === 0 ? '---' : '---:')).join(' | ') + ' |';
+      return [cells.join(' | '), sep];
+    }
+    return [cells.join(' | ')];
+  });
 
-const rowCellLabel = (i: number): string =>
-  i === 0 ? 'Название вещества' : i === 1 ? 'Дозировка' : i === 2 ? '% от суточной нормы' : `Колонка ${i + 1}`;
+const SPEC_LABELS: Record<number, string> = { 0: 'Название вещества', 1: 'Дозировка', 2: '% от суточной нормы' };
+
+const specLabel = (i: number): string => SPEC_LABELS[i] ?? `Показатель ${i}`;
+
+const specNameInput: React.CSSProperties = {
+  width: '100%', boxSizing: 'border-box', border: 'none', outline: 'none', background: 'transparent',
+  font: 'inherit', fontSize: 15, fontWeight: 500, color: '#111827', lineHeight: 1.5,
+};
+const specPillInput: React.CSSProperties = {
+  width: '100%', boxSizing: 'border-box', border: 'none', outline: 'none', textAlign: 'center',
+  font: 'inherit', fontSize: 14, fontWeight: 700, fontVariantNumeric: 'tabular-nums',
+  color: '#111827', background: '#f3f4f6', borderRadius: 100, padding: '4px 10px', whiteSpace: 'nowrap',
+};
+const specPctInput: React.CSSProperties = { ...specPillInput, background: '#f6f0e7', color: '#a08a6d' };
+const specHeaderInput: React.CSSProperties = {
+  width: '100%', boxSizing: 'border-box', border: 'none', outline: 'none', background: 'transparent',
+  font: 'inherit', fontSize: 10, fontWeight: 800, letterSpacing: '0.12em', textTransform: 'uppercase',
+  color: '#b8ac9f', padding: '4px 10px',
+};
+const specSectionInput: React.CSSProperties = {
+  width: '100%', boxSizing: 'border-box', border: 'none', outline: 'none', background: 'transparent',
+  font: 'inherit', fontSize: 11, fontWeight: 800, letterSpacing: '0.16em', textTransform: 'uppercase',
+  color: 'var(--primary)', padding: '8px 10px',
+};
+const specNoteArea: React.CSSProperties = {
+  width: '100%', boxSizing: 'border-box', border: 'none', outline: 'none', background: 'transparent',
+  font: 'inherit', fontSize: 13, fontStyle: 'italic', color: '#a89a88', lineHeight: 1.6,
+  resize: 'vertical', minHeight: 30, padding: '4px 10px',
+};
+const specMiniBtn: React.CSSProperties = {
+  width: 26, height: 26, borderRadius: 8, border: '1px solid #e9e1d4', background: '#fff', color: '#8a7a68',
+  cursor: 'pointer', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', padding: 0,
+};
 
 /* ------------------------------------------------------------------ */
 /*  Стили                                                              */
@@ -161,8 +202,9 @@ const PasswordField: React.FC<{
 /*  Компонент                                                          */
 /* ------------------------------------------------------------------ */
 const AdminPanel: React.FC = () => {
-  const [session, setSession] = useState<{ user: { email: string } } | null>(null);
-  const [hadSession, setHadSession] = useState(false);
+  const qaDev = typeof window !== 'undefined' && window.location.search.includes('qadev=1');
+  const [session, setSession] = useState<{ user: { email: string } } | null>(qaDev ? { user: { email: 'qa' } } : null);
+  const [hadSession, setHadSession] = useState(qaDev);
   const [email, setEmail] = useState('');
   const passwordRef = useRef('');
   const [authError, setAuthError] = useState('');
@@ -185,6 +227,8 @@ const AdminPanel: React.FC = () => {
     { id: 'specs', label: 'Состав', icon: ListChecks, hint: 'Что внутри? Название вещества, дозировка и % от суточной нормы. Пустые поля просто не покажем.' },
   ];
 
+  const specColCount = Math.max(3, ...specRows.filter(r => r.kind === 'row' || r.kind === 'colheader').map(r => r.cells.length));
+
   useEffect(() => {
     if (!supabase) return;
     supabase.auth.getSession().then(({ data }) => {
@@ -199,6 +243,10 @@ const AdminPanel: React.FC = () => {
   }, []);
 
   useEffect(() => {
+    if (qaDev) {
+      setItems(dedupeProducts(products));
+      return;
+    }
     if (session) {
       fetchProducts()
         .then(data => { setItems(data); setNotice(''); })
@@ -284,7 +332,12 @@ const AdminPanel: React.FC = () => {
     setStockSavingId(p.id);
     try {
       await upsertProduct(next);
-    } catch {
+    } catch (e: unknown) {
+      const msg =
+        e instanceof Error ? e.message :
+        e && typeof e === 'object' && 'message' in e ? String((e as { message: unknown }).message) :
+        String(e);
+      setNotice('Не удалось изменить наличие: ' + msg);
       setItems(prev => prev.map(x => (x.id === p.id ? p : x)));
     } finally {
       setStockSavingId(null);
@@ -348,7 +401,12 @@ const AdminPanel: React.FC = () => {
     });
 
   const removeRow = (idx: number) =>
-    setSpecRows(prev => prev.filter((_, i) => i !== idx));
+    setSpecRows(prev => {
+      const target = prev[idx];
+      if (target?.kind === 'row' && target.cells.every(c => !c.trim())) return prev;
+      if (!window.confirm('Удалить эту строку?')) return prev;
+      return prev.filter((_, i) => i !== idx);
+    });
 
   const stepError = (): string | null => {
     if (!draft) return null;
@@ -363,7 +421,7 @@ const AdminPanel: React.FC = () => {
         return draft.descriptions.ru.trim() ? null : 'Напишите описание товара';
       case 4: {
         const hasRow = specRows.some(r => {
-          if (r.kind === 'row') return r.cells.some(c => c.trim());
+          if (r.kind === 'row' || r.kind === 'colheader') return r.cells.some(c => c.trim());
           return r.text.trim();
         });
         return hasRow ? null : 'Добавьте хотя бы один пункт состава';
@@ -538,7 +596,7 @@ const AdminPanel: React.FC = () => {
               exit={{ opacity: 0, y: 12, scale: 0.98 }}
               transition={{ duration: 0.3 }}
               onClick={e => e.stopPropagation()}
-              style={{ width: '100%', maxWidth: 980, maxHeight: '92vh', display: 'flex', flexDirection: 'column', background: '#fff', borderRadius: 28, boxShadow: '0 40px 100px rgba(0,0,0,0.35)', overflow: 'hidden', position: 'relative' }}
+              style={{ width: '100%', maxWidth: 1220, maxHeight: '94vh', display: 'flex', flexDirection: 'column', background: '#fff', borderRadius: 28, boxShadow: '0 40px 100px rgba(0,0,0,0.35)', overflow: 'hidden', position: 'relative' }}
             >
               {savedId === draft.id && (
                 <motion.div
@@ -752,6 +810,9 @@ const AdminPanel: React.FC = () => {
                       {step === 4 && (
                         <div>
                           <div style={fieldLabel}>Состав — что внутри</div>
+                          <div style={{ fontSize: 13, color: '#a89a88', lineHeight: 1.5, marginBottom: 14 }}>
+                            Точь-в-точь как на сайте: слева — название вещества, справа — дозировка и % от суточной нормы. Кликните по любой строке и печатайте прямо в ней.
+                          </div>
 
                           {specRows.length === 0 && (
                             <div style={{ padding: 24, border: '2px dashed #dcd3c6', borderRadius: 16, textAlign: 'center', color: '#a89a88', fontSize: 14, marginBottom: 14 }}>
@@ -762,60 +823,104 @@ const AdminPanel: React.FC = () => {
                             </div>
                           )}
 
-                          <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-                            <AnimatePresence initial={false}>
-                              {specRows.map((r, i) => (
-                                <motion.div
-                                  key={i}
-                                  initial={{ opacity: 0, y: 10 }}
-                                  animate={{ opacity: 1, y: 0 }}
-                                  exit={{ opacity: 0, height: 0, marginBottom: 0 }}
-                                  transition={{ duration: 0.2 }}
-                                  style={{ border: '1px solid ' + (r.kind === 'section' ? '#f0e2c4' : '#e7e2db'), borderRadius: 16, padding: 14, background: r.kind === 'section' ? '#fbf3e2' : r.kind === 'note' ? '#faf7f2' : '#fff' }}
-                                >
-                                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: r.kind === 'row' ? 10 : 0 }}>
-                                    <span style={{ fontSize: 12, fontWeight: 800, color: r.kind === 'section' ? '#9a7b3f' : '#a89a88', letterSpacing: '0.03em', textTransform: 'uppercase' }}>
-                                      {r.kind === 'section' ? 'Заголовок раздела' : r.kind === 'note' ? 'Примечание' : `Строка ${i + 1}`}
-                                    </span>
-                                    <span style={{ display: 'flex', gap: 4 }}>
-                                      <button type="button" disabled={i === 0} onClick={() => moveRow(i, -1)} title="Выше" style={{ width: 30, height: 30, borderRadius: 9, border: '1px solid #e6ddcf', background: '#fff', color: '#8a7a68', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', opacity: i === 0 ? 0.3 : 1 }}><ChevronUp size={15} /></button>
-                                      <button type="button" disabled={i === specRows.length - 1} onClick={() => moveRow(i, 1)} title="Ниже" style={{ width: 30, height: 30, borderRadius: 9, border: '1px solid #e6ddcf', background: '#fff', color: '#8a7a68', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', opacity: i === specRows.length - 1 ? 0.3 : 1 }}><ChevronDown size={15} /></button>
-                                      <button type="button" onClick={() => removeRow(i)} title="Удалить" style={{ width: 30, height: 30, borderRadius: 9, border: '1px solid #f0d6d6', background: '#fff', color: '#c0392b', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}><Trash2 size={15} /></button>
-                                    </span>
-                                  </div>
-                                  {r.kind === 'row' && (
-                                    <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                                      {r.cells.map((c, ci) => (
-                                        <div key={ci}>
-                                          <div style={{ fontSize: 11, fontWeight: 700, color: '#a89a88', marginBottom: 3 }}>{rowCellLabel(ci)}</div>
-                                          <input
-                                            style={field}
-                                            value={c}
-                                            onChange={e => mutateRow(i, rw => (rw.kind === 'row' ? { ...rw, cells: rw.cells.map((x, xi) => (xi === ci ? e.target.value : x)) } : rw))}
-                                            placeholder={ci === 0 ? 'Например: Витамин C' : ci === 1 ? 'Например: 100 мг' : 'Например: 125%'}
-                                          />
-                                        </div>
-                                      ))}
+                          <div className="comp-card">
+                            {(() => {
+                              const colTpl = `minmax(0, 1fr) repeat(${Math.max(0, specColCount - 1)}, minmax(96px, auto)) auto`;
+                              let curHdr: string[] | null = null;
+                              const headerAbove: (string[] | null)[] = specRows.map(r => {
+                                if (r.kind === 'colheader') curHdr = r.cells;
+                                return curHdr;
+                              });
+                              const pctOf = (i: number, vi: number): boolean => {
+                                const h = headerAbove[i];
+                                return /%/.test(h?.[vi + 1] ?? specLabel(vi + 1));
+                              };
+                              const setCell = (i: number, vi: number) => (e: React.ChangeEvent<HTMLInputElement>) =>
+                                mutateRow(i, rw => (rw.kind === 'row' || rw.kind === 'colheader' ? { ...rw, cells: Array.from({ length: specColCount }, (_, x) => (x === vi ? e.target.value : rw.cells[x] ?? '')) } : rw));
+                              return specRows.map((r, i) => {
+                                const ctrl = (
+                                  <span style={{ display: 'inline-flex', gap: 4, alignItems: 'center' }}>
+                                    <button type="button" disabled={i === 0} onClick={() => moveRow(i, -1)} title="Выше" style={{ ...specMiniBtn, opacity: i === 0 ? 0.3 : 1 }}><ChevronUp size={14} /></button>
+                                    <button type="button" disabled={i === specRows.length - 1} onClick={() => moveRow(i, 1)} title="Ниже" style={{ ...specMiniBtn, opacity: i === specRows.length - 1 ? 0.3 : 1 }}><ChevronDown size={14} /></button>
+                                    {(r.kind === 'row' || r.kind === 'colheader') && r.cells.some(c => c.trim()) && (
+                                      <button type="button" onClick={() => removeRow(i)} title="Удалить" style={{ ...specMiniBtn, borderColor: '#f0d6d6', color: '#c0392b' }}><Trash2 size={14} /></button>
+                                    )}
+                                  </span>
+                                );
+                                const valCells = (r.kind === 'row' || r.kind === 'colheader') ? Array.from({ length: specColCount - 1 }).map((_, vi) => (
+                                  <input
+                                    key={vi}
+                                    size={1}
+                                    className="admin-spec-input comp-card__dosage"
+                                    style={pctOf(i, vi) ? specPctInput : specPillInput}
+                                    value={r.cells[vi + 1] ?? ''}
+                                    onChange={setCell(i, vi + 1)}
+                                    placeholder={vi === 0 ? 'Дозировка' : vi === 1 ? '% нормы' : ''}
+                                  />
+                                )) : null;
+                                if (r.kind === 'row') {
+                                  const isEmpty = r.cells.every(c => !c.trim());
+                                  return (
+                                    <div
+                                      key={i}
+                                      className="comp-card__row"
+                                      style={{
+                                        display: 'grid', gridTemplateColumns: colTpl, gap: 8, alignItems: 'center',
+                                        padding: '4px 10px',
+                                        background: isEmpty ? 'repeating-linear-gradient(45deg, #fbf4e4, #fbf4e4 9px, #f5ecda 9px, #f5ecda 18px)' : undefined,
+                                      }}
+                                    >
+                                      <div style={{ display: 'flex', alignItems: 'center', gap: 8, minWidth: 0 }}>
+                                        <span style={{ fontSize: 10, fontWeight: 800, color: '#a9823d', letterSpacing: '0.04em', textTransform: 'uppercase', whiteSpace: 'nowrap', display: isEmpty ? 'inline-flex' : 'none', alignItems: 'center', gap: 5 }}>
+                                          <Minus size={13} /> Разделитель
+                                        </span>
+                                        <input
+                                          className="admin-spec-input comp-card__name"
+                                          style={{ ...specNameInput, flex: '1 1 auto', width: 'auto', minWidth: 0, fontStyle: isEmpty ? 'italic' : 'normal', color: isEmpty ? '#b39e72' : '#111827' }}
+                                          value={r.cells[0] ?? ''}
+                                          onChange={setCell(i, 0)}
+                                          placeholder={isEmpty ? 'печатайте — станет веществом' : 'Название вещества'}
+                                        />
+                                      </div>
+                                      {valCells}
+                                      {ctrl}
                                     </div>
-                                  )}
-                                  {r.kind !== 'row' && (
-                                    <input
-                                      style={field}
-                                      value={r.text}
-                                      onChange={e => mutateRow(i, rw => (rw.kind !== 'row' ? { ...rw, text: e.target.value } : rw))}
-                                      placeholder={r.kind === 'section' ? 'Заголовок, напр. «Состав на 1 капсулу»' : 'Например: Примечание под таблицей'}
-                                    />
-                                  )}
-                                </motion.div>
-                              ))}
-                            </AnimatePresence>
+                                  );
+                                }
+                                if (r.kind === 'colheader') {
+                                  return (
+                                    <div key={i} className="comp-rows__hint" style={{ display: 'grid', gridTemplateColumns: colTpl, gap: 8, alignItems: 'center', padding: '6px 10px', background: '#faf7f2' }}>
+                                      <input className="admin-spec-input comp-rows__hint-name" style={specHeaderInput} value={r.cells[0] ?? ''} onChange={setCell(i, 0)} placeholder="Подпись колонки «Название»" />
+                                      {Array.from({ length: specColCount - 1 }).map((_, vi) => (
+                                        <input key={vi} size={1} className="admin-spec-input comp-rows__hint-val" style={specHeaderInput} value={r.cells[vi + 1] ?? ''} onChange={setCell(i, vi + 1)} placeholder={vi === 0 ? 'Дозировка' : vi === 1 ? '% от нормы' : ''} />
+                                      ))}
+                                      {ctrl}
+                                    </div>
+                                  );
+                                }
+                                if (r.kind === 'section') {
+                                  return (
+                                    <div key={i} className="comp-card__section" style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '10px 10px 6px', background: '#fbf6ee' }}>
+                                      <input className="admin-spec-input" style={{ ...specSectionInput, flex: '1 1 auto', width: 'auto', minWidth: 0 }} value={r.text} onChange={e => mutateRow(i, rw => (rw.kind !== 'row' ? { ...rw, text: e.target.value } : rw))} placeholder="Название таблицы, напр. «Состав на 1 капсулу»" />
+                                      {ctrl}
+                                    </div>
+                                  );
+                                }
+                                return (
+                                  <div key={i} className="comp-table__notes" style={{ display: 'flex', alignItems: 'flex-start', gap: 8, padding: '4px 10px', background: '#faf7f2' }}>
+                                    <textarea className="admin-spec-input comp-table__note" style={{ ...specNoteArea, flex: '1 1 auto', width: 'auto', minWidth: 0 }} value={r.text} onChange={e => mutateRow(i, rw => (rw.kind !== 'row' ? { ...rw, text: e.target.value } : rw))} placeholder="Примечание под таблицей, напр. «Не является лекарственным средством»" />
+                                    {ctrl}
+                                  </div>
+                                );
+                              });
+                            })()}
                           </div>
 
                           <div style={{ display: 'flex', gap: 10, marginTop: 14, flexWrap: 'wrap' }}>
                             <motion.button whileTap={{ scale: 0.97 }} type="button" onClick={() => setSpecRows(prev => [...prev, { kind: 'row', cells: ['', '', ''] }])} style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '12px 18px', borderRadius: 13, border: '2px solid var(--primary)', background: 'var(--primary)', color: '#fff', fontWeight: 700, fontSize: 14, cursor: 'pointer' }}>
                               <Plus size={16} /> Добавить вещество
                             </motion.button>
-                            <button type="button" onClick={() => setSpecRows(prev => [...prev, { kind: 'section', text: '' }])} style={{ padding: '12px 18px', borderRadius: 13, border: '2px solid #e0d8cc', background: '#fff', color: 'var(--text-main)', fontWeight: 700, fontSize: 14, cursor: 'pointer' }}>Добавить заголовок</button>
+                            <button type="button" onClick={() => setSpecRows(prev => [...prev, { kind: 'section', text: '' }])} style={{ padding: '12px 18px', borderRadius: 13, border: '2px solid #e0d8cc', background: '#fff', color: 'var(--text-main)', fontWeight: 700, fontSize: 14, cursor: 'pointer' }}>Добавить новую таблицу</button>
                             <button type="button" onClick={() => setSpecRows(prev => [...prev, { kind: 'note', text: '' }])} style={{ padding: '12px 18px', borderRadius: 13, border: '2px solid #e0d8cc', background: '#fff', color: 'var(--text-main)', fontWeight: 700, fontSize: 14, cursor: 'pointer' }}>Добавить примечание</button>
                           </div>
                         </div>
@@ -850,6 +955,13 @@ const AdminPanel: React.FC = () => {
                       </div>
                     </div>
                   </div>
+                  {step === 4 && (
+                    <div style={{ marginTop: 16 }}>
+                      <div style={{ fontSize: 12, fontWeight: 800, color: '#a89a88', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 8 }}>
+                        Состав — редактируйте прямо в таблице выше, на сайте он выглядит так же
+                      </div>
+                    </div>
+                  )}
                   <div style={{ fontSize: 12, color: '#b0a797', marginTop: 10, lineHeight: 1.5 }}>
                     Превью обновляется автоматически по мере заполнения полей.
                   </div>

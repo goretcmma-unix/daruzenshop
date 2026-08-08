@@ -15,7 +15,7 @@ interface Props {
 }
 
 const ProductModal: React.FC<Props> = (props) => {
-  const { t } = useLang();
+  const { lang, t } = useLang();
   const { selectedProduct, setSelectedProduct, modalQuantity, setModalQuantity, addToCart, buyNow } = props;
   return (
     <>
@@ -99,12 +99,14 @@ const ProductModal: React.FC<Props> = (props) => {
                              </tr>
                            </thead>
                            <tbody>
-                              {selectedProduct.specs.map((spec, i) => {
+                              {selectedProduct.specs.map((spec: string, i: number) => {
                                 const part = parseCompositionLine(spec);
                                 if (part.type !== 'row') return null;
-                                const ingredient = part.cells[0] ?? '';
-                                const dosage = part.cells[1] ?? '';
-                                if (!ingredient || !dosage) return null;
+                                const cells = part.cells;
+                                if (!cells.length) return null;
+                                const ingredient = cells[0] ?? '';
+                                const dosage = cells[1] ?? '';
+                                if (!ingredient) return null;
                                return (
                                  <tr key={i}>
                                    <td style={{ padding: '14px 18px', borderBottom: '1px solid #f3f4f6', fontSize: '14px', color: '#111827', lineHeight: '1.4', textAlign: 'left', fontWeight: '500' }}>{ingredient}</td>
@@ -121,9 +123,9 @@ const ProductModal: React.FC<Props> = (props) => {
                      <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '12px' }}>
                        <span style={{ fontWeight: '600', fontSize: '15px', color: 'var(--primary-dark)' }}>{t.modal.quantity}</span>
                        <div style={{ display: 'flex', alignItems: 'center', gap: '18px', background: '#F5F5F7', padding: '8px 18px', borderRadius: '12px' }}>
-                         <button onClick={() => setModalQuantity(q => Math.max(1, q - 1))} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '4px', display: 'flex' }}><Minus size={18} /></button>
+                         <button onClick={() => setModalQuantity(Math.max(1, modalQuantity - 1))} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '4px', display: 'flex' }}><Minus size={18} /></button>
                          <span style={{ fontWeight: '700', minWidth: '24px', textAlign: 'center', fontSize: '18px' }}>{modalQuantity}</span>
-                         <button onClick={() => setModalQuantity(q => q + 1)} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '4px', display: 'flex' }}><Plus size={18} /></button>
+                         <button onClick={() => setModalQuantity(modalQuantity + 1)} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '4px', display: 'flex' }}><Plus size={18} /></button>
                        </div>
                      </div>
 

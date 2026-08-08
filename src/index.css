@@ -620,6 +620,12 @@ a:hover {
   transition: opacity 0.2s ease, height 0.2s ease;
 }
 
+[dir="rtl"] .comp-card__row::before {
+  left: auto;
+  right: 0;
+  border-radius: 3px 0 0 3px;
+}
+
 .comp-card__row:hover::before {
   opacity: 0.6;
   height: 26px;
@@ -664,6 +670,11 @@ a:hover {
   color: #111827;
   line-height: 1.5;
   padding-left: 14px;
+}
+
+[dir="rtl"] .comp-card__name {
+  padding-left: 0;
+  padding-right: 48px;
 }
 
 .comp-card__values {
@@ -763,6 +774,10 @@ a:hover {
   padding: 2px 0 10px;
 }
 
+[dir="rtl"] .comp-rows__hint {
+  flex-direction: row;
+}
+
 .comp-rows__hint-name {
   font-family: 'system-ui', -apple-system, sans-serif;
   font-size: 10px;
@@ -770,6 +785,11 @@ a:hover {
   letter-spacing: 0.14em;
   text-transform: uppercase;
   color: #b8ac9f;
+}
+
+[dir="rtl"] .comp-rows__hint-name {
+  text-align: right;
+  margin-left: 48px;
 }
 
 .comp-rows__hint-val {

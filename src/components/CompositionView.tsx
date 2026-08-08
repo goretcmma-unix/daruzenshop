@@ -68,15 +68,19 @@ const CompRows: React.FC<{ block: CompTableBlock; t: ReturnType<typeof useLang>[
   }, [block, openCol]);
 
   if (valueLabels.length > 0) {
-    const pctIdx = valueLabels.findIndex(h => /%/.test(h));
-    const doseLabels = pctIdx !== -1 ? valueLabels.filter((_, i) => i !== pctIdx) : valueLabels;
+    const headerPctIdx = valueLabels.findIndex(h => /%/.test(h));
+    const hasPctData = headerPctIdx !== -1 && block.rows.some(r => /%/.test(r[headerPctIdx + 1] ?? ''));
+    const pctIdx = hasPctData ? headerPctIdx : -1;
+    const doseCols = valueLabels
+      .map((label, i) => ({ label, col: i + 1 }))
+      .filter(d => d.col - 1 !== headerPctIdx);
     return (
       <div ref={rootRef}>
       {pctIdx !== -1 && valueLabels[pctIdx] && (
         <div className="comp-card__pct-caption">{valueLabels[pctIdx]}</div>
       )}
       <div className="comp-dose">
-        {doseLabels.map((label, ci) => {
+        {doseCols.map(({ label, col }, ci) => {
           const open = ci === openCol;
           return (
             <div key={ci} className="comp-acc">
@@ -110,7 +114,7 @@ const CompRows: React.FC<{ block: CompTableBlock; t: ReturnType<typeof useLang>[
                         const name = cells[0];
                         if (!name) return null;
                         const sub = name.startsWith('└');
-                        const val = cells[ci + 1];
+                        const val = cells[col];
                         if (!val || val === '-') return null;
                         const pct = pctIdx !== -1 ? cells[pctIdx + 1] : null;
                         const showPct = !!pct;
@@ -119,7 +123,7 @@ const CompRows: React.FC<{ block: CompTableBlock; t: ReturnType<typeof useLang>[
                             <span className="comp-card__name">{sub ? name.replace(/^└\s*/, '') : name}</span>
                             <span className="comp-card__values">
                               <span className="comp-card__dosage">{val}</span>
-                              {showPct && <span className="comp-card__pct">{pct}</span>}
+                              {pctIdx !== -1 && <span className="comp-card__pct">{showPct ? pct : '—'}</span>}
                             </span>
                           </div>
                         );
@@ -171,9 +175,12 @@ const CompRows: React.FC<{ block: CompTableBlock; t: ReturnType<typeof useLang>[
           <div key={ri} className={'comp-card__row' + (sub ? ' is-sub' : '')}>
             <span className="comp-card__name">{sub ? name.replace(/^└\s*/, '') : name}</span>
             <span className="comp-card__values">
-              {cells.slice(1).map((v, vi) => {
-                if (!v) return null;
-                return <span key={vi} className={vi === pctCol ? 'comp-card__pct' : 'comp-card__dosage'}>{v}</span>;
+              {Array.from({ length: valueCount }).map((_, vi) => {
+                const v = cells[vi + 1];
+                const hasVal = !!v && v !== '-' && v !== '—';
+                return (
+                  <span key={vi} className={vi === pctCol ? 'comp-card__pct' : 'comp-card__dosage'}>{hasVal ? v : '—'}</span>
+                );
               })}
             </span>
           </div>

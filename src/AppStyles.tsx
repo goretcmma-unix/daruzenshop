@@ -129,7 +129,7 @@ const AppStyles = () => (
       .hero-section .hero-text-container {
         max-width: 100%;
         margin-left: 0;
-        margin-top: -110px;
+        margin-top: -150px;
       }
       
       .hero-section .hero-description {
@@ -319,19 +319,71 @@ const AppStyles = () => (
         background-size: 310% auto;
       }
     }
-
-    @media (min-width: 600px) and (max-width: 704px) {      .hero-section::before {
+    @media (min-width: 600px) and (max-width: 704px) {
+      .hero-section::before {
         background-position: right -380px bottom -120px;
         background-size: 300% auto;
       }
     }
 
-    @media (min-width: 370px) and (max-width: 416px) {
+    @media (max-width: 375px) {
+      .hero-section::before {
+        background-position: right -295px bottom -80px;
+        background-size: 260% auto;
+      }
+      .hero-section .hero-text-container {
+        margin-top: -80px;
+      }
+    }
+
+    @media (min-width: 358px) and (max-width: 362px) {
+      .hero-section::before {
+        background-size: 300% auto;
+        background-position: right -325px bottom -100px;
+      }
+    }
+
+    @media (min-width: 390px) and (max-width: 778px) {
+      .hero-section::before {
+        background-size: 350% auto;
+        background-position: right -450px bottom -120px;
+      }
+    }
+
+    @media (min-width: 428px) and (max-width: 432px) {
+      .hero-section::before {
+        background-position: right -465px bottom -120px;
+      }
+    }
+
+    @media (min-width: 438px) and (max-width: 442px) {
+      .hero-section::before {
+        background-position: right -470px bottom -120px;
+      }
+      .hero-section .hero-title {
+        font-size: clamp(42px, 10.5vw, 70px);
+      }
+      .hero-section .hero-description {
+        font-size: clamp(14px, 1.7vw, 23px);
+      }
+      .hero-section .hero-actions .btn {
+        font-size: 15px;
+        padding: 11px 26px;
+      }
+    }
+
+    @media (min-width: 388px) and (max-width: 392px) {
+      .hero-section::before {
+        background-position: right -480px bottom -120px;
+      }
+    }
+
+    @media (min-width: 376px) and (max-width: 416px) {
       .hero-section .hero-title {
         font-size: clamp(40px, 11vw, 68px);
       }
       .hero-section .hero-text-container {
-        margin-top: -40px;
+        margin-top: -150px;
       }
     }
 

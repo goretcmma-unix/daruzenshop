@@ -89,23 +89,12 @@ const App: React.FC = () => {
   useLayoutEffect(() => {
     if (!selectedProduct || activeMobileTab !== 'product') return;
     const pane = document.querySelector<HTMLElement>('.modal-tab-pane[data-tab="product"]');
-    const panel = tabBuyRef.current;
     const viewport = document.querySelector<HTMLElement>('.modal-tabs-viewport');
-    if (!pane || !panel) return;
-    const desc = pane.querySelector<HTMLElement>('.desc-card__content');
+    if (!pane || !viewport) return;
     const update = () => {
-      if (!pane || !panel) return;
-      panel.style.height = '';
-      const natural = panel.scrollHeight;
-      const descBottom = desc ? Math.round(desc.getBoundingClientRect().top + pane.scrollTop + desc.offsetHeight) : Math.round(pane.getBoundingClientRect().bottom);
-      const gap = 24;
-      const target = Math.max(natural, Math.round(window.innerHeight - descBottom - gap));
-      panel.style.height = target + 'px';
-      if (viewport) {
-        const scrollable = pane.scrollHeight > pane.clientHeight + 1;
-        viewport.style.maskImage = scrollable ? '' : 'none';
-        viewport.style.webkitMaskImage = scrollable ? '' : 'none';
-      }
+      const scrollable = pane.scrollHeight > pane.clientHeight + 1;
+      viewport.style.maskImage = scrollable ? '' : 'none';
+      viewport.style.webkitMaskImage = scrollable ? '' : 'none';
     };
     update();
     const onResize = () => update();
@@ -121,10 +110,8 @@ const App: React.FC = () => {
       window.removeEventListener('resize', onResize);
       timers.forEach((t) => window.clearTimeout(t));
       if (img) img.removeEventListener('load', onImgLoad);
-      if (viewport) {
-        viewport.style.maskImage = '';
-        viewport.style.webkitMaskImage = '';
-      }
+      viewport.style.maskImage = '';
+      viewport.style.webkitMaskImage = '';
     };
   }, [selectedProduct, activeMobileTab]);
   //const [lastAddedItem, setLastAddedItem] = useState<string | null>(null);
@@ -1562,6 +1549,7 @@ const App: React.FC = () => {
                     className="modal-image"
                     style={{ filter: selectedProduct.inStock === false ? 'grayscale(1)' : 'none' }}
                   />
+                  <img src="/images/label_certificates.png" alt="Certificates" className="modal-product-media__cert-label" />
                   <motion.button 
                     whileHover={{ scale: 1.1, background: 'rgba(255, 255, 255, 0.9)', boxShadow: '0 8px 20px rgba(0,0,0,0.1)' }}
                     whileTap={{ scale: 0.95 }}
@@ -1670,6 +1658,7 @@ const App: React.FC = () => {
                   <div className={`modal-tab-pane${activeMobileTab === 'product' ? ' is-active' : ''}`} data-tab="product">
                     <div className="modal-product-media">
                       <NormalizedImg src={selectedProduct.image} className="modal-product-media__img" alt={selectedProduct.name} loading="lazy" decoding="async" />
+                      <img src="/images/label_certificates.png" alt="Certificates" className="modal-product-media__cert-label" />
                       <motion.button whileHover={{ scale: 1.1, background: 'rgba(255, 255, 255, 0.95)', boxShadow: '0 8px 20px rgba(0,0,0,0.1)' }} whileTap={{ scale: 0.95 }} onClick={() => { setSelectedProduct(null); setModalQuantity(1); }} className="modal-tab-close" aria-label="Close">
                         <X size={16} color="var(--text-muted)" />
                       </motion.button>

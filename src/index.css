@@ -946,10 +946,21 @@ a:hover {
   letter-spacing: 0.01em;
 }
 
+.desc-card__content p + p {
+  margin-top: 1em;
+}
+
+@media (max-width: 768px) {
+  .desc-card__content {
+    padding-bottom: 0;
+  }
+}
+
 @media (max-width: 768px) {
   .modal-shell {
     align-items: stretch !important;
     justify-content: stretch !important;
+    overscroll-behavior: contain;
   }
 
   .modal-layout {
@@ -1198,7 +1209,7 @@ a:hover {
    needs bottom clearance there (it is a no-op on desktop where the bar is hidden). */
 @media (max-width: 768px) {
   .modal-tabs-track .modal-tab-pane {
-    padding-bottom: 110px;
+    padding-bottom: 24px;
   }
 }
 
@@ -1294,6 +1305,41 @@ a:hover {
   background: #fff;
 }
 
+/* Desktop: shift product image left to make room for sticker */
+@media (min-width: 769px) {
+  .modal-image {
+    margin-right: 140px;
+    object-position: left center;
+  }
+  [dir="rtl"] .modal-image {
+    margin-right: 0;
+    margin-left: 140px;
+    object-position: right center;
+  }
+}
+
+.modal-product-media__cert-label {
+  position: absolute;
+  top: 12vh;
+  left: 26vh;
+  width: 400px;
+  height: auto;
+  max-height: 400px;
+  object-fit: contain;
+  filter: none;
+  mix-blend-mode: multiply;
+  opacity: 0.92;
+  z-index: 5;
+  pointer-events: none;
+}
+
+[dir="rtl"] .modal-product-media__cert-label {
+  right: 26vh;
+  position: absolute;
+  top: 14vh;
+  left: auto;
+}
+
 .modal-product-head {
   display: none;
 }
@@ -1326,8 +1372,7 @@ a:hover {
 
 /* Bottom bar with the buy buttons in the Description tab.
    Fixed: pinned to the very bottom of the screen, full width,
-   with all corners rounded and shadow. Its height is adjusted in JS:
-   it grows upward to sit right under the description when it is short. */
+   with all corners rounded and shadow. Fixed height on mobile. */
 .modal-tab-buy {
   position: fixed;
   bottom: 0;
@@ -1342,6 +1387,14 @@ a:hover {
   background: #fff;
   border-radius: 20px 20px 0 0;
   box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.1);
+}
+
+@media (max-width: 768px) {
+  .modal-tab-buy {
+    height: 140px;
+    min-height: 140px;
+    max-height: 140px;
+  }
 }
 
 @media (max-width: 768px) {

@@ -32,7 +32,8 @@ const AppStyles = () => (
       position: relative;
       display: flex;
       align-items: center;
-    }      .hero-section::before {
+    }
+      .hero-section::before {
       content: '';
       position: absolute;
       inset: 0;
@@ -43,8 +44,9 @@ const AppStyles = () => (
       background-size: 111% auto;
       background-position: center 75%;
     }
-    html[lang="ar"] .hero-section::before {
+        html[lang="ar"] .hero-section::before {
       background-image: url('/images/hero_bg_daruzen_ar.webp');
+            background-color: #5a4a3f;
       background-size: 111% auto;
       background-position: 0% 60%;
       transform: none;
@@ -83,6 +85,14 @@ const AppStyles = () => (
         overflow: hidden;
       }
 
+html[lang="ar"] .hero-section::before {
+      background-color: #5a4a3f;
+      background-size: cover;
+      background-position: center center;
+    }
+html[lang="ar"] .hero-section::after {
+                        background: linear-gradient(270deg, rgba(255,255,255,0.5) 0%, transparent 35%) !important;
+    }
       .header {
         width: 100% !important;
         margin-left: 0 !important;
@@ -131,7 +141,8 @@ const AppStyles = () => (
       .hero-section {
         min-height: 75vh;
         display: flex;
-      }      .hero-section::before {
+      }
+      .hero-section::before {
         background-image: url('/images/hero_bg_daruzen.webp');
         background-repeat: no-repeat;
         background-size: cover;
@@ -184,6 +195,155 @@ const AppStyles = () => (
         background: linear-gradient(to left, var(--bg-main) 20%, transparent 100%);
         pointer-events: none;
         z-index: 5;
+      }
+    }
+
+    /* Arabic mobile - increase photo scale from iPhone SE and up */
+    @media (max-width: 778px) {
+      html[lang="ar"] .hero-section::before {
+        background-size: 310% auto !important;
+        background-position: 44% 35% !important;
+      }
+      html[lang="ar"] .hero-section .hero-description {
+        text-shadow: none !important;
+      }
+    }
+    @media (min-width: 390px) and (max-width: 778px) {
+      html[lang="ar"] .hero-section::before {
+        background-size: 370% auto !important;
+      }
+    }
+
+    /* ===== Все планшеты / iPad (768–1180px) - ВСЁ В ОДНОМ МЕСТЕ ===== */
+    @media (min-width: 768px) and (max-width: 1180px) {
+      /* --- ФОН --- */
+      html[lang="ar"] .hero-section::before {
+        background-position: 34% 45% !important;
+        background-size: 200% auto !important;
+      }
+      /* --- БЛОК ТЕКСТА (заголовок + параграф + кнопка) --- */
+      html[lang="ar"] .hero-text-container {
+        margin-right: 10%;
+        margin-left: 0;
+        margin-top: -60px;
+        max-width: 48%;
+      }
+      /* --- ЗАГОЛОВОК --- */
+      html[lang="ar"] .hero-title {
+        font-size: clamp(38px, 6vw, 72px);
+      }
+      /* --- ПАРАГРАФ --- */
+      html[lang="ar"] .hero-description {
+        font-size: clamp(14px, 1.8vw, 20px);
+      }
+      /* --- КНОПКА --- */
+      html[lang="ar"] .hero-actions .btn {
+        font-size: 16px;
+        padding: 12px 28px;
+      }
+    }
+
+    /* ===== iPhone SE (375px) ===== */
+    @media (min-width: 372px) and (max-width: 378px) {
+      html[lang="ar"] .hero-section::before {
+        background-position: 45% 32% !important;
+        background-size: 300% auto !important;
+      }
+    }
+
+    /* ===== iPhone 12 / 13 / 14 (390px) ===== */
+    @media (min-width: 388px) and (max-width: 395px) {
+      html[lang="ar"] .hero-section::before {
+        background-position: 44% 46% !important;
+        background-size: 340% auto !important;
+      }
+    }
+
+    /* ===== iPhone XR (414px) ===== */
+    @media (min-width: 412px) and (max-width: 418px) {
+      html[lang="ar"] .hero-section::before {
+        background-position: 44% 48% !important;
+        background-size: 340% auto !important;
+      }
+    }
+
+    /* ===== iPhone 14 Pro Max / 13 Pro Max / 12 Pro Max (430px) ===== */
+    @media (min-width: 428px) and (max-width: 435px) {
+      html[lang="ar"] .hero-section::before {
+        background-position: 44% 50% !important;
+        background-size: 320% auto !important;
+      }
+    }
+
+    /* ===== iPhone 5 / SE 1st gen / старые (320px) ===== */
+    @media (min-width: 318px) and (max-width: 323px) {
+      html[lang="ar"] .hero-section::before {
+        background-position: 55% 55% !important;
+        background-size: 320% auto !important;
+      }
+    }
+
+    /* ===== iPhone 15 / 16 / 15 Pro / 16 Pro (393px) ===== */
+    @media (min-width: 391px) and (max-width: 395px) {
+      html[lang="ar"] .hero-section::before {
+        background-position: 50% 55% !important;
+        background-size: 375% auto !important;
+      }
+    }
+
+    /* ===== iPhone 16 Pro Max (440px) ===== */
+    @media (min-width: 438px) and (max-width: 442px) {
+      html[lang="ar"] .hero-section::before {
+        background-position: 44% 55% !important;
+        background-size: 320% auto !important;
+      }
+    }
+
+    /* ===== Samsung Galaxy S8 / S9 / S10 / S20 / A-series (360px) ===== */
+    @media (min-width: 358px) and (max-width: 363px) {
+      html[lang="ar"] .hero-section::before {
+        background-position: 44% 10% !important;
+        background-size: 320% auto !important;
+      }
+    }
+
+    /* ===== Google Pixel 2–4 (409px) ===== */
+    @media (min-width: 408px) and (max-width: 410px) {
+      html[lang="ar"] .hero-section::before {
+        background-position: 50% 57% !important;
+        background-size: 375% auto !important;
+      }
+    }
+
+    /* ===== Samsung Galaxy Fold (подключенный, 344px) ===== */
+    @media (min-width: 342px) and (max-width: 347px) {
+      html[lang="ar"] .hero-section::before {
+        background-position: 42% -35% !important;
+        background-size: 380% auto !important;
+      }
+    }
+
+    /* ===== Samsung Galaxy Fold (сложенный, 280px) ===== */
+    @media (min-width: 278px) and (max-width: 283px) {
+      html[lang="ar"] .hero-section::before {
+        background-position: 55% 55% !important;
+        background-size: 320% auto !important;
+      }
+    }
+
+    /* ===== Samsung Galaxy S20 Ultra (412px) ===== */
+    @media (min-width: 411px) and (max-width: 413px) {
+      html[lang="ar"] .hero-section::before {
+        background-position: 44% 55% !important;
+        background-size: 310% auto !important;
+      }
+    }
+
+    /* ===== Google Pixel 7 / Galaxy Note 20 (411px) ===== */
+    @media (min-width: 410px) and (max-width: 411px) {
+      html[lang="ar"] .hero-section::before {
+        background-position: 50% 57% !important;
+        background-size: 375% auto !important;
       }
     }
 
@@ -266,7 +426,8 @@ const AppStyles = () => (
       }
     }
 
-    @media (min-width: 1117px) and (max-width: 1232px) {      .hero-section::before {
+    @media (min-width: 1117px) and (max-width: 1232px) {
+      .hero-section::before {
         background-position: 70% center;
         background-size: auto 100%;
       }
@@ -281,7 +442,8 @@ const AppStyles = () => (
         min-height: 80vh;
         padding-top: 80px;
         padding-bottom: 60px;
-      }      .hero-section::before {
+      }
+      .hero-section::before {
         background-size: 200% auto;
         background-position: right -520px center;
       }
@@ -318,7 +480,8 @@ const AppStyles = () => (
       }
     }
 
-    @media (min-width: 760px) and (max-width: 874px) {      .hero-section::before {
+    @media (min-width: 760px) and (max-width: 874px) {
+      .hero-section::before {
         background-position: right -400px top 55%;
         background-size: 200% auto;
       }
@@ -336,7 +499,8 @@ const AppStyles = () => (
       }
     }
 
-    @media (min-width: 360px) and (max-width: 600px) {      .hero-section::before {
+    @media (min-width: 360px) and (max-width: 600px) {
+      .hero-section::before {
         background-position: right -395px bottom -120px;
         background-size: 310% auto;
       }
@@ -414,7 +578,8 @@ const AppStyles = () => (
       .hero-desc-br3 { display: inline !important; }
     }
 
-    @media (min-width: 874px) and (max-width: 1116px) {      .hero-section::before {
+    @media (min-width: 874px) and (max-width: 1116px) {
+      .hero-section::before {
         background-size: 185% auto;
       }
     }
@@ -675,7 +840,8 @@ const AppStyles = () => (
     .mobile-menu-link {
       cursor: pointer;
     }
-  `}</style>
+  `}
+</style>
 );
 
 export default AppStyles;

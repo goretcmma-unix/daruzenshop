@@ -49,7 +49,7 @@ const AppStyles = () => (
       inset: 0;
       z-index: 0;
       pointer-events: none;
-      background: linear-gradient(to right, rgba(255,255,255,0.6) 0%, rgba(255,255,255,0.2) 12%, transparent 22%);
+      background: linear-gradient(to right, rgba(255,255,255,0.7) 0%, rgba(255,255,255,0.35) 22%, transparent 42%);
     }
     @media (max-width: 778px) {
       .hero-section,

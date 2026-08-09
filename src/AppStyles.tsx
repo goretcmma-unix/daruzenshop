@@ -43,6 +43,12 @@ const AppStyles = () => (
       background-size: 111% auto;
       background-position: center 75%;
     }
+    html[lang="ar"] .hero-section::before {
+      background-image: url('/images/hero_bg_daruzen_ar.webp');
+      background-size: 111% auto;
+      background-position: 0% 60%;
+      transform: none;
+    }
     .hero-section::after {
       content: '';
       position: absolute;
@@ -51,6 +57,22 @@ const AppStyles = () => (
       pointer-events: none;
       background: linear-gradient(to right, rgba(255,255,255,0.85) 0%, rgba(255,255,255,0.5) 32%, transparent 55%);
     }
+    html[lang="ar"] .hero-section::after {
+      background: linear-gradient(to left, rgba(255,255,255,0.85) 0%, rgba(255,255,255,0.5) 32%, transparent 55%);
+    }
+      html[lang="ar"] .hero-content-wrapper {
+        max-width: none;
+        padding: 0;
+      }
+      html[lang="ar"] .hero-text-container {
+        margin-left: 0;
+        margin-right: 0;
+      }
+      @media (min-width: 779px) {
+        html[lang="ar"] .hero-text-container {
+          margin-right: 12%;
+        }
+      }
     @media (max-width: 778px) {
       .hero-section,
       .marquee-section,

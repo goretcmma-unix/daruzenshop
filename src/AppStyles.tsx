@@ -40,8 +40,8 @@ const AppStyles = () => (
       pointer-events: none;
             background-image: url('/images/hero_bg_daruzen.webp');
       background-repeat: no-repeat;
-      background-size: cover;
-      background-position: center;
+      background-size: 111% auto;
+      background-position: center 75%;
     }
     .hero-section::after {
       content: '';

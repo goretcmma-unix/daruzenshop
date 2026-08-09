@@ -606,7 +606,7 @@ const App: React.FC = () => {
           transition={{ duration: 0.2, ease: 'easeOut' }}
         >
       {/* Hero Section */}
-      <section className="hero-section" style={{ position: 'relative' }}>
+            <section className="hero-section" style={{ position: 'relative' }}>
         <div className="container hero-content-wrapper">
           <motion.div
             style={{ opacity: heroOpacity, scale: heroScale, willChange: 'transform, opacity' }}

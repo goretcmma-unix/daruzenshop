@@ -32,17 +32,24 @@ const AppStyles = () => (
       position: relative;
       display: flex;
       align-items: center;
-    }
-    .hero-section::before {
+    }      .hero-section::before {
       content: '';
       position: absolute;
       inset: 0;
       z-index: 0;
       pointer-events: none;
-      background-image: url('/1c5221f4-d246-4584-b49e-f003d74f910b.png');
-      background-size: cover;
-      background-position: right center;
+            background-image: url('/images/hero_bg_daruzen.webp');
       background-repeat: no-repeat;
+      background-size: cover;
+      background-position: center;
+    }
+    .hero-section::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      background: linear-gradient(to right, rgba(255,255,255,0.6) 0%, rgba(255,255,255,0.2) 12%, transparent 22%);
     }
     @media (max-width: 778px) {
       .hero-section,
@@ -100,17 +107,16 @@ const AppStyles = () => (
       }
 
       .hero-section {
-        --mobile-bg-scale: 170%;
-        --mobile-bg-pos-x: right -160px;
-        --mobile-bg-pos-y: top 62%;
         min-height: 75vh;
         display: flex;
+      }      .hero-section::before {
+        background-image: url('/images/hero_bg_daruzen.webp');
+        background-repeat: no-repeat;
+        background-size: cover;
+        background-position: center;
       }
-      .hero-section::before {
-        background-image: url('/images/image.webp') !important;
-        background-repeat: no-repeat !important;
-        background-size: var(--mobile-bg-scale) auto !important;
-        background-position: var(--mobile-bg-pos-x) var(--mobile-bg-pos-y) !important;
+      .hero-section::after {
+        background: linear-gradient(to right, rgba(255,255,255,0.6) 0%, rgba(255,255,255,0.2) 18%, transparent 30%) !important;
       }
       
       .hero-section .hero-title {
@@ -123,10 +129,17 @@ const AppStyles = () => (
       .hero-section .hero-text-container {
         max-width: 100%;
         margin-left: 0;
+        margin-top: -110px;
       }
       
       .hero-section .hero-description {
         max-width: 100%;
+      }
+      .hero-section .hero-description .hero-desc-br {
+        display: none !important;
+      }
+      .hero-section .hero-description .hero-desc-br3 {
+        display: inline !important;
       }
 
       .category-filter-container {
@@ -171,7 +184,7 @@ const AppStyles = () => (
       margin-bottom: clamp(16px, 2vw, 28px);
       color: var(--primary);
       overflow-wrap: break-word;
-      text-shadow: 0 1px 6px rgba(0,0,0,0.06);
+      text-shadow: 0 1px 2px rgba(0,0,0,0.04);
     }
     .hero-br-line3 { display: inline; }
     .hero-desc-br { display: inline; }
@@ -181,11 +194,11 @@ const AppStyles = () => (
       font-size: clamp(14px, 1.8vw, 24px);
       line-height: 1.5;
       color: var(--primary);
-      opacity: 0.8;
+      opacity: 0.85;
       margin-bottom: clamp(24px, 3vw, 44px);
       font-weight: 400;
         max-width: clamp(320px, 38vw, 520px);
-      text-shadow: 0 1px 6px rgba(0,0,0,0.06);
+      text-shadow: 0 1px 2px rgba(0,0,0,0.03), 0 0 10px rgba(255,255,255,0.9), 0 2px 14px rgba(255,255,255,0.95);
     }
     .marquee-section {
       background: var(--bg-main);
@@ -231,8 +244,7 @@ const AppStyles = () => (
       }
     }
 
-    @media (min-width: 1117px) and (max-width: 1232px) {
-      .hero-section::before {
+    @media (min-width: 1117px) and (max-width: 1232px) {      .hero-section::before {
         background-position: 70% center;
         background-size: auto 100%;
       }
@@ -247,9 +259,7 @@ const AppStyles = () => (
         min-height: 80vh;
         padding-top: 80px;
         padding-bottom: 60px;
-      }
-      
-      .hero-section::before {
+      }      .hero-section::before {
         background-size: 200% auto;
         background-position: right -520px center;
       }
@@ -286,8 +296,7 @@ const AppStyles = () => (
       }
     }
 
-    @media (min-width: 760px) and (max-width: 874px) {
-      .hero-section::before {
+    @media (min-width: 760px) and (max-width: 874px) {      .hero-section::before {
         background-position: right -400px top 55%;
         background-size: 200% auto;
       }
@@ -298,25 +307,22 @@ const AppStyles = () => (
         max-width: clamp(400px, 48vw, 540px);
       }
     }
-
     @media (min-width: 360px) and (max-width: 778px) {
       .hero-section::before {
-        background-position: right -240px top 78% !important;
-        background-size: 145% auto !important;
+        background-position: right -365px bottom -120px;
+        background-size: 290% auto;
       }
     }
 
-    @media (min-width: 360px) and (max-width: 600px) {
-      .hero-section::before {
-        background-position: right -150px top 65% !important;
-        background-size: 180% auto !important;
+    @media (min-width: 360px) and (max-width: 600px) {      .hero-section::before {
+        background-position: right -395px bottom -120px;
+        background-size: 310% auto;
       }
     }
 
-    @media (min-width: 600px) and (max-width: 704px) {
-      .hero-section::before {
-        background-position: right -190px top 70% !important;
-        background-size: 155% auto !important;
+    @media (min-width: 600px) and (max-width: 704px) {      .hero-section::before {
+        background-position: right -380px bottom -120px;
+        background-size: 300% auto;
       }
     }
 
@@ -334,8 +340,7 @@ const AppStyles = () => (
       .hero-desc-br3 { display: inline !important; }
     }
 
-    @media (min-width: 874px) and (max-width: 1116px) {
-      .hero-section::before {
+    @media (min-width: 874px) and (max-width: 1116px) {      .hero-section::before {
         background-size: 185% auto;
       }
     }

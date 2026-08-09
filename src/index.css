@@ -1739,8 +1739,8 @@ a:hover {
     display: inline-block !important;
   }
 
-  .hero-section {
-    min-height: 65vh;
+    .hero-section {
+    min-height: 85vh;
     padding-top: clamp(70px, 8vh, 100px);
     padding-bottom: clamp(40px, 5vh, 60px);
   }
@@ -1767,7 +1767,7 @@ a:hover {
   }
 
   .hero-section {
-    min-height: 55vh;
+    min-height: 75vh;
   }
 
   .header .container {

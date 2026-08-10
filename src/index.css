@@ -1070,6 +1070,21 @@ a:hover {
   }
 }
 
+/* Each tab gets its own modal height on tablets/desktop (the sheet self-expands):
+   collapse the inactive panes so the track height matches only the active tab.
+   Without this the track stretches to the tallest pane, so a shorter tab
+   (e.g. Description) leaves a tall empty band under its content. */
+@media (min-width: 769px) {
+  .modal-layout[data-active-tab="product"] .modal-tab-pane:not(.is-active),
+  .modal-layout[data-active-tab="composition"] .modal-tab-pane:not(.is-active),
+  .modal-layout[data-active-tab="note"] .modal-tab-pane:not(.is-active) {
+    height: 0 !important;
+    min-height: 0 !important;
+    overflow: hidden !important;
+  }
+}
+
+
 @media (max-height: 700px) and (max-width: 480px) {
   .modal-image-col {
     flex: none !important;
@@ -1405,6 +1420,14 @@ a:hover {
     max-height: 90vh !important;
   }
 
+  /* The tabs track must size to the ACTIVE pane only, so a tall tab (e.g.
+     Composition) doesn't stretch the Description / Note tabs to the same height.
+     Inactive panes are collapsed by the rule below (height: 0). */
+  .modal-tabs-track {
+    height: auto;
+    align-items: flex-start;
+  }
+
   .modal-image-col {
     flex: none;
     width: 100%;
@@ -1438,6 +1461,13 @@ a:hover {
     min-height: 0;
   }
 
+  /* On tablets the sheet self-expands (no internal scroll / fade zone), so the
+     48px reserved bottom padding of the tab pane only creates a tall empty band
+     after the description. Remove it so the sheet ends right after the content. */
+  .modal-tabs-track .modal-tab-pane {
+    padding-bottom: 0 !important;
+  }
+
   /* Buy buttons sit right under the description with a small gap */
   .modal-buy-under,
   .modal-out-of-stock {
@@ -1450,8 +1480,8 @@ a:hover {
   .modal-product-media__cert-label {
     top: 50%;
     left: auto;
-    right: clamp(68px, 3vw, 20px);
-    width: clamp(284px, 20%, 250px);
+    right: 20px;
+    width: clamp(200px, 28%, 280px);
     max-height: none;
     transform: translateY(-50%);
   }

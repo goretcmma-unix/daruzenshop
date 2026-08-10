@@ -1192,7 +1192,7 @@ a:hover {
   min-height: 0;
   overflow-y: auto;
   overflow-x: hidden;
-  overscroll-behavior-y: contain;
+  overscroll-behavior: none;
   touch-action: pan-y;
   padding-inline-end: 4px;
   animation: none !important;
@@ -1209,7 +1209,7 @@ a:hover {
    needs bottom clearance there (it is a no-op on desktop where the bar is hidden). */
 @media (max-width: 768px) {
   .modal-tabs-track .modal-tab-pane {
-    padding-bottom: 24px;
+    padding-bottom: 160px;
   }
 }
 
@@ -1321,23 +1321,61 @@ a:hover {
 .modal-product-media__cert-label {
   position: absolute;
   top: 12vh;
-  left: 26vh;
+  left: 28vh;
   width: 400px;
   height: auto;
   max-height: 400px;
   object-fit: contain;
   filter: none;
   mix-blend-mode: multiply;
-  opacity: 0.92;
+  opacity: 0.7;
   z-index: 5;
   pointer-events: none;
 }
 
 [dir="rtl"] .modal-product-media__cert-label {
-  right: 26vh;
+  right: 28vh;
   position: absolute;
   top: 14vh;
   left: auto;
+}
+
+/* Mobile: photo stays full width and centred; the 200px certificate sticker
+   overlaps the photo's right edge, vertically centred. Close button moves to
+   the top-left corner (same side as on desktop) so it never overlaps the
+   sticker. */
+@media (max-width: 768px) {
+  .modal-product-media {
+    display: block;
+  }
+  .modal-product-media__img {
+    margin: 0;
+    object-position: 36% center;
+  }
+  .modal-product-media__cert-label {
+    position: absolute;
+    top: 50%;
+    left: auto;
+    right: -36px;
+    width: 180px;
+    max-height: none;
+    transform: translateY(-50%);
+  }
+  .modal-product-media .modal-tab-close {
+    left: 12px;
+    right: auto;
+  }
+  [dir="rtl"] .modal-product-media__img {
+    object-position: 75% center;
+  }
+  [dir="rtl"] .modal-product-media .modal-tab-close {
+    left: auto;
+    right: 12px;
+  }
+  [dir="rtl"] .modal-product-media__cert-label {
+    left: -16px;
+    right: auto;
+  }
 }
 
 .modal-product-head {
@@ -1386,14 +1424,14 @@ a:hover {
   padding: 16px 20px calc(16px + env(safe-area-inset-bottom));
   background: #fff;
   border-radius: 20px 20px 0 0;
-  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.18);
 }
 
 @media (max-width: 768px) {
   .modal-tab-buy {
-    height: 140px;
-    min-height: 140px;
-    max-height: 140px;
+    height: 146px;
+    min-height: 146px;
+    max-height: 146px;
   }
 }
 

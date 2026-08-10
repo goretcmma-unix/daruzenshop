@@ -1340,24 +1340,24 @@ a:hover {
   left: auto;
 }
 
-/* Mobile: photo stays full width and centred; the 200px certificate sticker
-   overlaps the photo's right edge, vertically centred. Close button moves to
-   the top-left corner (same side as on desktop) so it never overlaps the
-   sticker. */
+/* Mobile: everything scales with the viewport (clamp/vw/vh), so the layout
+   holds on any phone width without per-device tweaks. Photo stays full width,
+   sticker overlaps the photo's right edge, close button top-left. */
 @media (max-width: 768px) {
   .modal-product-media {
     display: block;
   }
   .modal-product-media__img {
     margin: 0;
+    max-height: clamp(220px, 42vh, 300px);
     object-position: 36% center;
   }
   .modal-product-media__cert-label {
     position: absolute;
     top: 50%;
     left: auto;
-    right: -36px;
-    width: 180px;
+    right: clamp(-24px, -6vw, -8px);
+    width: clamp(140px, 48vw, 200px);
     max-height: none;
     transform: translateY(-50%);
   }
@@ -1366,16 +1366,16 @@ a:hover {
     right: auto;
   }
   [dir="rtl"] .modal-product-media__img {
-    object-position: 75% center;
+    object-position: 64% center;
   }
   [dir="rtl"] .modal-product-media .modal-tab-close {
     left: auto;
     right: 12px;
   }
   [dir="rtl"] .modal-product-media__cert-label {
-    left: -24px;
+    left: clamp(-24px, -6vw, -8px);
     right: auto;
-    top: 22vh;
+    top: 50%;
   }
 }
 

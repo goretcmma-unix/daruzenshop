@@ -1276,6 +1276,69 @@ a:hover {
   }
 }
 
+/* Vertical tablets (portrait, 769–900px): sticky buy bar inside modal */
+@media (min-width: 769px) and (max-width: 900px) {
+  /* modal-tab-buy stays hidden (rendered outside .modal-layout); use modal-buy-under instead */
+
+    .modal-buy-under {
+    position: sticky !important;
+    bottom: 0 !important;
+    background: #fff !important;
+    border-radius: 24px !important;
+    box-shadow: 0 -12px 40px rgba(0, 0, 0, 0.22) !important;
+    padding: 20px 24px !important;
+    margin-top: 20px !important;
+    z-index: 10 !important;
+  }
+
+  .modal-tabs-track .modal-tab-pane {
+    padding-bottom: 0 !important;
+  }
+
+  .modal-buy-actions {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .modal-buy-under .btn,
+  .modal-buy-under .modal-buy-btn {
+    height: 60px !important;
+    font-size: 18px !important;
+    border-radius: 18px !important;
+  }
+
+  .modal-buy-under .modal-buy-qty {
+    height: 60px !important;
+  }
+
+  .modal-buy-under .modal-buy-qty__value {
+    font-size: 20px !important;
+  }
+
+    .modal-image-wrapper {
+    height: clamp(440px, 58vh, 700px) !important;
+  }
+
+  .modal-product-media__cert-label {
+    width: clamp(140px, 28%, 240px);
+    max-height: 340px;
+  }
+
+  .modal-title {
+    font-size: 28px;
+  }
+
+  .modal-price {
+    font-size: 26px;
+  }
+
+  .desc-card__content p {
+    font-size: 18px;
+    line-height: 1.6;
+  }
+}
+
 /* ==================== PRODUCT TAB ON MOBILE ==================== */
 /* Photo, title and description scroll together inside the pane (like the Note tab);
    the fixed top photo/header are replaced by the in-pane copies. */
@@ -1359,7 +1422,7 @@ a:hover {
   }
 
   .modal-image {
-    margin-right: 0 !important;
+    margin-right: 8vh !important;
     margin-left: 0 !important;
     object-position: center;
     width: auto !important;
@@ -1387,8 +1450,8 @@ a:hover {
   .modal-product-media__cert-label {
     top: 50%;
     left: auto;
-    right: clamp(8px, 3vw, 20px);
-    width: clamp(84px, 20%, 150px);
+    right: clamp(68px, 3vw, 20px);
+    width: clamp(284px, 20%, 250px);
     max-height: none;
     transform: translateY(-50%);
   }

@@ -1567,43 +1567,6 @@ const App: React.FC = () => {
                     <X size={16} color="var(--text-muted)" />
                   </motion.button>
                 </motion.div>
-                {selectedProduct.inStock === false ? (
-                  <div style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', padding: '0 24px', height: '54px', borderRadius: '14px', border: '2px solid #d5cfc6', color: '#8a8a8a', fontWeight: '600', fontSize: '15px', letterSpacing: '0.01em', background: 'transparent' }}>
-                    Нет в наличии
-                  </div>
-                ) : (
-                  <div className="modal-buy-under">
-                    <div className="modal-buy-actions">
-                      <div className="modal-buy-qty">
-                        <QtyButton label="-" onClick={() => setModalQuantity(q => Math.max(1, q - 1))}>
-                          <Minus size={18} />
-                        </QtyButton>
-                        <span className="modal-buy-qty__value">{modalQuantity}</span>
-                        <QtyButton label="+" withRotate onClick={() => setModalQuantity(q => q + 1)}>
-                          <Plus size={18} />
-                        </QtyButton>
-                      </div>
-                      <motion.button
-                        whileHover={{ scale: 1.02 }}
-                        whileTap={{ scale: 0.98 }}
-                        onClick={() => addToCart(selectedProduct, modalQuantity)}
-                        className="btn btn-primary"
-                        style={{ height: '54px', borderRadius: '14px', fontSize: '16px', boxShadow: '0 4px 12px rgba(93, 64, 55, 0.1)' }}
-                      >
-                        <ShoppingCart size={20} /> {t.cart.inCart}
-                      </motion.button>
-                      <motion.button
-                        whileHover={{ scale: 1.02, filter: 'brightness(1.08)' }}
-                        whileTap={{ scale: 0.98 }}
-                        onClick={() => buyNow(selectedProduct, modalQuantity)}
-                        className="modal-buy-btn"
-                        style={{ background: 'linear-gradient(135deg, #25D366 0%, #128C7E 100%)', color: 'white', border: 'none', height: '54px', borderRadius: '14px', fontWeight: '700', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', boxShadow: '0 10px 20px rgba(37, 211, 102, 0.15)' }}
-                      >
-                        {t.cart.buyNow}
-                      </motion.button>
-                    </div>
-                  </div>
-                )}
               </motion.div>
               <div className="modal-info-wrapper">
                 <motion.span 
@@ -1764,6 +1727,43 @@ const App: React.FC = () => {
                   )}
                 </div>
                 </div>
+                {selectedProduct.inStock === false ? (
+                  <div className="modal-out-of-stock" style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', padding: '0 24px', height: '54px', borderRadius: '14px', border: '2px solid #d5cfc6', color: '#8a8a8a', fontWeight: '600', fontSize: '15px', letterSpacing: '0.01em', background: 'transparent' }}>
+                    Нет в наличии
+                  </div>
+                ) : (
+                  <div className="modal-buy-under">
+                    <div className="modal-buy-actions">
+                      <div className="modal-buy-qty">
+                        <QtyButton label="-" onClick={() => setModalQuantity(q => Math.max(1, q - 1))}>
+                          <Minus size={18} />
+                        </QtyButton>
+                        <span className="modal-buy-qty__value">{modalQuantity}</span>
+                        <QtyButton label="+" withRotate onClick={() => setModalQuantity(q => q + 1)}>
+                          <Plus size={18} />
+                        </QtyButton>
+                      </div>
+                      <motion.button
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                        onClick={() => addToCart(selectedProduct, modalQuantity)}
+                        className="btn btn-primary"
+                        style={{ height: '54px', borderRadius: '14px', fontSize: '16px', boxShadow: '0 4px 12px rgba(93, 64, 55, 0.1)' }}
+                      >
+                        <ShoppingCart size={20} /> {t.cart.inCart}
+                      </motion.button>
+                      <motion.button
+                        whileHover={{ scale: 1.02, filter: 'brightness(1.08)' }}
+                        whileTap={{ scale: 0.98 }}
+                        onClick={() => buyNow(selectedProduct, modalQuantity)}
+                        className="modal-buy-btn"
+                        style={{ background: 'linear-gradient(135deg, #25D366 0%, #128C7E 100%)', color: 'white', border: 'none', height: '54px', borderRadius: '14px', fontWeight: '700', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', boxShadow: '0 10px 20px rgba(37, 211, 102, 0.15)' }}
+                      >
+                        {t.cart.buyNow}
+                      </motion.button>
+                    </div>
+                  </div>
+                )}
               </div>
             </motion.div>
             </div>

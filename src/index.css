@@ -201,6 +201,10 @@ a:hover {
   transition: opacity 0.3s ease, transform 0.3s ease;
 }
 
+.desktop-nav {
+  gap: clamp(12px, 2.5vw, 35px) !important;
+}
+
 .nav-link::after {
   content: '';
   position: absolute;
@@ -291,31 +295,18 @@ a:hover {
   padding: 8px 0;
 }
 
-/* Grid Utilities */
+/* Grid Utilities — fully fluid: columns reflow at any width, no fixed breakpoints.
+   Min size grows with the viewport so cards never get tiny on tablets, and the
+   desktop layout stays at 3 columns (capped) on wide screens. */
 .grid-catalog {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: clamp(16px, 2vw, 32px);
+  grid-template-columns: repeat(auto-fill, minmax(clamp(180px, 40vw, 250px), 1fr));
+  gap: clamp(12px, 2vw, 32px);
 }
 
-@media (max-width: 1024px) and (min-width: 769px) {
+@media (min-width: 1180px) {
   .grid-catalog {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 20px;
-  }
-}
-
-@media (max-width: 768px) {
-  .grid-catalog {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 12px;
-  }
-}
-
-@media (max-width: 480px) {
-  .grid-catalog {
-    grid-template-columns: 1fr;
-    gap: 16px;
+    grid-template-columns: repeat(3, 1fr);
   }
 }
 
@@ -427,6 +418,8 @@ a:hover {
   flex-direction: row;
   gap: clamp(40px, 5vw, 64px);
   padding: clamp(28px, 4vw, 52px);
+  height: auto !important;
+  max-height: 90vh !important;
 }
 
 .modal-image-col {
@@ -445,6 +438,7 @@ a:hover {
   justify-content: center;
   position: relative;
   min-height: 0;
+  max-height: calc(90vh - 2 * clamp(28px, 4vw, 52px));
   background: #ffffff;
 }
 
@@ -498,8 +492,8 @@ a:hover {
 }
 
 .modal-buy-under {
-  margin-top: auto;
-  padding-top: 28px;
+  margin-top: 0;
+  padding-top: 16px;
 }
 
 .modal-buy-actions {
@@ -967,6 +961,7 @@ a:hover {
     flex-direction: column;
     width: 100vw !important;
     height: 100vh !important;
+    height: 100dvh !important;
     max-height: none !important;
     border-radius: 0 !important;
     gap: 0 !important;
@@ -1032,7 +1027,7 @@ a:hover {
   }
 
   .modal-swipe {
-    padding-bottom: calc(160px + env(safe-area-inset-bottom));
+    padding-bottom: calc(146px + clamp(24px, 4vw, 48px) + env(safe-area-inset-bottom));
   }
 
   .modal-buy-actions {
@@ -1165,12 +1160,10 @@ a:hover {
 
 /* Tab content - horizontal track with slide-through transition */
 .modal-tabs-viewport {
-  flex: 1 1 auto;
+  flex: 0 1 auto;
   min-height: 0;
   position: relative;
   overflow: hidden;
-  -webkit-mask-image: linear-gradient(to bottom, black calc(100% - 40px), transparent 100%);
-  mask-image: linear-gradient(to bottom, black calc(100% - 40px), transparent 100%);
 }
 
 .modal-tabs-track {
@@ -1206,10 +1199,11 @@ a:hover {
 }
 
 /* The fixed buy bar overlays the bottom of the screen on mobile, so the pane
-   needs bottom clearance there (it is a no-op on desktop where the bar is hidden). */
+   needs bottom clearance there (it is a no-op on desktop where the bar is hidden).
+   Padding = bar height (146px) + comfortable fluid gap + safe-area inset. */
 @media (max-width: 768px) {
   .modal-tabs-track .modal-tab-pane {
-    padding-bottom: 160px;
+    padding-bottom: calc(146px + clamp(24px, 4vw, 48px) + env(safe-area-inset-bottom));
   }
 }
 
@@ -1243,7 +1237,10 @@ a:hover {
 
   .modal-layout[data-active-tab="product"] .modal-buy-under,
   .modal-layout[data-active-tab="composition"] .modal-buy-under,
-  .modal-layout[data-active-tab="note"] .modal-buy-under {
+  .modal-layout[data-active-tab="note"] .modal-buy-under,
+  .modal-layout[data-active-tab="product"] .modal-out-of-stock,
+  .modal-layout[data-active-tab="composition"] .modal-out-of-stock,
+  .modal-layout[data-active-tab="note"] .modal-out-of-stock {
     display: none !important;
   }
 
@@ -1271,20 +1268,11 @@ a:hover {
   }
 }
 
-/* On desktop, the buy buttons live in the left column under the image,
-   so hide the mobile tab buy bar to avoid duplication. */
+/* On desktop the buy buttons now live in the info column right under the
+   description/tabs, so the fixed tab buy bar would duplicate them. Hide it. */
 @media (min-width: 769px) {
   .modal-tab-buy {
     display: none !important;
-  }
-
-  /* The modal has bottom padding (clamp(28px, 4vw, 52px)), which shortens the
-     scroll column and clips content well above the card's bottom rounding.
-     Counteract it so the tab content scrolls down to the card's bottom edge,
-     but keep a 24px gap (the modal's border-radius) so the cut line sits
-     inside the card and the rounded corners absorb it. */
-  .modal-tabs-viewport {
-    margin-bottom: calc(clamp(28px, 4vw, 52px) * -1 + 24px);
   }
 }
 
@@ -1320,9 +1308,9 @@ a:hover {
 
 .modal-product-media__cert-label {
   position: absolute;
-  top: 12vh;
-  left: 28vh;
-  width: 400px;
+  top: clamp(16px, 6vh, 96px);
+  right: clamp(10px, 1.5vw, 28px);
+  width: min(400px, 55%);
   height: auto;
   max-height: 400px;
   object-fit: contain;
@@ -1334,10 +1322,114 @@ a:hover {
 }
 
 [dir="rtl"] .modal-product-media__cert-label {
-  right: 28vh;
+  right: auto;
+  left: clamp(10px, 1.5vw, 28px);
   position: absolute;
-  top: 14vh;
-  left: auto;
+  top: clamp(16px, 6vh, 96px);
+}
+
+/* All tablets and narrow windows (769-1180px, any orientation): a compact
+   single column — photo, then category/title/price, tabs + content, then the
+   buy buttons right under the description with a small gap. The card sizes to
+   its content (auto height) instead of growing to 90vh, so it stays short;
+   long note/composition content is capped by max-height and scrolls inside. */
+@media (min-width: 769px) and (max-width: 1180px) {
+  .modal-layout {
+    flex-direction: column;
+    gap: clamp(18px, 2.5vw, 28px);
+    padding: clamp(20px, 4vw, 36px);
+    height: auto !important;
+    max-height: 90vh !important;
+  }
+
+  .modal-image-col {
+    flex: none;
+    width: 100%;
+    min-height: 0;
+  }
+
+  .modal-image-wrapper {
+    flex: none;
+    width: 100%;
+    height: clamp(340px, 46vh, 520px);
+    padding: 12px;
+    align-items: center;
+    overflow: hidden;
+    border-radius: 16px;
+  }
+
+  .modal-image {
+    margin-right: 0 !important;
+    margin-left: 0 !important;
+    object-position: center;
+    width: auto !important;
+    height: auto !important;
+    max-height: 100% !important;
+    max-width: 100% !important;
+    object-fit: contain;
+  }
+
+  .modal-info-wrapper {
+    flex: none;
+    width: 100%;
+    min-height: 0;
+  }
+
+  /* Buy buttons sit right under the description with a small gap */
+  .modal-buy-under,
+  .modal-out-of-stock {
+    margin-top: clamp(16px, 2.5vw, 24px);
+    padding-top: 20px;
+    border-top: 1px solid rgba(0, 0, 0, 0.05);
+  }
+
+  /* Sticker stays inside the photo area, on the right */
+  .modal-product-media__cert-label {
+    top: 50%;
+    left: auto;
+    right: clamp(8px, 3vw, 20px);
+    width: clamp(84px, 20%, 150px);
+    max-height: none;
+    transform: translateY(-50%);
+  }
+  [dir="rtl"] .modal-product-media__cert-label {
+    right: auto;
+    left: clamp(8px, 3vw, 20px);
+  }
+
+  /* iPad 10.5" portrait (834px) — move sticker slightly more to the right */
+  @media (min-width: 820px) and (max-width: 850px) {
+    .modal-product-media__cert-label {
+      right: 32px;
+    }
+    [dir="rtl"] .modal-product-media__cert-label {
+      right: auto;
+      left: 32px;
+    }
+  }
+
+  /* Tab content flows with the card; the whole card scrolls as one */
+  .modal-tabs-viewport {
+    flex: none;
+    min-height: 0;
+    -webkit-mask-image: none;
+    mask-image: none;
+    margin-bottom: 0;
+  }
+}
+
+/* Actual browser viewport 1534px and wider — push sticker clearly to the right */
+@media (min-width: 1510px) {
+  .modal-product-media__cert-label {
+    position: absolute;
+    right: -96px !important; 
+    position: absolute;
+    top: 15vh;
+  }
+  [dir="rtl"] .modal-product-media__cert-label {
+    right: auto !important;
+    left: 96px !important;
+  }
 }
 
 /* Mobile: everything scales with the viewport (clamp/vw/vh), so the layout

@@ -1,7 +1,7 @@
 const AppStyles = () => (
   <style>{`
     /* Mobile styles */
-    @media (max-width: 778px) {
+    @media (max-width: 768px) {
       .desktop-nav { display: none !important; }
       .md-hidden { display: inline-block !important; }
       
@@ -153,7 +153,7 @@ html[lang="ar"] .hero-section::after {
       }
       
       .hero-section .hero-title {
-        font-size: clamp(38px, 10vw, 68px);
+        font-size: clamp(38px, 10vw, 63px);
         max-width: 100%;
         overflow-wrap: break-word;
         text-shadow: 0 1px 6px rgba(0,0,0,0.06);
@@ -435,7 +435,7 @@ html[lang="ar"] .hero-section::after {
       .hero-desc-br3 { display: inline; }
     }
 
-    @media (min-width: 780px) and (max-width: 1116px) {
+    @media (min-width: 769px) and (max-width: 1116px) {
       .md-hidden { display: none !important; }
       
       .hero-section {
@@ -576,6 +576,60 @@ html[lang="ar"] .hero-section::after {
     @media (min-width: 350px) and (max-width: 400px) {
       .hero-desc-br { display: none !important; }
       .hero-desc-br3 { display: inline !important; }
+    }
+
+    /* 448–778: фон по-экранно, под текстом слева чистая зона.
+       Меняй background-position (сдвиг) и background-size (масштаб) по каждому экрану. */
+    @media (min-width: 448px) and (max-width: 479px) {
+  .hero-section::before {
+    background-size: cover;
+    background-position: 45% 75%;
+  }
+  .hero-section .hero-title {
+    font-size: min(clamp(38px, 10vw, 63px), calc(100vh * 0.085));
+  }
+}
+@media (min-width: 480px) and (max-width: 559px) {
+  .hero-section::before {
+    background-size: cover;
+    background-position: 42% 75%;
+  }
+  .hero-section .hero-title {
+    font-size: min(clamp(38px, 10vw, 63px), calc(100vh * 0.085));
+  }
+}
+@media (min-width: 560px) and (max-width: 639px) {
+  .hero-section::before {
+    background-size: cover;
+    background-position: 38% 75%;
+  }
+  .hero-section .hero-title {
+    font-size: min(clamp(38px, 10vw, 63px), calc(100vh * 0.085));
+  }
+}
+@media (min-width: 640px) and (max-width: 703px) {
+  .hero-section::before {
+    background-size: cover;
+    background-position: 35% 75%;
+  }
+  .hero-section .hero-title {
+    font-size: min(clamp(38px, 10vw, 63px), calc(100vh * 0.085));
+  }
+}
+@media (min-width: 704px) and (max-width: 778px) {
+  .hero-section::before {
+    background-size: 170% auto;
+    background-position: right -300px bottom -120px;
+  }
+  .hero-section .hero-title {
+    font-size: min(clamp(38px, 10vw, 63px), calc(100vh * 0.085));
+  }
+}
+@media (min-width: 448px) and (max-width: 778px) and (max-height: 650px) {
+      .hero-section .hero-text-container { margin-top: -40px; }
+    }
+    @media (min-width: 448px) and (max-width: 778px) and (min-height: 651px) and (max-height: 800px) {
+      .hero-section .hero-text-container { margin-top: -60px; }
     }
 
     @media (min-width: 874px) and (max-width: 1116px) {

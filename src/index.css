@@ -498,7 +498,7 @@ a:hover {
 
 .modal-buy-actions {
   display: grid;
-  grid-template-columns: auto 1fr 1.35fr;
+  grid-template-columns: auto 1.2fr 1.15fr;
   gap: 12px;
 }
 
@@ -1387,7 +1387,7 @@ a:hover {
 .modal-product-media__cert-label {
   position: absolute;
   top: clamp(16px, 6vh, 96px);
-  right: clamp(10px, 1.5vw, 28px);
+  right: 0;
   width: min(400px, 55%);
   height: auto;
   max-height: 400px;
@@ -1480,8 +1480,8 @@ a:hover {
   .modal-product-media__cert-label {
     top: 50%;
     left: auto;
-    right: 20px;
-    width: clamp(200px, 28%, 280px);
+    right: 15px;
+    width: clamp(100px, 58%, 320px);
     max-height: none;
     transform: translateY(-50%);
   }
@@ -1490,8 +1490,11 @@ a:hover {
     left: clamp(8px, 3vw, 20px);
   }
 
-  /* iPad 10.5" portrait (834px) — move sticker slightly more to the right */
-  @media (min-width: 820px) and (max-width: 850px) {
+  /* iPad 10.5" portrait (834px) previously forced right: 32px here, which
+     overrode the `right` value from the main tablet block for iPads ~820-850px
+     wide. Removed so that `right` in .modal-product-media__cert-label (above)
+     takes effect on ALL tablets, including iPads. */
+  /* @media (min-width: 820px) and (max-width: 850px) {
     .modal-product-media__cert-label {
       right: 32px;
     }
@@ -1499,7 +1502,7 @@ a:hover {
       right: auto;
       left: 32px;
     }
-  }
+  } */
 
   /* Tab content flows with the card; the whole card scrolls as one */
   .modal-tabs-viewport {

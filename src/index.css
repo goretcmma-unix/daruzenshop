@@ -1373,8 +1373,9 @@ a:hover {
     right: 12px;
   }
   [dir="rtl"] .modal-product-media__cert-label {
-    left: -16px;
+    left: -26px;
     right: auto;
+    top: 22vh;
   }
 }
 

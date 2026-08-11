@@ -29,6 +29,8 @@ const ui = {
     catalog: {
       title: 'Наш каталог',
       empty: 'По вашему запросу ничего не найдено',
+      prev: 'Назад',
+      next: 'Далее',
     },
     cart: {
       badgeUnit: 'шт',
@@ -155,6 +157,8 @@ const ui = {
     catalog: {
       title: 'Katalogumuz',
       empty: 'Aramanız için hiçbir sonuç bulunamadı',
+      prev: 'Önceki',
+      next: 'Sonraki',
     },
     cart: {
       badgeUnit: 'adet',
@@ -281,6 +285,8 @@ const ui = {
     catalog: {
       title: 'Our Catalog',
       empty: 'No results found for your request',
+      prev: 'Previous',
+      next: 'Next',
     },
     cart: {
       badgeUnit: 'pcs',
@@ -407,6 +413,8 @@ const ui = {
     catalog: {
       title: 'كتالوجنا',
       empty: 'لم يتم العثور على نتائج لطلبك',
+      prev: 'السابق',
+      next: 'التالي',
     },
     cart: {
       badgeUnit: 'قطعة',

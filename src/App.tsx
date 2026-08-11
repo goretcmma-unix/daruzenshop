@@ -841,7 +841,7 @@ const App: React.FC = () => {
                   transition: 'opacity 0.2s',
                 }}
               >
-                {isRtl ? '→ السابق' : '← Назад'}
+                {isRtl ? `→ ${t.catalog.prev}` : `← ${t.catalog.prev}`}
               </button>
               <span style={{ fontSize: '14px', color: 'var(--text-muted)', minWidth: '48px', textAlign: 'center' }}>
                 {page + 1} / {pageCount}
@@ -863,7 +863,7 @@ const App: React.FC = () => {
                   transition: 'opacity 0.2s',
                 }}
               >
-                {isRtl ? 'التالي ←' : 'Далее →'}
+                {isRtl ? `${t.catalog.next} ←` : `${t.catalog.next} →`}
               </button>
             </div>
           )}

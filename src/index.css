@@ -310,6 +310,14 @@ a:hover {
   }
 }
 
+/* Narrow phones (incl. iPhone Plus 414px landscape): one card per row —
+   two columns are too cramped at these widths. */
+@media (max-width: 480px) {
+  .grid-catalog {
+    grid-template-columns: 1fr;
+  }
+}
+
 /* Categories */
 .category-filter {
   display: flex;
@@ -2100,6 +2108,93 @@ a:hover {
   .mobile-menu-content {
     width: min(300px, 80vw);
     padding: clamp(24px, 5vw, 40px) clamp(16px, 4vw, 24px);
+  }
+}
+
+/* Mobile (≤768px): same as tablets — each tab gives the sheet its own height
+   (the layout self-expands to the active tab and is capped), with a small gap
+   after the content and the buy bar pinned to the bottom edge as a flex footer
+   instead of a sticky overlay. */
+@media (max-width: 768px) {
+  .modal-shell {
+    align-items: flex-end !important;
+    justify-content: center !important;
+  }
+
+  .modal-layout {
+    width: 100% !important;
+    height: auto !important;
+    min-height: clamp(380px, 60dvh, 720px);
+    max-height: 92dvh !important;
+    border-radius: 24px 24px 0 0 !important;
+    overflow: hidden !important;
+  }
+
+  /* Scrollable body of the sheet (the photo column is hidden on mobile, so the
+     info block is the only child here) — scrolls above the pinned buy bar. */
+  .modal-scroll-region {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+    overscroll-behavior-y: contain;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+
+  .modal-scroll-region::-webkit-scrollbar {
+    display: none;
+    width: 0;
+    height: 0;
+  }
+
+  .modal-info-wrapper {
+    flex: 1 1 auto !important;
+    min-height: 0;
+    padding: 16px 20px 0 !important;
+  }
+
+  /* Small gap between the last line of the active tab and the buy bar */
+  .modal-info-wrapper::after {
+    content: '';
+    display: block;
+    flex: none;
+    height: clamp(20px, 4vw, 32px);
+  }
+
+  /* The track sizes to the active pane (inactive ones are height: 0), so the
+     sheet takes the active tab's own height. The active pane must not scroll
+     internally — overflow: visible makes it grow with the content, so the
+     whole sheet scrolls like a normal page. The viewport must not shrink
+     (flex: none) or the pane content gets squeezed to the sheet height. */
+  .modal-tabs-viewport {
+    flex: none;
+    min-height: 0;
+  }
+
+  .modal-tabs-track {
+    height: auto;
+  }
+
+  .modal-tabs-track .modal-tab-pane {
+    padding-bottom: 0 !important;
+  }
+
+  .modal-tabs-track .modal-tab-pane.is-active {
+    overflow: visible !important;
+  }
+
+  /* Buy bar: flex footer, always at the sheet's bottom edge. */
+  .modal-tab-buy {
+    position: static !important;
+    flex-shrink: 0;
+    width: 100%;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    box-shadow: 0 -20px 60px rgba(0, 0, 0, 0.28), 0 -4px 14px rgba(0, 0, 0, 0.12);
   }
 }
 

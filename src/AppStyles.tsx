@@ -573,6 +573,29 @@ html[lang="ar"] .hero-section::after {
       }
     }
 
+    /* iPhone 8+ / Plus (≈414px): чуть меньше зум фона, блок текста ниже
+       и немного компактнее. */
+    @media (min-width: 405px) and (max-width: 423px) {
+      .hero-section::before {
+        background-size: 320% auto;
+        background-position: right -420px bottom -120px;
+      }
+      .hero-section .hero-text-container {
+        margin-top: -90px;
+      }
+      .hero-section .hero-title {
+        font-size: clamp(36px, 9.5vw, 52px);
+      }
+      .hero-section .hero-description {
+        font-size: clamp(13px, 3.4vw, 15px);
+        margin-bottom: 20px;
+      }
+      .hero-section .hero-actions .btn {
+        font-size: 13px;
+        padding: 9px 20px;
+      }
+    }
+
     @media (min-width: 350px) and (max-width: 400px) {
       .hero-desc-br { display: none !important; }
       .hero-desc-br3 { display: inline !important; }

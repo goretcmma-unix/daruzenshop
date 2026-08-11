@@ -555,6 +555,12 @@ a:hover {
   overscroll-behavior-y: contain;
 }
 
+/* Transparent wrapper on desktop and mobile (unchanged layouts);
+   on tablets it becomes the scrollable body of the sheet. */
+.modal-scroll-region {
+  display: contents;
+}
+
 .modal-swipe,
 .modal-layout {
   scrollbar-width: none;
@@ -1271,6 +1277,12 @@ a:hover {
   .modal-layout[data-active-tab="note"] .modal-swipe {
     padding-bottom: 0 !important;
   }
+
+  /* Mobile shows the bottom buy bar only on the Product tab */
+  .modal-layout[data-active-tab="composition"] .modal-tab-buy,
+  .modal-layout[data-active-tab="note"] .modal-tab-buy {
+    display: none !important;
+  }
 }
 
 @media (max-width: 768px) {
@@ -1284,30 +1296,15 @@ a:hover {
 }
 
 /* On desktop the buy buttons now live in the info column right under the
-   description/tabs, so the fixed tab buy bar would duplicate them. Hide it. */
-@media (min-width: 769px) {
+   description/tabs, so the pinned bottom bar would duplicate them. Hide it. */
+@media (min-width: 1181px) {
   .modal-tab-buy {
     display: none !important;
   }
 }
 
-/* Vertical tablets (portrait, 769–900px): sticky buy bar inside modal */
+/* Vertical tablets (portrait, 769–900px): pinned buy bar at the modal bottom */
 @media (min-width: 769px) and (max-width: 900px) {
-  /* modal-tab-buy stays hidden (rendered outside .modal-layout); use modal-buy-under instead */
-
-    .modal-buy-under {
-    position: sticky !important;
-    bottom: 0 !important;
-    background: #fff !important;
-    border-radius: 24px !important;
-    box-shadow: 0 -20px 60px rgba(0, 0, 0, 0.28), 0 -4px 14px rgba(0, 0, 0, 0.12) !important;
-    min-height: 76px;
-    padding: 16px 0 20px 0 !important;
-    margin-top: auto !important;
-    margin-bottom: 0 !important;
-    z-index: 10 !important;
-  }
-
   .modal-tabs-track .modal-tab-pane {
     padding-bottom: 0 !important;
   }
@@ -1320,19 +1317,19 @@ a:hover {
     padding-right: clamp(20px, 4vw, 36px);
   }
 
-  .modal-buy-under .btn,
-  .modal-buy-under .modal-buy-btn {
+  .modal-tab-buy .btn,
+  .modal-tab-buy .modal-buy-btn {
     height: 60px !important;
     font-size: 18px !important;
     border-radius: 18px !important;
     width: 100%;
   }
 
-  .modal-buy-under .modal-buy-qty {
+  .modal-tab-buy .modal-buy-qty {
     height: 60px !important;
   }
 
-  .modal-buy-under .modal-buy-qty__value {
+  .modal-tab-buy .modal-buy-qty__value {
     font-size: 20px !important;
   }
 
@@ -1419,12 +1416,35 @@ a:hover {
 @media (min-width: 769px) and (max-width: 1180px) {
   .modal-layout {
     flex-direction: column;
-    gap: clamp(18px, 2.5vw, 28px);
+    gap: 0;
     padding: clamp(20px, 4vw, 36px);
     padding-bottom: 0;
     height: auto !important;
     min-height: clamp(480px, 78vh, 860px);
     max-height: 90vh !important;
+    overflow: hidden !important;
+  }
+
+  /* Scrollable body of the sheet: photo + info scroll together, while the
+     buy bar stays pinned to the bottom edge as a flex footer (no sticky,
+     so it works reliably on iPad/Safari). */
+  .modal-scroll-region {
+    flex: 1 1 auto;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    gap: clamp(18px, 2.5vw, 28px);
+    overflow-y: auto;
+    overflow-x: hidden;
+    overscroll-behavior-y: contain;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+
+  .modal-scroll-region::-webkit-scrollbar {
+    display: none;
+    width: 0;
+    height: 0;
   }
 
   /* The tabs viewport now fills the modal height, so the track must fill it
@@ -1470,6 +1490,16 @@ a:hover {
     flex-direction: column;
   }
 
+  /* Breathing room between the last line of Описание/Состав/Примечание and
+     the pinned bottom buy bar. A real (non-shrinking) spacer element, so the
+     gap survives the nested flex sizing and always shows after scrolling. */
+  .modal-info-wrapper::after {
+    content: '';
+    display: block;
+    flex: none;
+    height: clamp(20px, 3vw, 32px);
+  }
+
   /* On tablets the sheet self-expands (no internal scroll / fade zone), so the
      48px reserved bottom padding of the tab pane only creates a tall empty band
      after the description. Remove it so the sheet ends right after the content. */
@@ -1477,25 +1507,29 @@ a:hover {
     padding-bottom: 0 !important;
   }
 
-  /* Buy buttons sit right under the description with a small gap.
-   Full width of the modal card (edge to edge = modal-layout width), so the
-   panel is not narrower than the card; inner content keeps the card padding. */
+  /* The in-column buy buttons are replaced on tablets by the pinned bottom bar
+     (.modal-tab-buy — a flex footer of .modal-layout, always at the modal
+     bottom). Hide the old in-flow bars so they don't duplicate. */
   .modal-buy-under,
   .modal-out-of-stock {
-    position: sticky;
-    bottom: 0;
-    min-height: 100px;
-    margin-top: clamp(16px, 2.5vw, 24px);
-    margin-bottom: 0;
-    margin-left: calc(-1 * clamp(20px, 4vw, 36px));
-    margin-right: calc(-1 * clamp(20px, 4vw, 36px));
-    padding-top: 16px;
-    padding-bottom: 20px;
-    padding-left: clamp(20px, 4vw, 36px);
-    padding-right: clamp(20px, 4vw, 36px);
-    border-top: 1px solid rgba(0, 0, 0, 0.05);
-    box-shadow: 0 -20px 60px rgba(0, 0, 0, 0.28), 0 -4px 14px rgba(0, 0, 0, 0.12);
+    display: none !important;
+  }
+
+  /* Pinned bottom bar. Full width of the modal card (edge to edge — the layout
+     keeps its side padding, so counteract it), the inner .modal-buy-actions
+     restores the padding. */
+  .modal-tab-buy {
+    position: static !important;
+    flex-shrink: 0;
+    margin: 0;
+    margin-left: calc(-1 * clamp(20px, 4vw, 36px)) !important;
+    margin-right: calc(-1 * clamp(20px, 4vw, 36px)) !important;
+    padding: 16px 0 calc(16px + env(safe-area-inset-bottom));
     background: #fff;
+    border-top: 1px solid rgba(0, 0, 0, 0.05);
+    border-radius: 20px 20px 0 0;
+    box-shadow: 0 -20px 60px rgba(0, 0, 0, 0.28), 0 -4px 14px rgba(0, 0, 0, 0.12);
+    z-index: 10;
   }
 
   /* Sticker stays inside the photo area, on the right */

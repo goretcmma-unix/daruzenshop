@@ -1535,6 +1535,7 @@ const App: React.FC = () => {
                 boxShadow: '0 25px 50px -12px rgba(0,0,0,0.25)'
               }}
             >
+              <div className="modal-scroll-region">
               <motion.div className="modal-image-col">
                 <motion.div 
                   className="modal-image-wrapper"
@@ -1765,10 +1766,11 @@ const App: React.FC = () => {
                   </div>
                 )}
                             </div>
+              </div>
 
-              {/* Buy bar inside modal — sticky on tablets, fixed on mobile */}
+              {/* Buy bar inside modal — pinned to the bottom edge on tablets, sticky on mobile */}
               <AnimatePresence>
-                {selectedProduct && activeMobileTab === 'product' && (
+                {selectedProduct && (
                   <motion.div
                     key="modal-tab-buy"
                     ref={tabBuyRef}

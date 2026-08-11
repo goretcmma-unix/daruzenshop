@@ -1300,9 +1300,11 @@ a:hover {
     bottom: 0 !important;
     background: #fff !important;
     border-radius: 24px !important;
-    box-shadow: 0 -12px 40px rgba(0, 0, 0, 0.22) !important;
-    padding: 20px 24px !important;
-    margin-top: 20px !important;
+    box-shadow: 0 -20px 60px rgba(0, 0, 0, 0.28), 0 -4px 14px rgba(0, 0, 0, 0.12) !important;
+    min-height: 76px;
+    padding: 16px 0 20px 0 !important;
+    margin-top: auto !important;
+    margin-bottom: 0 !important;
     z-index: 10 !important;
   }
 
@@ -1311,9 +1313,11 @@ a:hover {
   }
 
   .modal-buy-actions {
-    display: flex;
-    align-items: center;
-    gap: 16px;
+    display: grid;
+    grid-template-columns: auto 1.0fr 1.25fr;
+    gap: 12px;
+    padding-left: clamp(20px, 4vw, 36px);
+    padding-right: clamp(20px, 4vw, 36px);
   }
 
   .modal-buy-under .btn,
@@ -1321,6 +1325,7 @@ a:hover {
     height: 60px !important;
     font-size: 18px !important;
     border-radius: 18px !important;
+    width: 100%;
   }
 
   .modal-buy-under .modal-buy-qty {
@@ -1416,16 +1421,18 @@ a:hover {
     flex-direction: column;
     gap: clamp(18px, 2.5vw, 28px);
     padding: clamp(20px, 4vw, 36px);
+    padding-bottom: 0;
     height: auto !important;
+    min-height: clamp(480px, 78vh, 860px);
     max-height: 90vh !important;
   }
 
-  /* The tabs track must size to the ACTIVE pane only, so a tall tab (e.g.
-     Composition) doesn't stretch the Description / Note tabs to the same height.
-     Inactive panes are collapsed by the rule below (height: 0). */
+  /* The tabs viewport now fills the modal height, so the track must fill it
+     too and stretch the active pane to scroll internally. Inactive panes are
+     still collapsed (height: 0) by the other rule. */
   .modal-tabs-track {
-    height: auto;
-    align-items: flex-start;
+    height: 100%;
+    align-items: stretch;
   }
 
   .modal-image-col {
@@ -1456,9 +1463,11 @@ a:hover {
   }
 
   .modal-info-wrapper {
-    flex: none;
+    flex: 1 1 auto;
     width: 100%;
     min-height: 0;
+    display: flex;
+    flex-direction: column;
   }
 
   /* On tablets the sheet self-expands (no internal scroll / fade zone), so the
@@ -1468,12 +1477,25 @@ a:hover {
     padding-bottom: 0 !important;
   }
 
-  /* Buy buttons sit right under the description with a small gap */
+  /* Buy buttons sit right under the description with a small gap.
+   Full width of the modal card (edge to edge = modal-layout width), so the
+   panel is not narrower than the card; inner content keeps the card padding. */
   .modal-buy-under,
   .modal-out-of-stock {
+    position: sticky;
+    bottom: 0;
+    min-height: 100px;
     margin-top: clamp(16px, 2.5vw, 24px);
-    padding-top: 20px;
+    margin-bottom: 0;
+    margin-left: calc(-1 * clamp(20px, 4vw, 36px));
+    margin-right: calc(-1 * clamp(20px, 4vw, 36px));
+    padding-top: 16px;
+    padding-bottom: 20px;
+    padding-left: clamp(20px, 4vw, 36px);
+    padding-right: clamp(20px, 4vw, 36px);
     border-top: 1px solid rgba(0, 0, 0, 0.05);
+    box-shadow: 0 -20px 60px rgba(0, 0, 0, 0.28), 0 -4px 14px rgba(0, 0, 0, 0.12);
+    background: #fff;
   }
 
   /* Sticker stays inside the photo area, on the right */
@@ -1511,6 +1533,13 @@ a:hover {
     -webkit-mask-image: none;
     mask-image: none;
     margin-bottom: 0;
+  }
+
+  .modal-buy-actions {
+    grid-template-columns: auto 1.0fr 1.25fr;
+    gap: 12px;
+    padding-left: clamp(20px, 4vw, 36px);
+    padding-right: clamp(20px, 4vw, 36px);
   }
 }
 
@@ -1598,10 +1627,10 @@ a:hover {
 }
 
 /* Bottom bar with the buy buttons in the Description tab.
-   Fixed: pinned to the very bottom of the screen, full width,
-   with all corners rounded and shadow. Fixed height on mobile. */
+   Grounded to the bottom edge of the modal window (sticky inside .modal-layout),
+   not fixed to the screen, so it does not float/hang in the air. */
 .modal-tab-buy {
-  position: fixed;
+  position: sticky;
   bottom: 0;
   left: 0;
   right: 0;

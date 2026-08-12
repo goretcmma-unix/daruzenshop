@@ -162,7 +162,7 @@ html[lang="ar"] .hero-section::after {
       .hero-section .hero-text-container {
         max-width: 100%;
         margin-left: 0;
-        margin-top: -80px;
+        margin-top: 0;
       }
       
       .hero-section .hero-description {
@@ -198,19 +198,15 @@ html[lang="ar"] .hero-section::after {
       }
     }
 
-    /* Arabic mobile - increase photo scale from iPhone SE and up */
+    /* Arabic mobile - единое плавное правило, без per-device хаков */
     @media (max-width: 778px) {
       html[lang="ar"] .hero-section::before {
-        background-size: 310% auto !important;
-        background-position: 44% 35% !important;
+        background-color: #5a4a3f;
+        background-size: cover !important;
+        background-position: center center !important;
       }
       html[lang="ar"] .hero-section .hero-description {
         text-shadow: none !important;
-      }
-    }
-    @media (min-width: 390px) and (max-width: 778px) {
-      html[lang="ar"] .hero-section::before {
-        background-size: 370% auto !important;
       }
     }
 
@@ -218,8 +214,8 @@ html[lang="ar"] .hero-section::after {
     @media (min-width: 768px) and (max-width: 1180px) {
       /* --- ФОН --- */
       html[lang="ar"] .hero-section::before {
-        background-position: 34% 45% !important;
-        background-size: 200% auto !important;
+        background-size: cover;
+        background-position: center center;
       }
       /* --- БЛОК ТЕКСТА (заголовок + параграф + кнопка) --- */
       html[lang="ar"] .hero-text-container {
@@ -243,109 +239,6 @@ html[lang="ar"] .hero-section::after {
       }
     }
 
-    /* ===== iPhone SE (375px) ===== */
-    @media (min-width: 372px) and (max-width: 378px) {
-      html[lang="ar"] .hero-section::before {
-        background-position: 45% 32% !important;
-        background-size: 300% auto !important;
-      }
-    }
-
-    /* ===== iPhone 12 / 13 / 14 (390px) ===== */
-    @media (min-width: 388px) and (max-width: 395px) {
-      html[lang="ar"] .hero-section::before {
-        background-position: 44% 46% !important;
-        background-size: 340% auto !important;
-      }
-    }
-
-    /* ===== iPhone XR (414px) ===== */
-    @media (min-width: 412px) and (max-width: 418px) {
-      html[lang="ar"] .hero-section::before {
-        background-position: 44% 48% !important;
-        background-size: 340% auto !important;
-      }
-    }
-
-    /* ===== iPhone 14 Pro Max / 13 Pro Max / 12 Pro Max (430px) ===== */
-    @media (min-width: 428px) and (max-width: 435px) {
-      html[lang="ar"] .hero-section::before {
-        background-position: 44% 50% !important;
-        background-size: 320% auto !important;
-      }
-    }
-
-    /* ===== iPhone 5 / SE 1st gen / старые (320px) ===== */
-    @media (min-width: 318px) and (max-width: 323px) {
-      html[lang="ar"] .hero-section::before {
-        background-position: 55% 55% !important;
-        background-size: 320% auto !important;
-      }
-    }
-
-    /* ===== iPhone 15 / 16 / 15 Pro / 16 Pro (393px) ===== */
-    @media (min-width: 391px) and (max-width: 395px) {
-      html[lang="ar"] .hero-section::before {
-        background-position: 50% 55% !important;
-        background-size: 375% auto !important;
-      }
-    }
-
-    /* ===== iPhone 16 Pro Max (440px) ===== */
-    @media (min-width: 438px) and (max-width: 442px) {
-      html[lang="ar"] .hero-section::before {
-        background-position: 44% 55% !important;
-        background-size: 320% auto !important;
-      }
-    }
-
-    /* ===== Samsung Galaxy S8 / S9 / S10 / S20 / A-series (360px) ===== */
-    @media (min-width: 358px) and (max-width: 363px) {
-      html[lang="ar"] .hero-section::before {
-        background-position: 44% 10% !important;
-        background-size: 320% auto !important;
-      }
-    }
-
-    /* ===== Google Pixel 2–4 (409px) ===== */
-    @media (min-width: 408px) and (max-width: 410px) {
-      html[lang="ar"] .hero-section::before {
-        background-position: 50% 57% !important;
-        background-size: 375% auto !important;
-      }
-    }
-
-    /* ===== Samsung Galaxy Fold (подключенный, 344px) ===== */
-    @media (min-width: 342px) and (max-width: 347px) {
-      html[lang="ar"] .hero-section::before {
-        background-position: 42% -35% !important;
-        background-size: 380% auto !important;
-      }
-    }
-
-    /* ===== Samsung Galaxy Fold (сложенный, 280px) ===== */
-    @media (min-width: 278px) and (max-width: 283px) {
-      html[lang="ar"] .hero-section::before {
-        background-position: 55% 55% !important;
-        background-size: 320% auto !important;
-      }
-    }
-
-    /* ===== Samsung Galaxy S20 Ultra (412px) ===== */
-    @media (min-width: 411px) and (max-width: 413px) {
-      html[lang="ar"] .hero-section::before {
-        background-position: 44% 55% !important;
-        background-size: 310% auto !important;
-      }
-    }
-
-    /* ===== Google Pixel 7 / Galaxy Note 20 (411px) ===== */
-    @media (min-width: 410px) and (max-width: 411px) {
-      html[lang="ar"] .hero-section::before {
-        background-position: 50% 57% !important;
-        background-size: 375% auto !important;
-      }
-    }
 
     .hero-content-wrapper {
       width: 100%;
@@ -448,12 +341,12 @@ html[lang="ar"] .hero-section::after {
         padding-bottom: 60px;
       }
       .hero-section::before {
-        background-size: 200% auto;
-        background-position: right -520px center;
+        background-size: cover;
+        background-position: center;
       }
       
       .hero-title {
-        font-size: clamp(38px, 7vw, 76px);
+        font-size: clamp(34px, 6vw, 70px);
       }
       
       .header .container {
@@ -484,185 +377,18 @@ html[lang="ar"] .hero-section::after {
       }
     }
 
-    @media (min-width: 760px) and (max-width: 874px) {
+    /* Mobile: единая плавная адаптация (вместо per-device хаков).
+       Фон всегда cover + центр, заголовок и описание резиновые через clamp. */
+    @media (max-width: 778px) {
       .hero-section::before {
-        background-position: right -200px top 55%;
-        background-size: 140% auto;
-      }
-      .hero-title {
-        font-size: clamp(38px, 7.5vw, 76px);
-      }
-      .hero-text-container {
-        max-width: clamp(400px, 48vw, 540px);
-      }
-    }
-    @media (min-width: 360px) and (max-width: 778px) {
-      .hero-section::before {
-        background-position: right -365px bottom -120px;
-        background-size: 290% auto;
-      }
-    }
-
-    @media (min-width: 360px) and (max-width: 600px) {
-      .hero-section::before {
-        background-position: right -395px bottom -120px;
-        background-size: 310% auto;
-      }
-    }
-    @media (min-width: 600px) and (max-width: 704px) {
-      .hero-section::before {
-        background-position: right -380px bottom -120px;
-        background-size: 300% auto;
-      }
-    }
-
-    @media (max-width: 375px) {
-      .hero-section::before {
-        background-position: right -295px bottom -80px;
-        background-size: 260% auto;
-      }
-      .hero-section .hero-text-container {
-        margin-top: -80px;
-      }
-    }
-
-    @media (min-width: 358px) and (max-width: 362px) {
-      .hero-section::before {
-        background-size: 300% auto;
-        background-position: right -325px bottom -100px;
-      }
-    }
-
-    @media (min-width: 390px) and (max-width: 778px) {
-      .hero-section::before {
-        background-size: 350% auto;
-        background-position: right -450px bottom -120px;
-      }
-    }
-
-    @media (min-width: 428px) and (max-width: 432px) {
-      .hero-section::before {
-        background-position: right -465px bottom -120px;
-      }
-    }
-
-    @media (min-width: 438px) and (max-width: 442px) {
-      .hero-section::before {
-        background-position: right -470px bottom -120px;
+        background-size: cover;
+        background-position: center;
       }
       .hero-section .hero-title {
-        font-size: clamp(42px, 10.5vw, 70px);
-      }
-      .hero-section .hero-description {
-        font-size: clamp(14px, 1.7vw, 23px);
-      }
-      .hero-section .hero-actions .btn {
-        font-size: 15px;
-        padding: 11px 26px;
-      }
-    }
-
-    @media (min-width: 388px) and (max-width: 392px) {
-      .hero-section::before {
-        background-position: right -480px bottom -120px;
-      }
-    }
-
-    @media (min-width: 376px) and (max-width: 416px) {
-      .hero-section .hero-title {
-        font-size: clamp(40px, 11vw, 68px);
+        font-size: min(clamp(38px, 10vw, 63px), calc(100vh * 0.085));
       }
       .hero-section .hero-text-container {
-        margin-top: -150px;
-      }
-    }
-
-    /* iPhone 8+ / Plus (≈414px): чуть меньше зум фона, блок текста ниже
-       и немного компактнее. */
-    @media (min-width: 405px) and (max-width: 423px) {
-      .hero-section::before {
-        background-size: 320% auto;
-        background-position: right -420px bottom -120px;
-      }
-      .hero-section .hero-text-container {
-        margin-top: -90px;
-      }
-      .hero-section .hero-title {
-        font-size: clamp(36px, 9.5vw, 52px);
-      }
-      .hero-section .hero-description {
-        font-size: clamp(13px, 3.4vw, 15px);
-        margin-bottom: 20px;
-      }
-      .hero-section .hero-actions .btn {
-        font-size: 13px;
-        padding: 9px 20px;
-      }
-    }
-
-    @media (min-width: 350px) and (max-width: 400px) {
-      .hero-desc-br { display: none !important; }
-      .hero-desc-br3 { display: inline !important; }
-    }
-
-    /* 448–778: фон по-экранно, под текстом слева чистая зона.
-       Меняй background-position (сдвиг) и background-size (масштаб) по каждому экрану. */
-    @media (min-width: 448px) and (max-width: 479px) {
-  .hero-section::before {
-    background-size: cover;
-    background-position: 45% 75%;
-  }
-  .hero-section .hero-title {
-    font-size: min(clamp(38px, 10vw, 63px), calc(100vh * 0.085));
-  }
-}
-@media (min-width: 480px) and (max-width: 559px) {
-  .hero-section::before {
-    background-size: cover;
-    background-position: 42% 75%;
-  }
-  .hero-section .hero-title {
-    font-size: min(clamp(38px, 10vw, 63px), calc(100vh * 0.085));
-  }
-}
-@media (min-width: 560px) and (max-width: 639px) {
-  .hero-section::before {
-    background-size: cover;
-    background-position: 38% 75%;
-  }
-  .hero-section .hero-title {
-    font-size: min(clamp(38px, 10vw, 63px), calc(100vh * 0.085));
-  }
-}
-@media (min-width: 640px) and (max-width: 703px) {
-  .hero-section::before {
-    background-size: cover;
-    background-position: 35% 75%;
-  }
-  .hero-section .hero-title {
-    font-size: min(clamp(38px, 10vw, 63px), calc(100vh * 0.085));
-  }
-}
-@media (min-width: 704px) and (max-width: 778px) {
-  .hero-section::before {
-    background-size: 170% auto;
-    background-position: right -300px bottom -120px;
-  }
-  .hero-section .hero-title {
-    font-size: min(clamp(38px, 10vw, 63px), calc(100vh * 0.085));
-  }
-}
-@media (min-width: 448px) and (max-width: 778px) and (max-height: 650px) {
-      .hero-section .hero-text-container { margin-top: -40px; }
-    }
-    @media (min-width: 448px) and (max-width: 778px) and (min-height: 651px) and (max-height: 800px) {
-      .hero-section .hero-text-container { margin-top: -60px; }
-    }
-
-    @media (min-width: 874px) and (max-width: 1116px) {
-      .hero-section::before {
-        background-size: 120% auto;
-        background-position: right -100px center;
+        margin-top: 0;
       }
     }
 
@@ -903,95 +629,10 @@ html[lang="ar"] .hero-section::after {
       }
     }
 
-    /* 769–1116: desktop-like hero — smaller text so it fits the viewport */
-    @media (min-width: 769px) and (max-width: 1116px) {
-      .hero-text-container {
-        margin-left: calc(64px - max(0px, 50vw - 640px));
-      }
-      .hero-title {
-        font-size: clamp(34px, 5.8vw, 66px);
-      }
-      .hero-description {
-        font-size: clamp(15px, 1.5vw, 19px);
-      }
-      .hero-actions .btn {
-        padding: clamp(10px, 1.2vw, 14px) clamp(18px, 2.6vw, 34px);
-        font-size: clamp(13px, 1.3vw, 16px);
-      }
-    }
-
-    /* 769–873: slightly larger title, bg shifted a bit further left */
+    /* 769–873: чуть крупнее заголовок на узких планшетах */
     @media (min-width: 769px) and (max-width: 873px) {
       .hero-title {
         font-size: clamp(36px, 6.4vw, 70px);
-      }
-      .hero-section::before {
-        background-position-x: right -200px;
-      }
-    }
-
-    /* 500–778 (tablet/landscape): lower, smaller title; bg less zoomed */
-    @media (min-width: 500px) and (max-width: 778px) {
-      .hero-section .hero-title {
-        font-size: min(clamp(32px, 8vw, 50px), calc(100vh * 0.085));
-      }
-      .hero-section::before {
-        background-size: auto 100%;
-        background-position: right calc(-100px - max(0px, 736px - 100vw) * 0.8) center;
-      }
-    }
-    @media (min-width: 500px) and (max-width: 778px) {
-      .hero-section .hero-text-container {
-        margin-bottom: 1px;
-      }
-    }
-
-    /* 360–447: smaller bg, smaller and lower title */
-    @media (min-width: 360px) and (max-width: 447px) {
-      .hero-section::before {
-        background-size: auto 100%;
-        background-position: right -300px center;
-      }
-      .hero-section .hero-title {
-        font-size: clamp(34px, 9vw, 44px);
-      }
-      .hero-section .hero-text-container {
-        margin-top: -90px;
-      }
-    }
-
-    /* ≤397: bg slightly lower, smaller button so it balances the title */
-    @media (max-width: 397px) {
-      .hero-section::before {
-        background-size: auto max(100%, calc(104% - max(0px, 400px - 100vw) * 0.85));
-        background-position-x: right calc(-270px - max(0px, 400px - 100vw) * 1.5);
-        background-position-y: 20%;
-      }
-      .hero-section .hero-actions .btn {
-        font-size: 13px;
-        padding: 8px 16px;
-      }
-      .hero-section .hero-text-container {
-        margin-top: -40px;
-      }
-    }
-
-    /* iPhone SE 2/3 gen (375px): только этот размер — сдвигаем фон левее.
-       Правило идёт последним, поэтому выигрывает по каскаду без !important
-       и не задевает другие устройства */
-    @media (min-width: 372px) and (max-width: 378px) {
-      .hero-section::before {
-        background-position: right -260px center;
-        background-size: auto 106%;
-        margin-top: 112px;
-      }
-    }
-
-    /* iPhone SE 1st gen (320px): только этот размер — фон тоже сдвинут левее */
-    @media (min-width: 318px) and (max-width: 323px) {
-      .hero-section::before {
-        background-position: right -310px center;
-        background-size: auto 100%;
       }
     }
 

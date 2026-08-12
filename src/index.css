@@ -451,12 +451,27 @@ a:hover {
 }
 
 .modal-image {
-  width: 100%;
+  width: auto;
   height: 100%;
   max-width: 100%;
   max-height: 100%;
   object-fit: contain;
   background: #ffffff;
+}
+
+/* The photo shrink-wraps to the image's exact rendered box, so the sticker
+   positioned inside it stays glued to the photo instead of drifting with the
+   column wrapper when the window is resized. */
+.modal-photo {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  height: 100%;
+  width: auto;
+  max-width: 100%;
+  max-height: 100%;
 }
 
 .modal-info-wrapper {
@@ -1374,31 +1389,40 @@ a:hover {
 
 .modal-product-media__img {
   display: block;
-  width: 100%;
+  width: auto;
+  height: auto;
+  max-width: 100%;
   max-height: 300px;
   object-fit: contain;
   border-radius: 16px;
   background: #fff;
 }
 
-/* Desktop: shift product image left to make room for sticker */
+/* Shrink-wraps to the product image so the sticker stays glued to the product
+   itself instead of drifting inside the full-width photo area. */
+.modal-product-photo {
+  position: relative;
+  display: inline-block;
+  max-width: 100%;
+  line-height: 0;
+}
+
+/* Desktop: shift product photo left to make room for sticker */
 @media (min-width: 769px) {
-  .modal-image {
+  .modal-photo {
     margin-right: 140px;
-    object-position: left center;
   }
-  [dir="rtl"] .modal-image {
+  [dir="rtl"] .modal-photo {
     margin-right: 0;
     margin-left: 140px;
-    object-position: right center;
   }
 }
 
 .modal-product-media__cert-label {
   position: absolute;
-  top: clamp(16px, 6vh, 96px);
-  right: 0;
-  width: min(400px, 55%);
+  top: 160px;
+  right: -180px;
+  width: 360px;
   height: auto;
   max-height: 400px;
   object-fit: contain;
@@ -1413,7 +1437,7 @@ a:hover {
   right: auto;
   left: clamp(10px, 1.5vw, 28px);
   position: absolute;
-  top: clamp(16px, 6vh, 96px);
+  top: 160px;
 }
 
 /* All tablets and narrow windows (769-1180px, any orientation): a compact
@@ -1490,6 +1514,13 @@ a:hover {
     object-fit: contain;
   }
 
+  /* The tablet photo keeps its own 8vh margin on the image; neutralize the
+     wrapper margin so they don't stack. */
+  .modal-photo {
+    margin-right: 0 !important;
+    margin-left: 0 !important;
+  }
+
   .modal-info-wrapper {
     flex: 1 1 auto;
     width: 100%;
@@ -1544,7 +1575,7 @@ a:hover {
   .modal-product-media__cert-label {
     top: 50%;
     left: auto;
-    right: 15px;
+    right: -40px;
     width: clamp(100px, 58%, 320px);
     max-height: none;
     transform: translateY(-50%);
@@ -1553,20 +1584,6 @@ a:hover {
     right: auto;
     left: clamp(8px, 3vw, 20px);
   }
-
-  /* iPad 10.5" portrait (834px) previously forced right: 32px here, which
-     overrode the `right` value from the main tablet block for iPads ~820-850px
-     wide. Removed so that `right` in .modal-product-media__cert-label (above)
-     takes effect on ALL tablets, including iPads. */
-  /* @media (min-width: 820px) and (max-width: 850px) {
-    .modal-product-media__cert-label {
-      right: 32px;
-    }
-    [dir="rtl"] .modal-product-media__cert-label {
-      right: auto;
-      left: 32px;
-    }
-  } */
 
   /* Tab content flows with the card; the whole card scrolls as one */
   .modal-tabs-viewport {
@@ -1585,17 +1602,42 @@ a:hover {
   }
 }
 
-/* Actual browser viewport 1534px and wider — push sticker clearly to the right */
+/* Vertical tablets (769–900px): sticker a bit further right */
+@media (min-width: 769px) and (max-width: 900px) {
+  .modal-product-media__cert-label {
+    right: -70px;
+  }
+  [dir="rtl"] .modal-product-media__cert-label {
+    right: auto;
+    left: -70px;
+  }
+}
+
+/* Desktop, narrower windows (1181–1509px): sticker has its own dedicated spot
+   on the photo's right side, slightly lower — no falling through to defaults. */
+@media (min-width: 1181px) and (max-width: 1509px) {
+  .modal-product-media__cert-label {
+    position: absolute;
+    right: -180px;
+    top: 160px;
+  }
+  [dir="rtl"] .modal-product-media__cert-label {
+    right: auto;
+    left: clamp(24px, 3vw, 60px);
+  }
+}
+
+/* Actual browser viewport 1534px and wider — keep the same spot as the
+   narrow desktop range so the sticker never jumps across the 1510px boundary */
 @media (min-width: 1510px) {
   .modal-product-media__cert-label {
     position: absolute;
-    right: -96px !important; 
-    position: absolute;
-    top: 15vh;
+    right: -180px !important;
+    top: 160px;
   }
   [dir="rtl"] .modal-product-media__cert-label {
     right: auto !important;
-    left: 96px !important;
+    left: clamp(24px, 3vw, 60px) !important;
   }
 }
 
@@ -1605,18 +1647,28 @@ a:hover {
 @media (max-width: 768px) {
   .modal-product-media {
     display: block;
+    text-align: center;
+  }
+  .modal-product-photo {
+    display: inline-block;
+    max-width: 100%;
+    margin-inline-start: 50px;
   }
   .modal-product-media__img {
     margin: 0;
-    max-height: clamp(220px, 42vh, 300px);
-    object-position: 36% center;
+    margin-right: clamp(60px, 16vw, 110px);
+    width: auto;
+    height: auto;
+    max-width: 100%;
+    max-height: clamp(240px, 44vh, 400px);
+    object-position: center center;
   }
   .modal-product-media__cert-label {
     position: absolute;
     top: 50%;
     left: auto;
-    right: clamp(-24px, -6vw, -8px);
-    width: clamp(140px, 48vw, 200px);
+    right: 14px;
+    width: clamp(110px, 27vw, 165px);
     max-height: none;
     transform: translateY(-50%);
   }
@@ -1625,14 +1677,15 @@ a:hover {
     right: auto;
   }
   [dir="rtl"] .modal-product-media__img {
-    object-position: 64% center;
+    margin-right: 0;
+    margin-left: clamp(60px, 16vw, 110px);
   }
   [dir="rtl"] .modal-product-media .modal-tab-close {
     left: auto;
     right: 12px;
   }
   [dir="rtl"] .modal-product-media__cert-label {
-    left: clamp(-24px, -6vw, -8px);
+    left: 30px;
     right: auto;
     top: 50%;
   }

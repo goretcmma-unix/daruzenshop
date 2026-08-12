@@ -28,7 +28,7 @@ const AppStyles = () => (
       margin: 0;
       min-height: 90vh;
       padding-top: 120px;
-      padding-bottom: 120px;
+      padding-bottom: 160px;
       position: relative;
       display: flex;
       align-items: center;
@@ -162,7 +162,7 @@ html[lang="ar"] .hero-section::after {
       .hero-section .hero-text-container {
         max-width: 100%;
         margin-left: 0;
-        margin-top: -150px;
+        margin-top: -80px;
       }
       
       .hero-section .hero-description {
@@ -386,8 +386,8 @@ html[lang="ar"] .hero-section::after {
     }
     .marquee-section {
       background: var(--bg-main);
-      border-top: 1px solid var(--border);
-      border-bottom: 1px solid var(--border);
+      border: 1px solid rgba(93, 64, 55, 0.09);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6), 0 8px 24px rgba(62, 39, 35, 0.04);
       overflow: hidden;
       margin-top: 0;
       position: relative;
@@ -760,6 +760,7 @@ html[lang="ar"] .hero-section::after {
       -webkit-box-orient: vertical;
       overflow: hidden;
       line-height: 1.3;
+      text-wrap: balance;
     }
 
     .product-card-price {
@@ -941,7 +942,7 @@ html[lang="ar"] .hero-section::after {
     }
     @media (min-width: 500px) and (max-width: 778px) {
       .hero-section .hero-text-container {
-        margin-top: 30px;
+        margin-bottom: 1px;
       }
     }
 
@@ -971,7 +972,26 @@ html[lang="ar"] .hero-section::after {
         padding: 8px 16px;
       }
       .hero-section .hero-text-container {
-        margin-top: -110px;
+        margin-top: -40px;
+      }
+    }
+
+    /* iPhone SE 2/3 gen (375px): только этот размер — сдвигаем фон левее.
+       Правило идёт последним, поэтому выигрывает по каскаду без !important
+       и не задевает другие устройства */
+    @media (min-width: 372px) and (max-width: 378px) {
+      .hero-section::before {
+        background-position: right -260px center;
+        background-size: auto 106%;
+        margin-top: 112px;
+      }
+    }
+
+    /* iPhone SE 1st gen (320px): только этот размер — фон тоже сдвинут левее */
+    @media (min-width: 318px) and (max-width: 323px) {
+      .hero-section::before {
+        background-position: right -310px center;
+        background-size: auto 100%;
       }
     }
 

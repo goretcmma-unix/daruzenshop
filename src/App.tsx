@@ -636,7 +636,8 @@ const App: React.FC = () => {
           overflow: 'hidden',
           width: '100%',
           display: 'flex',
-          padding: '30px 0' 
+          marginTop: '-14px',
+          padding: '36px 0 18px' 
         }}>
           {/* Фикс лагов: заменяем CSS mask на наложения (overlays) */}
           <div style={{ position: 'absolute', top: 0, left: 0, bottom: 0, width: '15%', background: 'linear-gradient(to right, var(--bg-main), transparent)', zIndex: 2, pointerEvents: 'none' }} />
@@ -1541,6 +1542,7 @@ const App: React.FC = () => {
                   className="modal-image-wrapper"
                   style={{ flex: '1 1 auto', display: 'flex', alignItems: 'flex-start', justifyContent: 'center', position: 'relative' }}
                 >
+                  <div className="modal-photo">
                   <motion.img 
                     initial={{ scale: 0.8, opacity: 0 }}
                     animate={{ scale: 1, opacity: selectedProduct.inStock === false ? 0.3 : 1 }}
@@ -1551,6 +1553,7 @@ const App: React.FC = () => {
                     style={{ filter: selectedProduct.inStock === false ? 'grayscale(1)' : 'none' }}
                   />
                   <img src="/images/label_certificates.png" alt="Certificates" className="modal-product-media__cert-label" />
+                  </div>
                   <motion.button 
                     whileHover={{ scale: 1.1, background: 'rgba(255, 255, 255, 0.9)', boxShadow: '0 8px 20px rgba(0,0,0,0.1)' }}
                     whileTap={{ scale: 0.95 }}
@@ -1621,8 +1624,10 @@ const App: React.FC = () => {
                   {/* Product tab */}
                   <div className={`modal-tab-pane${activeMobileTab === 'product' ? ' is-active' : ''}`} data-tab="product">
                     <div className="modal-product-media">
-                      <NormalizedImg src={selectedProduct.image} className="modal-product-media__img" alt={selectedProduct.name} loading="lazy" decoding="async" />
-                      <img src="/images/label_certificates.png" alt="Certificates" className="modal-product-media__cert-label" />
+                      <div className="modal-product-photo">
+                        <NormalizedImg src={selectedProduct.image} className="modal-product-media__img" alt={selectedProduct.name} loading="lazy" decoding="async" />
+                        <img src="/images/label_certificates.png" alt="Certificates" className="modal-product-media__cert-label" />
+                      </div>
                       <motion.button whileHover={{ scale: 1.1, background: 'rgba(255, 255, 255, 0.95)', boxShadow: '0 8px 20px rgba(0,0,0,0.1)' }} whileTap={{ scale: 0.95 }} onClick={() => { setSelectedProduct(null); setModalQuantity(1); }} className="modal-tab-close" aria-label="Close">
                         <X size={16} color="var(--text-muted)" />
                       </motion.button>
@@ -1838,6 +1843,16 @@ const App: React.FC = () => {
               exit={{ opacity: 0 }}
               transition={{ duration: 0.25, ease: 'easeOut' }}
               className="mobile-menu-overlay" 
+              onClick={() => setIsMobileMenuOpen(false)} 
+            />
+        )}
+        {isMobileMenuOpen && (
+            <motion.div 
+              key="mobile-menu-content"
+              initial={{ x: isRtl ? '100%' : '-100%' }}
+              animate={{ x: 0 }}
+              exit={{ x: isRtl ? '100%' : '-100%' }}
+              transition={{ duration: 0.38, ease: [0.22, 1, 0.36, 1] }}
               onClick={() => setIsMobileMenuOpen(false)} 
             />
         )}

@@ -1644,8 +1644,8 @@ a:hover {
     position: absolute;
     right: -30%;
     top: 20%;
-    width: 60%;
-    max-height: 50%;
+    width: 68%;
+    max-height: 55%;
   }
   [dir="rtl"] .modal-product-media__cert-label {
     right: auto;
@@ -1660,8 +1660,8 @@ a:hover {
     position: absolute;
     right: -30% !important;
     top: 20%;
-    width: 60%;
-    max-height: 50%;
+    width: 68%;
+    max-height: 55%;
   }
   [dir="rtl"] .modal-product-media__cert-label {
     right: auto !important;

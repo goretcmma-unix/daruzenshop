@@ -1540,12 +1540,15 @@ const App: React.FC = () => {
               <motion.div className="modal-image-col">
                 <motion.div 
                   className="modal-image-wrapper"
-                  style={{ flex: '1 1 auto', display: 'flex', alignItems: 'flex-start', justifyContent: 'center', position: 'relative' }}
+                  style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'center', position: 'relative' }}
                 >
-                  <div className="modal-photo">
+                  <div
+                    className="modal-photo"
+                    style={{ width: 'auto', height: '100%', maxWidth: '100%', maxHeight: '100%' }}
+                  >
                   <motion.img 
-                    initial={{ scale: 0.8, opacity: 0 }}
-                    animate={{ scale: 1, opacity: selectedProduct.inStock === false ? 0.3 : 1 }}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: selectedProduct.inStock === false ? 0.3 : 1 }}
                     src={selectedProductImage}
                     loading="lazy"
                     decoding="async"

@@ -27,8 +27,8 @@ const AppStyles = () => (
       width: 100%;
       margin: 0;
       min-height: 90vh;
-      padding-top: 120px;
-      padding-bottom: 160px;
+      padding-top: clamp(100px, 9vh, 140px);
+      padding-bottom: clamp(120px, 11vh, 180px);
       position: relative;
       display: flex;
       align-items: center;
@@ -41,14 +41,14 @@ const AppStyles = () => (
       pointer-events: none;
             background-image: url('/images/hero_bg_daruzen.webp');
       background-repeat: no-repeat;
-      background-size: 111% auto;
-      background-position: center 75%;
+      background-size: cover;
+      background-position: right center;
     }
         html[lang="ar"] .hero-section::before {
       background-image: url('/images/hero_bg_daruzen_ar.webp');
             background-color: #5a4a3f;
-      background-size: 111% auto;
-      background-position: 0% 60%;
+      background-size: cover;
+      background-position: center;
       transform: none;
     }
     .hero-section::after {
@@ -317,17 +317,13 @@ html[lang="ar"] .hero-section::after {
       .hero-text-container {
         /* Push the text block to ~96px from the viewport's left edge,
            same as the 1414px+ layout. */
-        margin-left: calc(64px - max(0px, 50vw - 640px));
+        margin-left: calc(32px - max(0px, 50vw - 640px));
         padding-left: 0;
         max-width: clamp(380px, 44vw, 560px);
       }
     }
 
     @media (min-width: 1117px) and (max-width: 1232px) {
-      .hero-section::before {
-        background-position: 70% center;
-        background-size: auto 110%;
-      }
       .hero-desc-br { display: none; }
       .hero-desc-br3 { display: inline; }
     }
@@ -367,7 +363,7 @@ html[lang="ar"] .hero-section::after {
       .hero-text-container {
         max-width: clamp(380px, 45vw, 540px);
         padding-left: 0;
-        margin-left: 0;
+        margin-left: calc(32px - max(0px, 50vw - 640px));
         position: relative;
         z-index: 2;
       }

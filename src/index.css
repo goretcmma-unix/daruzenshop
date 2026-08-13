@@ -453,6 +453,7 @@ a:hover {
 .modal-image {
   width: auto;
   height: 100%;
+  aspect-ratio: 3 / 4;
   max-width: 100%;
   max-height: 100%;
   object-fit: contain;
@@ -1324,6 +1325,23 @@ a:hover {
   .modal-tab-buy {
     display: none !important;
   }
+
+   /* Give the photo column a definite height so the shrink-wrapped photo box
+      (and the sticker glued to its edge) keeps a stable width from the very
+      first frame. Without this the wrapper height is content-driven (the
+      layout is height:auto), so .modal-image resolves to its intrinsic size —
+      and the box changes width when src swaps from the raw image to the
+      normalized 600x800 version, shifting the sticker. The height matches the
+      wrapper's previous max-height so the photo keeps its original size and
+      the sticker stays at the same spot. The 620px floor (with the base
+      max-height removed) keeps the photo wide enough that the fixed-size
+      sticker never overlaps the product's center — even on short windows the
+      tab pane just scrolls instead of shrinking the photo. */
+  .modal-image-wrapper {
+    flex: none;
+    height: max(620px, min(800px, calc(90vh - 2 * clamp(28px, 4vw, 52px))));
+    max-height: none;
+  }
 }
 
 /* Vertical tablets (portrait, 769–900px): pinned buy bar at the modal bottom */
@@ -1614,12 +1632,20 @@ a:hover {
 }
 
 /* Desktop, narrower windows (1181–1509px): sticker has its own dedicated spot
-   on the photo's right side, slightly lower — no falling through to defaults. */
+   on the photo's right side, slightly lower — no falling through to defaults.
+   Size and offset are pure percentages of the photo box, so the sticker stays
+   glued to exactly the same relative spot on the product and scales smoothly
+   and synchronously with the photo as the window grows or shrinks (the photo
+   box has a 620px floor, so the sticker never gets tiny and never overlaps the
+   product's center). Identical to the wider desktop rule so the sticker never
+   jumps across the 1510px boundary. */
 @media (min-width: 1181px) and (max-width: 1509px) {
   .modal-product-media__cert-label {
     position: absolute;
-    right: -180px;
-    top: 160px;
+    right: -30%;
+    top: 20%;
+    width: 60%;
+    max-height: 50%;
   }
   [dir="rtl"] .modal-product-media__cert-label {
     right: auto;
@@ -1632,8 +1658,10 @@ a:hover {
 @media (min-width: 1510px) {
   .modal-product-media__cert-label {
     position: absolute;
-    right: -180px !important;
-    top: 160px;
+    right: -30% !important;
+    top: 20%;
+    width: 60%;
+    max-height: 50%;
   }
   [dir="rtl"] .modal-product-media__cert-label {
     right: auto !important;

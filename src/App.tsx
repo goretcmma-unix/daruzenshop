@@ -34,8 +34,8 @@ import QtyButton from './components/QtyButton';
 import AdminPanel from './components/AdminPanel';
 import RecoveryPage from './components/RecoveryPage';
 import { NormalizedImg } from './components/NormalizedImg';
+import { FadeInImage } from './components/FadeInImage';
 import { CompositionPanel } from './components/CompositionView';
-import { useNormalizedImage } from './lib/normalizeImage';
 
 const getAvailableTabs = (p: { specs?: unknown[]; note?: string } | null): ('product' | 'composition' | 'note')[] => [
   'product',
@@ -65,7 +65,6 @@ const App: React.FC = () => {
   const modalTabsTrackRef = useRef<HTMLDivElement>(null);
   const tabBuyRef = useRef<HTMLDivElement>(null);
   const modalTouchYRef = useRef<number | null>(null);
-  const selectedProductImage = useNormalizedImage(selectedProduct?.image);
   const navClickRef = useRef(false);
 
   const [page, setPage] = useState(0);
@@ -1546,11 +1545,9 @@ const App: React.FC = () => {
                     className="modal-photo"
                     style={{ width: 'auto', height: '100%', maxWidth: '100%', maxHeight: '100%' }}
                   >
-                  <motion.img 
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: selectedProduct.inStock === false ? 0.3 : 1 }}
-                    src={selectedProductImage}
-                    loading="lazy"
+                  <FadeInImage
+                    src={selectedProduct.image}
+                    targetOpacity={selectedProduct.inStock === false ? 0.3 : 1}
                     decoding="async"
                     className="modal-image"
                     style={{ filter: selectedProduct.inStock === false ? 'grayscale(1)' : 'none' }}
@@ -1628,7 +1625,7 @@ const App: React.FC = () => {
                   <div className={`modal-tab-pane${activeMobileTab === 'product' ? ' is-active' : ''}`} data-tab="product">
                     <div className="modal-product-media">
                       <div className="modal-product-photo">
-                        <NormalizedImg src={selectedProduct.image} className="modal-product-media__img" alt={selectedProduct.name} loading="lazy" decoding="async" />
+                        <FadeInImage src={selectedProduct.image} className="modal-product-media__img" alt={selectedProduct.name} decoding="async" />
                         <img src="/images/label_certificates.webp" alt="Certificates" className="modal-product-media__cert-label" />
                       </div>
                       <motion.button whileHover={{ scale: 1.1, background: 'rgba(255, 255, 255, 0.95)', boxShadow: '0 8px 20px rgba(0,0,0,0.1)' }} whileTap={{ scale: 0.95 }} onClick={() => { setSelectedProduct(null); setModalQuantity(1); }} className="modal-tab-close" aria-label="Close">
@@ -1648,7 +1645,7 @@ const App: React.FC = () => {
                   {selectedProduct.specs && selectedProduct.specs.length > 0 && (
                     <div className={`modal-tab-pane${activeMobileTab === 'composition' ? ' is-active' : ''}`} data-tab="composition">
                       <div className="modal-note-media">
-                        <NormalizedImg src={selectedProduct.image} className="modal-note-media__img" alt={selectedProduct.name} loading="lazy" decoding="async" />
+                        <FadeInImage src={selectedProduct.image} className="modal-note-media__img" alt={selectedProduct.name} decoding="async" />
                         <motion.button whileHover={{ scale: 1.1, background: 'rgba(255, 255, 255, 0.9)', boxShadow: '0 8px 20px rgba(0,0,0,0.1)' }} whileTap={{ scale: 0.95 }} onClick={() => { setSelectedProduct(null); setModalQuantity(1); }} className="modal-tab-close" aria-label="Close" style={{ position: 'absolute', top: '16px', right: '16px', background: 'rgba(255, 255, 255, 0.7)', border: 'none', borderRadius: '50%', width: '36px', height: '36px', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 2px 8px rgba(0,0,0,0.08)', cursor: 'pointer', zIndex: 10, transition: 'all 0.2s ease' }}>
                           <X size={16} color="var(--text-muted)" />
                         </motion.button>
@@ -1661,7 +1658,7 @@ const App: React.FC = () => {
                   {selectedProduct.note && (
                     <div className={`modal-tab-pane${activeMobileTab === 'note' ? ' is-active' : ''}`} data-tab="note">
                       <div className="modal-note-media">
-                        <NormalizedImg src={selectedProduct.image} className="modal-note-media__img" alt={selectedProduct.name} loading="lazy" decoding="async" />
+                        <FadeInImage src={selectedProduct.image} className="modal-note-media__img" alt={selectedProduct.name} decoding="async" />
                         <motion.button whileHover={{ scale: 1.1, background: 'rgba(255, 255, 255, 0.9)', boxShadow: '0 8px 20px rgba(0,0,0,0.1)' }} whileTap={{ scale: 0.95 }} onClick={() => { setSelectedProduct(null); setModalQuantity(1); }} className="modal-tab-close" aria-label="Close" style={{ position: 'absolute', top: '16px', right: '16px', background: 'rgba(255, 255, 255, 0.7)', border: 'none', borderRadius: '50%', width: '36px', height: '36px', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 2px 8px rgba(0,0,0,0.08)', cursor: 'pointer', zIndex: 10, transition: 'all 0.2s ease' }}>
                           <X size={16} color="var(--text-muted)" />
                         </motion.button>

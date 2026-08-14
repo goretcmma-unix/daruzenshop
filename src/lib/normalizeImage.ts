@@ -49,12 +49,20 @@ export const getNormalizedImage = (src: string): Promise<string> => {
   return p;
 };
 
+export const getCachedNormalizedImage = (src: string): string | null => {
+  try {
+    return localStorage.getItem(cacheKey(src));
+  } catch {
+    return null;
+  }
+};
+
 export const useNormalizedImage = (src: string | undefined): string | undefined => {
-  const [out, setOut] = useState<string | undefined>(src);
+  const [out, setOut] = useState<string | undefined>(() => src ? (getCachedNormalizedImage(src) ?? src) : src);
   const [prevSrc, setPrevSrc] = useState<string | undefined>(src);
   if (src !== prevSrc) {
     setPrevSrc(src);
-    setOut(src);
+    setOut(src ? (getCachedNormalizedImage(src) ?? src) : src);
   }
   useEffect(() => {
     if (!src) return;

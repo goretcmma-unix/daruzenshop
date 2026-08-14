@@ -1555,7 +1555,7 @@ const App: React.FC = () => {
                     className="modal-image"
                     style={{ filter: selectedProduct.inStock === false ? 'grayscale(1)' : 'none' }}
                   />
-                  <img src="/images/label_certificates.png" alt="Certificates" className="modal-product-media__cert-label" />
+                  <img src="/images/label_certificates.webp" alt="Certificates" className="modal-product-media__cert-label" />
                   </div>
                   <motion.button 
                     whileHover={{ scale: 1.1, background: 'rgba(255, 255, 255, 0.9)', boxShadow: '0 8px 20px rgba(0,0,0,0.1)' }}
@@ -1629,7 +1629,7 @@ const App: React.FC = () => {
                     <div className="modal-product-media">
                       <div className="modal-product-photo">
                         <NormalizedImg src={selectedProduct.image} className="modal-product-media__img" alt={selectedProduct.name} loading="lazy" decoding="async" />
-                        <img src="/images/label_certificates.png" alt="Certificates" className="modal-product-media__cert-label" />
+                        <img src="/images/label_certificates.webp" alt="Certificates" className="modal-product-media__cert-label" />
                       </div>
                       <motion.button whileHover={{ scale: 1.1, background: 'rgba(255, 255, 255, 0.95)', boxShadow: '0 8px 20px rgba(0,0,0,0.1)' }} whileTap={{ scale: 0.95 }} onClick={() => { setSelectedProduct(null); setModalQuantity(1); }} className="modal-tab-close" aria-label="Close">
                         <X size={16} color="var(--text-muted)" />

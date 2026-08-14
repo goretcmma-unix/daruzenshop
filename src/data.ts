@@ -838,7 +838,7 @@ export const products: Product[] = [
     },
     categoryKey: 'herbs',
     price: 1400,
-    image: 'https://fstihxljqljhfyubptsk.supabase.co/storage/v1/object/public/product_image/prod-1785669452074/1785669463531.webp',
+    image: '/images/chasteberry.webp',
     createdAt: 1754496000,
     isNew: true,
     descriptions: {

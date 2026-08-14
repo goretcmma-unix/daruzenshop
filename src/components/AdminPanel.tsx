@@ -7,7 +7,7 @@ import {
   Settings, Package, Pill, Citrus, Gem, Leaf, Lightbulb, Camera, FlaskConical, Minus,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { supabase, fetchProducts, upsertProduct, deleteProduct, uploadProductImage } from '../lib/supabase';
+import { supabase, fetchProducts, upsertProduct, deleteProduct } from '../lib/supabase';
 import { autoTranslateFromRu } from '../lib/translate';
 import { cropToStandard } from '../lib/imagePipeline';
 import { NormalizedImg } from './NormalizedImg';
@@ -220,7 +220,7 @@ const AdminPanel: React.FC = () => {
   const [showHelp, setShowHelp] = useState(true);
 
   const steps = [
-    { id: 'photo', label: 'Фотография', icon: ImageIcon, hint: 'Покажите товар красиво — фото привлекает покупателя. Перетащите картинку прямо в это окно или нажмите на него.' },
+    { id: 'photo', label: 'Фотография', icon: ImageIcon, hint: 'Покажите товар красиво — фото привлекает покупателя. Перетащите картинку прямо в это окно или нажмите на него. Фото обрабатывается и сохраняется прямо в данных товара — без внешнего хранилища.' },
     { id: 'name', label: 'Название', icon: Type, hint: 'Напишите название по-русски. Остальные языки (турецкий, английский, арабский) мы переведём автоматически — кнопка «Перевести» в конце.' },
     { id: 'price', label: 'Цена и категория', icon: Coins, hint: 'Выберите, к какому разделу относится товар, и укажите цену в турецких лирах (₺).' },
     { id: 'desc', label: 'Описание', icon: FileText, hint: 'Расскажите о товаре простыми словами: что это, зачем, как принимать. Это увидит покупатель.' },
@@ -370,14 +370,12 @@ const AdminPanel: React.FC = () => {
     img.onload = async () => {
       try {
         const c = cropToStandard(img);
-        const blob: Blob = await new Promise((resolve, reject) =>
-          c.toBlob(b => (b ? resolve(b) : reject(new Error('Ошибка конвертации фото'))), 'image/webp', 0.95)
-        );
-        const url = await uploadProductImage(draft.id, blob);
-        updateDraft(pr => ({ ...pr, image: url }));
-        setNotice('');
+        const dataUrl = c.toDataURL('image/webp', 0.95);
+        updateDraft(pr => ({ ...pr, image: dataUrl }));
+        setNotice('Фото встроено в данные товара ✓');
+        setTimeout(() => setNotice(''), 3000);
       } catch (e: unknown) {
-        setNotice('Ошибка загрузки фото: ' + String(e instanceof Error ? e.message : e));
+        setNotice('Ошибка обработки фото: ' + String(e instanceof Error ? e.message : e));
       }
       URL.revokeObjectURL(localUrl);
     };
@@ -706,7 +704,7 @@ const AdminPanel: React.FC = () => {
                           </div>
                           <input id="img-input" type="file" accept="image/*" style={{ display: 'none' }} onChange={e => handleImageFile(e.target.files?.[0] ?? null)} />
                           <div style={{ marginTop: 20 }}>
-                            <div style={{ ...fieldLabel, fontSize: 13.5, color: '#a39483' }}>Или вставьте ссылку на фото</div>
+                            <div style={{ ...fieldLabel, fontSize: 13.5, color: '#a39483' }}>Ссылка на фото из интернета не будет показана на сайте — фото должно быть встроено через загрузку файла</div>
                             <input style={field} value={draft.image} onChange={e => updateDraft(pr => ({ ...pr, image: e.target.value }))} placeholder="https://…" />
                           </div>
                           {draft.image && (

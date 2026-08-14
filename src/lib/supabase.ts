@@ -74,10 +74,15 @@ export const fetchProducts = async (): Promise<Product[]> => {
       return dedupeProducts(products);
     }
     const dbRows = (data as ProductRow[]).map(rowToProduct);
-    // Показываем ТОЛЬКО товары которые есть в data.ts
-    // Локальные данные из data.ts имеют приоритет над базой
+    // Локальные данные из data.ts имеют приоритет над базой.
+    // Показываем только товары которые есть в data.ts, плюс товары, добавленные
+    // админом с фото, встроенным в данные (base64) — такие грузятся локально и
+    // не зависят от внешнего хранилища. Устаревшие строки БД (старые /images/…
+    // или удалённые URL) остаются скрытыми.
     const localIds = new Set(products.map(p => p.id));
-    const filteredDb = dbRows.filter(dbP => localIds.has(dbP.id));
+    const isAdminAdded = (dbP: Product): boolean =>
+      typeof dbP.image === 'string' && dbP.image.startsWith('data:image/');
+    const filteredDb = dbRows.filter(dbP => localIds.has(dbP.id) || isAdminAdded(dbP));
     const backfilled = filteredDb.map(dbP => {
       const localP = products.find(p => p.id === dbP.id);
       if (!localP) return dbP;
@@ -138,17 +143,6 @@ export const upsertProduct = async (p: Product): Promise<void> => {
     const { error } = await supabase.from('products').insert(row);
     if (error) throw error;
   }
-};
-
-export const uploadProductImage = async (productId: string, blob: Blob): Promise<string> => {
-  if (!supabase) throw new Error('Supabase не настроен');
-  const path = `${productId}/${Date.now()}.webp`;
-  const { error } = await supabase.storage.from('product_image').upload(path, blob, {
-    contentType: 'image/webp',
-  });
-  if (error) throw error;
-  const { data } = supabase.storage.from('product_image').getPublicUrl(path);
-  return data.publicUrl;
 };
 
 export const deleteProduct = async (id: string): Promise<void> => {

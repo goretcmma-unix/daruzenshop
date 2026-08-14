@@ -1453,7 +1453,7 @@ a:hover {
 
 [dir="rtl"] .modal-product-media__cert-label {
   right: auto;
-  left: clamp(10px, 1.5vw, 28px);
+  left: -180px;
   position: absolute;
   top: 160px;
 }
@@ -1532,6 +1532,13 @@ a:hover {
     object-fit: contain;
   }
 
+  /* In RTL the photo mirrors: reserve the strip on the LEFT (where the sticker
+     hangs) instead of the right, so the sticker never overlaps the product. */
+  [dir="rtl"] .modal-image {
+    margin-right: 0 !important;
+    margin-left: 8vh !important;
+  }
+
   /* The tablet photo keeps its own 8vh margin on the image; neutralize the
      wrapper margin so they don't stack. */
   .modal-photo {
@@ -1600,7 +1607,9 @@ a:hover {
   }
   [dir="rtl"] .modal-product-media__cert-label {
     right: auto;
-    left: clamp(8px, 3vw, 20px);
+    left: -48px;
+    top: 50%;
+    transform: translateY(-50%);
   }
 
   /* Tab content flows with the card; the whole card scrolls as one */
@@ -1628,6 +1637,8 @@ a:hover {
   [dir="rtl"] .modal-product-media__cert-label {
     right: auto;
     left: -70px;
+    top: 50%;
+    transform: translateY(-50%);
   }
 }
 
@@ -1649,7 +1660,7 @@ a:hover {
   }
   [dir="rtl"] .modal-product-media__cert-label {
     right: auto;
-    left: clamp(24px, 3vw, 60px);
+    left: -33%;
   }
 }
 
@@ -1665,7 +1676,7 @@ a:hover {
   }
   [dir="rtl"] .modal-product-media__cert-label {
     right: auto !important;
-    left: clamp(24px, 3vw, 60px) !important;
+    left: -33% !important;
   }
 }
 
@@ -1713,7 +1724,7 @@ a:hover {
     right: 12px;
   }
   [dir="rtl"] .modal-product-media__cert-label {
-    left: 30px;
+    left: 8px;
     right: auto;
     top: 50%;
   }

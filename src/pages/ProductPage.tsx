@@ -83,18 +83,15 @@ const ProductPage: React.FC<ProductPageProps> = ({ onAddToCart, onBuyNow }) => {
         jsonLd={jsonLd}
       />
 
-      <div className="modal-scroll-region" style={{ minHeight: '100vh' }}>
-        <div className="modal-layout" data-active-tab={activeTab} style={{
+      <div className="modal-layout" data-active-tab={activeTab} style={{
           width: '100%',
-          maxWidth: '1280px',
-          margin: '0 auto',
           minHeight: '100vh',
           background: 'white',
           display: 'flex',
           flexDirection: 'row',
           position: 'relative',
         }}>
-          <div className="modal-scroll-region" style={{ display: 'flex', flexDirection: 'row', width: '100%' }}>
+          <div style={{ display: 'flex', flexDirection: 'row', width: '100%', maxWidth: '1280px', margin: '0 auto' }}>
             <div className="modal-image-col" style={{ flex: '1 1 50%' }}>
               <div className="modal-image-wrapper" style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'center', position: 'relative' }}>
                 <div className="modal-photo" style={{ width: 'auto', height: '100%', maxWidth: '100%', maxHeight: '100%' }}>
@@ -243,7 +240,6 @@ const ProductPage: React.FC<ProductPageProps> = ({ onAddToCart, onBuyNow }) => {
             </div>
           </div>
         </div>
-      </div>
     </>
   );
 };

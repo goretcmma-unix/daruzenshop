@@ -85,7 +85,13 @@ const ProductPage: React.FC<ProductPageProps> = ({ product, onAddToCart, onBuyNo
   };
 
   return (
-    <>
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.25, ease: 'easeInOut' }}
+      style={{ position: 'fixed', inset: 0, zIndex: 4000, pointerEvents: 'auto' }}
+    >
       <SEOHead
         title={`${product.name} — Daruzen | Купить витамины и добавки`}
         description={product.description}
@@ -96,15 +102,15 @@ const ProductPage: React.FC<ProductPageProps> = ({ product, onAddToCart, onBuyNo
       />
 
       {/* Backdrop */}
-      <div onClick={goBack} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 4000 }} />
+      <div onClick={goBack} style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.6)' }} />
 
       {/* Modal */}
       <div className="modal-shell">
         <motion.div
-          initial={{ scale: 0.95, opacity: 0, x: '-50%', y: '-55%' }}
+          initial={{ scale: 0.96, opacity: 0, x: '-50%', y: '-55%' }}
           animate={{ scale: 1, opacity: 1, x: '-50%', y: '-50%' }}
-          exit={{ scale: 0.95, opacity: 0, x: '-50%', y: '-55%' }}
-          transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+          exit={{ scale: 0.96, opacity: 0, x: '-50%', y: '-55%' }}
+          transition={{ type: 'spring', damping: 28, stiffness: 350, exitDuration: 0.15 }}
           className="modal-layout"
           data-active-tab={activeTab}
           style={{
@@ -361,7 +367,7 @@ const ProductPage: React.FC<ProductPageProps> = ({ product, onAddToCart, onBuyNo
           </div>
         </motion.div>
       </div>
-    </>
+    </motion.div>
   );
 };
 

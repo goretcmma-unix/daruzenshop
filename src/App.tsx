@@ -1828,12 +1828,14 @@ const App: React.FC = () => {
       </AnimatePresence>
 
       {/* Product page overlay (Wildberries-style) */}
-{location.pathname.startsWith('/product/') && (() => {
-  const productId = location.pathname.split('/product/')[1];
-  const lp = localizeProducts(lang).find(p => p.id === productId);
-  if (!lp) return null;
-  return <ProductPage product={lp} onAddToCart={(p, q) => addToCart(p, q)} onBuyNow={(p, q) => buyNow(p, q)} />;
-})()}
+      <AnimatePresence>
+        {location.pathname.startsWith('/product/') && (() => {
+          const productId = location.pathname.split('/product/')[1];
+          const lp = localizeProducts(lang).find(p => p.id === productId);
+          if (!lp) return null;
+          return <ProductPage key={productId} product={lp} onAddToCart={(p, q) => addToCart(p, q)} onBuyNow={(p, q) => buyNow(p, q)} />;
+        })()}
+      </AnimatePresence>
 {/* CSS for components not using inline styles */}
       <AppStyles />
           </>

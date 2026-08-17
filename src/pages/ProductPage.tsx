@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ShoppingCart, Plus, Minus, AlertTriangle, Pill, Snowflake } from 'lucide-react';
 import { products, localizeProducts, dedupeProducts, type Product } from '../data';
@@ -75,15 +75,15 @@ const ProductPage: React.FC<ProductPageProps> = ({ onAddToCart, onBuyNow }) => {
         <div className="container" style={{ maxWidth: '1000px' }}>
           <nav aria-label="Breadcrumb" style={{ marginBottom: '32px' }}>
             <ol style={{ display: 'flex', gap: '8px', fontSize: '14px', color: 'var(--text-muted)', listStyle: 'none', padding: 0, flexWrap: 'wrap' }}>
-              <li><a href="/" style={{ color: 'var(--primary)', textDecoration: 'none' }}>Главная</a></li>
+              <li><Link to="/" style={{ color: 'var(--primary)', textDecoration: 'none' }}>Главная</Link></li>
               <li>/</li>
-              <li><a href="/catalog" style={{ color: 'var(--primary)', textDecoration: 'none' }}>Каталог</a></li>
+              <li><Link to="/" onClick={(e) => { e.preventDefault(); window.location.href = '/'; }} style={{ color: 'var(--primary)', textDecoration: 'none' }}>Каталог</Link></li>
               <li>/</li>
               <li>{product.name}</li>
             </ol>
           </nav>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '60px', alignItems: 'start' }}>
+          <div className="product-page-grid">
             <div style={{ position: 'sticky', top: '120px' }}>
               <div style={{ background: '#FDFBFA', borderRadius: '24px', overflow: 'hidden', aspectRatio: '1', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <FadeInImage

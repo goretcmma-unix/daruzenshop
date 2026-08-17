@@ -834,7 +834,7 @@ const App: React.FC = () => {
                     transition={{ duration: 0.15, ease: "easeOut" }}
                     className="product-card"
                   style={{ display: 'flex', flexDirection: 'column', height: '100%', cursor: 'pointer' }}
-                  onClick={() => setSelectedProduct(product)}
+                  onClick={() => navigate("/product/" + product.id)}
                 >
                   <div className="product-image-container">
                     <NormalizedImg

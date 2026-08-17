@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useLayoutEffect, useRef, useMemo, startTransition } from 'react';
+import React, { useState, useEffect, useLayoutEffect, useRef, useMemo, startTransition, Suspense } from 'react';
 import { Routes, Route, useLocation } from 'react-router-dom';
 import { 
   ShoppingCart, 
@@ -35,10 +35,10 @@ import QtyButton from './components/QtyButton';
 import AdminPanel from './components/AdminPanel';
 import RecoveryPage from './components/RecoveryPage';
 
-import AboutPage from './pages/AboutPage';
-import CatalogPage from './pages/CatalogPage';
-import ContactsPage from './pages/ContactsPage';
-import ProductPage from './pages/ProductPage';
+const AboutPage = React.lazy(() => import('./pages/AboutPage'));
+const CatalogPage = React.lazy(() => import('./pages/CatalogPage'));
+const ContactsPage = React.lazy(() => import('./pages/ContactsPage'));
+const ProductPage = React.lazy(() => import('./pages/ProductPage'));
 import { NormalizedImg } from './components/NormalizedImg';
 import { FadeInImage } from './components/FadeInImage';
 import { CompositionPanel } from './components/CompositionView';
@@ -500,7 +500,8 @@ const App: React.FC = () => {
 
   return (
     <div className="app-shell">
-      <Routes>
+      <Suspense fallback={<div style={{display:"flex",alignItems:"center",justifyContent:"center",minHeight:"100vh",fontFamily:"sans-serif"}}><div style={{textAlign:"center"}}><img src="/images/dr.svg.png" alt="Daruzen" style={{width:"60px",height:"60px",objectFit:"contain",marginBottom:"16px",opacity:0.6}} /><p style={{color:"#8A857F",fontSize:"14px"}}>Daruzen</p></div></div>}>
+        <Routes>
         <Route path="/about" element={
           <>
             {renderHeader()}
@@ -2275,6 +2276,7 @@ const App: React.FC = () => {
           </>
         } />
       </Routes>
+        </Suspense>
     </div>
   );
 };

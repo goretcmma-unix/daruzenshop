@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /api/
+
+Sitemap: https://drdaruzen.com/sitemap.xml
+
+# Daruzen - Official Health Store
+# https://drdaruzen.com

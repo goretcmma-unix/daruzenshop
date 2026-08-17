@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useLayoutEffect, useRef, useMemo, startTransition} from 'react';
-import { Routes, Route, useLocation } from 'react-router-dom';
+import { Routes, Route, useLocation, Link, useNavigate } from 'react-router-dom';
 import { 
   ShoppingCart, 
   Search, 
@@ -52,13 +52,9 @@ const getAvailableTabs = (p: { specs?: unknown[]; note?: string } | null): ('pro
 const App: React.FC = () => {
   const { lang, setLang, t } = useLang();
   const location = useLocation();
+  const navigate = useNavigate();
 
-  // Redirect /catalog to /
-  useEffect(() => {
-    if (location.pathname === '/catalog') {
-      window.location.replace('/');
-    }
-  }, [location.pathname]);
+
   const isRtl = lang === 'ar';
   const [cart, setCart] = useState<{ product: LocalizedProduct; quantity: number }[]>([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
@@ -444,15 +440,15 @@ const App: React.FC = () => {
               <line className="b-line b-line-bot" x1="3.5" y1="18" x2="20.5" y2="18" />
             </svg>
           </button>
-          <a href="/" style={{ display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer', textDecoration: 'none' }}>
+          <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer', textDecoration: 'none' }}>
             <img src="/images/dr.svg.png" alt="Daruzen Logo" className="header-logo" fetchPriority="high" />
-          </a>
+          </Link>
         </div>
         <nav className="desktop-nav" style={{ display: 'flex', gap: '35px', position: 'absolute', left: '50%', transform: 'translateX(-50%)' }}>
-          <a href="/" className={`nav-link${location.pathname === '/' ? ' active' : ''}`}>{t.nav.home}</a>
-          <a href="/catalog" className={`nav-link${location.pathname === '/catalog' ? ' active' : ''}`}>{t.nav.catalog}</a>
-          <a href="/about" className={`nav-link${location.pathname === '/about' ? ' active' : ''}`}>{t.nav.about}</a>
-          <a href="/contacts" className={`nav-link${location.pathname === '/contacts' ? ' active' : ''}`}>{t.nav.contacts}</a>
+          <Link to="/" className={`nav-link${location.pathname === '/' ? ' active' : ''}`}>{t.nav.home}</Link>
+          <Link to="/#catalog" onClick={(e) => { e.preventDefault(); navigate("/"); setTimeout(() => document.getElementById("catalog")?.scrollIntoView({behavior:"smooth"}), 100); }} className={`nav-link${location.pathname === '/catalog' ? ' active' : ''}`}>{t.nav.catalog}</Link>
+          <Link to="/about" className={`nav-link${location.pathname === '/about' ? ' active' : ''}`}>{t.nav.about}</Link>
+          <Link to="/contacts" className={`nav-link${location.pathname === '/contacts' ? ' active' : ''}`}>{t.nav.contacts}</Link>
         </nav>
         <div className="header-right-group" style={{ display: 'flex', alignItems: 'center', gap: '6px', justifyContent: 'flex-end' }}>
           <button onClick={() => setIsCartOpen(true)} className="header-cart-btn" style={{ position: 'relative', background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '6px', width: '36px', height: '36px' }}>
@@ -484,10 +480,10 @@ const App: React.FC = () => {
           <div>
             <h4 style={{ marginBottom: '24px', fontWeight: '700' }}>{t.footer.company}</h4>
             <nav style={{ display: 'flex', flexDirection: 'column', gap: '12px', opacity: 0.6 }}>
-              <a href="/about">О нас</a>
-              <a href="/catalog">Доставка</a>
-              <a href="/contacts">Оплата</a>
-              <a href="/contacts">Контакты</a>
+              <Link to="/about">О нас</Link>
+<Link to="/" onClick={(e) => { e.preventDefault(); navigate("/"); setTimeout(() => document.getElementById("catalog")?.scrollIntoView({behavior:"smooth"}), 100); }}>Каталог</Link>
+              <Link to="/contacts">Оплата</Link>
+              <Link to="/contacts">Контакты</Link>
             </nav>
           </div>
           <div>

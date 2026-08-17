@@ -15,7 +15,7 @@ export const SEOHead: React.FC<SEOProps> = ({
   description,
   keywords,
   canonical,
-  ogImage = 'https://drdaruzen.com/images/hero_bg_daruzen.webp',
+  ogImage = 'https://drdaruzen.com/images/og-image.png',
   ogType = 'website',
   jsonLd,
 }) => {

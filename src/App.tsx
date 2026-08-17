@@ -464,6 +464,79 @@ const App: React.FC = () => {
           <button onClick={() => setIsSearchOpen(true)} style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '6px', width: '36px', height: '36px', color: 'var(--primary)' }}>
             <Search size={20} />
           </button>
+          <div style={{ position: 'relative', display: 'inline-block', lineHeight: 0 }}>
+              <div
+                onClick={() => setIsLangOpen(o => !o)}
+                title={LANGS.find(l => l.code === lang)?.label}
+                style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '36px', height: '36px', cursor: 'pointer', borderRadius: '50%', transition: 'background 0.2s', background: isLangOpen ? 'rgba(0,0,0,0.06)' : 'transparent' }}
+              >
+                <div style={{ width: '22px', height: '22px', borderRadius: '50%', overflow: 'hidden' }}>
+                  <img src={LANGS.find(l => l.code === lang)?.flag} alt={lang} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+                </div>
+              </div>
+              <AnimatePresence>
+                {isLangOpen && (
+                  <>
+                    <motion.div
+                      key="lang-backdrop"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      onClick={() => setIsLangOpen(false)}
+                      style={{ position: 'fixed', inset: 0, zIndex: 1190 }}
+                    />
+                    <motion.div
+                      key="lang-dropdown"
+                      initial={{ opacity: 0, y: -8, scale: 0.96 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      exit={{ opacity: 0, y: -8, scale: 0.96 }}
+                      transition={{ duration: 0.18, ease: 'easeOut' }}
+                      className="lang-dropdown"
+                      style={{
+                        position: 'absolute',
+                        top: 'calc(100% + 8px)',
+                        insetInlineEnd: 0,
+                        background: '#fff',
+                        borderRadius: '14px',
+                        boxShadow: '0 12px 30px rgba(0,0,0,0.14)',
+                        padding: '6px',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: '4px',
+                        zIndex: 1200,
+                        minWidth: '150px',
+                      }}
+                    >
+                      {LANGS.map(l => (
+                        <motion.div
+                          key={l.code}
+                          onClick={() => { setLang(l.code); setIsLangOpen(false); }}
+                          whileHover={{ background: 'rgba(0,0,0,0.06)' }}
+                          transition={{ duration: 0.15 }}
+                          style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '10px',
+                            background: lang === l.code ? 'rgba(0,0,0,0.06)' : 'none',
+                            borderRadius: '10px',
+                            cursor: 'pointer',
+                            padding: '8px 12px',
+                            fontSize: '14px',
+                            color: 'var(--primary-dark)',
+                            textAlign: 'left',
+                          }}
+                        >
+                          <div style={{ width: '22px', height: '22px', borderRadius: '50%', overflow: 'hidden', flexShrink: 0 }}>
+                            <img src={l.flag} alt={l.code} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+                          </div>
+                          <span>{l.label}</span>
+                        </motion.div>
+                      ))}
+                    </motion.div>
+                  </>
+                )}
+              </AnimatePresence>
+            </div>
         </div>
       </div>
     </header>
@@ -1378,238 +1451,6 @@ const App: React.FC = () => {
         </div>
       </section>
 
-      {/* Cart Drawer */}
-      <AnimatePresence>
-        {isCartOpen && (
-          <div>
-            <motion.div 
-              initial={{ opacity: 0 }} 
-              animate={{ opacity: 1 }} 
-              exit={{ opacity: 0 }}
-              onClick={() => setIsCartOpen(false)}
-              style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.2)', zIndex: 3000 }}
-            />
-            <motion.div 
-              initial={{ x: isRtl ? '-110%' : '110%', opacity: 0 }} 
-              animate={{ x: 0, opacity: 1 }} 
-              exit={{ x: isRtl ? '-110%' : '110%', opacity: 0 }}
-              transition={{ duration: 0.3, ease: "easeOut" }}
-              style={{ 
-                position: 'fixed', 
-                top: '16px', 
-                [isRtl ? 'left' : 'right']: '16px', 
-                bottom: '16px', 
-                width: 'calc(100% - 32px)', 
-                maxWidth: '420px', 
-                background: '#FFFFFF', // Полностью белый фон без прозрачности
-                zIndex: 3001, 
-                display: 'flex', 
-                flexDirection: 'column', 
-                borderRadius: '32px', 
-                boxShadow: '0 30px 60px rgba(0,0,0,0.12)',
-                border: '1px solid rgba(255, 255, 255, 0.3)',
-                overflow: 'hidden'
-              }}
-            >
-              <div style={{ padding: '32px 24px', borderBottom: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                  <h3 style={{ fontSize: '20px', fontWeight: '600', color: 'var(--primary-dark)', letterSpacing: '-0.02em' }}>{t.cart.title}</h3>
-                  {cart.length > 0 && (
-                    <motion.button
-                      initial={{ opacity: 0, scale: 0.8 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      onClick={() => setCart([])}
-                      style={{ background: 'rgba(255, 59, 48, 0.08)', border: 'none', color: '#FF3B30', padding: '4px 12px', borderRadius: '8px', fontSize: '13px', fontWeight: '700', cursor: 'pointer' }}
-                      whileHover={{ background: 'rgba(255, 59, 48, 0.12)' }}
-                      whileTap={{ scale: 0.95 }}
-                    >
-                      {t.cart.clear}
-                    </motion.button>
-                  )}
-                </div>
-                <button onClick={() => setIsCartOpen(false)} style={{ background: 'rgba(0,0,0,0.04)', border: 'none', borderRadius: '50%', width: '36px', height: '36px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', transition: 'background 0.2s' }}>
-                  <X size={18} />
-                </button>
-              </div>
-
-              <div style={{ flex: 1, overflowY: 'auto', overscrollBehaviorY: 'contain', padding: '0 24px', display: 'flex', flexDirection: 'column' }}>
-                {cart.length === 0 ? (
-                  <div style={{ textAlign: 'center', marginTop: '56px' }}>
-                    <div style={{ width: '80px', height: '80px', background: '#F5F5F7', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px' }}>
-                      <ShoppingCart size={32} color="#D1D1D6" />
-                    </div>
-                    <p style={{ color: '#86868B', fontSize: '17px', fontWeight: '500' }}>{t.cart.empty}</p>
-                  </div>
-                ) : (
-                  cart.map(item => (() => { const localizedProduct = item.product; return (
-                      <motion.div 
-                      layout
-                      key={item.product.id} 
-                      className="cart-drawer-item"
-                      style={{ display: 'flex', flexDirection: 'column', alignItems: 'stretch', gap: '10px', background: 'none', padding: '16px 0', borderBottom: '1px solid var(--border)' }}
-                    >
-                      <div className="cart-drawer-item-image" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
-                        <NormalizedImg src={localizedProduct.image} className="cart-item-img" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
-                      </div>
-                      <div style={{ display: 'flex', flexDirection: 'column', width: '100%' }}>
-                        <div style={{ fontWeight: '700', fontSize: '18px', color: 'var(--primary-dark)', marginBottom: '4px', lineHeight: '1.3', wordBreak: 'break-word', overflowWrap: 'break-word' }}>{localizedProduct.name}</div>
-                         <div style={{ color: 'var(--primary)', fontWeight: '800', fontSize: '20px' }}>{formatPrice(localizedProduct.price, lang)}</div>
-                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '14px' }}>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '14px', background: '#F5F5F7', padding: '4px 12px', borderRadius: '10px' }}>
-                            <QtyButton label="-" onClick={() => updateQuantity(item.product.id, -1)}>
-                              <Minus size={14} />
-                            </QtyButton>
-                            <motion.span
-                              key={item.quantity}
-                              initial={{ scale: 0.4, opacity: 0.3 }}
-                              animate={{ scale: 1, opacity: 1 }}
-                              transition={{ type: 'spring', stiffness: 500, damping: 16 }}
-                              style={{ fontWeight: '700', fontSize: '14px', minWidth: '18px', textAlign: 'center', display: 'inline-block' }}
-                            >
-                              {item.quantity}
-                            </motion.span>
-                            <QtyButton label="+" withRotate onClick={() => updateQuantity(item.product.id, 1)}>
-                              <Plus size={14} />
-                            </QtyButton>
-                          </div>
-                          <button onClick={() => removeFromCart(item.product.id)} style={{ background: 'none', border: 'none', color: 'var(--text-muted)', opacity: 0.4, cursor: 'pointer', padding: '4px', transition: 'opacity 0.2s ease' }} 
-                            onMouseEnter={(e) => e.currentTarget.style.opacity = '0.8'} 
-                            onMouseLeave={(e) => e.currentTarget.style.opacity = '0.4'}>
-                            <Trash2 size={16} />
-                          </button>
-                        </div>
-                      </div>
-                    </motion.div>
-                  ); })())
-                )}
-              </div>
-
-              <div style={{ padding: '32px 24px', background: 'white', borderTop: '1px solid rgba(0,0,0,0.05)', boxShadow: '0 -15px 40px rgba(0,0,0,0.04)' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '24px' }}>
-                  <span style={{ fontSize: '20px', fontWeight: '600' }}>{t.cart.total}</span>
-                   <span style={{ fontSize: '32px', fontWeight: '800', color: 'var(--primary-dark)' }}>{formatPrice(totalAmount, lang)}</span>
-                </div>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                  <motion.button 
-                    whileHover={{ scale: 1.02, filter: 'brightness(1.05)' }}
-                    whileTap={{ scale: 0.98 }}
-                    disabled={cart.length === 0}
-                    onClick={shopOnWhatsApp}
-                    style={{ background: 'linear-gradient(135deg, #25D366 0%, #128C7E 100%)', color: 'white', height: '72px', borderRadius: '22px', border: 'none', fontWeight: '700', fontSize: '18px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', cursor: 'pointer', opacity: cart.length === 0 ? 0.5 : 1, transition: 'all 0.3s ease', boxShadow: '0 10px 25px rgba(37, 211, 102, 0.2)' }}
-                  >
-                    <MessageCircle size={24} /> {t.cart.whatsapp}
-                  </motion.button>
-                  <motion.button 
-                    whileHover={{ scale: 1.02, filter: 'brightness(1.05)' }}
-                    whileTap={{ scale: 0.98 }}
-                    disabled={cart.length === 0}
-                    onClick={shopOnTelegram}
-                    style={{ background: 'linear-gradient(135deg, #0088CC 0%, #005580 100%)', color: 'white', height: '72px', borderRadius: '22px', border: 'none', fontWeight: '700', fontSize: '18px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', cursor: 'pointer', opacity: cart.length === 0 ? 0.5 : 1, transition: 'all 0.3s ease', boxShadow: '0 10px 25px rgba(0, 136, 204, 0.2)' }}
-                  >
-                    <Send size={24} /> {t.cart.telegram}
-                  </motion.button>
-                </div>
-              </div>
-            </motion.div>
-            </div>
-        )}
-      </AnimatePresence>
-
-      {/* Трендовый Floating Search (Spotlight-style) */}
-      <AnimatePresence>
-        {isSearchOpen && (
-          <motion.div 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={() => setIsSearchOpen(false)}
-            style={{ 
-              position: 'fixed', 
-              inset: 0, 
-              background: 'rgba(0, 0, 0, 0.1)', // Полупрозрачный фон без блюра на весь экран
-              backdropFilter: 'none', // Убрали блюр с оверлея
-              WebkitBackdropFilter: 'none',
-              zIndex: 5000,
-              display: 'flex',
-              justifyContent: 'center',
-              paddingTop: '100px'
-            }}
-          >
-            <motion.div 
-              initial={{ y: -20, opacity: 0, scale: 0.95 }}
-              animate={{ y: 0, opacity: 1, scale: 1 }}
-              exit={{ y: -20, opacity: 0, scale: 0.95 }}
-              onClick={(e) => e.stopPropagation()}
-              style={{
-                width: '90%', 
-                maxWidth: '500px', 
-                background: 'rgba(255, 255, 255, 0.8)', 
-                backdropFilter: 'blur(12px) saturate(180%)',
-                borderRadius: '20px',
-                padding: '12px 16px',
-                boxShadow: '0 20px 50px rgba(0,0,0,0.1), 0 0 0 1px rgba(0,0,0,0.05)',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '12px',
-                height: '60px'
-              }}
-            >
-               <Search size={22} color="var(--primary)" style={{ opacity: 0.4 }} />
-               <input
-                 autoFocus
-                 value={searchQuery}
-                 onChange={(e) => setSearchQuery(e.target.value)}
-                 onKeyDown={(e) => {
-                   if (e.key === 'Enter') {
-                     setIsSearchOpen(false);
-                     scrollToCatalog();
-                   }
-                 }}
-                 placeholder={t.search.placeholder}
-                 style={{
-                   flex: 1,
-                   minWidth: 0,
-                   width: '100%',
-                   height: '100%',
-                   border: 'none',
-                   background: 'transparent',
-                   outline: 'none',
-                   color: 'var(--primary)',
-                   caretColor: 'var(--accent)',
-                   fontFamily: 'inherit',
-                   fontSize: '18px',
-                   fontWeight: '500',
-                   padding: 0,
-                 }}
-               />
-               <button
-                    type="button"
-                    aria-label="Close search"
-                    onClick={() => {
-                      if (searchQuery) setSearchQuery('');
-                      else setIsSearchOpen(false);
-                    }}
-                    style={{
-                      flex: '0 0 auto',
-                      background: 'transparent',
-                      border: 'none',
-                      cursor: 'pointer',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      padding: 0,
-                      marginLeft: '2px',
-                      color: 'var(--primary)',
-                      opacity: 0.5,
-                    }}
-                  >
-                    <X size={20} />
-                  </button>
-               </motion.div>
-            </motion.div>
-            )}
-          </AnimatePresence>
-
       {/* Product Quick View Modal */}
       <AnimatePresence>
         {selectedProduct && (
@@ -1940,6 +1781,297 @@ const App: React.FC = () => {
       
 
 
+      <footer style={{ 
+        background: 'rgba(62, 39, 35, 0.96)', 
+        color: 'white', 
+        padding: '80px 0 40px'
+      }}>
+        <div className="container">
+          <div className="footer-grid">
+            <div style={{ gridColumn: 'span 2' }}>
+              <img 
+                src="/images/dr.svg.png" 
+                alt="Daruzen Logo" 
+                  style={{ 
+                    width: '80px', 
+                    height: '80px', 
+                    objectFit: 'contain', 
+                    marginBottom: '24px',
+                    filter: 'brightness(0) invert(1)'
+                  }} 
+              />
+              <p style={{ opacity: 0.6, maxWidth: '300px', lineHeight: '1.8' }}>
+                {t.footer.desc}
+              </p>
+            </div>
+            <div>
+              <h4 style={{ marginBottom: '24px', fontWeight: '700' }}>{t.footer.company}</h4>
+              <nav style={{ display: 'flex', flexDirection: 'column', gap: '12px', opacity: 0.6 }}>
+                 {t.footer.links.map(link => (() => {
+                   return (<a key={link} href="#">{link}</a>);
+                 })())}
+              </nav>
+            </div>
+            <div>
+              <h4 style={{ marginBottom: '24px', fontWeight: '700' }}>{t.footer.connect}</h4>
+              <nav style={{ display: 'flex', flexDirection: 'column', gap: '12px', opacity: 0.6 }}>
+                <a href="mailto:daruzenshop@outlook.com" style={{ color: 'inherit', textDecoration: 'none' }}>daruzenshop@outlook.com</a>
+                <a href="tel:+905446791012" style={{ color: 'inherit', textDecoration: 'none' }}>+90 544 679 10 12</a>
+                <div style={{ display: 'flex', gap: '16px', marginTop: '12px' }}>
+                   <MessageCircle size={20} />
+                   <Send size={20} />
+                </div>
+              </nav>
+            </div>
+          </div>
+          <div style={{ paddingTop: '40px', borderTop: '1px solid rgba(255,255,255,0.1)', textAlign: 'center', opacity: 0.4, fontSize: '14px' }}>
+            © {new Date().getFullYear()} DARUZEN. {t.footer.rights}
+          </div>
+        </div>
+      </footer>
+
+      </motion.div>
+      </AnimatePresence>
+
+      {/* CSS for components not using inline styles */}
+      <AppStyles />
+          </>
+        } />
+      </Routes>
+
+      {/* ===== Global Overlays (work on all pages) ===== */}
+      {/* Cart Drawer */}
+      <AnimatePresence>
+        {isCartOpen && (
+          <div>
+            <motion.div 
+              initial={{ opacity: 0 }} 
+              animate={{ opacity: 1 }} 
+              exit={{ opacity: 0 }}
+              onClick={() => setIsCartOpen(false)}
+              style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.2)', zIndex: 3000 }}
+            />
+            <motion.div 
+              initial={{ x: isRtl ? '-110%' : '110%', opacity: 0 }} 
+              animate={{ x: 0, opacity: 1 }} 
+              exit={{ x: isRtl ? '-110%' : '110%', opacity: 0 }}
+              transition={{ duration: 0.3, ease: "easeOut" }}
+              style={{ 
+                position: 'fixed', 
+                top: '16px', 
+                [isRtl ? 'left' : 'right']: '16px', 
+                bottom: '16px', 
+                width: 'calc(100% - 32px)', 
+                maxWidth: '420px', 
+                background: '#FFFFFF', // Полностью белый фон без прозрачности
+                zIndex: 3001, 
+                display: 'flex', 
+                flexDirection: 'column', 
+                borderRadius: '32px', 
+                boxShadow: '0 30px 60px rgba(0,0,0,0.12)',
+                border: '1px solid rgba(255, 255, 255, 0.3)',
+                overflow: 'hidden'
+              }}
+            >
+              <div style={{ padding: '32px 24px', borderBottom: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                  <h3 style={{ fontSize: '20px', fontWeight: '600', color: 'var(--primary-dark)', letterSpacing: '-0.02em' }}>{t.cart.title}</h3>
+                  {cart.length > 0 && (
+                    <motion.button
+                      initial={{ opacity: 0, scale: 0.8 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      onClick={() => setCart([])}
+                      style={{ background: 'rgba(255, 59, 48, 0.08)', border: 'none', color: '#FF3B30', padding: '4px 12px', borderRadius: '8px', fontSize: '13px', fontWeight: '700', cursor: 'pointer' }}
+                      whileHover={{ background: 'rgba(255, 59, 48, 0.12)' }}
+                      whileTap={{ scale: 0.95 }}
+                    >
+                      {t.cart.clear}
+                    </motion.button>
+                  )}
+                </div>
+                <button onClick={() => setIsCartOpen(false)} style={{ background: 'rgba(0,0,0,0.04)', border: 'none', borderRadius: '50%', width: '36px', height: '36px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', transition: 'background 0.2s' }}>
+                  <X size={18} />
+                </button>
+              </div>
+
+              <div style={{ flex: 1, overflowY: 'auto', overscrollBehaviorY: 'contain', padding: '0 24px', display: 'flex', flexDirection: 'column' }}>
+                {cart.length === 0 ? (
+                  <div style={{ textAlign: 'center', marginTop: '56px' }}>
+                    <div style={{ width: '80px', height: '80px', background: '#F5F5F7', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px' }}>
+                      <ShoppingCart size={32} color="#D1D1D6" />
+                    </div>
+                    <p style={{ color: '#86868B', fontSize: '17px', fontWeight: '500' }}>{t.cart.empty}</p>
+                  </div>
+                ) : (
+                  cart.map(item => (() => { const localizedProduct = item.product; return (
+                      <motion.div 
+                      layout
+                      key={item.product.id} 
+                      className="cart-drawer-item"
+                      style={{ display: 'flex', flexDirection: 'column', alignItems: 'stretch', gap: '10px', background: 'none', padding: '16px 0', borderBottom: '1px solid var(--border)' }}
+                    >
+                      <div className="cart-drawer-item-image" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
+                        <NormalizedImg src={localizedProduct.image} className="cart-item-img" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+                      </div>
+                      <div style={{ display: 'flex', flexDirection: 'column', width: '100%' }}>
+                        <div style={{ fontWeight: '700', fontSize: '18px', color: 'var(--primary-dark)', marginBottom: '4px', lineHeight: '1.3', wordBreak: 'break-word', overflowWrap: 'break-word' }}>{localizedProduct.name}</div>
+                         <div style={{ color: 'var(--primary)', fontWeight: '800', fontSize: '20px' }}>{formatPrice(localizedProduct.price, lang)}</div>
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '14px' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '14px', background: '#F5F5F7', padding: '4px 12px', borderRadius: '10px' }}>
+                            <QtyButton label="-" onClick={() => updateQuantity(item.product.id, -1)}>
+                              <Minus size={14} />
+                            </QtyButton>
+                            <motion.span
+                              key={item.quantity}
+                              initial={{ scale: 0.4, opacity: 0.3 }}
+                              animate={{ scale: 1, opacity: 1 }}
+                              transition={{ type: 'spring', stiffness: 500, damping: 16 }}
+                              style={{ fontWeight: '700', fontSize: '14px', minWidth: '18px', textAlign: 'center', display: 'inline-block' }}
+                            >
+                              {item.quantity}
+                            </motion.span>
+                            <QtyButton label="+" withRotate onClick={() => updateQuantity(item.product.id, 1)}>
+                              <Plus size={14} />
+                            </QtyButton>
+                          </div>
+                          <button onClick={() => removeFromCart(item.product.id)} style={{ background: 'none', border: 'none', color: 'var(--text-muted)', opacity: 0.4, cursor: 'pointer', padding: '4px', transition: 'opacity 0.2s ease' }} 
+                            onMouseEnter={(e) => e.currentTarget.style.opacity = '0.8'} 
+                            onMouseLeave={(e) => e.currentTarget.style.opacity = '0.4'}>
+                            <Trash2 size={16} />
+                          </button>
+                        </div>
+                      </div>
+                    </motion.div>
+                  ); })())
+                )}
+              </div>
+
+              <div style={{ padding: '32px 24px', background: 'white', borderTop: '1px solid rgba(0,0,0,0.05)', boxShadow: '0 -15px 40px rgba(0,0,0,0.04)' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '24px' }}>
+                  <span style={{ fontSize: '20px', fontWeight: '600' }}>{t.cart.total}</span>
+                   <span style={{ fontSize: '32px', fontWeight: '800', color: 'var(--primary-dark)' }}>{formatPrice(totalAmount, lang)}</span>
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                  <motion.button 
+                    whileHover={{ scale: 1.02, filter: 'brightness(1.05)' }}
+                    whileTap={{ scale: 0.98 }}
+                    disabled={cart.length === 0}
+                    onClick={shopOnWhatsApp}
+                    style={{ background: 'linear-gradient(135deg, #25D366 0%, #128C7E 100%)', color: 'white', height: '72px', borderRadius: '22px', border: 'none', fontWeight: '700', fontSize: '18px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', cursor: 'pointer', opacity: cart.length === 0 ? 0.5 : 1, transition: 'all 0.3s ease', boxShadow: '0 10px 25px rgba(37, 211, 102, 0.2)' }}
+                  >
+                    <MessageCircle size={24} /> {t.cart.whatsapp}
+                  </motion.button>
+                  <motion.button 
+                    whileHover={{ scale: 1.02, filter: 'brightness(1.05)' }}
+                    whileTap={{ scale: 0.98 }}
+                    disabled={cart.length === 0}
+                    onClick={shopOnTelegram}
+                    style={{ background: 'linear-gradient(135deg, #0088CC 0%, #005580 100%)', color: 'white', height: '72px', borderRadius: '22px', border: 'none', fontWeight: '700', fontSize: '18px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', cursor: 'pointer', opacity: cart.length === 0 ? 0.5 : 1, transition: 'all 0.3s ease', boxShadow: '0 10px 25px rgba(0, 136, 204, 0.2)' }}
+                  >
+                    <Send size={24} /> {t.cart.telegram}
+                  </motion.button>
+                </div>
+              </div>
+            </motion.div>
+            </div>
+        )}
+      </AnimatePresence>
+
+      {/* Трендовый Floating Search (Spotlight-style) */}
+      <AnimatePresence>
+        {isSearchOpen && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setIsSearchOpen(false)}
+            style={{ 
+              position: 'fixed', 
+              inset: 0, 
+              background: 'rgba(0, 0, 0, 0.1)', // Полупрозрачный фон без блюра на весь экран
+              backdropFilter: 'none', // Убрали блюр с оверлея
+              WebkitBackdropFilter: 'none',
+              zIndex: 5000,
+              display: 'flex',
+              justifyContent: 'center',
+              paddingTop: '100px'
+            }}
+          >
+            <motion.div 
+              initial={{ y: -20, opacity: 0, scale: 0.95 }}
+              animate={{ y: 0, opacity: 1, scale: 1 }}
+              exit={{ y: -20, opacity: 0, scale: 0.95 }}
+              onClick={(e) => e.stopPropagation()}
+              style={{
+                width: '90%', 
+                maxWidth: '500px', 
+                background: 'rgba(255, 255, 255, 0.8)', 
+                backdropFilter: 'blur(12px) saturate(180%)',
+                borderRadius: '20px',
+                padding: '12px 16px',
+                boxShadow: '0 20px 50px rgba(0,0,0,0.1), 0 0 0 1px rgba(0,0,0,0.05)',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '12px',
+                height: '60px'
+              }}
+            >
+               <Search size={22} color="var(--primary)" style={{ opacity: 0.4 }} />
+               <input
+                 autoFocus
+                 value={searchQuery}
+                 onChange={(e) => setSearchQuery(e.target.value)}
+                 onKeyDown={(e) => {
+                   if (e.key === 'Enter') {
+                     setIsSearchOpen(false);
+                     scrollToCatalog();
+                   }
+                 }}
+                 placeholder={t.search.placeholder}
+                 style={{
+                   flex: 1,
+                   minWidth: 0,
+                   width: '100%',
+                   height: '100%',
+                   border: 'none',
+                   background: 'transparent',
+                   outline: 'none',
+                   color: 'var(--primary)',
+                   caretColor: 'var(--accent)',
+                   fontFamily: 'inherit',
+                   fontSize: '18px',
+                   fontWeight: '500',
+                   padding: 0,
+                 }}
+               />
+               <button
+                    type="button"
+                    aria-label="Close search"
+                    onClick={() => {
+                      if (searchQuery) setSearchQuery('');
+                      else setIsSearchOpen(false);
+                    }}
+                    style={{
+                      flex: '0 0 auto',
+                      background: 'transparent',
+                      border: 'none',
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      padding: 0,
+                      marginLeft: '2px',
+                      color: 'var(--primary)',
+                      opacity: 0.5,
+                    }}
+                  >
+                    <X size={20} />
+                  </button>
+               </motion.div>
+            </motion.div>
+            )}
+          </AnimatePresence>
+
       {/* Mobile Nav Drawer */}
       <AnimatePresence>
         {isMobileMenuOpen && (
@@ -2214,63 +2346,7 @@ const App: React.FC = () => {
         )}
       </AnimatePresence>
 
-      <footer style={{ 
-        background: 'rgba(62, 39, 35, 0.96)', 
-        color: 'white', 
-        padding: '80px 0 40px'
-      }}>
-        <div className="container">
-          <div className="footer-grid">
-            <div style={{ gridColumn: 'span 2' }}>
-              <img 
-                src="/images/dr.svg.png" 
-                alt="Daruzen Logo" 
-                  style={{ 
-                    width: '80px', 
-                    height: '80px', 
-                    objectFit: 'contain', 
-                    marginBottom: '24px',
-                    filter: 'brightness(0) invert(1)'
-                  }} 
-              />
-              <p style={{ opacity: 0.6, maxWidth: '300px', lineHeight: '1.8' }}>
-                {t.footer.desc}
-              </p>
-            </div>
-            <div>
-              <h4 style={{ marginBottom: '24px', fontWeight: '700' }}>{t.footer.company}</h4>
-              <nav style={{ display: 'flex', flexDirection: 'column', gap: '12px', opacity: 0.6 }}>
-                 {t.footer.links.map(link => (() => {
-                   return (<a key={link} href="#">{link}</a>);
-                 })())}
-              </nav>
-            </div>
-            <div>
-              <h4 style={{ marginBottom: '24px', fontWeight: '700' }}>{t.footer.connect}</h4>
-              <nav style={{ display: 'flex', flexDirection: 'column', gap: '12px', opacity: 0.6 }}>
-                <a href="mailto:daruzenshop@outlook.com" style={{ color: 'inherit', textDecoration: 'none' }}>daruzenshop@outlook.com</a>
-                <a href="tel:+905446791012" style={{ color: 'inherit', textDecoration: 'none' }}>+90 544 679 10 12</a>
-                <div style={{ display: 'flex', gap: '16px', marginTop: '12px' }}>
-                   <MessageCircle size={20} />
-                   <Send size={20} />
-                </div>
-              </nav>
-            </div>
-          </div>
-          <div style={{ paddingTop: '40px', borderTop: '1px solid rgba(255,255,255,0.1)', textAlign: 'center', opacity: 0.4, fontSize: '14px' }}>
-            © {new Date().getFullYear()} DARUZEN. {t.footer.rights}
-          </div>
-        </div>
-      </footer>
 
-      </motion.div>
-      </AnimatePresence>
-
-      {/* CSS for components not using inline styles */}
-      <AppStyles />
-          </>
-        } />
-      </Routes>
         </div>
   );
 };

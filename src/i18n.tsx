@@ -528,10 +528,10 @@ const ui = {
 } as const;
 
 export const titles: Record<Lang, string> = {
-  ru: 'Daruzen — Магазин здоровья',
-  tr: 'Daruzen — Sağlık Mağazası',
-  en: 'Daruzen — Health Store',
-  ar: 'Daruzen — متجر الصحة',
+  ru: 'Daruzen — Официальный сайт витаминов и БАДов Турции',
+  tr: 'Daruzen — Türkiye Vitamin ve Takviye Ürünleri Resmi Sitesi',
+  en: 'Daruzen — Official Site of Turkish Vitamins and Supplements',
+  ar: 'Daruzen — الموقع الرسمي للفيتامينات والمكملات الغذائية من تركيا',
 };
 
 type Currency = {

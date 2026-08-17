@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ShoppingCart, Plus, Minus, AlertTriangle, Pill, Snowflake, X, ChevronDown } from 'lucide-react';
 import { products, localizeProducts, dedupeProducts, type Product, type LocalizedProduct } from '../data';
@@ -11,27 +11,16 @@ import { CompositionPanel } from '../components/CompositionView';
 import QtyButton from '../components/QtyButton';
 
 interface ProductPageProps {
+  product: LocalizedProduct;
   onAddToCart: (product: LocalizedProduct, qty: number) => void;
   onBuyNow: (product: LocalizedProduct, qty: number) => void;
 }
 
-const ProductPage: React.FC<ProductPageProps> = ({ onAddToCart, onBuyNow }) => {
-  const { id } = useParams<{ id: string }>();
+const ProductPage: React.FC<ProductPageProps> = ({ product, onAddToCart, onBuyNow }) => {
   const navigate = useNavigate();
   const { lang, t } = useLang();
   const [quantity, setQuantity] = useState(1);
   const [activeTab, setActiveTab] = useState<'product' | 'composition' | 'note'>('product');
-  const [tabBuyVisible, setTabBuyVisible] = useState(false);
-
-  const [productsData, setProductsData] = useState<Product[]>(() => dedupeProducts(products));
-  useEffect(() => {
-    fetchProducts()
-      .then(data => { if (data.length) setProductsData(dedupeProducts(data)); })
-      .catch(() => {});
-  }, []);
-
-  const localizedProducts = useMemo(() => localizeProducts(lang, productsData), [lang, productsData]);
-  const product = useMemo(() => localizedProducts.find(p => p.id === id), [localizedProducts, id]);
 
   const isRtl = lang === 'ar';
 
@@ -48,7 +37,6 @@ const ProductPage: React.FC<ProductPageProps> = ({ onAddToCart, onBuyNow }) => {
   ], []);
 
   useEffect(() => {
-    if (!product) return;
     const tabs = getAvailableTabs(product);
     const viewport = document.querySelector('.modal-tabs-viewport');
     if (!viewport) return;
@@ -74,17 +62,6 @@ const ProductPage: React.FC<ProductPageProps> = ({ onAddToCart, onBuyNow }) => {
     window.addEventListener('keydown', handler);
     return () => window.removeEventListener('keydown', handler);
   }, [goBack]);
-
-  if (!product) {
-    return (
-      <div style={{ minHeight: '100vh', background: 'rgba(0,0,0,0.6)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <div style={{ background: 'white', borderRadius: '24px', padding: '48px', textAlign: 'center' }}>
-          <p style={{ fontSize: '18px', color: 'var(--text-muted)' }}>Товар не найден</p>
-          <button onClick={goBack} style={{ marginTop: '16px', color: 'var(--primary)', background: 'none', border: 'none', cursor: 'pointer', fontSize: '16px' }}>&#8592; Назад</button>
-        </div>
-      </div>
-    );
-  }
 
   const availableTabs = getAvailableTabs(product);
 
@@ -123,14 +100,17 @@ const ProductPage: React.FC<ProductPageProps> = ({ onAddToCart, onBuyNow }) => {
 
       {/* Modal */}
       <div className="modal-shell">
-        <div
+        <motion.div
+          initial={{ scale: 0.95, opacity: 0, x: '-50%', y: '-55%' }}
+          animate={{ scale: 1, opacity: 1, x: '-50%', y: '-50%' }}
+          exit={{ scale: 0.95, opacity: 0, x: '-50%', y: '-55%' }}
+          transition={{ type: 'spring', damping: 25, stiffness: 300 }}
           className="modal-layout"
           data-active-tab={activeTab}
           style={{
             position: 'fixed',
             top: '50%',
             left: '50%',
-            transform: 'translate(-50%, -50%)',
             width: 'clamp(320px, 94vw, 1280px)',
             height: '90vh',
             maxHeight: '90vh',
@@ -286,9 +266,8 @@ const ProductPage: React.FC<ProductPageProps> = ({ onAddToCart, onBuyNow }) => {
                           const isDosage = !isNegated && /дозировк|суточная доз|способ применени|Günlük önerilen|Recommended daily|الجرعة|önerilen doz|daily dose/i.test(trimmed);
                           const isStorage = /хранени|хранить|Saklama|Storage conditions|ظروف التخزين|saklama koşulları|Store in/i.test(trimmed);
                           const type = isWarning ? 'warning' : isCaution ? 'info' : isDosage ? 'dosage' : isStorage ? 'storage' : 'info';
-                          const label = isWarning ? t.modal.noteWarning : isDosage ? t.modal.noteDosage : isStorage ? t.modal.noteStorage : t.modal.noteInfo;
                           const body = isWarning ? trimmed : trimmed.replace(/^[^:]+:\s*/, '');
-                          return { pi, type, label, body, isWarning };
+                          return { pi, type, body, isWarning };
                         });
                         const items = paragraphs.filter(p => !p.isWarning);
                         const warnings = paragraphs.filter(p => p.isWarning);
@@ -380,7 +359,7 @@ const ProductPage: React.FC<ProductPageProps> = ({ onAddToCart, onBuyNow }) => {
               )}
             </div>
           </div>
-        </div>
+        </motion.div>
       </div>
     </>
   );

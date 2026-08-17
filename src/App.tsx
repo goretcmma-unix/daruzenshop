@@ -591,16 +591,10 @@ const App: React.FC = () => {
             {renderFooter()}
           </>
         } />
-        <Route path="/product/:id" element={
-          <>
-            {renderHeader()}
-            <ProductPage onAddToCart={(p, q) => addToCart(p, q)} onBuyNow={(p, q) => buyNow(p, q)} />
-            {renderFooter()}
-          </>
-        } />
         <Route path="*" element={
           <>
-            {/* Meta tags для мобильного приложения */}
+
+        {/* Meta tags для мобильного приложения */}
             <style dangerouslySetInnerHTML={{ __html: `
               @media (display-mode: standalone) {
                 .header { padding-top: env(safe-area-inset-top); }
@@ -1833,7 +1827,14 @@ const App: React.FC = () => {
       </motion.div>
       </AnimatePresence>
 
-      {/* CSS for components not using inline styles */}
+      {/* Product page overlay (Wildberries-style) */}
+{location.pathname.startsWith('/product/') && (() => {
+  const productId = location.pathname.split('/product/')[1];
+  const lp = localizeProducts(lang).find(p => p.id === productId);
+  if (!lp) return null;
+  return <ProductPage product={lp} onAddToCart={(p, q) => addToCart(p, q)} onBuyNow={(p, q) => buyNow(p, q)} />;
+})()}
+{/* CSS for components not using inline styles */}
       <AppStyles />
           </>
         } />

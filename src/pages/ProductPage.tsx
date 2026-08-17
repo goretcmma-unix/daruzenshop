@@ -77,7 +77,7 @@ const ProductPage: React.FC<ProductPageProps> = ({ onAddToCart, onBuyNow }) => {
             <ol style={{ display: 'flex', gap: '8px', fontSize: '14px', color: 'var(--text-muted)', listStyle: 'none', padding: 0, flexWrap: 'wrap' }}>
               <li><Link to="/" style={{ color: 'var(--primary)', textDecoration: 'none' }}>Главная</Link></li>
               <li>/</li>
-              <li><Link to="/" onClick={(e) => { e.preventDefault(); window.location.href = '/'; }} style={{ color: 'var(--primary)', textDecoration: 'none' }}>Каталог</Link></li>
+              <li><Link to="/" style={{ color: 'var(--primary)', textDecoration: 'none' }}>Каталог</Link></li>
               <li>/</li>
               <li>{product.name}</li>
             </ol>

@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useMemo, useRef } from 'react';
-import { useParams, Link, useNavigate } from 'react-router-dom';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ShoppingCart, Plus, Minus, AlertTriangle, Pill, Snowflake, X, ChevronDown } from 'lucide-react';
 import { products, localizeProducts, dedupeProducts, type Product, type LocalizedProduct } from '../data';
@@ -8,17 +8,12 @@ import { fetchProducts } from '../lib/supabase';
 import { SEOHead } from '../seo/SEOHead';
 import { FadeInImage } from '../components/FadeInImage';
 import { CompositionPanel } from '../components/CompositionView';
+import QtyButton from '../components/QtyButton';
 
 interface ProductPageProps {
   onAddToCart: (product: LocalizedProduct, qty: number) => void;
   onBuyNow: (product: LocalizedProduct, qty: number) => void;
 }
-
-const getAvailableTabs = (p: { specs?: unknown[]; note?: string } | null): ('product' | 'composition' | 'note')[] => [
-  'product',
-  ...(p?.specs && p.specs.length > 0 ? (['composition'] as const) : []),
-  ...(p?.note ? (['note'] as const) : []),
-];
 
 const ProductPage: React.FC<ProductPageProps> = ({ onAddToCart, onBuyNow }) => {
   const { id } = useParams<{ id: string }>();
@@ -26,6 +21,7 @@ const ProductPage: React.FC<ProductPageProps> = ({ onAddToCart, onBuyNow }) => {
   const { lang, t } = useLang();
   const [quantity, setQuantity] = useState(1);
   const [activeTab, setActiveTab] = useState<'product' | 'composition' | 'note'>('product');
+  const [tabBuyVisible, setTabBuyVisible] = useState(false);
 
   const [productsData, setProductsData] = useState<Product[]>(() => dedupeProducts(products));
   useEffect(() => {
@@ -37,17 +33,60 @@ const ProductPage: React.FC<ProductPageProps> = ({ onAddToCart, onBuyNow }) => {
   const localizedProducts = useMemo(() => localizeProducts(lang, productsData), [lang, productsData]);
   const product = useMemo(() => localizedProducts.find(p => p.id === id), [localizedProducts, id]);
 
+  const isRtl = lang === 'ar';
+
+  const switchTab = useCallback((tab: 'product' | 'composition' | 'note') => {
+    setActiveTab(tab);
+    const viewport = document.querySelector('.modal-tabs-viewport');
+    if (viewport) viewport.scrollTop = 0;
+  }, []);
+
+  const getAvailableTabs = useCallback((p: { specs?: unknown[]; note?: string } | null): ('product' | 'composition' | 'note')[] => [
+    'product',
+    ...(p?.specs && p.specs.length > 0 ? (['composition'] as const) : []),
+    ...(p?.note ? (['note'] as const) : []),
+  ], []);
+
+  useEffect(() => {
+    if (!product) return;
+    const tabs = getAvailableTabs(product);
+    const viewport = document.querySelector('.modal-tabs-viewport');
+    if (!viewport) return;
+    const idx = tabs.indexOf(activeTab);
+    const track = viewport.querySelector('.modal-tabs-track') as HTMLElement;
+    if (track) track.style.transform = `translateX(${(isRtl ? 1 : -1) * idx * 100}%)`;
+    viewport.scrollTop = 0;
+  }, [activeTab, product, isRtl, getAvailableTabs]);
+
+  useEffect(() => {
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => { document.body.style.overflow = prev; };
+  }, []);
+
+  const goBack = useCallback(() => {
+    if (window.history.length > 1) navigate(-1);
+    else navigate('/');
+  }, [navigate]);
+
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => { if (e.key === 'Escape') goBack(); };
+    window.addEventListener('keydown', handler);
+    return () => window.removeEventListener('keydown', handler);
+  }, [goBack]);
+
   if (!product) {
     return (
-      <div style={{ textAlign: 'center', padding: '200px 20px', minHeight: '60vh' }}>
-        <h1 style={{ fontSize: '24px', color: 'var(--text-muted)' }}>Товар не найден</h1>
-        <Link to="/" style={{ color: 'var(--primary)', marginTop: '16px', display: 'inline-block' }}>&#8592; Вернуться на главную</Link>
+      <div style={{ minHeight: '100vh', background: 'rgba(0,0,0,0.6)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div style={{ background: 'white', borderRadius: '24px', padding: '48px', textAlign: 'center' }}>
+          <p style={{ fontSize: '18px', color: 'var(--text-muted)' }}>Товар не найден</p>
+          <button onClick={goBack} style={{ marginTop: '16px', color: 'var(--primary)', background: 'none', border: 'none', cursor: 'pointer', fontSize: '16px' }}>&#8592; Назад</button>
+        </div>
       </div>
     );
   }
 
   const availableTabs = getAvailableTabs(product);
-  const isRtl = lang === 'ar';
 
   const jsonLd = {
     '@context': 'https://schema.org',
@@ -63,11 +102,7 @@ const ProductPage: React.FC<ProductPageProps> = ({ onAddToCart, onBuyNow }) => {
       priceCurrency: lang === 'en' ? 'USD' : lang === 'ru' ? 'RUB' : 'TRY',
       price: lang === 'en' ? (product.price * 0.025).toFixed(2) : product.price,
       availability: product.inStock === false ? 'https://schema.org/OutOfStock' : 'https://schema.org/InStock',
-      seller: {
-        '@type': 'Organization',
-        name: 'Daruzen',
-        url: 'https://drdaruzen.com',
-      },
+      seller: { '@type': 'Organization', name: 'Daruzen', url: 'https://drdaruzen.com' },
     },
     category: product.category,
   };
@@ -83,17 +118,38 @@ const ProductPage: React.FC<ProductPageProps> = ({ onAddToCart, onBuyNow }) => {
         jsonLd={jsonLd}
       />
 
-      <div className="product-page-content"  style={{
-          width: '100%',
-          minHeight: '100vh',
-          background: 'white',
-          display: 'flex',
-          flexDirection: 'row',
-          position: 'relative',
-        }}>
-          <div style={{ display: 'flex', flexDirection: 'row', width: '100%', maxWidth: '1280px', margin: '0 auto' }}>
-            <div className="modal-image-col" style={{ flex: '1 1 50%' }}>
-              <div className="modal-image-wrapper" style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'center', position: 'relative' }}>
+      {/* Backdrop */}
+      <div onClick={goBack} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 4000 }} />
+
+      {/* Modal */}
+      <div className="modal-shell">
+        <div
+          className="modal-layout"
+          data-active-tab={activeTab}
+          style={{
+            position: 'fixed',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            width: 'clamp(320px, 94vw, 1280px)',
+            height: '90vh',
+            maxHeight: '90vh',
+            background: 'white',
+            borderRadius: '24px',
+            overflowY: 'auto',
+            overflowX: 'hidden',
+            overscrollBehaviorY: 'contain',
+            pointerEvents: 'auto',
+            boxShadow: '0 25px 50px -12px rgba(0,0,0,0.25)',
+            zIndex: 4001,
+          }}
+        >
+          <div className="modal-scroll-region">
+            <motion.div className="modal-image-col">
+              <motion.div
+                className="modal-image-wrapper"
+                style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'center', position: 'relative' }}
+              >
                 <div className="modal-photo" style={{ width: 'auto', height: '100%', maxWidth: '100%', maxHeight: '100%' }}>
                   <FadeInImage
                     src={product.image}
@@ -104,30 +160,72 @@ const ProductPage: React.FC<ProductPageProps> = ({ onAddToCart, onBuyNow }) => {
                   />
                   <img src="/images/label_certificates.webp" alt="Certificates" className="modal-product-media__cert-label" />
                 </div>
-              </div>
-            </div>
+                <motion.button
+                  whileHover={{ scale: 1.1, background: 'rgba(255, 255, 255, 0.9)', boxShadow: '0 8px 20px rgba(0,0,0,0.1)' }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={goBack}
+                  style={{
+                    position: 'absolute', top: '16px', insetInlineStart: '16px',
+                    background: 'rgba(255, 255, 255, 0.7)',
+                    border: 'none', borderRadius: '50%',
+                    width: '36px', height: '36px',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
+                    cursor: 'pointer', zIndex: 10,
+                    transition: 'all 0.2s ease'
+                  }}>
+                  <X size={16} color="var(--text-muted)" />
+                </motion.button>
+              </motion.div>
+            </motion.div>
 
-            <div className="modal-info-wrapper" style={{ flex: '1 1 50%', padding: '32px 40px' }}>
-              <span className="modal-category" style={{ color: 'var(--accent)', fontWeight: '800', fontSize: '12px', textTransform: 'uppercase', letterSpacing: '0.18em', marginBottom: '20px', display: 'inline-block' }}>
+            <div className="modal-info-wrapper">
+              <motion.span
+                className="modal-category"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3, delay: 0.1 }}
+                style={{ color: 'var(--accent)', fontWeight: '800', fontSize: '12px', textTransform: 'uppercase', letterSpacing: '0.18em', marginBottom: '20px', display: 'inline-block' }}
+              >
                 {product.category}
-              </span>
-              <h1 className="modal-title" style={{ fontWeight: '700', marginBottom: '16px', lineHeight: '1.15', color: 'var(--primary-dark)', letterSpacing: '-0.03em', fontSize: 'clamp(24px, 3vw, 32px)' }}>
+              </motion.span>
+              <motion.h2
+                className="modal-title"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3, delay: 0.15 }}
+                style={{ fontWeight: '700', marginBottom: '16px', lineHeight: '1.15', color: 'var(--primary-dark)', letterSpacing: '-0.03em' }}
+              >
                 {product.name}
-              </h1>
-              <div className="modal-price" style={{ fontWeight: '700', marginBottom: '32px', color: 'var(--primary)', fontSize: '28px' }}>
+              </motion.h2>
+              <motion.div
+                className="modal-price"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3, delay: 0.2 }}
+                style={{ fontWeight: '700', marginBottom: '32px', color: 'var(--primary)' }}
+              >
                 {formatPrice(product.price, lang)}
-              </div>
+              </motion.div>
 
-              {/* Tabs */}
+              {/* Mobile tab bar */}
               <div className="modal-mobile-tabs">
-                {availableTabs.map(tab => (
-                  <button key={tab} type="button" className={`modal-mobile-tab${activeTab === tab ? ' active' : ''}`} onClick={() => setActiveTab(tab)}>
-                    {tab === 'product' ? t.modal.tabProduct : tab === 'composition' ? t.modal.tabComposition : t.modal.tabNote}
+                <button type="button" className={`modal-mobile-tab${activeTab === 'product' ? ' active' : ''}`} onClick={() => switchTab('product')}>
+                  {t.modal.tabProduct}
+                </button>
+                {product.specs && product.specs.length > 0 && (
+                  <button type="button" className={`modal-mobile-tab${activeTab === 'composition' ? ' active' : ''}`} onClick={() => switchTab('composition')}>
+                    {t.modal.tabComposition}
                   </button>
-                ))}
+                )}
+                {product.note && (
+                  <button type="button" className={`modal-mobile-tab${activeTab === 'note' ? ' active' : ''}`} onClick={() => switchTab('note')}>
+                    {t.modal.tabNote}
+                  </button>
+                )}
               </div>
 
-              {/* Tab content */}
+              {/* Tab content track */}
               <div className="modal-tabs-viewport">
                 <div className="modal-tabs-track" style={{ transform: `translateX(${(isRtl ? 1 : -1) * availableTabs.indexOf(activeTab) * 100}%)` }}>
                   {/* Product tab */}
@@ -137,6 +235,9 @@ const ProductPage: React.FC<ProductPageProps> = ({ onAddToCart, onBuyNow }) => {
                         <FadeInImage src={product.image} className="modal-product-media__img" alt={product.name} decoding="async" />
                         <img src="/images/label_certificates.webp" alt="Certificates" className="modal-product-media__cert-label" />
                       </div>
+                      <motion.button whileHover={{ scale: 1.1, background: 'rgba(255, 255, 255, 0.95)', boxShadow: '0 8px 20px rgba(0,0,0,0.1)' }} whileTap={{ scale: 0.95 }} onClick={goBack} className="modal-tab-close" aria-label="Close">
+                        <X size={16} color="var(--text-muted)" />
+                      </motion.button>
                     </div>
                     <div className="modal-product-head">
                       <h3 className="modal-note-title">{product.name}</h3>
@@ -152,6 +253,9 @@ const ProductPage: React.FC<ProductPageProps> = ({ onAddToCart, onBuyNow }) => {
                     <div className={`modal-tab-pane${activeTab === 'composition' ? ' is-active' : ''}`} data-tab="composition">
                       <div className="modal-note-media">
                         <FadeInImage src={product.image} className="modal-note-media__img" alt={product.name} decoding="async" />
+                        <motion.button whileHover={{ scale: 1.1, background: 'rgba(255, 255, 255, 0.9)', boxShadow: '0 8px 20px rgba(0,0,0,0.1)' }} whileTap={{ scale: 0.95 }} onClick={goBack} className="modal-tab-close" aria-label="Close" style={{ position: 'absolute', top: '16px', right: '16px', background: 'rgba(255, 255, 255, 0.7)', border: 'none', borderRadius: '50%', width: '36px', height: '36px', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 2px 8px rgba(0,0,0,0.08)', cursor: 'pointer', zIndex: 10, transition: 'all 0.2s ease' }}>
+                          <X size={16} color="var(--text-muted)" />
+                        </motion.button>
                       </div>
                       <CompositionPanel specs={product.specs} t={t} />
                     </div>
@@ -162,6 +266,9 @@ const ProductPage: React.FC<ProductPageProps> = ({ onAddToCart, onBuyNow }) => {
                     <div className={`modal-tab-pane${activeTab === 'note' ? ' is-active' : ''}`} data-tab="note">
                       <div className="modal-note-media">
                         <FadeInImage src={product.image} className="modal-note-media__img" alt={product.name} decoding="async" />
+                        <motion.button whileHover={{ scale: 1.1, background: 'rgba(255, 255, 255, 0.9)', boxShadow: '0 8px 20px rgba(0,0,0,0.1)' }} whileTap={{ scale: 0.95 }} onClick={goBack} className="modal-tab-close" aria-label="Close" style={{ position: 'absolute', top: '16px', right: '16px', background: 'rgba(255, 255, 255, 0.7)', border: 'none', borderRadius: '50%', width: '36px', height: '36px', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 2px 8px rgba(0,0,0,0.08)', cursor: 'pointer', zIndex: 10, transition: 'all 0.2s ease' }}>
+                          <X size={16} color="var(--text-muted)" />
+                        </motion.button>
                       </div>
                       <div className="modal-note-head">
                         <h3 className="modal-note-title">{product.name}</h3>
@@ -179,8 +286,9 @@ const ProductPage: React.FC<ProductPageProps> = ({ onAddToCart, onBuyNow }) => {
                           const isDosage = !isNegated && /дозировк|суточная доз|способ применени|Günlük önerilen|Recommended daily|الجرعة|önerilen doz|daily dose/i.test(trimmed);
                           const isStorage = /хранени|хранить|Saklama|Storage conditions|ظروف التخزين|saklama koşulları|Store in/i.test(trimmed);
                           const type = isWarning ? 'warning' : isCaution ? 'info' : isDosage ? 'dosage' : isStorage ? 'storage' : 'info';
+                          const label = isWarning ? t.modal.noteWarning : isDosage ? t.modal.noteDosage : isStorage ? t.modal.noteStorage : t.modal.noteInfo;
                           const body = isWarning ? trimmed : trimmed.replace(/^[^:]+:\s*/, '');
-                          return { pi, type, body, isWarning };
+                          return { pi, type, label, body, isWarning };
                         });
                         const items = paragraphs.filter(p => !p.isWarning);
                         const warnings = paragraphs.filter(p => p.isWarning);
@@ -201,12 +309,30 @@ const ProductPage: React.FC<ProductPageProps> = ({ onAddToCart, onBuyNow }) => {
                                 ))}
                               </div>
                             )}
-                            {warnings.map(({ pi, body }) => (
-                              <div key={pi} className="modal-note-alert">
-                                <div className="modal-note-alert__label">{t.modal.noteWarning}</div>
-                                <p className="modal-note-paragraph">{body}</p>
-                              </div>
-                            ))}
+                            {warnings.map(({ pi, body }) => {
+                              const m = body.match(/^([^!.!؟\n]+[!.!؟])\s*(.*)$/s);
+                              const head = (m && m[1] ? m[1] : '').trim();
+                              const rest = (m && m[2] ? m[2] : '').trim();
+                              const isUpper = /[A-ZА-ЯЁ]/.test(head) && !/[a-zа-яё]/.test(head);
+                              return (
+                                <div key={pi} className="modal-note-alert">
+                                  {isUpper ? (
+                                    <>
+                                      <div className="modal-note-alert__plate">
+                                        <AlertTriangle size={14} strokeWidth={2.6} aria-hidden="true" />
+                                        {head}
+                                      </div>
+                                      {rest && <p className="modal-note-paragraph">{rest}</p>}
+                                    </>
+                                  ) : (
+                                    <>
+                                      <div className="modal-note-alert__label">{t.modal.noteWarning}</div>
+                                      <p className="modal-note-paragraph">{body}</p>
+                                    </>
+                                  )}
+                                </div>
+                              );
+                            })}
                           </div>
                         );
                       })()}
@@ -215,31 +341,47 @@ const ProductPage: React.FC<ProductPageProps> = ({ onAddToCart, onBuyNow }) => {
                 </div>
               </div>
 
-              {/* Buy section */}
               {product.inStock === false ? (
-                <div style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', padding: '0 24px', height: '54px', borderRadius: '14px', border: '2px solid #d5cfc6', color: '#8a8a8a', fontWeight: '600', fontSize: '15px', marginTop: '24px' }}>
+                <div className="modal-out-of-stock" style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', padding: '0 24px', height: '54px', borderRadius: '14px', border: '2px solid #d5cfc6', color: '#8a8a8a', fontWeight: '600', fontSize: '15px', letterSpacing: '0.01em', background: 'transparent' }}>
                   Нет в наличии
                 </div>
               ) : (
-                <div className="modal-buy-under" style={{ marginTop: '24px' }}>
+                <div className="modal-buy-under">
                   <div className="modal-buy-actions">
                     <div className="modal-buy-qty">
-                      <button onClick={() => setQuantity(q => Math.max(1, q - 1))} style={{ background: 'none', border: '1px solid var(--border)', borderRadius: '12px', width: '44px', height: '44px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Minus size={18} /></button>
+                      <QtyButton label="-" onClick={() => setQuantity(q => Math.max(1, q - 1))}>
+                        <Minus size={18} />
+                      </QtyButton>
                       <span className="modal-buy-qty__value">{quantity}</span>
-                      <button onClick={() => setQuantity(q => q + 1)} style={{ background: 'none', border: '1px solid var(--border)', borderRadius: '12px', width: '44px', height: '44px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Plus size={18} /></button>
+                      <QtyButton label="+" withRotate onClick={() => setQuantity(q => q + 1)}>
+                        <Plus size={18} />
+                      </QtyButton>
                     </div>
-                    <button onClick={() => onAddToCart(product, quantity)} className="btn btn-primary" style={{ height: '54px', borderRadius: '14px', fontSize: '16px', boxShadow: '0 4px 12px rgba(93, 64, 55, 0.1)', display: 'flex', alignItems: 'center', gap: '8px', padding: '0 24px', border: 'none', cursor: 'pointer' }}>
+                    <motion.button
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                      onClick={() => onAddToCart(product, quantity)}
+                      className="btn btn-primary"
+                      style={{ height: '54px', borderRadius: '14px', fontSize: '16px', boxShadow: '0 4px 12px rgba(93, 64, 55, 0.1)' }}
+                    >
                       <ShoppingCart size={20} /> {t.cart.inCart}
-                    </button>
-                    <button onClick={() => onBuyNow(product, quantity)} style={{ background: 'linear-gradient(135deg, #25D366 0%, #128C7E 100%)', color: 'white', border: 'none', height: '54px', borderRadius: '14px', fontWeight: '700', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', boxShadow: '0 10px 20px rgba(37, 211, 102, 0.15)', padding: '0 24px', fontSize: '16px' }}>
+                    </motion.button>
+                    <motion.button
+                      whileHover={{ scale: 1.02, filter: 'brightness(1.08)' }}
+                      whileTap={{ scale: 0.98 }}
+                      onClick={() => onBuyNow(product, quantity)}
+                      className="modal-buy-btn"
+                      style={{ background: 'linear-gradient(135deg, #25D366 0%, #128C7E 100%)', color: 'white', border: 'none', height: '54px', borderRadius: '14px', fontWeight: '700', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', boxShadow: '0 10px 20px rgba(37, 211, 102, 0.15)' }}
+                    >
                       {t.cart.buyNow}
-                    </button>
+                    </motion.button>
                   </div>
                 </div>
               )}
             </div>
           </div>
         </div>
+      </div>
     </>
   );
 };

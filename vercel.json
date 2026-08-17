@@ -1,5 +1,15 @@
 {
+  "redirects": [
+    {
+      "source": "/catalog",
+      "destination": "/",
+      "permanent": false
+    }
+  ],
   "rewrites": [
-    { "source": "/((?!sitemap\\.xml|robots\\.txt).*)", "destination": "/index.html" }
+    {
+      "source": "/((?!sitemap\\.xml|robots\\.txt).*)",
+      "destination": "/index.html"
+    }
   ]
 }

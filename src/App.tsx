@@ -52,6 +52,13 @@ const getAvailableTabs = (p: { specs?: unknown[]; note?: string } | null): ('pro
 const App: React.FC = () => {
   const { lang, setLang, t } = useLang();
   const location = useLocation();
+
+  // Redirect /catalog to /
+  useEffect(() => {
+    if (location.pathname === '/catalog') {
+      window.location.replace('/');
+    }
+  }, [location.pathname]);
   const isRtl = lang === 'ar';
   const [cart, setCart] = useState<{ product: LocalizedProduct; quantity: number }[]>([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
@@ -505,13 +512,6 @@ const App: React.FC = () => {
           <>
             {renderHeader()}
             <AboutPage />
-            {renderFooter()}
-          </>
-        } />
-        <Route path="/catalog" element={
-          <>
-            {renderHeader()}
-            <CatalogPage onSelectProduct={setSelectedProduct} onAddToCart={(p) => addToCart(p)} />
             {renderFooter()}
           </>
         } />

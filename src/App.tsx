@@ -445,7 +445,8 @@ const App: React.FC = () => {
                <img 
                 src="/images/dr.svg.png" 
                 alt="Daruzen Logo"
-                className="header-logo" 
+                className="header-logo"
+                fetchPriority="high"
               />
             </div>
           </div>

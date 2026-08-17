@@ -83,7 +83,7 @@ const ProductPage: React.FC<ProductPageProps> = ({ onAddToCart, onBuyNow }) => {
         jsonLd={jsonLd}
       />
 
-      <div className="modal-layout" data-active-tab={activeTab} style={{
+      <div className="product-page-content"  style={{
           width: '100%',
           minHeight: '100vh',
           background: 'white',

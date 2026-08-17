@@ -1691,14 +1691,14 @@ a:hover {
   .modal-product-photo {
     display: inline-block;
     max-width: 100%;
-    margin-inline-start: 50px;
+    margin-inline-start: 0;
   }
   .modal-product-media__img {
     margin: 0;
-    margin-right: clamp(60px, 16vw, 110px);
+    margin-left: clamp(16px, 4vw, 32px);
     width: auto;
     height: auto;
-    max-width: 100%;
+    max-width: 65%;
     max-height: clamp(240px, 44vh, 400px);
     object-position: center center;
   }
@@ -1706,7 +1706,7 @@ a:hover {
     position: absolute;
     top: 50%;
     left: auto;
-    right: 14px;
+    right: -8px;
     width: clamp(110px, 27vw, 165px);
     max-height: none;
     transform: translateY(-50%);

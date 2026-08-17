@@ -261,6 +261,12 @@ a:hover {
   transform: scale(1.04);
   will-change: transform;
 }
+.product-card-title {
+  word-break: break-word;
+  overflow-wrap: break-word;
+  max-width: 200px;
+}
+
 
 /* Mobile Menu */
 .mobile-menu-overlay {

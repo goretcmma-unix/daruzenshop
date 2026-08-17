@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useLayoutEffect, useRef, useMemo, startTransition } from 'react';
+import { Routes, Route, useLocation } from 'react-router-dom';
 import { 
   ShoppingCart, 
   Search, 
@@ -33,6 +34,11 @@ import AppStyles from './AppStyles';
 import QtyButton from './components/QtyButton';
 import AdminPanel from './components/AdminPanel';
 import RecoveryPage from './components/RecoveryPage';
+
+import AboutPage from './pages/AboutPage';
+import CatalogPage from './pages/CatalogPage';
+import ContactsPage from './pages/ContactsPage';
+import ProductPage from './pages/ProductPage';
 import { NormalizedImg } from './components/NormalizedImg';
 import { FadeInImage } from './components/FadeInImage';
 import { CompositionPanel } from './components/CompositionView';
@@ -45,6 +51,7 @@ const getAvailableTabs = (p: { specs?: unknown[]; note?: string } | null): ('pro
 
 const App: React.FC = () => {
   const { lang, setLang, t } = useLang();
+  const location = useLocation();
   const isRtl = lang === 'ar';
   const [cart, setCart] = useState<{ product: LocalizedProduct; quantity: number }[]>([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
@@ -419,13 +426,116 @@ const App: React.FC = () => {
     return <AdminPanel />;
   }
 
+  const renderHeader = () => (
+    <header className={`header ${scrolled ? 'scrolled' : ''}`}>
+      <div className="container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%', maxWidth: 'none', paddingLeft: '40px', paddingRight: '40px' }}>
+        <div className="header-left-group" style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <button className="md-hidden burger-btn" onClick={() => setIsMobileMenuOpen(true)} aria-label="Menu">
+            <svg viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="var(--primary)" strokeWidth="2.4" strokeLinecap="round" style={{ display: 'block' }}>
+              <line className="b-line b-line-top" x1="3.5" y1="6" x2="20.5" y2="6" />
+              <line className="b-line b-line-mid" x1="3.5" y1="12" x2="20.5" y2="12" />
+              <line className="b-line b-line-bot" x1="3.5" y1="18" x2="20.5" y2="18" />
+            </svg>
+          </button>
+          <a href="/" style={{ display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer', textDecoration: 'none' }}>
+            <img src="/images/dr.svg.png" alt="Daruzen Logo" className="header-logo" fetchPriority="high" />
+          </a>
+        </div>
+        <nav className="desktop-nav" style={{ display: 'flex', gap: '35px', position: 'absolute', left: '50%', transform: 'translateX(-50%)' }}>
+          <a href="/" className={`nav-link${location.pathname === '/' ? ' active' : ''}`}>{t.nav.home}</a>
+          <a href="/catalog" className={`nav-link${location.pathname === '/catalog' ? ' active' : ''}`}>{t.nav.catalog}</a>
+          <a href="/about" className={`nav-link${location.pathname === '/about' ? ' active' : ''}`}>{t.nav.about}</a>
+          <a href="/contacts" className={`nav-link${location.pathname === '/contacts' ? ' active' : ''}`}>{t.nav.contacts}</a>
+        </nav>
+        <div className="header-right-group" style={{ display: 'flex', alignItems: 'center', gap: '6px', justifyContent: 'flex-end' }}>
+          <button onClick={() => setIsCartOpen(true)} className="header-cart-btn" style={{ position: 'relative', background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '6px', width: '36px', height: '36px' }}>
+            <ShoppingCart size={20} color="var(--primary)" />
+            <AnimatePresence mode="wait">
+              {cart.length > 0 && (
+                <motion.span key={totalItemsCount} initial={{ scale: 0.5, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.5, opacity: 0 }} className="cart-badge" style={{ position: 'absolute', top: '-2px', right: '-4px', background: 'var(--accent-light)', color: 'var(--primary-dark)', fontSize: '10px', fontWeight: '900', padding: '1px 6px', borderRadius: '100px', boxShadow: '0 2px 6px rgba(237, 196, 77, 0.5)', whiteSpace: 'nowrap', lineHeight: '1.2' }}>
+                  {totalItemsCount}
+                </motion.span>
+              )}
+            </AnimatePresence>
+          </button>
+          <button onClick={() => setIsSearchOpen(true)} style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '6px', width: '36px', height: '36px', color: 'var(--primary)' }}>
+            <Search size={20} />
+          </button>
+        </div>
+      </div>
+    </header>
+  );
+
+  const renderFooter = () => (
+    <footer style={{ background: 'rgba(62, 39, 35, 0.96)', color: 'white', padding: '80px 0 40px' }}>
+      <div className="container">
+        <div className="footer-grid">
+          <div style={{ gridColumn: 'span 2' }}>
+            <img src="/images/dr.svg.png" alt="Daruzen Logo" style={{ width: '80px', height: '80px', objectFit: 'contain', marginBottom: '24px', filter: 'brightness(0) invert(1)' }} />
+            <p style={{ opacity: 0.6, maxWidth: '300px', lineHeight: '1.8' }}>{t.footer.desc}</p>
+          </div>
+          <div>
+            <h4 style={{ marginBottom: '24px', fontWeight: '700' }}>{t.footer.company}</h4>
+            <nav style={{ display: 'flex', flexDirection: 'column', gap: '12px', opacity: 0.6 }}>
+              <a href="/about">О нас</a>
+              <a href="/catalog">Доставка</a>
+              <a href="/contacts">Оплата</a>
+              <a href="/contacts">Контакты</a>
+            </nav>
+          </div>
+          <div>
+            <h4 style={{ marginBottom: '24px', fontWeight: '700' }}>{t.footer.connect}</h4>
+            <nav style={{ display: 'flex', flexDirection: 'column', gap: '12px', opacity: 0.6 }}>
+              <a href="mailto:daruzenshop@outlook.com" style={{ color: 'inherit', textDecoration: 'none' }}>daruzenshop@outlook.com</a>
+              <a href="tel:+905446791012" style={{ color: 'inherit', textDecoration: 'none' }}>+90 544 679 10 12</a>
+            </nav>
+          </div>
+        </div>
+        <div style={{ paddingTop: '40px', borderTop: '1px solid rgba(255,255,255,0.1)', textAlign: 'center', opacity: 0.4, fontSize: '14px' }}>
+          © {new Date().getFullYear()} DARUZEN. {t.footer.rights}
+        </div>
+      </div>
+    </footer>
+  );
+
   return (
     <div className="app-shell">
-      {/* Meta tags для мобильного приложения */}
-      <style dangerouslySetInnerHTML={{ __html: `
-        @media (display-mode: standalone) {
-          .header { padding-top: env(safe-area-inset-top); }
-        }
+      <Routes>
+        <Route path="/about" element={
+          <>
+            {renderHeader()}
+            <AboutPage />
+            {renderFooter()}
+          </>
+        } />
+        <Route path="/catalog" element={
+          <>
+            {renderHeader()}
+            <CatalogPage onSelectProduct={setSelectedProduct} onAddToCart={(p) => addToCart(p)} />
+            {renderFooter()}
+          </>
+        } />
+        <Route path="/contacts" element={
+          <>
+            {renderHeader()}
+            <ContactsPage />
+            {renderFooter()}
+          </>
+        } />
+        <Route path="/product/:id" element={
+          <>
+            {renderHeader()}
+            <ProductPage onAddToCart={(p, q) => addToCart(p, q)} onBuyNow={(p, q) => buyNow(p, q)} />
+            {renderFooter()}
+          </>
+        } />
+        <Route path="*" element={
+          <>
+            {/* Meta tags для мобильного приложения */}
+            <style dangerouslySetInnerHTML={{ __html: `
+              @media (display-mode: standalone) {
+                .header { padding-top: env(safe-area-inset-top); }
+              }
       `}} />
       {/* Navigation */}
       <header className={`header ${scrolled ? 'scrolled' : ''}`}>
@@ -2162,6 +2272,9 @@ const App: React.FC = () => {
 
       {/* CSS for components not using inline styles */}
       <AppStyles />
+          </>
+        } />
+      </Routes>
     </div>
   );
 };

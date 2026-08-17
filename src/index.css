@@ -1704,12 +1704,13 @@ a:hover {
   }
   .modal-product-media__cert-label {
     position: absolute;
-    top: 50%;
+    bottom: 8px;
     left: auto;
-    right: 14px;
-    width: clamp(110px, 27vw, 165px);
+    right: 8px;
+    width: clamp(70px, 20vw, 110px);
     max-height: none;
-    transform: translateY(-50%);
+    transform: none;
+    opacity: 0.75;
   }
   .modal-product-media .modal-tab-close {
     left: 12px;

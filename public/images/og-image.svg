@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#3E2723;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#4E342E;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#5D4037;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="gold" x1="0%" y1="0%" x2="55%" y2="100%">
+      <stop offset="0%" style="stop-color:#E6BD63;stop-opacity:1" />
+      <stop offset="55%" style="stop-color:#CF9B41;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#B9822F;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)" />
+  <circle cx="900" cy="315" r="350" fill="rgba(207,155,65,0.06)" />
+  <circle cx="300" cy="500" r="250" fill="rgba(207,155,65,0.04)" />
+  <text x="600" y="280" font-family="Arial, Helvetica, sans-serif" font-size="120" font-weight="800" fill="url(#gold)" text-anchor="middle" letter-spacing="-2">Daruzen</text>
+  <line x1="440" y1="330" x2="760" y2="330" stroke="rgba(207,155,65,0.3)" stroke-width="1" />
+  <text x="600" y="410" font-family="Arial, Helvetica, sans-serif" font-size="28" fill="rgba(255,255,255,0.55)" text-anchor="middle" letter-spacing="3">drdaruzen.com</text>
+</svg>

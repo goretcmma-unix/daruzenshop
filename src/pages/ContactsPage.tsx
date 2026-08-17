@@ -34,7 +34,7 @@ const ContactsPage: React.FC = () => {
       <SEOHead
         title="Контакты Daruzen — Телефон, Email, Офис в Турции | drdaruzen.com"
         description="Свяжитесь с Daruzen: +90 544 679 10 12, daruzenshop@outlook.com. Офис в Стамбуле, Турция. Закажите витамины и добавки через WhatsApp или Telegram."
-        keywords="Daruzen контакты, дарузен телефон, daruzen email, заказать витамины, БАД Турция"
+        keywords="Daruzen контакты, дарузен телефон, daruzen email, заказать витамины, турецкие витамины, витамины из Турции, БАД Турция, турецкие добавки"
         canonical="https://drdaruzen.com/contacts"
         jsonLd={jsonLd}
       />

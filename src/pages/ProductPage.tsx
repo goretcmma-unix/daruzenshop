@@ -65,7 +65,7 @@ const ProductPage: React.FC<ProductPageProps> = ({ onAddToCart, onBuyNow }) => {
       <SEOHead
         title={`${product.name} — Daruzen | Купить витамины и добавки`}
         description={product.description}
-        keywords={`${product.name}, Daruzen, дарузен, ${product.category}, купить, витамины, добавки, БАД`}
+        keywords={`${product.name}, Daruzen, дарузен, турецкие витамины, витамины из Турции, ${product.category}, купить, витамины, добавки, БАД, БАДы из Турции, турецкие добавки`}
         canonical={`https://drdaruzen.com/product/${product.id}`}
         ogType="product"
         jsonLd={jsonLd}

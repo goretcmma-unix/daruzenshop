@@ -1,15 +1,20 @@
 {
   "short_name": "Daruzen",
-  "name": "Daruzen - Премиальные добавки из Турции",
+  "name": "Daruzen — Витамины и БАДы из Турции",
   "icons": [
-    {
-      "src": "/favicon.png",
-      "sizes": "any",
-      "type": "image/png"
-    },
     {
       "src": "/favicon-48.png",
       "sizes": "48x48",
+      "type": "image/png"
+    },
+    {
+      "src": "/favicon-96.png",
+      "sizes": "96x96",
+      "type": "image/png"
+    },
+    {
+      "src": "/favicon-144.png",
+      "sizes": "144x144",
       "type": "image/png"
     },
     {

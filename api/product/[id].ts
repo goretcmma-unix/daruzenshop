@@ -5,37 +5,12 @@ const supabaseUrl = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL ||
 const supabaseKey = process.env.SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY || '';
 const SITE = 'https://drdaruzen.com';
 
-const CATEGORY_META: Record<string, { label: string; titleSuffix: string; descSuffix: string; keywords: string }> = {
-  supplements: {
-    label: 'Добавки',
-    titleSuffix: 'Купить БАДы из Турции — цена, отзывы | Daruzen',
-    descSuffix: 'БАДы и добавки из Турции с доставкой. Натуральные добавки для здоровья, похудения, иммунитета.',
-    keywords: 'БАДы, добавки, турецкие БАДы, натуральные добавки, добавки из Турции, купить БАДы, БАДы для здоровья, добавки для похудения, добавки для иммунитета',
-  },
-  vitamins: {
-    label: 'Витамины',
-    titleSuffix: 'Купить витамины из Турции — цена | Daruzen',
-    descSuffix: 'Витамины из Турции с доставкой. Витамины для иммунитета, здоровья, красоты. Оригинальные турецкие витамины.',
-    keywords: 'витамины, турецкие витамины, витамины из Турции, купить витамины, витамины для иммунитета, витамины для здоровья, витамины недорого',
-  },
-  minerals: {
-    label: 'Минералы',
-    titleSuffix: 'Купить минералы из Турции — цена | Daruzen',
-    descSuffix: 'Минеральные добавки из Турции. Магний, цинк, железо, кальций — оригинальные турецкие минералы.',
-    keywords: 'минералы, турецкие минералы, магний, цинк, железо, кальций, купить минералы, минералы из Турции',
-  },
-  beauty: {
-    label: 'Красота',
-    titleSuffix: 'Добавки для красоты из Турции — купить | Daruzen',
-    descSuffix: 'Добавки для красоты и ухода из Турции. Коллаген, биотин, витамины для кожи, волос и ногтей.',
-    keywords: 'красота, коллаген, биотин, витамины для кожи, витамины для волос, добавки для красоты, турецкие добавки для красоты',
-  },
-  herbs: {
-    label: 'Травы',
-    titleSuffix: 'Травяные добавки из Турции — купить | Daruzen',
-    descSuffix: 'Натуральные травяные добавки из Турции. Травяные экстракты для здоровья и иммунитета.',
-    keywords: 'травы, травяные добавки, экстракты, натуральные добавки, травяные экстракты из Турции, турецкие травы',
-  },
+const CATEGORY_LABELS: Record<string, string> = {
+  supplements: 'БАД',
+  vitamins: 'Витамины',
+  minerals: 'Минералы',
+  beauty: 'Добавки для красоты',
+  herbs: 'Травяная добавка',
 };
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
@@ -56,13 +31,16 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   const name = product.names?.ru || product.names?.en || id;
   const desc = product.descriptions?.ru || product.descriptions?.en || '';
-  const meta = CATEGORY_META[product.categoryKey] || CATEGORY_META.supplements;
+  const catLabel = CATEGORY_LABELS[product.categoryKey] || 'Добавки';
   const imageUrl = product.image?.startsWith('http') ? product.image : SITE + product.image;
   const price = product.price || 0;
 
-  const title = `${name} — ${meta.titleSuffix}`;
-  const description = `${name} — ${meta.descSuffix} ${desc.slice(0, 120)}`;
-  const keywords = `${name}, ${meta.keywords}, дарузен, daruzen`;
+  // Extract first sentence of description for keywords
+  const firstSentence = desc.split(/[.!]\s/)[0] || '';
+
+  const title = `${name} — купить ${catLabel.toLowerCase()} из Турции | Daruzen`;
+  const description = `${name}. ${firstSentence}. Купить с доставкой из Турции. Daruzen — оригинал по лучшей цене.`;
+  const keywords = `${name}, ${catLabel.toLowerCase()} из турции, купить ${catLabel.toLowerCase()}, ${name} купить, турция витамины, дарузен, daruzen, ${firstSentence}`;
 
   const jsonLd = JSON.stringify({
     "@context": "https://schema.org",
@@ -71,7 +49,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     "description": desc,
     "image": imageUrl,
     "brand": { "@type": "Brand", "name": "Daruzen" },
-    "category": meta.label,
+    "category": catLabel,
     "offers": {
       "@type": "Offer",
       "price": price,

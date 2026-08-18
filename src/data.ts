@@ -829,7 +829,7 @@ export const products: Product[] = [
     },
   },
   {
-    id: 'prod-1785669452074',
+    id: 'prod-13',
     names: {
       ru: 'Женский комплекс',
       tr: 'Hayıt Ekstresi',
@@ -905,7 +905,7 @@ export const products: Product[] = [
     },
   },
   {
-    id: 'prod-1785672176662',
+    id: 'prod-14',
     names: {
       ru: 'Железо бисглицинат + Витамин C',
       tr: 'Demir bisglisinat + C Vitamini',

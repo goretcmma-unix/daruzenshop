@@ -81,7 +81,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const inStock = p.in_stock !== false && p.inStock !== false;
     const url = SITE + '/product/' + p.id;
 
-    xml += '<offer id="' + esc(p.id) + '" available="' + (inStock ? 'true' : 'false') + '" url="' + esc(url) + '">\n';
+    xml += '<offer id="' + esc(p.id) + '" available="' + (inStock ? 'true' : 'false') + '">\n';
+    xml += '<url>' + esc(url) + '</url>\n';
     xml += '<name>' + esc(name) + '</name>\n';
     xml += '<price>' + price + '</price>\n';
     xml += '<currencyId>RUB</currencyId>\n';

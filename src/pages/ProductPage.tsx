@@ -99,6 +99,7 @@ const ProductPage: React.FC<ProductPageProps> = ({ product, onAddToCart, onBuyNo
         description={product.description}
         keywords={`${product.name}, Daruzen, дарузен, турецкие витамины, витамины из Турции, ${product.category}, купить, витамины, добавки, БАД, БАДы из Турции, турецкие добавки`}
         canonical={`https://drdaruzen.com/product/${product.id}`}
+        ogImage={product.image.startsWith("http") ? product.image : `https://drdaruzen.com${product.image}`}
         ogType="product"
         jsonLd={jsonLd}
       />

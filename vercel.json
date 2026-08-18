@@ -1,4 +1,9 @@
 {
+  "functions": {
+    "api/sitemap.ts": {
+      "maxDuration": 10
+    }
+  },
   "redirects": [
     {
       "source": "/catalog",
@@ -7,6 +12,10 @@
     }
   ],
   "rewrites": [
+    {
+      "source": "/sitemap.xml",
+      "destination": "/api/sitemap"
+    },
     {
       "source": "/((?!sitemap\\.xml|robots\\.txt).*)",
       "destination": "/index.html"

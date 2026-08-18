@@ -53,7 +53,9 @@ const ProductPage: React.FC<ProductPageProps> = ({ product, onAddToCart, onBuyNo
   }, []);
 
   const goBack = useCallback(() => {
-    if (window.history.length > 1) navigate(-1);
+    const prev = document.referrer;
+    const isSameSite = prev && new URL(prev, location.origin).origin === location.origin;
+    if (isSameSite && window.history.length > 1) navigate(-1);
     else navigate('/');
   }, [navigate]);
 

@@ -66,7 +66,52 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     }
   });
 
-  const html = `<!DOCTYPE html>
+  // Fetch the main SPA page to get correct asset URLs
+  let spaHtml = '';
+  try {
+    const resp = await fetch(SITE, {
+      headers: { 'User-Agent': 'Mozilla/5.0' },
+      redirect: 'follow',
+    });
+    spaHtml = await resp.text();
+  } catch {}
+
+  // If we got the SPA HTML, inject product meta tags into <head>
+  if (spaHtml) {
+    // Replace title
+    spaHtml = spaHtml.replace(/<title>.*?<\/title>/, `<title>${title}</title>`);
+
+    // Replace meta description
+    spaHtml = spaHtml.replace(/<meta name="description" content=".*?"/, `<meta name="description" content="${description}"`);
+    spaHtml = spaHtml.replace(/<meta name="keywords" content=".*?"/, `<meta name="keywords" content="${keywords}"`);
+
+    // Replace canonical
+    spaHtml = spaHtml.replace(/<link rel="canonical" href=".*?"/, `<link rel="canonical" href="${SITE}/product/${id}"`);
+
+    // Replace OG tags
+    spaHtml = spaHtml.replace(/<meta property="og:url" content=".*?"/, `<meta property="og:url" content="${SITE}/product/${id}"`);
+    spaHtml = spaHtml.replace(/<meta property="og:title" content=".*?"/, `<meta property="og:title" content="${title}"`);
+    spaHtml = spaHtml.replace(/<meta property="og:description" content=".*?"/, `<meta property="og:description" content="${description}"`);
+    spaHtml = spaHtml.replace(/<meta property="og:image" content=".*?"/, `<meta property="og:image" content="${imageUrl}"`);
+    spaHtml = spaHtml.replace(/<meta property="og:type" content=".*?"/, `<meta property="og:type" content="product"`);
+
+    // Replace Twitter tags
+    spaHtml = spaHtml.replace(/<meta name="twitter:title" content=".*?"/, `<meta name="twitter:title" content="${title}"`);
+    spaHtml = spaHtml.replace(/<meta name="twitter:description" content=".*?"/, `<meta name="twitter:description" content="${description}"`);
+    spaHtml = spaHtml.replace(/<meta name="twitter:image" content=".*?"/, `<meta name="twitter:image" content="${imageUrl}"`);
+
+    // Add Product JSON-LD before </head>
+    const productJsonLd = `<script type="application/ld+json">${jsonLd}</script>`;
+    if (spaHtml.includes('</head>')) {
+      spaHtml = spaHtml.replace('</head>', `${productJsonLd}\n</head>`);
+    }
+
+    res.setHeader('Content-Type', 'text/html; charset=utf-8');
+    res.setHeader('Cache-Control', 'public, max-age=3600, s-maxage=3600');
+    res.status(200).send(spaHtml);
+  } else {
+    // Fallback: serve static HTML if SPA fetch fails
+    const html = `<!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8"/>
@@ -91,11 +136,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   <p>${desc}</p>
   <p><strong>Цена:</strong> ${price} ₽</p>
   <p><img src="${imageUrl}" alt="${name}" width="600"/></p>
-  <noscript><p>Включите JavaScript для полноценного просмотра.</p></noscript>
 </body>
 </html>`;
-
-  res.setHeader('Content-Type', 'text/html; charset=utf-8');
-  res.setHeader('Cache-Control', 'public, max-age=3600, s-maxage=3600');
-  res.status(200).send(html);
+    res.setHeader('Content-Type', 'text/html; charset=utf-8');
+    res.setHeader('Cache-Control', 'public, max-age=3600, s-maxage=3600');
+    res.status(200).send(html);
+  }
 }

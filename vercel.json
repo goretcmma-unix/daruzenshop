@@ -21,14 +21,7 @@
     },
     {
       "source": "/product/:id",
-      "destination": "/api/product/:id",
-      "has": [
-        {
-          "type": "header",
-          "key": "user-agent",
-          "value": "(Googlebot|YandexBot|bingbot|LinkedInBot|TwitterBot|facebookexternalhit|WhatsApp|TelegramBot|SlackBot|Applebot).*"
-        }
-      ]
+      "destination": "/api/product/:id"
     },
     {
       "source": "/((?!sitemap\\.xml|robots\\.txt).*)",

@@ -1889,7 +1889,7 @@ const App: React.FC = () => {
       <AnimatePresence>
         {location.pathname.startsWith('/product/') && (() => {
           const productId = location.pathname.split('/product/')[1];
-          const lp = localizeProducts(lang).find(p => p.id === productId);
+          const lp = localizedProducts.find(p => p.id === productId);
           if (!lp) return null;
           return <ProductPage key={productId} product={lp} onAddToCart={(p, q) => addToCart(p, q)} onBuyNow={(p, q) => buyNow(p, q)} />;
         })()}

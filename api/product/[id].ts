@@ -35,7 +35,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   const imageUrl = product.image?.startsWith('http') ? product.image : SITE + product.image;
   const price = product.price || 0;
 
-  // Extract first sentence of description for keywords
   const firstSentence = desc.split(/[.!]\s/)[0] || '';
 
   const title = `${name} — купить ${catLabel.toLowerCase()} из Турции | Daruzen`;
@@ -79,10 +78,13 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   <meta name="twitter:image" content="${imageUrl}"/>
   <link rel="canonical" href="${SITE}/product/${id}"/>
   <script type="application/ld+json">${jsonLd}</script>
-  <meta http-equiv="refresh" content="0;url=${SITE}/product/${id}"/>
 </head>
 <body>
-  <p>Переход на <a href="${SITE}/product/${id}">${name}</a>...</p>
+  <h1>${name}</h1>
+  <p>${desc}</p>
+  <p><strong>Цена:</strong> ${price} ₽</p>
+  <p><img src="${imageUrl}" alt="${name}" width="600"/></p>
+  <noscript><p>Включите JavaScript для полноценного просмотра.</p></noscript>
 </body>
 </html>`;
 

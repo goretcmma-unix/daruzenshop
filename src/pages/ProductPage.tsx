@@ -10,6 +10,25 @@ import { FadeInImage } from '../components/FadeInImage';
 import { CompositionPanel } from '../components/CompositionView';
 import QtyButton from '../components/QtyButton';
 
+const SEO_DATA: Record<string, { titleSuffix: string; keywords: (name: string, cat: string) => string }> = {
+  ru: {
+    titleSuffix: 'Daruzen | Купить витамины и БАДы из Турции',
+    keywords: (name: string, cat: string) => `${name}, Daruzen, дарузен, турецкие витамины, витамины из Турции, ${cat}, купить витамины, БАДы, бады из Турции, турецкие добавки, витамины турция, натуральные добавки, купить добавки, дарузен витамины, витамины купить онлайн`,
+  },
+  tr: {
+    titleSuffix: 'Daruzen | Türk Vitaminleri ve Takviyeleri',
+    keywords: (name: string, cat: string) => `${name}, Daruzen, daruzen, türk vitaminleri, türkiye vitaminleri, ${cat}, vitamin al, takviye, besin takviyesi, türk takviyeleri, doğal takviyeler, daruzen vitamin, türkiye ürünleri, online vitamin`,
+  },
+  en: {
+    titleSuffix: 'Daruzen | Turkish Vitamins & Supplements',
+    keywords: (name: string, cat: string) => `${name}, Daruzen, daruzen, turkish vitamins, vitamins from turkey, ${cat}, buy vitamins, supplements, dietary supplements, turkish supplements, natural supplements, daruzen vitamins, turkey vitamins, order vitamins online`,
+  },
+  ar: {
+    titleSuffix: 'داروزن | فيتامينات ومكملات غذائية من تركيا',
+    keywords: (name: string, cat: string) => `${name}, داروزن, daruzen, فيتامينات تركية, فيتامينات من تركيا, ${cat}, شراء فيتامينات, مكملات, مكملات غذائية, مكملات تركية, مكملات طبيعية, داروزن فيتамين, منتجات تركية, فيتامينات اونلاين`,
+  },
+};
+
 interface ProductPageProps {
   product: LocalizedProduct;
   onAddToCart: (product: LocalizedProduct, qty: number) => void;
@@ -95,9 +114,9 @@ const ProductPage: React.FC<ProductPageProps> = ({ product, onAddToCart, onBuyNo
       style={{ position: 'fixed', inset: 0, zIndex: 4000, pointerEvents: 'auto' }}
     >
       <SEOHead
-        title={`${product.name} — Daruzen | Купить витамины и добавки`}
+        title={`${product.name} — ${(SEO_DATA[lang] || SEO_DATA.en).titleSuffix}`}
         description={product.description}
-        keywords={`${product.name}, Daruzen, дарузен, турецкие витамины, витамины из Турции, ${product.category}, купить, витамины, добавки, БАД, БАДы из Турции, турецкие добавки`}
+        keywords={(SEO_DATA[lang] || SEO_DATA.en).keywords(product.name, product.category)}
         canonical={`https://drdaruzen.com/product/${product.id}`}
         ogImage={product.image.startsWith("http") ? product.image : `https://drdaruzen.com${product.image}`}
         ogType="product"

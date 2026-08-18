@@ -81,9 +81,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const inStock = p.in_stock !== false && p.inStock !== false;
     const url = SITE + '/product/' + p.id;
 
-    const firstSentence = desc.split(/[.!]\s/)[0] || '';
-
-    xml += '<offer id="' + esc(p.id) + '" available="' + (inStock ? 'true' : 'false') + '">\n';
+    xml += '<offer id="' + esc(p.id) + '" available="' + (inStock ? 'true' : 'false') + '" url="' + esc(url) + '">\n';
     xml += '<name>' + esc(name) + '</name>\n';
     xml += '<price>' + price + '</price>\n';
     xml += '<currencyId>RUB</currencyId>\n';
@@ -93,7 +91,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     xml += '<vendor>Daruzen</vendor>\n';
     xml += '<vendorCode>' + esc(p.id) + '</vendorCode>\n';
     xml += '<model>' + esc(name) + '</model>\n';
-    xml += '<url>' + esc(url) + '</url>\n';
 
     if (p.isNew) {
       xml += '<param name="Новинка">Да</param>\n';

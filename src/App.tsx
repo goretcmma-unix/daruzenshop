@@ -620,7 +620,36 @@ const App: React.FC = () => {
               }}
             />
 
-        {/* SEO content — visible to crawlers, styled for brand consistency */}
+        
+        {/* JSON-LD ItemList for rich search results (products with images) */}
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
+          '@context': 'https://schema.org',
+          '@type': 'ItemList',
+          name: (SEO_QUERIES[lang] || SEO_QUERIES.en).title,
+          description: (SEO_QUERIES[lang] || SEO_QUERIES.en).description,
+          url: 'https://drdaruzen.com',
+          numberOfItems: localizedProducts.length,
+          itemListElement: localizedProducts.map((p, i) => ({
+            '@type': 'ListItem',
+            position: i + 1,
+            item: {
+              '@type': 'Product',
+              name: p.name,
+              description: p.description,
+              image: p.image.startsWith('http') ? p.image : 'https://drdaruzen.com' + p.image,
+              url: 'https://drdaruzen.com/product/' + p.id,
+              brand: { '@type': 'Brand', name: 'Daruzen' },
+              offers: {
+                '@type': 'Offer',
+                priceCurrency: lang === 'en' ? 'USD' : lang === 'ru' ? 'RUB' : 'TRY',
+                price: lang === 'en' ? (p.price * 0.025).toFixed(2) : p.price,
+                availability: p.inStock === false ? 'https://schema.org/OutOfStock' : 'https://schema.org/InStock',
+              },
+            },
+          })),
+        }) }} />
+
+{/* SEO content — visible to crawlers, styled for brand consistency */}
         <section className="seo-content" style={{
           background: 'var(--bg)',
           padding: '60px 24px',

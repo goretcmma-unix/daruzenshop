@@ -649,58 +649,8 @@ const App: React.FC = () => {
           })),
         }) }} />
 
-{/* SEO content — visible to crawlers, styled for brand consistency */}
-        <section className="seo-content" style={{
-          background: 'var(--bg)',
-          padding: '60px 24px',
-          maxWidth: '1200px',
-          margin: '0 auto',
-        }}>
-          <h2 style={{ fontSize: '1.5rem', fontWeight: 700, color: 'var(--primary)', marginBottom: '24px' }}>
-            {(SEO_CATEGORIES[lang] || SEO_CATEGORIES.en).purposeHeading}
-          </h2>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '16px', marginBottom: '48px' }}>
-            {(SEO_CATEGORIES[lang] || SEO_CATEGORIES.en).purposeItems.map((item, i) => (
-              <div key={i} style={{
-                background: 'white',
-                borderRadius: '12px',
-                padding: '20px',
-                border: '1px solid rgba(99,67,49,0.08)',
-                fontSize: '14px',
-                lineHeight: '1.6',
-                color: '#333',
-              }}>
-                {item}
-              </div>
-            ))}
-          </div>
 
-          <h2 style={{ fontSize: '1.5rem', fontWeight: 700, color: 'var(--primary)', marginBottom: '24px' }}>
-            {(SEO_CATEGORIES[lang] || SEO_CATEGORIES.en).componentsHeading}
-          </h2>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '16px', marginBottom: '48px' }}>
-            {(SEO_CATEGORIES[lang] || SEO_CATEGORIES.en).componentsItems.map((item, i) => (
-              <div key={i} style={{
-                background: 'white',
-                borderRadius: '12px',
-                padding: '20px',
-                border: '1px solid rgba(99,67,49,0.08)',
-                fontSize: '14px',
-                lineHeight: '1.6',
-                color: '#333',
-              }}>
-                {item}
-              </div>
-            ))}
-          </div>
 
-          <h2 style={{ fontSize: '1.5rem', fontWeight: 700, color: 'var(--primary)', marginBottom: '24px' }}>
-            {(SEO_CATEGORIES[lang] || SEO_CATEGORIES.en).brandsHeading}
-          </h2>
-          <p style={{ fontSize: '14px', lineHeight: '1.8', color: '#555', maxWidth: '800px' }}>
-            {(SEO_CATEGORIES[lang] || SEO_CATEGORIES.en).brandsText}
-          </p>
-        </section>
 
 {/* Meta tags для мобильного приложения */}
             <style dangerouslySetInnerHTML={{ __html: `

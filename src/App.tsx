@@ -28,6 +28,8 @@ import {
 import { motion, AnimatePresence, useScroll, useTransform, useInView, useAnimationControls } from 'framer-motion';
 import { categoryKeys, products, getCategoryLabel, localizeProducts, dedupeProducts, isNewProduct, type LocalizedProduct, type CategoryKey, type Product } from './data';
 import { useLang, LANGS, formatPrice } from './i18n';
+import { SEOHead } from './seo/SEOHead';
+import { SEO_QUERIES, SEO_CATEGORIES } from './seo/seoContent';
 import { fetchProducts, supabase } from './lib/supabase';
 
 import AppStyles from './AppStyles';
@@ -594,7 +596,84 @@ const App: React.FC = () => {
         <Route path="*" element={
           <>
 
-        {/* Meta tags для мобильного приложения */}
+        {/* SEO: meta tags for all search engines */}
+            <SEOHead
+              title={(SEO_QUERIES[lang] || SEO_QUERIES.en).title}
+              description={(SEO_QUERIES[lang] || SEO_QUERIES.en).description}
+              keywords={(SEO_QUERIES[lang] || SEO_QUERIES.en).keywords}
+              canonical="https://drdaruzen.com"
+              ogImage="https://drdaruzen.com/images/og-image.png"
+              jsonLd={{
+                '@context': 'https://schema.org',
+                '@type': 'Organization',
+                name: 'Daruzen',
+                url: 'https://drdaruzen.com',
+                logo: 'https://drdaruzen.com/images/dr.svg.png',
+                description: (SEO_QUERIES[lang] || SEO_QUERIES.en).description,
+                sameAs: [],
+                contactPoint: {
+                  '@type': 'ContactPoint',
+                  telephone: '+90-544-679-10-12',
+                  contactType: 'customer service',
+                  availableLanguage: ['Russian', 'Turkish', 'English', 'Arabic'],
+                },
+              }}
+            />
+
+        {/* SEO content — visible to crawlers, styled for brand consistency */}
+        <section className="seo-content" style={{
+          background: 'var(--bg)',
+          padding: '60px 24px',
+          maxWidth: '1200px',
+          margin: '0 auto',
+        }}>
+          <h2 style={{ fontSize: '1.5rem', fontWeight: 700, color: 'var(--primary)', marginBottom: '24px' }}>
+            {(SEO_CATEGORIES[lang] || SEO_CATEGORIES.en).purposeHeading}
+          </h2>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '16px', marginBottom: '48px' }}>
+            {(SEO_CATEGORIES[lang] || SEO_CATEGORIES.en).purposeItems.map((item, i) => (
+              <div key={i} style={{
+                background: 'white',
+                borderRadius: '12px',
+                padding: '20px',
+                border: '1px solid rgba(99,67,49,0.08)',
+                fontSize: '14px',
+                lineHeight: '1.6',
+                color: '#333',
+              }}>
+                {item}
+              </div>
+            ))}
+          </div>
+
+          <h2 style={{ fontSize: '1.5rem', fontWeight: 700, color: 'var(--primary)', marginBottom: '24px' }}>
+            {(SEO_CATEGORIES[lang] || SEO_CATEGORIES.en).componentsHeading}
+          </h2>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '16px', marginBottom: '48px' }}>
+            {(SEO_CATEGORIES[lang] || SEO_CATEGORIES.en).componentsItems.map((item, i) => (
+              <div key={i} style={{
+                background: 'white',
+                borderRadius: '12px',
+                padding: '20px',
+                border: '1px solid rgba(99,67,49,0.08)',
+                fontSize: '14px',
+                lineHeight: '1.6',
+                color: '#333',
+              }}>
+                {item}
+              </div>
+            ))}
+          </div>
+
+          <h2 style={{ fontSize: '1.5rem', fontWeight: 700, color: 'var(--primary)', marginBottom: '24px' }}>
+            {(SEO_CATEGORIES[lang] || SEO_CATEGORIES.en).brandsHeading}
+          </h2>
+          <p style={{ fontSize: '14px', lineHeight: '1.8', color: '#555', maxWidth: '800px' }}>
+            {(SEO_CATEGORIES[lang] || SEO_CATEGORIES.en).brandsText}
+          </p>
+        </section>
+
+{/* Meta tags для мобильного приложения */}
             <style dangerouslySetInnerHTML={{ __html: `
               @media (display-mode: standalone) {
                 .header { padding-top: env(safe-area-inset-top); }

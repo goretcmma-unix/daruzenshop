@@ -2,6 +2,9 @@
   "functions": {
     "api/sitemap.ts": {
       "maxDuration": 10
+    },
+    "api/product/*.ts": {
+      "maxDuration": 10
     }
   },
   "redirects": [
@@ -15,6 +18,10 @@
     {
       "source": "/sitemap.xml",
       "destination": "/api/sitemap"
+    },
+    {
+      "source": "/product/:id",
+      "destination": "/api/product/:id"
     },
     {
       "source": "/((?!sitemap\\.xml|robots\\.txt).*)",

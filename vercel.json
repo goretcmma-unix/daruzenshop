@@ -5,6 +5,9 @@
     },
     "api/product/*.ts": {
       "maxDuration": 10
+    },
+    "api/yandex-feed.ts": {
+      "maxDuration": 10
     }
   },
   "redirects": [
@@ -20,11 +23,15 @@
       "destination": "/api/sitemap"
     },
     {
+      "source": "/yandex-feed.yml",
+      "destination": "/api/yandex-feed"
+    },
+    {
       "source": "/product/:id",
       "destination": "/api/product/:id"
     },
     {
-      "source": "/((?!sitemap\\.xml|robots\\.txt).*)",
+      "source": "/((?!sitemap\\.xml|robots\\.txt|yandex-feed\\.yml).*)",
       "destination": "/index.html"
     }
   ]

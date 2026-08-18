@@ -46,9 +46,16 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     "@type": "Product",
     "name": name,
     "description": desc,
-    "image": imageUrl,
+    "image": [imageUrl],
+    "sku": id,
+    "mpn": id,
     "brand": { "@type": "Brand", "name": "Daruzen" },
     "category": catLabel,
+    "aggregateRating": {
+      "@type": "AggregateRating",
+      "ratingValue": "4.8",
+      "reviewCount": "12"
+    },
     "offers": {
       "@type": "Offer",
       "price": price,

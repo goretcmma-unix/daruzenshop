@@ -1814,9 +1814,7 @@ a:hover {
 
 @media (max-width: 768px) {
   .modal-tab-buy {
-    height: auto !important;
-    border-radius: 20px 20px 0 0 !important;
-    padding: 4px 20px calc(65px + env(safe-area-inset-bottom)) !important;
+    display: none !important;
   }
 }
 
@@ -2242,97 +2240,121 @@ a:hover {
    instead of a sticky overlay. */
 @media (max-width: 768px) {
   .modal-shell {
-    align-items: flex-end !important;
-    justify-content: center !important;
+    align-items: stretch !important;
+    justify-content: stretch !important;
+    overscroll-behavior: contain;
   }
 
   .modal-layout {
-    display: flex !important;
-    flex-direction: column !important;
-    width: 100% !important;
-    height: 80dvh !important;
-    border-radius: 24px 24px 0 0 !important;
-    overflow: hidden !important;
-    position: fixed !important;
-    top: auto !important;
-    bottom: 0 !important;
-    left: 0 !important;
-    right: 0 !important;
-    transform: none !important;
-    overscroll-behavior: none !important;
+    flex-direction: column;
+    width: 100vw !important;
+    height: 100vh !important;
+    height: 100dvh !important;
+    max-height: none !important;
+    border-radius: 0 !important;
+    gap: 0 !important;
+    padding: 0 !important;
+    overflow: visible !important;
+    box-shadow: none !important;
+  }
+  /* Product tab: content scrolls on the full screen like the Note tab,
+     the photo/name/price/description live inside the pane. */
+  .modal-layout[data-active-tab="product"] .desc-card__content {
+    margin-bottom: 10px !important;
   }
 
-  /* Scrollable body of the sheet (the photo column is hidden on mobile, so the
-     info block is the only child here) — scrolls above the pinned buy bar. */
-  .modal-scroll-region {
+  .modal-layout[data-active-tab="product"] .modal-tab-pane:not(.is-active),
+  .modal-layout[data-active-tab="composition"] .modal-tab-pane:not(.is-active),
+  .modal-layout[data-active-tab="note"] .modal-tab-pane:not(.is-active) {
+    height: 0 !important;
+    min-height: 0 !important;
+    overflow: hidden !important;
+  }
+  .modal-image-col {
+    flex: none !important;
+  }
+  .modal-image-wrapper {
+    flex: none !important;
+    min-height: 0;
+    height: 36vh !important;
+    padding: 12px !important;
+    align-items: center !important;
+  }
+
+  .modal-category {
+    margin-bottom: 10px !important;
+  }
+
+  .modal-title {
+    margin-bottom: 10px !important;
+    text-wrap: pretty;
+  }
+
+  .modal-price {
+    margin-bottom: 12px !important;
+  }
+
+  .modal-mobile-tabs {
+    margin-bottom: 10px !important;
+  }
+
+  .desc-card__content p {
+    line-height: 1.6 !important;
+  }
+  .modal-buy-under {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 20;
+    margin: 0;
+    padding: 14px 20px calc(14px + env(safe-area-inset-bottom));
+    background: #fff;
+    border-radius: 24px 24px 0 0;
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.08);
+  }
+
+  .modal-swipe {
+    padding-bottom: calc(146px + clamp(24px, 4vw, 48px) + env(safe-area-inset-bottom));
+  }
+
+  .modal-buy-actions {
+    grid-template-columns: auto 1fr;
+    gap: 10px;
+  }
+  .modal-buy-actions .modal-buy-btn {
+    grid-column: 1 / -1;
+  }
+  .modal-buy-qty {
+    min-width: 0;
+  }
+  .modal-image {
+    width: auto !important;
+    height: auto !important;
+    max-height: 100% !important;
+    max-width: 100% !important;
+    object-fit: contain;
+  }
+  .modal-info-wrapper {
+    flex: 1;
+    padding: 16px 20px 24px !important;
     display: flex;
     flex-direction: column;
-    flex: 1 1 auto;
-    min-height: 0;
-    overflow-y: auto;
-    overflow-x: hidden;
-    overscroll-behavior: none;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
-    padding-bottom: 100px;
-  }
-
-  .modal-scroll-region::-webkit-scrollbar {
-    display: none;
-    width: 0;
-    height: 0;
-  }
-
-  .modal-info-wrapper {
-    flex: 1 1 auto !important;
-    min-height: 0;
-    padding: 48px 20px 48px !important;
-  }
-
-  /* Small gap between the last line of the active tab and the buy bar */
-  .modal-info-wrapper::after {
-    content: '';
-    display: block;
-    flex: none;
-    height: 0;
-  }
-
-  /* The track sizes to the active pane (inactive ones are height: 0), so the
-     sheet takes the active tab's own height. The active pane must not scroll
-     internally — overflow: visible makes it grow with the content, so the
-     whole sheet scrolls like a normal page. The viewport must not shrink
-     (flex: none) or the pane content gets squeezed to the sheet height. */
-  .modal-tabs-viewport {
-    flex: none;
     min-height: 0;
   }
-
-  .modal-tabs-track {
-    height: auto;
+  .modal-scroll-area {
+    overflow: visible;
+    padding-bottom: 0;
   }
-
-  .modal-tabs-track .modal-tab-pane {
-    padding-bottom: 0 !important;
+  .modal-comp-table th,
+  .modal-comp-table td {
+    padding: 8px 10px !important;
+    font-size: 12px !important;
   }
-
-  .modal-tabs-track .modal-tab-pane.is-active {
-    overflow: visible !important;
-  }
-
-  /* Buy bar: flex child, pinned at bottom of modal-layout. */
-  .modal-tab-buy {
-    position: fixed !important;
-    right: 0 !important;
-    left: 0 !important;
-    bottom: 0 !important;
-    flex-shrink: 0;
-    width: 100%;
-    height: auto !important;
-    border-radius: 20px 20px 0 0 !important;
-    padding: 8px 20px calc(20px + env(safe-area-inset-bottom)) !important;
-    z-index: 10;
-    background: #fff;
-    box-shadow: 0 -20px 60px rgba(0, 0, 0, 0.28), 0 -4px 14px rgba(0, 0, 0, 0.12);
+  .modal-actions-sticky {
+    padding-top: 16px;
+    border-top: 1px solid rgba(0,0,0,0.08);
+    margin-top: 8px;
   }
 }
 

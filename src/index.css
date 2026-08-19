@@ -248,20 +248,12 @@ a:hover {
   height: 100%;
   object-fit: cover;
   display: block;
-  transition: zoom 0.4s ease-out;
+  scale: 1;
+  transition: scale 0.4s ease-out;
 }
 
 .product-card:hover .product-image {
-  zoom: 1.04;
-}
-
-@supports not (zoom: 1) {
-  .product-image {
-    transition: filter 0.4s ease-out;
-  }
-  .product-card:hover .product-image {
-    filter: brightness(1.06) contrast(1.02);
-  }
+  scale: 1.04;
 }
 
 .product-card {

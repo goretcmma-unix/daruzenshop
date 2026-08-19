@@ -2248,9 +2248,7 @@ a:hover {
 
   .modal-layout {
     width: 100% !important;
-    height: auto !important;
-    min-height: clamp(380px, 60dvh, 720px);
-    max-height: 99dvh !important;
+    height: 100dvh !important;
     border-radius: 24px 24px 0 0 !important;
     overflow: hidden !important;
   }

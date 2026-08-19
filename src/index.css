@@ -35,6 +35,7 @@ html {
   padding: 0;
   width: 100%;
   scrollbar-width: none;
+  overscroll-behavior-y: none;
 }
 
 body {

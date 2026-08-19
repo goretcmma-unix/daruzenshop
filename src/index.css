@@ -2250,7 +2250,7 @@ a:hover {
     display: flex !important;
     flex-direction: column !important;
     width: 100% !important;
-    height: 86dvh !important;
+    height: 80dvh !important;
     border-radius: 24px 24px 0 0 !important;
     overflow: hidden !important;
     position: fixed !important;

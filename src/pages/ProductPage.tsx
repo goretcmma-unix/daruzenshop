@@ -66,9 +66,8 @@ const ProductPage: React.FC<ProductPageProps> = ({ product, onAddToCart, onBuyNo
   }, [activeTab, product, isRtl, getAvailableTabs]);
 
   useEffect(() => {
-    const prev = document.body.style.overflow;
-    document.body.style.overflow = 'hidden';
-    return () => { document.body.style.overflow = prev; };
+    document.body.classList.add('scroll-locked');
+    return () => { document.body.classList.remove('scroll-locked'); };
   }, []);
 
   const goBack = useCallback(() => {

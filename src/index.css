@@ -257,7 +257,6 @@ a:hover {
   padding: 20px;
   border: 1px solid var(--border);
   transition: box-shadow 0.2s ease;
-  contain: layout style;
 }
 
 .product-card:hover {
@@ -266,7 +265,6 @@ a:hover {
 
 .product-card:hover .product-image {
   transform: scale(1.04);
-  will-change: transform;
 }
 .product-page-grid {
   display: grid;

@@ -1779,9 +1779,9 @@ const App: React.FC = () => {
                   <motion.div
                     key="modal-tab-buy"
                     ref={tabBuyRef}
-                    initial={{ y: '100%' }}
+                    initial={window.innerWidth > 768 ? { y: '100%' } : false}
                     animate={{ y: 0 }}
-                    exit={{ y: '100%' }}
+                    exit={window.innerWidth > 768 ? { y: '100%' } : undefined}
                     transition={{ type: 'tween', duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
                     className="modal-tab-buy"
                   >

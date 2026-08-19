@@ -1814,9 +1814,9 @@ a:hover {
 
 @media (max-width: 768px) {
   .modal-tab-buy {
-    height: 146px;
+    height: auto !important;
     min-height: 146px;
-    max-height: 146px;
+    max-height: none !important;
   }
 }
 
@@ -2309,14 +2309,16 @@ a:hover {
     overflow: visible !important;
   }
 
-  /* Buy bar: flex footer, always at the sheet's bottom edge. */
+  /* Buy bar: pinned to the very bottom edge of the modal. */
   .modal-tab-buy {
-    position: static !important;
+    position: sticky !important;
+    bottom: 0;
     flex-shrink: 0;
     width: 100%;
     height: auto !important;
     min-height: 0 !important;
     max-height: none !important;
+    z-index: 10;
     box-shadow: 0 -20px 60px rgba(0, 0, 0, 0.28), 0 -4px 14px rgba(0, 0, 0, 0.12);
   }
 }

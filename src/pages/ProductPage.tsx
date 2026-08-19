@@ -72,11 +72,13 @@ const ProductPage: React.FC<ProductPageProps> = ({ product, onAddToCart, onBuyNo
     document.body.style.top = `-${scrollY}px`;
     document.body.style.width = '100%';
     return () => {
-      document.body.style.overflow = '';
-      document.body.style.position = '';
-      document.body.style.top = '';
-      document.body.style.width = '';
-      window.scrollTo(0, scrollY);
+      requestAnimationFrame(() => {
+        document.body.style.overflow = '';
+        document.body.style.position = '';
+        document.body.style.top = '';
+        document.body.style.width = '';
+        window.scrollTo(0, scrollY);
+      });
     };
   }, []);
 
@@ -145,10 +147,10 @@ const ProductPage: React.FC<ProductPageProps> = ({ product, onAddToCart, onBuyNo
       {/* Modal */}
       <div className="modal-shell">
         <motion.div
-          initial={{ scale: 0.96, opacity: 0, x: '-50%', y: '-55%' }}
+          initial={{ scale: 0.96, opacity: 0, x: '-50%', y: '-50%' }}
           animate={{ scale: 1, opacity: 1, x: '-50%', y: '-50%' }}
-          exit={{ scale: 0.96, opacity: 0, x: '-50%', y: '-55%' }}
-          transition={{ type: 'spring', damping: 28, stiffness: 350, exitDuration: 0.15 }}
+          exit={{ scale: 0.96, opacity: 0, x: '-50%', y: '-50%' }}
+          transition={{ duration: 0.25, ease: 'easeInOut' }}
           className="modal-layout"
           data-active-tab={activeTab}
           style={{

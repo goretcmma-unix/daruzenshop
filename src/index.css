@@ -1816,7 +1816,7 @@ a:hover {
   .modal-tab-buy {
     height: auto !important;
     border-radius: 20px 20px 0 0 !important;
-    padding: 12px 20px calc(12px + env(safe-area-inset-bottom)) !important;
+    padding: 12px 20px calc(32px + env(safe-area-inset-bottom)) !important;
   }
 }
 
@@ -2314,13 +2314,12 @@ a:hover {
 
   /* Buy bar: flex child, pinned at bottom of modal-layout. */
   .modal-tab-buy {
-    position: fixed !important;
-    bottom: 0 !important;
+    position: relative !important;
     flex-shrink: 0;
     width: 100%;
     height: auto !important;
     border-radius: 20px 20px 0 0 !important;
-    padding: 12px 20px calc(12px + env(safe-area-inset-bottom)) !important;
+    padding: 16px 20px calc(32px + env(safe-area-inset-bottom)) !important;
     z-index: 10;
     background: #fff;
     box-shadow: 0 -20px 60px rgba(0, 0, 0, 0.28), 0 -4px 14px rgba(0, 0, 0, 0.12);

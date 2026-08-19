@@ -1814,7 +1814,7 @@ a:hover {
 
 @media (max-width: 768px) {
   .modal-tab-buy {
-    height: auto !important;
+    height: 100px !important;
     border-radius: 20px 20px 0 0 !important;
     padding: 12px 20px calc(12px + env(safe-area-inset-bottom)) !important;
   }

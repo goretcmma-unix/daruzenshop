@@ -2287,7 +2287,7 @@ a:hover {
     content: '';
     display: block;
     flex: none;
-    height: clamp(20px, 4vw, 32px);
+    height: 0;
   }
 
   /* The track sizes to the active pane (inactive ones are height: 0), so the

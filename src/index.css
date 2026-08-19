@@ -1023,10 +1023,9 @@ a:hover {
   .modal-layout {
     flex-direction: column;
     width: calc(100vw - 12px) !important;
-    height: auto !important;
-    min-height: clamp(320px, 50vh, 500px) !important;
-    max-height: calc(100dvh - 12px) !important;
+    height: calc(100dvh - 12px) !important;
     margin-top: 12px !important;
+    max-height: none !important;
     border-radius: 20px 20px 0 0 !important;
     gap: 0 !important;
     padding: 0 !important;
@@ -1292,7 +1291,7 @@ a:hover {
   .modal-tab-pane {
     height: auto !important;
     overflow: visible !important;
-    padding-bottom: 0 !important;
+    padding-bottom: calc(146px + clamp(16px, 3vw, 32px)) !important;
   }
   .modal-scroll-region {
     display: flex;
@@ -2276,10 +2275,9 @@ a:hover {
   .modal-layout {
     flex-direction: column;
     width: calc(100vw - 12px) !important;
-    height: auto !important;
-    min-height: clamp(320px, 50vh, 500px) !important;
-    max-height: calc(100dvh - 12px) !important;
+    height: calc(100dvh - 12px) !important;
     margin-top: 12px !important;
+    max-height: none !important;
     border-radius: 20px 20px 0 0 !important;
     gap: 0 !important;
     padding: 0 !important;

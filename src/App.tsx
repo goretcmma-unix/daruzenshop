@@ -226,22 +226,35 @@ const App: React.FC = () => {
 
   useEffect(() => {
     const isLocked = isMobileMenuOpen || isCartOpen || selectedProduct !== null;
-    const root = document.documentElement;
     // Лёгкий лок без position:fixed: не сбрасывает позицию скролла и не
     // вызывает reflow/прыжок на мобильных (главный источник лагов меню/модалок)
     if (isLocked) {
-      root.style.overflow = 'hidden';
+      const scrollY = window.scrollY;
+      document.documentElement.style.overflow = 'hidden';
       document.body.style.overflow = 'hidden';
+      document.body.style.position = 'fixed';
+      document.body.style.top = `-${scrollY}px`;
+      document.body.style.width = '100%';
       document.body.style.touchAction = 'none';
     } else {
-      root.style.overflow = '';
+      const scrollY = parseInt(document.body.style.top || '0', 10) * -1 || 0;
+      document.documentElement.style.overflow = '';
       document.body.style.overflow = '';
+      document.body.style.position = '';
+      document.body.style.top = '';
+      document.body.style.width = '';
       document.body.style.touchAction = '';
+      window.scrollTo(0, scrollY);
     }
     return () => {
-      root.style.overflow = '';
+      const scrollY = parseInt(document.body.style.top || '0', 10) * -1 || 0;
+      document.documentElement.style.overflow = '';
       document.body.style.overflow = '';
+      document.body.style.position = '';
+      document.body.style.top = '';
+      document.body.style.width = '';
       document.body.style.touchAction = '';
+      window.scrollTo(0, scrollY);
     };
   }, [isMobileMenuOpen, isCartOpen, selectedProduct]);
 

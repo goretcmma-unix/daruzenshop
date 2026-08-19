@@ -392,6 +392,41 @@ const ProductPage: React.FC<ProductPageProps> = ({ product, onAddToCart, onBuyNo
                   </div>
                 </div>
               )}
+
+              {/* Mobile/tablet bottom buy bar */}
+              {product.inStock !== false && (
+                <div className="modal-tab-buy">
+                  <div className="modal-buy-actions">
+                    <div className="modal-buy-qty">
+                      <QtyButton label="-" onClick={() => setQuantity(q => Math.max(1, q - 1))}>
+                        <Minus size={18} />
+                      </QtyButton>
+                      <span className="modal-buy-qty__value">{quantity}</span>
+                      <QtyButton label="+" withRotate onClick={() => setQuantity(q => q + 1)}>
+                        <Plus size={18} />
+                      </QtyButton>
+                    </div>
+                    <motion.button
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                      onClick={() => onAddToCart(product, quantity)}
+                      className="btn btn-primary"
+                      style={{ height: '54px', borderRadius: '14px', fontSize: '16px', boxShadow: '0 4px 12px rgba(93, 64, 55, 0.1)' }}
+                    >
+                      <ShoppingCart size={20} /> {t.cart.inCart}
+                    </motion.button>
+                    <motion.button
+                      whileHover={{ scale: 1.02, filter: 'brightness(1.08)' }}
+                      whileTap={{ scale: 0.98 }}
+                      onClick={() => onBuyNow(product, quantity)}
+                      className="modal-buy-btn"
+                      style={{ background: 'linear-gradient(135deg, #25D366 0%, #128C7E 100%)', color: 'white', border: 'none', height: '54px', borderRadius: '14px', fontWeight: '700', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', boxShadow: '0 10px 20px rgba(37, 211, 102, 0.15)' }}
+                    >
+                      {t.cart.buyNow}
+                    </motion.button>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </motion.div>

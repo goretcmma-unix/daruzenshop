@@ -1814,9 +1814,14 @@ a:hover {
 
 @media (max-width: 768px) {
   .modal-tab-buy {
+    position: fixed !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
     height: 146px;
     min-height: 146px;
     max-height: 146px;
+    z-index: 9999;
   }
 }
 

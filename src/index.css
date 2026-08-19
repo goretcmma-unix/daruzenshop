@@ -1022,11 +1022,11 @@ a:hover {
 
   .modal-layout {
     flex-direction: column;
-    width: 100vw !important;
-    height: 100vh !important;
-    height: 100dvh !important;
+    width: calc(100vw - 12px) !important;
+    height: calc(100dvh - 12px) !important;
+    margin-top: 12px !important;
     max-height: none !important;
-    border-radius: 0 !important;
+    border-radius: 20px 20px 0 0 !important;
     gap: 0 !important;
     padding: 0 !important;
     overflow: visible !important;
@@ -2254,11 +2254,11 @@ a:hover {
 
   .modal-layout {
     flex-direction: column;
-    width: 100vw !important;
-    height: 100vh !important;
-    height: 100dvh !important;
+    width: calc(100vw - 12px) !important;
+    height: calc(100dvh - 12px) !important;
+    margin-top: 12px !important;
     max-height: none !important;
-    border-radius: 0 !important;
+    border-radius: 20px 20px 0 0 !important;
     gap: 0 !important;
     padding: 0 !important;
     overflow: visible !important;

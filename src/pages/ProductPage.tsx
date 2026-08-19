@@ -145,10 +145,10 @@ const ProductPage: React.FC<ProductPageProps> = ({ product, onAddToCart, onBuyNo
       {/* Modal */}
       <div className="modal-shell">
         <motion.div
-          initial={{ scale: 0.96, opacity: 0, x: '-50%', y: '-50%' }}
+          initial={{ scale: 0.96, opacity: 0, x: '-50%', y: '-55%' }}
           animate={{ scale: 1, opacity: 1, x: '-50%', y: '-50%' }}
-          exit={{ scale: 0.96, opacity: 0, x: '-50%', y: '-50%' }}
-          transition={{ duration: 0.25, ease: 'easeInOut' }}
+          exit={{ scale: 0.96, opacity: 0, x: '-50%', y: '-55%' }}
+          transition={{ type: 'spring', damping: 28, stiffness: 350, exitDuration: 0.15 }}
           className="modal-layout"
           data-active-tab={activeTab}
           style={{

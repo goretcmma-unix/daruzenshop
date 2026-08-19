@@ -2242,10 +2242,10 @@ a:hover {
 
   .modal-layout {
     width: 100% !important;
-    top: auto !important;
+    top: 0 !important;
     bottom: 0 !important;
-    left: 0 !important;
-    transform: none !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
     height: auto !important;
     min-height: clamp(380px, 60dvh, 720px);
     max-height: 100dvh !important;

@@ -241,14 +241,19 @@ a:hover {
   background: #ffffff;
   border-radius: var(--radius-md);
   overflow: hidden;
+  transform: translateZ(0);
+  transition: transform 0.4s ease-out;
+}
+
+.product-card:hover .product-image-container {
+  transform: translateZ(0) scale(1.04);
 }
 
 .product-image {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  will-change: transform;
-  transition: transform 0.4s ease-out;
+  display: block;
 }
 
 .product-card {
@@ -263,9 +268,6 @@ a:hover {
   box-shadow: var(--shadow-md);
 }
 
-.product-card:hover .product-image {
-  transform: scale(1.04);
-}
 .product-page-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;

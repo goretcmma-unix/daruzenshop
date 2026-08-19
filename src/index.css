@@ -54,6 +54,7 @@ html::-webkit-scrollbar, body::-webkit-scrollbar {
 #root, .app-shell {
   overflow-x: hidden;
   width: 100%;
+  overscroll-behavior: none;
 }
 
 body.scroll-locked {

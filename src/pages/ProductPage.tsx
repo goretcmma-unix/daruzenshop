@@ -150,7 +150,7 @@ const ProductPage: React.FC<ProductPageProps> = ({ product, onAddToCart, onBuyNo
             height: '90vh',
             maxHeight: '90vh',
             background: 'white',
-            borderRadius: '24px 24px 0 0',
+            borderRadius: '24px',
             overflowY: 'auto',
             overflowX: 'hidden',
             overscrollBehaviorY: 'contain',

@@ -1814,7 +1814,7 @@ a:hover {
 
 @media (max-width: 768px) {
   .modal-tab-buy {
-    height: 100px !important;
+    height: auto !important;
     border-radius: 20px 20px 0 0 !important;
     padding: 12px 20px calc(12px + env(safe-area-inset-bottom)) !important;
   }
@@ -2314,7 +2314,8 @@ a:hover {
 
   /* Buy bar: flex child, pinned at bottom of modal-layout. */
   .modal-tab-buy {
-    position: relative !important;
+    position: fixed !important;
+    bottom: 0 !important;
     flex-shrink: 0;
     width: 100%;
     height: auto !important;

@@ -1773,18 +1773,12 @@ const App: React.FC = () => {
                             </div>
               </div>
 
-              {/* Buy bar inside modal — pinned to the bottom edge on tablets, sticky on mobile */}
-              <AnimatePresence>
-                {selectedProduct && (
-                  <motion.div
-                    key="modal-tab-buy"
-                    ref={tabBuyRef}
-                    initial={window.innerWidth > 768 ? { y: '100%' } : false}
-                    animate={{ y: 0 }}
-                    exit={window.innerWidth > 768 ? { y: '100%' } : undefined}
-                    transition={{ type: 'tween', duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
-                    className="modal-tab-buy"
-                  >
+              {/* Buy bar inside modal — pinned to the bottom edge on tablets, flex child on mobile */}
+              {selectedProduct && (
+              <div
+                className="modal-tab-buy"
+                ref={tabBuyRef}
+              >
                     {selectedProduct.inStock === false ? (
                       <div style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', padding: '0 24px', height: '54px', borderRadius: '14px', border: '2px solid #d5cfc6', color: '#8a8a8a', fontWeight: '600', fontSize: '15px', letterSpacing: '0.01em', background: 'transparent' }}>
                         Нет в наличии
@@ -1820,9 +1814,8 @@ const App: React.FC = () => {
                         </motion.button>
                       </div>
                     )}
-                  </motion.div>
-                )}
-              </AnimatePresence>
+              </div>
+              )}
             </motion.div>
             </div>
           </div>

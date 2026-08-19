@@ -2259,6 +2259,7 @@ a:hover {
     left: 0 !important;
     right: 0 !important;
     transform: none !important;
+    overscroll-behavior: none !important;
   }
 
   /* Scrollable body of the sheet (the photo column is hidden on mobile, so the
@@ -2270,7 +2271,7 @@ a:hover {
     min-height: 0;
     overflow-y: auto;
     overflow-x: hidden;
-    overscroll-behavior-y: contain;
+    overscroll-behavior: none;
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
     padding-bottom: 100px;

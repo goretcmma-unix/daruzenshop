@@ -239,8 +239,8 @@ a:hover {
   width: 100%;
   aspect-ratio: 3 / 4;
   background: #ffffff;
-  border-radius: var(--radius-md);
-  overflow: hidden;
+  clip-path: inset(0 round var(--radius-md));
+  transition: transform 0.4s ease-out;
 }
 
 .product-image {
@@ -248,12 +248,10 @@ a:hover {
   height: 100%;
   object-fit: cover;
   display: block;
-  scale: 1;
-  transition: scale 0.4s ease-out;
 }
 
-.product-card:hover .product-image {
-  scale: 1.04;
+.product-card:hover .product-image-container {
+  transform: scale(1.04);
 }
 
 .product-card {

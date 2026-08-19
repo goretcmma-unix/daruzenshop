@@ -1499,6 +1499,7 @@ a:hover {
     min-height: clamp(480px, 78vh, 860px);
     max-height: 90vh !important;
     overflow: hidden !important;
+    border-radius: 24px 24px 0 0;
   }
 
   /* Scrollable body of the sheet: photo + info scroll together, while the

@@ -1291,16 +1291,19 @@ a:hover {
   .modal-tab-pane {
     height: auto !important;
     overflow: visible !important;
-    padding-bottom: calc(146px + clamp(16px, 3vw, 32px)) !important;
+    padding-bottom: 0 !important;
   }
   .modal-scroll-region {
     display: flex;
     flex-direction: column;
-    flex: 1 1 0;
+    flex: 0 1 auto;
     min-height: 0;
     overflow-y: auto;
     overflow-x: hidden;
     overscroll-behavior: contain;
+  }
+  .modal-info-wrapper {
+    flex: 0 1 auto;
   }
 }
 
@@ -1835,11 +1838,13 @@ a:hover {
   .modal-tab-buy {
     position: static !important;
     flex: 0 0 auto !important;
+    margin-top: auto !important;
     height: 146px;
     min-height: 146px;
     max-height: 146px;
     z-index: 9999;
-    margin: 0 !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
     padding-left: clamp(20px, 4vw, 36px) !important;
     padding-right: clamp(20px, 4vw, 36px) !important;
   }

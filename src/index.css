@@ -2313,7 +2313,10 @@ a:hover {
 
   /* Buy bar: flex child, pinned at bottom of modal-layout. */
   .modal-tab-buy {
-    position: relative !important;
+    position: fixed !important;
+    right: 0 !important;
+    left: 0 !important;
+    bottom: 0 !important;
     flex-shrink: 0;
     width: 100%;
     height: auto !important;

@@ -2267,6 +2267,7 @@ a:hover {
     overscroll-behavior-y: contain;
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
+    padding-bottom: 120px;
   }
 
   .modal-scroll-region::-webkit-scrollbar {

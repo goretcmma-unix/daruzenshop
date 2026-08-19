@@ -2244,14 +2244,13 @@ a:hover {
   .modal-shell {
     align-items: flex-end !important;
     justify-content: center !important;
-    padding-top: 40px !important;
   }
 
   .modal-layout {
     display: flex !important;
     flex-direction: column !important;
     width: 100% !important;
-    height: calc(100dvh - 40px) !important;
+    height: 86dvh !important;
     border-radius: 24px 24px 0 0 !important;
     overflow: hidden !important;
   }

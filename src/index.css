@@ -240,7 +240,7 @@ a:hover {
   aspect-ratio: 3 / 4;
   background: #ffffff;
   border-radius: var(--radius-md);
-  overflow: hidden;
+  overflow: clip;
   transform: translateZ(0);
   transition: transform 0.4s ease-out;
 }

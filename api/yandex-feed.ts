@@ -56,9 +56,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   xml += '<name>Daruzen</name>\n';
   xml += '<company>Daruzen</company>\n';
   xml += '<url>' + SITE + '</url>\n';
-  xml += '<platform>Vercel</platform>\n';
-  xml += '<version>1.0</version>\n';
-
   xml += '<currencies>\n';
   xml += '<currency id="RUB" rate="1"/>\n';
   xml += '</currencies>\n';

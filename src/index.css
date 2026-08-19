@@ -34,9 +34,8 @@ html {
   margin: 0;
   padding: 0;
   width: 100%;
-  overflow: clip;
-  overscroll-behavior: none;
   scrollbar-width: none;
+  overscroll-behavior: none;
 }
 
 body {

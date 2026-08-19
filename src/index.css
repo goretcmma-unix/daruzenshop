@@ -1238,7 +1238,7 @@ a:hover {
 
 /* Tab content - horizontal track with slide-through transition */
 .modal-tabs-viewport {
-  flex: 0 1 auto;
+  flex: 1 1 auto;
   min-height: 0;
   position: relative;
   overflow: hidden;
@@ -1727,12 +1727,12 @@ a:hover {
     margin-inline-start: 0;
   }
   .modal-product-media__img {
-    margin: 0;
-    margin-left: clamp(16px, 4vw, 32px);
-    width: auto;
+    margin: 0 auto;
+    width: 100%;
     height: auto;
-    max-width: 65%;
-    max-height: clamp(240px, 44vh, 400px);
+    max-width: 100%;
+    max-height: 300px;
+    object-fit: contain;
     object-position: center center;
   }
   .modal-product-media__cert-label {

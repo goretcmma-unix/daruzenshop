@@ -7,6 +7,26 @@ const supabaseKey = process.env.SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_A
 const LANGS = ['ru', 'tr', 'en', 'ar'];
 const SITE = 'https://drdaruzen.com';
 
+function urlEntry(loc: string, lastmod: string, changefreq: string, priority: string, hreflangs: string): string {
+  return [
+    '    <url>',
+    '      <loc>' + loc + '</loc>',
+    '      <lastmod>' + lastmod + '</lastmod>',
+    '      <changefreq>' + changefreq + '</changefreq>',
+    '      <priority>' + priority + '</priority>',
+    hreflangs,
+    '    </url>',
+  ].join('\n');
+}
+
+function hreflangBlock(path: string): string {
+  const lines = LANGS.map(function (hl) {
+    return '      <xhtml:link rel="alternate" hreflang="' + hl + '" href="' + SITE + '/' + hl + path + '" />';
+  });
+  lines.push('      <xhtml:link rel="alternate" hreflang="x-default" href="' + SITE + '/en' + path + '" />');
+  return lines.join('\n');
+}
+
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   res.setHeader('Content-Type', 'application/xml; charset=utf-8');
   res.setHeader('Cache-Control', 'public, max-age=3600, s-maxage=3600');
@@ -26,38 +46,24 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   const today = new Date().toISOString().slice(0, 10);
 
-  const staticPages = LANGS.flatMap((l) => [
-    `<url><loc>${SITE}/${l}/</loc><lastmod>${today}</lastmod><changefreq>weekly</changefreq><priority>1.0</priority>
-        ${LANGS.map((hl) => `<xhtml:link rel="alternate" hreflang="${hl}" href="${SITE}/${hl}/" />`).join('\n        ')}
-        <xhtml:link rel="alternate" hreflang="x-default" href="${SITE}/en/" />
-      </url>`,
-    `<url><loc>${SITE}/${l}/about</loc><lastmod>${today}</lastmod><changefreq>monthly</changefreq><priority>0.9</priority>
-        ${LANGS.map((hl) => `<xhtml:link rel="alternate" hreflang="${hl}" href="${SITE}/${hl}/about" />`).join('\n        ')}
-        <xhtml:link rel="alternate" hreflang="x-default" href="${SITE}/en/about" />
-      </url>`,
-    `<url><loc>${SITE}/${l}/contacts</loc><lastmod>${today}</lastmod><changefreq>monthly</changefreq><priority>0.7</priority>
-        ${LANGS.map((hl) => `<xhtml:link rel="alternate" hreflang="${hl}" href="${SITE}/${hl}/contacts" />`).join('\n        ')}
-        <xhtml:link rel="alternate" hreflang="x-default" href="${SITE}/en/contacts" />
-      </url>`,
-  ]);
+  const lines: string[] = [];
+  lines.push('<?xml version="1.0" encoding="UTF-8"?>');
+  lines.push('<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"');
+  lines.push('        xmlns:xhtml="http://www.w3.org/1999/xhtml">');
 
-  const productUrls = productIds.map((id) => {
-    const langUrls = LANGS.map(
-      (l) => `<url><loc>${SITE}/${l}/product/${id}</loc><lastmod>${today}</lastmod><changefreq>weekly</changefreq><priority>0.8</priority>
-        ${LANGS.map((hl) => `<xhtml:link rel="alternate" hreflang="${hl}" href="${SITE}/${hl}/product/${id}" />`).join('\n        ')}
-        <xhtml:link rel="alternate" hreflang="x-default" href="${SITE}/en/product/${id}" />
-      </url>`
-    ).join('\n    ');
+  for (const l of LANGS) {
+    lines.push(urlEntry(SITE + '/' + l + '/', today, 'weekly', '1.0', hreflangBlock('/')));
+    lines.push(urlEntry(SITE + '/' + l + '/about', today, 'monthly', '0.9', hreflangBlock('/about')));
+    lines.push(urlEntry(SITE + '/' + l + '/contacts', today, 'monthly', '0.7', hreflangBlock('/contacts')));
+  }
 
-    return langUrls;
-  });
+  for (const id of productIds) {
+    for (const l of LANGS) {
+      lines.push(urlEntry(SITE + '/' + l + '/product/' + id, today, 'weekly', '0.8', hreflangBlock('/product/' + id)));
+    }
+  }
 
-  const xml = `<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
-        xmlns:xhtml="http://www.w3.org/1999/xhtml">
-  ${staticPages.join('\n  ')}
-  ${productUrls.join('\n  ')}
-</urlset>`;
+  lines.push('</urlset>');
 
-  res.status(200).send(xml);
+  res.status(200).send(lines.join('\n'));
 }

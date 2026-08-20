@@ -35,6 +35,11 @@
       "source": "/product",
       "destination": "/#catalog",
       "permanent": false
+    },
+    {
+      "source": "/product/:id",
+      "destination": "/ru/product/:id",
+      "permanent": true
     }
   ],
   "rewrites": [
@@ -61,11 +66,6 @@
     {
       "source": "/:lang(ar)/product/:id",
       "destination": "/api/product/:id?lang=ar"
-    },
-    {
-      "source": "/product/:id",
-      "destination": "/ru/product/:id",
-      "permanent": true
     },
     {
       "source": "/((?!sitemap\\.xml|robots\\.txt|yandex-feed\\.yml).*)",

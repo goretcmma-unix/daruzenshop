@@ -23,19 +23,19 @@ const LOCALE_MAP: Record<LangCode, string> = {
 
 const SEO_DATA: Record<string, { titleSuffix: string; keywords: (name: string, cat: string) => string }> = {
   ru: {
-    titleSuffix: 'Daruzen | Купить витамины и БАДы из Турции',
+    titleSuffix: 'Купить | Daruzen',
     keywords: (name: string, cat: string) => `${name}, Daruzen, дарузен, турецкие витамины, витамины из Турции, ${cat}, купить витамины, БАДы, бады из Турции, турецкие добавки, витамины турция, натуральные добавки, купить добавки, дарузен витамины, витамины купить онлайн`,
   },
   tr: {
-    titleSuffix: 'Daruzen | Türk Vitaminleri ve Takviyeleri',
+    titleSuffix: 'Satın Al | Daruzen',
     keywords: (name: string, cat: string) => `${name}, Daruzen, daruzen, türk vitaminleri, türkiye vitaminleri, ${cat}, vitamin al, takviye, besin takviyesi, türk takviyeleri, doğal takviyeler, daruzen vitamin, türkiye ürünleri, online vitamin`,
   },
   en: {
-    titleSuffix: 'Daruzen | Turkish Vitamins & Supplements',
+    titleSuffix: 'Buy Now | Daruzen',
     keywords: (name: string, cat: string) => `${name}, Daruzen, daruzen, turkish vitamins, vitamins from turkey, ${cat}, buy vitamins, supplements, dietary supplements, turkish supplements, natural supplements, daruzen vitamins, turkey vitamins, order vitamins online`,
   },
   ar: {
-    titleSuffix: 'داروزن | فيتامينات ومكملات غذائية من تركيا',
+    titleSuffix: 'شراء | داروزن',
     keywords: (name: string, cat: string) => `${name}, داروزن, daruzen, فيتامينات تركية, فيتامينات من تركيا, ${cat}, شراء فيتامينات, مكملات, مكملات غذائية, مكملات تركية, مكملات طبيعية, داروزن فيتامين, منتجات تركية, فيتامينات اونلاين`,
   },
 };
@@ -147,7 +147,7 @@ const ProductPage: React.FC<ProductPageProps> = ({ product, onAddToCart, onBuyNo
       style={{ position: 'fixed', inset: 0, zIndex: 4000, pointerEvents: 'auto' }}
     >
       <SEOHead
-        title={`${product.name} — ${(SEO_DATA[lang] || SEO_DATA.en).titleSuffix}`}
+        title={`${product.name.replace(/^Daruzen\s+/i, '')} | Daruzen`}
         description={product.description}
         keywords={(SEO_DATA[lang] || SEO_DATA.en).keywords(product.name, product.category)}
         canonical={canonicalLang}

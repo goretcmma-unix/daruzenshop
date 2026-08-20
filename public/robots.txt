@@ -6,7 +6,7 @@ Disallow: /admin
 Disallow: /api/
 
 Sitemap: https://drdaruzen.com/sitemap.xml
-Yandex-feed: https://drdaruzen.com/yandex-feed.yml
+# Yandex-feed: https://drdaruzen.com/yandex-feed.yml
 
 # Daruzen - Official Health Store
 # https://drdaruzen.com

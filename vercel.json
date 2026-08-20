@@ -15,6 +15,26 @@
       "source": "/catalog",
       "destination": "/",
       "permanent": false
+    },
+    {
+      "source": "/:lang(ru|tr|en|ar)/product/",
+      "destination": "/:lang/#catalog",
+      "permanent": false
+    },
+    {
+      "source": "/:lang(ru|tr|en|ar)/product",
+      "destination": "/:lang/#catalog",
+      "permanent": false
+    },
+    {
+      "source": "/product/",
+      "destination": "/#catalog",
+      "permanent": false
+    },
+    {
+      "source": "/product",
+      "destination": "/#catalog",
+      "permanent": false
     }
   ],
   "rewrites": [

@@ -5,7 +5,6 @@ import { categoryKeys, products, getCategoryLabel, localizeProducts, dedupeProdu
 import { useLang, formatPrice } from '../i18n';
 import { fetchProducts } from '../lib/supabase';
 import { SEOHead } from '../seo/SEOHead';
-import { NormalizedImg } from '../components/NormalizedImg';
 
 interface CatalogPageProps {
   onSelectProduct: (product: LocalizedProduct) => void;
@@ -103,7 +102,7 @@ const CatalogPage: React.FC<CatalogPageProps> = ({ onSelectProduct, onAddToCart 
                 onClick={() => onSelectProduct(product)}
               >
                 <div className="product-image-container">
-                  <NormalizedImg src={product.image} alt={product.name} className="product-image" loading="lazy" decoding="async" />
+                  <div className="product-image-bg" style={{ backgroundImage: `url(${product.image})` }} role="img" aria-label={product.name} />
                   <div style={{ position: 'absolute', top: '12px', left: '12px', padding: '6px 12px', background: 'rgba(255,255,255,0.9)', borderRadius: '8px', fontSize: '10px', fontWeight: '800', letterSpacing: '0.05em', textTransform: 'uppercase', color: 'var(--primary-dark)', boxShadow: '0 4px 12px rgba(0,0,0,0.05)' }}>
                     {product.category}
                   </div>

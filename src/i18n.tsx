@@ -569,6 +569,8 @@ const LanguageContext = createContext<LanguageContextValue | null>(null);
 const STORAGE_KEY = 'daruzen-lang';
 
 function getInitialLang(): Lang {
+  const stored = localStorage.getItem(STORAGE_KEY) as Lang | null;
+  if (stored && (['ru', 'tr', 'en', 'ar'] as Lang[]).includes(stored)) return stored;
   return 'ru';
 }
 
@@ -578,7 +580,6 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   useEffect(() => {
     document.documentElement.lang = lang;
     document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
-    document.title = titles[lang];
     window.localStorage.setItem(STORAGE_KEY, lang);
   }, [lang]);
 

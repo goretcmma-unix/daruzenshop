@@ -27,6 +27,22 @@
       "destination": "/api/yandex-feed"
     },
     {
+      "source": "/:lang(ru)/product/:id",
+      "destination": "/api/product/:id?lang=ru"
+    },
+    {
+      "source": "/:lang(tr)/product/:id",
+      "destination": "/api/product/:id?lang=tr"
+    },
+    {
+      "source": "/:lang(en)/product/:id",
+      "destination": "/api/product/:id?lang=en"
+    },
+    {
+      "source": "/:lang(ar)/product/:id",
+      "destination": "/api/product/:id?lang=ar"
+    },
+    {
       "source": "/product/:id",
       "destination": "/api/product/:id"
     },

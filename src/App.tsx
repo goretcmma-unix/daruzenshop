@@ -51,6 +51,21 @@ const getAvailableTabs = (p: { specs?: unknown[]; note?: string } | null): ('pro
   ...(p?.note ? (['note'] as const) : []),
 ];
 
+const PRODUCT_PATH_RE = /^\/(ru|tr|en|ar)\/product\/([^/?]+)/;
+const LEGACY_PRODUCT_RE = /^\/product\/([^/?]+)/;
+
+function extractProductId(pathname: string): string | null {
+  const m = pathname.match(PRODUCT_PATH_RE);
+  if (m) return m[2];
+  const m2 = pathname.match(LEGACY_PRODUCT_RE);
+  if (m2) return m2[1].split('/')[0];
+  return null;
+}
+
+function isProductPage(pathname: string): boolean {
+  return PRODUCT_PATH_RE.test(pathname) || LEGACY_PRODUCT_RE.test(pathname);
+}
+
 const App: React.FC = () => {
   const { lang, setLang, t } = useLang();
   const location = useLocation();
@@ -590,7 +605,8 @@ const App: React.FC = () => {
         <Route path="*" element={
           <>
 
-        {/* SEO: meta tags for all search engines */}
+        {/* SEO: meta tags for all search engines (skip on product pages — ProductPage handles its own SEOHead) */}
+            {!isProductPage(location.pathname) && (
             <SEOHead
               title={(SEO_QUERIES[lang] || SEO_QUERIES.en).title}
               description={(SEO_QUERIES[lang] || SEO_QUERIES.en).description}
@@ -613,6 +629,7 @@ const App: React.FC = () => {
                 },
               }}
             />
+            )}
 
         
         {/* JSON-LD ItemList for rich search results (products with images) */}
@@ -1874,8 +1891,9 @@ const App: React.FC = () => {
 
       {/* Product page overlay (Wildberries-style) */}
       <AnimatePresence>
-        {location.pathname.startsWith('/product/') && (() => {
-          const productId = location.pathname.split('/product/')[1];
+        {isProductPage(location.pathname) && (() => {
+          const productId = extractProductId(location.pathname);
+          if (!productId) return null;
           const lp = localizedProducts.find(p => p.id === productId);
           if (!lp) return null;
           return <ProductPage key={productId} product={lp} onAddToCart={(p, q) => addToCart(p, q)} onBuyNow={(p, q) => buyNow(p, q)} />;

@@ -4,6 +4,9 @@ import { createClient } from '@supabase/supabase-js';
 const supabaseUrl = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL || '';
 const supabaseKey = process.env.SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY || '';
 
+const LANGS = ['ru', 'tr', 'en', 'ar'];
+const SITE = 'https://drdaruzen.com';
+
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   res.setHeader('Content-Type', 'application/xml; charset=utf-8');
   res.setHeader('Cache-Control', 'public, max-age=3600, s-maxage=3600');
@@ -29,11 +32,31 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     '<url><loc>https://drdaruzen.com/contacts</loc><lastmod>' + today + '</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>',
   ];
 
-  const productUrls = productIds.map(id =>
-    '<url><loc>https://drdaruzen.com/product/' + id + '</loc><lastmod>' + today + '</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>'
-  );
+  const productUrls = productIds.map((id) => {
+    const langLinks = LANGS.map(
+      (l) => `<xhtml:link rel="alternate" hreflang="${l}" href="${SITE}/${l}/product/${id}" />`
+    ).join('\n        ');
+    const langUrls = LANGS.map(
+      (l) => `<url><loc>${SITE}/${l}/product/${id}</loc><lastmod>${today}</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>`
+    ).join('\n      ');
 
-  const xml = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">\n  ' + staticPages.concat(productUrls).join('\n  ') + '\n</urlset>';
+    return `    <url>
+      <loc>${SITE}/product/${id}</loc>
+      <lastmod>${today}</lastmod>
+      <changefreq>weekly</changefreq>
+      <priority>0.8</priority>
+      <xhtml:link rel="alternate" hreflang="x-default" href="${SITE}/product/${id}" />
+      ${langLinks}
+    </url>
+    ${langUrls}`;
+  });
+
+  const xml = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  ${staticPages.join('\n  ')}
+  ${productUrls.join('\n  ')}
+</urlset>`;
 
   res.status(200).send(xml);
 }

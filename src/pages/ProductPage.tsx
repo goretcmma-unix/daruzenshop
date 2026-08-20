@@ -10,6 +10,17 @@ import { FadeInImage } from '../components/FadeInImage';
 import { CompositionPanel } from '../components/CompositionView';
 import QtyButton from '../components/QtyButton';
 
+const SITE = 'https://drdaruzen.com';
+const ALL_LANGS = ['ru', 'tr', 'en', 'ar'] as const;
+type LangCode = typeof ALL_LANGS[number];
+
+const LOCALE_MAP: Record<LangCode, string> = {
+  ru: 'ru_RU',
+  tr: 'tr_TR',
+  en: 'en_US',
+  ar: 'ar_SA',
+};
+
 const SEO_DATA: Record<string, { titleSuffix: string; keywords: (name: string, cat: string) => string }> = {
   ru: {
     titleSuffix: 'Daruzen | Купить витамины и БАДы из Турции',
@@ -25,7 +36,7 @@ const SEO_DATA: Record<string, { titleSuffix: string; keywords: (name: string, c
   },
   ar: {
     titleSuffix: 'داروزن | فيتامينات ومكملات غذائية من تركيا',
-    keywords: (name: string, cat: string) => `${name}, داروزن, daruzen, فيتامينات تركية, فيتامينات من تركيا, ${cat}, شراء فيتامينات, مكملات, مكملات غذائية, مكملات تركية, مكملات طبيعية, داروزن فيتамين, منتجات تركية, فيتامينات اونلاين`,
+    keywords: (name: string, cat: string) => `${name}, داروزن, daruzen, فيتامينات تركية, فيتامينات من تركيا, ${cat}, شراء فيتامينات, مكملات, مكملات غذائية, مكملات تركية, مكملات طبيعية, داروزن فيتامين, منتجات تركية, فيتامينات اونلاين`,
   },
 };
 
@@ -89,15 +100,27 @@ const ProductPage: React.FC<ProductPageProps> = ({ product, onAddToCart, onBuyNo
 
   const availableTabs = getAvailableTabs(product);
 
+  const canonicalBase = `${SITE}/product/${product.id}`;
+  const canonicalLang = `${SITE}/${lang}/product/${product.id}`;
+
+  const hreflangLinks = ALL_LANGS.map((hl) => ({
+    lang: hl,
+    href: `${SITE}/${hl}/product/${product.id}`,
+  }));
+
+  const ogLocaleAlternates = ALL_LANGS
+    .filter((l) => l !== lang)
+    .map((l) => LOCALE_MAP[l as LangCode]);
+
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'Product',
     name: product.name,
     description: product.description,
-    image: [`https://drdaruzen.com${product.image}`],
+    image: [product.image.startsWith('http') ? product.image : `${SITE}${product.image}`],
     sku: product.id,
     mpn: product.id,
-    url: `https://drdaruzen.com/product/${product.id}`,
+    url: canonicalLang,
     brand: { '@type': 'Brand', name: 'Daruzen' },
     aggregateRating: {
       '@type': 'AggregateRating',
@@ -106,11 +129,11 @@ const ProductPage: React.FC<ProductPageProps> = ({ product, onAddToCart, onBuyNo
     },
     offers: {
       '@type': 'Offer',
-      url: `https://drdaruzen.com/product/${product.id}`,
+      url: canonicalLang,
       priceCurrency: lang === 'en' ? 'USD' : lang === 'ru' ? 'RUB' : 'TRY',
       price: lang === 'en' ? (product.price * 0.025).toFixed(2) : product.price,
       availability: product.inStock === false ? 'https://schema.org/OutOfStock' : 'https://schema.org/InStock',
-      seller: { '@type': 'Organization', name: 'Daruzen', url: 'https://drdaruzen.com' },
+      seller: { '@type': 'Organization', name: 'Daruzen', url: SITE },
     },
     category: product.category,
   };
@@ -127,10 +150,14 @@ const ProductPage: React.FC<ProductPageProps> = ({ product, onAddToCart, onBuyNo
         title={`${product.name} — ${(SEO_DATA[lang] || SEO_DATA.en).titleSuffix}`}
         description={product.description}
         keywords={(SEO_DATA[lang] || SEO_DATA.en).keywords(product.name, product.category)}
-        canonical={`https://drdaruzen.com/product/${product.id}`}
-        ogImage={product.image.startsWith("http") ? product.image : `https://drdaruzen.com${product.image}`}
+        canonical={canonicalLang}
+        ogImage={product.image.startsWith("http") ? product.image : `${SITE}${product.image}`}
         ogType="product"
         jsonLd={jsonLd}
+        lang={lang}
+        hreflangLinks={hreflangLinks}
+        ogLocale={LOCALE_MAP[lang as LangCode] || 'ru_RU'}
+        ogLocaleAlternates={ogLocaleAlternates}
       />
 
       {/* Backdrop */}

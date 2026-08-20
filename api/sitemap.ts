@@ -29,7 +29,7 @@ function hreflangBlock(path: string): string {
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   res.setHeader('Content-Type', 'application/xml; charset=utf-8');
-  res.setHeader('Cache-Control', 'public, max-age=3600, s-maxage=3600');
+  res.setHeader('Cache-Control', 'public, max-age=0, s-maxage=0, must-revalidate');
 
   let productIds: string[] = [];
 

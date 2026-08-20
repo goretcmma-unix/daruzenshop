@@ -245,16 +245,18 @@ a:hover {
 
 .product-image-bg {
   position: absolute;
+  will-change: transform;
   inset: 0;
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  transform: scale(1);
+  transform: translateZ(0) scale(1);
   transition: transform 0.4s ease-out;
+  transform-origin: center center;
 }
 
 .product-card:hover .product-image-bg {
-  transform: scale(1.04);
+  transform: translateZ(0) scale(1.04);
 }
 
 .product-card {
@@ -329,7 +331,7 @@ a:hover {
   padding: 8px 0;
 }
 
-/* Grid Utilities — fully fluid: columns reflow at any width, no fixed breakpoints.
+/* Grid Utilities ï¿½ fully fluid: columns reflow at any width, no fixed breakpoints.
    Min size grows with the viewport so cards never get tiny on tablets, and the
    desktop layout stays at 3 columns (capped) on wide screens. */
 .grid-catalog {
@@ -344,7 +346,7 @@ a:hover {
   }
 }
 
-/* Narrow phones (incl. iPhone Plus 414px landscape): one card per row —
+/* Narrow phones (incl. iPhone Plus 414px landscape): one card per row ï¿½
    two columns are too cramped at these widths. */
 @media (max-width: 480px) {
   .grid-catalog {
@@ -404,7 +406,7 @@ a:hover {
 }
 
 /* ? RTL flex-????????? ??????????? ???? ?? ??????? ????, ??-?? ???? ?? ?????
-   ????? ????? ?????. ????????????? ?????? «???????» ?? ?????? ???? (??? ? LTR),
+   ????? ????? ?????. ????????????? ?????? ï¿½???????ï¿½ ?? ?????? ???? (??? ? LTR),
    ????? ????????? ??????????? ?????? ??????? ? ? ???????? ??????. */
 [dir="rtl"] .keyword-train,
 [dir="rtl"] .keyword-train-track {
@@ -1327,7 +1329,7 @@ a:hover {
 }
 
 @media (max-width: 768px) {
-  /* When Product, Composition or Note tab is active — hide photo and buy buttons,
+  /* When Product, Composition or Note tab is active ï¿½ hide photo and buy buttons,
      the content takes the full screen and scrolls like the Note tab */
   .modal-layout[data-active-tab="product"] .modal-image-col,
   .modal-layout[data-active-tab="composition"] .modal-image-col,
@@ -1384,13 +1386,13 @@ a:hover {
    /* Give the photo column a definite height so the shrink-wrapped photo box
       (and the sticker glued to its edge) keeps a stable width from the very
       first frame. Without this the wrapper height is content-driven (the
-      layout is height:auto), so .modal-image resolves to its intrinsic size —
+      layout is height:auto), so .modal-image resolves to its intrinsic size ï¿½
       and the box changes width when src swaps from the raw image to the
       normalized 600x800 version, shifting the sticker. The height matches the
       wrapper's previous max-height so the photo keeps its original size and
       the sticker stays at the same spot. The 620px floor (with the base
       max-height removed) keeps the photo wide enough that the fixed-size
-      sticker never overlaps the product's center — even on short windows the
+      sticker never overlaps the product's center ï¿½ even on short windows the
       tab pane just scrolls instead of shrinking the photo. */
   .modal-image-wrapper {
     flex: none;
@@ -1399,7 +1401,7 @@ a:hover {
   }
 }
 
-/* Vertical tablets (portrait, 769–900px): pinned buy bar at the modal bottom */
+/* Vertical tablets (portrait, 769ï¿½900px): pinned buy bar at the modal bottom */
 @media (min-width: 769px) and (max-width: 900px) {
   .modal-tabs-track .modal-tab-pane {
     padding-bottom: 0 !important;
@@ -1514,7 +1516,7 @@ a:hover {
 }
 
 /* All tablets and narrow windows (769-1180px, any orientation): a compact
-   single column — photo, then category/title/price, tabs + content, then the
+   single column ï¿½ photo, then category/title/price, tabs + content, then the
    buy buttons right under the description with a small gap. The card sizes to
    its content (auto height) instead of growing to 90vh, so it stays short;
    long note/composition content is capped by max-height and scrolls inside. */
@@ -1627,14 +1629,14 @@ a:hover {
   }
 
   /* The in-column buy buttons are replaced on tablets by the pinned bottom bar
-     (.modal-tab-buy — a flex footer of .modal-layout, always at the modal
+     (.modal-tab-buy ï¿½ a flex footer of .modal-layout, always at the modal
      bottom). Hide the old in-flow bars so they don't duplicate. */
   .modal-buy-under,
   .modal-out-of-stock {
     display: none !important;
   }
 
-  /* Pinned bottom bar. Full width of the modal card (edge to edge — the layout
+  /* Pinned bottom bar. Full width of the modal card (edge to edge ï¿½ the layout
      keeps its side padding, so counteract it), the inner .modal-buy-actions
      restores the padding. */
   .modal-tab-buy {
@@ -1684,7 +1686,7 @@ a:hover {
   }
 }
 
-/* Vertical tablets (769–900px): sticker a bit further right */
+/* Vertical tablets (769ï¿½900px): sticker a bit further right */
 @media (min-width: 769px) and (max-width: 900px) {
   .modal-product-media__cert-label {
     right: -70px;
@@ -1697,8 +1699,8 @@ a:hover {
   }
 }
 
-/* Desktop, narrower windows (1181–1509px): sticker has its own dedicated spot
-   on the photo's right side, slightly lower — no falling through to defaults.
+/* Desktop, narrower windows (1181ï¿½1509px): sticker has its own dedicated spot
+   on the photo's right side, slightly lower ï¿½ no falling through to defaults.
    Size and offset are pure percentages of the photo box, so the sticker stays
    glued to exactly the same relative spot on the product and scales smoothly
    and synchronously with the photo as the window grows or shrinks (the photo
@@ -1719,7 +1721,7 @@ a:hover {
   }
 }
 
-/* Actual browser viewport 1534px and wider — keep the same spot as the
+/* Actual browser viewport 1534px and wider ï¿½ keep the same spot as the
    narrow desktop range so the sticker never jumps across the 1510px boundary */
 @media (min-width: 1510px) {
   .modal-product-media__cert-label {
@@ -2266,7 +2268,7 @@ a:hover {
   }
 }
 
-/* Mobile (=768px): same as tablets — each tab gives the sheet its own height
+/* Mobile (=768px): same as tablets ï¿½ each tab gives the sheet its own height
    (the layout self-expands to the active tab and is capped), with a small gap
    after the content and the buy bar pinned to the bottom edge as a flex footer
    instead of a sticky overlay. */

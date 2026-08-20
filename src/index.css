@@ -240,24 +240,22 @@ a:hover {
   aspect-ratio: 3 / 4;
   background: #ffffff;
   clip-path: inset(0 round var(--radius-md));
-  overflow: hidden;
 }
 
 .product-image-bg {
   position: absolute;
-  will-change: transform;
   inset: 0;
-  background-size: cover;
+  background-size: 104%;
   background-position: center;
   background-repeat: no-repeat;
-  transform: translateZ(0) scale(1);
-  transition: transform 0.4s ease-out;
-  transform-origin: center center;
+  clip-path: inset(1.923%);
+  transition: clip-path 0.4s ease-out;
 }
 
 .product-card:hover .product-image-bg {
-  transform: translateZ(0) scale(1.04);
+  clip-path: inset(0%);
 }
+
 
 .product-card {
   background: #ffffff;

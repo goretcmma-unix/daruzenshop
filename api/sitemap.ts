@@ -26,29 +26,30 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   const today = new Date().toISOString().slice(0, 10);
 
-  const staticPages = [
-    '<url><loc>https://drdaruzen.com/</loc><lastmod>' + today + '</lastmod><changefreq>weekly</changefreq><priority>1.0</priority></url>',
-    '<url><loc>https://drdaruzen.com/about</loc><lastmod>' + today + '</lastmod><changefreq>monthly</changefreq><priority>0.9</priority></url>',
-    '<url><loc>https://drdaruzen.com/contacts</loc><lastmod>' + today + '</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>',
-  ];
+  const staticPages = LANGS.flatMap((l) => [
+    `<url><loc>${SITE}/${l}/</loc><lastmod>${today}</lastmod><changefreq>weekly</changefreq><priority>1.0</priority>
+        ${LANGS.map((hl) => `<xhtml:link rel="alternate" hreflang="${hl}" href="${SITE}/${hl}/" />`).join('\n        ')}
+        <xhtml:link rel="alternate" hreflang="x-default" href="${SITE}/en/" />
+      </url>`,
+    `<url><loc>${SITE}/${l}/about</loc><lastmod>${today}</lastmod><changefreq>monthly</changefreq><priority>0.9</priority>
+        ${LANGS.map((hl) => `<xhtml:link rel="alternate" hreflang="${hl}" href="${SITE}/${hl}/about" />`).join('\n        ')}
+        <xhtml:link rel="alternate" hreflang="x-default" href="${SITE}/en/about" />
+      </url>`,
+    `<url><loc>${SITE}/${l}/contacts</loc><lastmod>${today}</lastmod><changefreq>monthly</changefreq><priority>0.7</priority>
+        ${LANGS.map((hl) => `<xhtml:link rel="alternate" hreflang="${hl}" href="${SITE}/${hl}/contacts" />`).join('\n        ')}
+        <xhtml:link rel="alternate" hreflang="x-default" href="${SITE}/en/contacts" />
+      </url>`,
+  ]);
 
   const productUrls = productIds.map((id) => {
-    const langLinks = LANGS.map(
-      (l) => `<xhtml:link rel="alternate" hreflang="${l}" href="${SITE}/${l}/product/${id}" />`
-    ).join('\n        ');
     const langUrls = LANGS.map(
-      (l) => `<url><loc>${SITE}/${l}/product/${id}</loc><lastmod>${today}</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>`
-    ).join('\n      ');
+      (l) => `<url><loc>${SITE}/${l}/product/${id}</loc><lastmod>${today}</lastmod><changefreq>weekly</changefreq><priority>0.8</priority>
+        ${LANGS.map((hl) => `<xhtml:link rel="alternate" hreflang="${hl}" href="${SITE}/${hl}/product/${id}" />`).join('\n        ')}
+        <xhtml:link rel="alternate" hreflang="x-default" href="${SITE}/en/product/${id}" />
+      </url>`
+    ).join('\n    ');
 
-    return `    <url>
-      <loc>${SITE}/product/${id}</loc>
-      <lastmod>${today}</lastmod>
-      <changefreq>weekly</changefreq>
-      <priority>0.8</priority>
-      <xhtml:link rel="alternate" hreflang="x-default" href="${SITE}/product/${id}" />
-      ${langLinks}
-    </url>
-    ${langUrls}`;
+    return langUrls;
   });
 
   const xml = `<?xml version="1.0" encoding="UTF-8"?>

@@ -956,7 +956,13 @@ const App: React.FC = () => {
                   onClick={() => navigate("/product/" + product.id)}
                 >
                   <div className="product-image-container">
-                    <div className="product-image-bg" style={{ backgroundImage: `url(${product.image})` }} role="img" aria-label={product.name} />
+                    <NormalizedImg
+                      src={product.image}
+                      alt={product.name}
+                      className="product-image"
+                      loading="lazy"
+                      decoding="async"
+                    />
                     <div style={{
                       position: 'absolute',
                       top: '12px',

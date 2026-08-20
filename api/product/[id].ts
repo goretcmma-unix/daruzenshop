@@ -110,9 +110,17 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   const id = req.query.id as string;
   if (!id) return res.status(400).send('Missing product id');
 
-  const lang: Lang = ALL_LANGS.includes(req.query.lang as Lang)
-    ? (req.query.lang as Lang)
-    : detectLang(req.headers['accept-language']);
+  let lang: Lang = 'ru';
+
+  const matchedPath = req.headers['x-matched-path'] as string | undefined;
+  const pathMatch = matchedPath?.match(/\/(ru|tr|en|ar)\/product\//);
+  if (pathMatch && ALL_LANGS.includes(pathMatch[1] as Lang)) {
+    lang = pathMatch[1] as Lang;
+  } else if (ALL_LANGS.includes(req.query.lang as Lang)) {
+    lang = req.query.lang as Lang;
+  } else {
+    lang = detectLang(req.headers['accept-language']);
+  }
 
   let product: Record<string, unknown> | null = null;
   if (supabaseUrl && supabaseKey) {

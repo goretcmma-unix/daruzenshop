@@ -257,8 +257,11 @@ a:hover {
 
 @-moz-document url-prefix() {
   .product-image {
-    transition: none;
+    transition: filter 0.35s ease-out;
     transform: none;
+  }
+  .product-card:hover .product-image {
+    filter: brightness(1.08);
   }
 }
 

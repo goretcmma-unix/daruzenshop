@@ -16,10 +16,10 @@ const CATEGORY_LABELS: Record<Lang, Record<string, string>> = {
 };
 
 const TITLE_SUFFIX: Record<Lang, string> = {
-  ru: 'Daruzen | Купить витамины и БАДы из Турции',
-  tr: 'Daruzen | Türk Vitaminleri ve Takviyeleri',
-  en: 'Daruzen | Turkish Vitamins & Supplements',
-  ar: 'داروزن | فيتامينات ومكملات غذائية تركية',
+  ru: 'Купить | Daruzen',
+  tr: 'Satın Al | Daruzen',
+  en: 'Buy Now | Daruzen',
+  ar: 'شراء | داروزن',
 };
 
 const META_DESC_TEMPLATES: Record<Lang, (name: string, catLabel: string, firstSentence: string) => string> = {
@@ -144,18 +144,18 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   const price = lang === 'en' ? (basePrice * cur.rate).toFixed(2) : String(basePrice);
   const firstSentence = desc.split(/[.!؟]\s/)[0] || desc.slice(0, 120);
 
-  const title = `${name} — ${TITLE_SUFFIX[lang]}`;
+  const cleanName = name.replace(/^Daruzen\s+/i, '');
+  const title = `${cleanName} | Daruzen`;
   const description = META_DESC_TEMPLATES[lang](name, catLabel, firstSentence);
   const keywords = KEYWORDS_TEMPLATES[lang](name, catLabel, firstSentence);
 
-  const canonicalBase = `${SITE}/product/${id}`;
   const canonicalLang = `${SITE}/${lang}/product/${id}`;
   const canonical = canonicalLang;
 
   const hreflangLinks = ALL_LANGS.map(
     (l) => `<link rel="alternate" hreflang="${l}" href="${SITE}/${l}/product/${id}" />`
   ).join('\n    ');
-  const xDefaultLink = `<link rel="alternate" hreflang="x-default" href="${canonicalBase}" />`;
+  const xDefaultLink = `<link rel="alternate" hreflang="x-default" href="${canonicalLang}" />`;
 
   const jsonLd = {
     '@context': 'https://schema.org',

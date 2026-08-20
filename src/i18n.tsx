@@ -31,6 +31,8 @@ const ui = {
       empty: 'По вашему запросу ничего не найдено',
       prev: 'Назад',
       next: 'Далее',
+      newLabel: 'Новое',
+      outOfStock: 'Нет в наличии',
     },
     cart: {
       badgeUnit: 'шт',
@@ -159,6 +161,8 @@ const ui = {
       empty: 'Aramanız için hiçbir sonuç bulunamadı',
       prev: 'Önceki',
       next: 'Sonraki',
+      newLabel: 'Yeni',
+      outOfStock: 'Stokta Yok',
     },
     cart: {
       badgeUnit: 'adet',
@@ -287,6 +291,8 @@ const ui = {
       empty: 'No results found for your request',
       prev: 'Previous',
       next: 'Next',
+      newLabel: 'New',
+      outOfStock: 'Out of Stock',
     },
     cart: {
       badgeUnit: 'pcs',
@@ -415,6 +421,8 @@ const ui = {
       empty: 'لم يتم العثور على نتائج لطلبك',
       prev: 'السابق',
       next: 'التالي',
+      newLabel: 'جديد',
+      outOfStock: 'غير متوفر',
     },
     cart: {
       badgeUnit: 'قطعة',
@@ -567,11 +575,29 @@ interface LanguageContextValue {
 const LanguageContext = createContext<LanguageContextValue | null>(null);
 
 const STORAGE_KEY = 'daruzen-lang';
+const ALL_LANGS: Lang[] = ['ru', 'tr', 'en', 'ar'];
+
+function detectLangFromUrl(): Lang | null {
+  if (typeof window === 'undefined') return null;
+  const match = window.location.pathname.match(/^\/(ru|tr|en|ar)(?:\/|$)/);
+  if (match && ALL_LANGS.includes(match[1] as Lang)) return match[1] as Lang;
+  return null;
+}
 
 function getInitialLang(): Lang {
+  const urlLang = detectLangFromUrl();
+  if (urlLang) {
+    localStorage.setItem(STORAGE_KEY, urlLang);
+    return urlLang;
+  }
   const stored = localStorage.getItem(STORAGE_KEY) as Lang | null;
-  if (stored && (['ru', 'tr', 'en', 'ar'] as Lang[]).includes(stored)) return stored;
+  if (stored && ALL_LANGS.includes(stored)) return stored;
   return 'ru';
+}
+
+function getPathForLang(lang: Lang, currentPath: string): string {
+  const stripped = currentPath.replace(/^\/(ru|tr|en|ar)(?=\/|$)/, '') || '/';
+  return `/${lang}${stripped === '/' ? '' : stripped}`;
 }
 
 export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -583,7 +609,13 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     window.localStorage.setItem(STORAGE_KEY, lang);
   }, [lang]);
 
-  const setLang = useCallback((next: Lang) => setLangState(next), []);
+  const setLang = useCallback((next: Lang) => {
+    setLangState(next);
+    const newPath = getPathForLang(next, window.location.pathname);
+    if (newPath !== window.location.pathname) {
+      window.history.pushState({}, '', newPath);
+    }
+  }, []);
 
   const value: LanguageContextValue = { lang, setLang, t: ui[lang] };
 

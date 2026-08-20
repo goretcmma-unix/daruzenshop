@@ -564,10 +564,10 @@ const App: React.FC = () => {
           <div>
             <h4 style={{ marginBottom: '24px', fontWeight: '700' }}>{t.footer.company}</h4>
             <nav style={{ display: 'flex', flexDirection: 'column', gap: '12px', opacity: 0.6 }}>
-              <Link to="/about">О нас</Link>
-<Link to="/" onClick={(e) => { e.preventDefault(); navigate("/"); setTimeout(() => document.getElementById("catalog")?.scrollIntoView({behavior:"smooth"}), 100); }}>Каталог</Link>
-              <Link to="/contacts">Оплата</Link>
-              <Link to="/contacts">Контакты</Link>
+              <Link to={`/${lang}/about`}>{t.nav.about}</Link>
+<Link to={`/${lang}/`} onClick={(e) => { e.preventDefault(); navigate(`/${lang}/`); setTimeout(() => document.getElementById("catalog")?.scrollIntoView({behavior:"smooth"}), 100); }}>{t.nav.catalog}</Link>
+              <Link to={`/${lang}/contacts`}>{t.footer.links[2]}</Link>
+              <Link to={`/${lang}/contacts`}>{t.footer.links[3]}</Link>
             </nav>
           </div>
           <div>
@@ -588,6 +588,20 @@ const App: React.FC = () => {
   return (
     <div className="app-shell">
         <Routes>
+        <Route path="/:lang/about" element={
+          <>
+            {renderHeader()}
+            <AboutPage />
+            {renderFooter()}
+          </>
+        } />
+        <Route path="/:lang/contacts" element={
+          <>
+            {renderHeader()}
+            <ContactsPage />
+            {renderFooter()}
+          </>
+        } />
         <Route path="/about" element={
           <>
             {renderHeader()}
@@ -611,13 +625,13 @@ const App: React.FC = () => {
               title={(SEO_QUERIES[lang] || SEO_QUERIES.en).title}
               description={(SEO_QUERIES[lang] || SEO_QUERIES.en).description}
               keywords={(SEO_QUERIES[lang] || SEO_QUERIES.en).keywords}
-              canonical="https://drdaruzen.com"
+              canonical={`https://drdaruzen.com/${lang}`}
               ogImage="https://drdaruzen.com/images/og-image.png"
               jsonLd={{
                 '@context': 'https://schema.org',
                 '@type': 'Organization',
                 name: 'Daruzen',
-                url: 'https://drdaruzen.com',
+          url: `https://drdaruzen.com/${lang}`,
                 logo: 'https://drdaruzen.com/images/dr.svg.png',
                 description: (SEO_QUERIES[lang] || SEO_QUERIES.en).description,
                 sameAs: [],
@@ -648,7 +662,7 @@ const App: React.FC = () => {
               name: p.name,
               description: p.description,
               image: p.image.startsWith('http') ? p.image : 'https://drdaruzen.com' + p.image,
-              url: 'https://drdaruzen.com/product/' + p.id,
+              url: `https://drdaruzen.com/${lang}/product/${p.id}`,
               brand: { '@type': 'Brand', name: 'Daruzen' },
               offers: {
                 '@type': 'Offer',
@@ -970,7 +984,7 @@ const App: React.FC = () => {
                     transition={{ duration: 0.15, ease: "easeOut" }}
                     className="product-card"
                   style={{ display: 'flex', flexDirection: 'column', height: '100%', cursor: 'pointer' }}
-                  onClick={() => navigate("/product/" + product.id)}
+                  onClick={() => navigate(`/${lang}/product/` + product.id)}
                 >
                   <div className="product-image-container">
                     <NormalizedImg
@@ -1015,7 +1029,7 @@ const App: React.FC = () => {
                         border: '2px solid rgba(255,255,255,0.4)',
                         backdropFilter: 'blur(2px)'
                       }}>
-                        Новое
+                        {t.catalog.newLabel}
                       </span>
                     )}
                     {product.inStock === false && (
@@ -1033,7 +1047,7 @@ const App: React.FC = () => {
                         textTransform: 'uppercase',
                         boxShadow: '0 2px 8px rgba(0,0,0,0.18)'
                       }}>
-                        Нет в наличии
+                        {t.catalog.outOfStock}
                       </span>
                     )}
                   </div>
@@ -1746,7 +1760,7 @@ const App: React.FC = () => {
                 </div>
                 {selectedProduct.inStock === false ? (
                   <div className="modal-out-of-stock" style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', padding: '0 24px', height: '54px', borderRadius: '14px', border: '2px solid #d5cfc6', color: '#8a8a8a', fontWeight: '600', fontSize: '15px', letterSpacing: '0.01em', background: 'transparent' }}>
-                    Нет в наличии
+                    {t.catalog.outOfStock}
                   </div>
                 ) : (
                   <div className="modal-buy-under">
@@ -1792,7 +1806,7 @@ const App: React.FC = () => {
               >
                     {selectedProduct.inStock === false ? (
                       <div style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', padding: '0 24px', height: '54px', borderRadius: '14px', border: '2px solid #d5cfc6', color: '#8a8a8a', fontWeight: '600', fontSize: '15px', letterSpacing: '0.01em', background: 'transparent' }}>
-                        Нет в наличии
+                        {t.catalog.outOfStock}
                       </div>
                     ) : (
                       <div className="modal-buy-actions">
@@ -1863,9 +1877,14 @@ const App: React.FC = () => {
             <div>
               <h4 style={{ marginBottom: '24px', fontWeight: '700' }}>{t.footer.company}</h4>
               <nav style={{ display: 'flex', flexDirection: 'column', gap: '12px', opacity: 0.6 }}>
-                 {t.footer.links.map(link => (() => {
-                   return (<a key={link} href="#">{link}</a>);
-                 })())}
+                 {[
+                   { label: t.footer.links[0], path: `/${lang}/about` },
+                   { label: t.footer.links[1], path: '#' },
+                   { label: t.footer.links[2], path: '#' },
+                   { label: t.footer.links[3], path: `/${lang}/contacts` },
+                 ].map(item => (
+                   <a key={item.label} href={item.path} style={{ color: 'inherit', textDecoration: 'none' }}>{item.label}</a>
+                 ))}
               </nav>
             </div>
             <div>

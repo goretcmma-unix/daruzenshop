@@ -89,8 +89,8 @@ const ProductPage: React.FC<ProductPageProps> = ({ product, onAddToCart, onBuyNo
     const prev = document.referrer;
     const isSameSite = prev && new URL(prev, location.origin).origin === location.origin;
     if (isSameSite && window.history.length > 1) navigate(-1);
-    else navigate('/');
-  }, [navigate]);
+    else navigate(`/${lang}/`);
+  }, [navigate, lang]);
 
   useEffect(() => {
     const handler = (e: KeyboardEvent) => { if (e.key === 'Escape') goBack(); };
@@ -387,7 +387,7 @@ const ProductPage: React.FC<ProductPageProps> = ({ product, onAddToCart, onBuyNo
 
               {product.inStock === false ? (
                 <div className="modal-out-of-stock" style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', padding: '0 24px', height: '54px', borderRadius: '14px', border: '2px solid #d5cfc6', color: '#8a8a8a', fontWeight: '600', fontSize: '15px', letterSpacing: '0.01em', background: 'transparent' }}>
-                  Нет в наличии
+                  {t.catalog.outOfStock}
                 </div>
               ) : (
                 <div className="modal-buy-under">

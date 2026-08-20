@@ -109,7 +109,7 @@ const CatalogPage: React.FC<CatalogPageProps> = ({ onSelectProduct, onAddToCart 
                   </div>
                   {isNewProduct(product) && (
                     <span style={{ position: 'absolute', top: '10px', right: '10px', background: 'linear-gradient(135deg, #e5484d 0%, #c0392b 100%)', color: '#fff', padding: '8px 14px', borderRadius: '12px', fontSize: '12px', fontWeight: '900', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
-                      Новое
+                      {t.catalog.newLabel}
                     </span>
                   )}
                 </div>

@@ -248,7 +248,7 @@ a:hover {
   height: 100%;
   object-fit: cover;
   display: block;
-  transition: transform 0.4s ease-out;
+  transition: transform 0.25s ease-out;
 }
 
 .product-card:hover .product-image {
@@ -260,7 +260,7 @@ a:hover {
     transform: none;
   }
   .product-card:hover .product-image {
-    animation: moz-zoom-in 0.4s ease-out forwards;
+    animation: moz-zoom-in 0.25s ease-out forwards;
   }
   @keyframes moz-zoom-in {
     from { zoom: 1; }

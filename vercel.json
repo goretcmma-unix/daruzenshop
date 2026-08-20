@@ -64,7 +64,8 @@
     },
     {
       "source": "/product/:id",
-      "destination": "/api/product/:id"
+      "destination": "/ru/product/:id",
+      "permanent": true
     },
     {
       "source": "/((?!sitemap\\.xml|robots\\.txt|yandex-feed\\.yml).*)",

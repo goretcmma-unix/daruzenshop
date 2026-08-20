@@ -105,6 +105,17 @@ const App: React.FC = () => {
   }, [selectedProduct]);
 
   useEffect(() => {
+    const hash = window.location.hash.replace('#', '');
+    if (hash) {
+      const timer = setTimeout(() => {
+        const el = document.getElementById(hash);
+        if (el) el.scrollIntoView({ behavior: 'smooth' });
+      }, 300);
+      return () => clearTimeout(timer);
+    }
+  }, []);
+
+  useEffect(() => {
     const track = modalTabsTrackRef.current;
     if (track) {
       const pane = track.querySelector<HTMLElement>('.modal-tab-pane.is-active');

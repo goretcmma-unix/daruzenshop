@@ -76,7 +76,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const imageUrl = p.image?.startsWith('http') ? p.image : SITE + p.image;
     const price = p.price || 0;
     const inStock = p.in_stock !== false && p.inStock !== false;
-    const url = SITE + '/product/' + p.id;
+    const url = SITE + '/ru/product/' + p.id;
 
     xml += '<offer id="' + esc(p.id) + '" available="' + (inStock ? 'true' : 'false') + '">\n';
     xml += '<url>' + esc(url) + '</url>\n';

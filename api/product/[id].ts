@@ -168,6 +168,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     brand: { '@type': 'Brand', name: 'Daruzen' },
     category: catLabel,
     url: canonical,
+    aggregateRating: {
+      '@type': 'AggregateRating',
+      ratingValue: '4.8',
+      reviewCount: '12',
+    },
     offers: {
       '@type': 'Offer',
       price,

@@ -81,25 +81,32 @@ async function getAssets(): Promise<string> {
   try {
     const resp = await fetch(SITE, { redirect: 'follow' });
     const html = await resp.text();
-    const bodyMatch = html.match(/<body[\s\S]*?<\/body>/);
-    if (!bodyMatch) return '';
-    const body = bodyMatch[0];
+    const srcSeen = new Set<string>();
     const tags: string[] = [];
-    const scriptRegex = /<script[^>]*src="([^"]+)"[^>]*><\/script>/g;
-    const moduleRegex = /<script[^>]*src="([^"]+)"[^>]*>/g;
-    const linkRegex = /<link[^>]*href="([^"]+)"[^>]*>/g;
-    let m;
-    while ((m = scriptRegex.exec(body)) !== null) tags.push(m[0]);
-    while ((m = moduleRegex.exec(body)) !== null) if (!tags.includes(m[0])) tags.push(m[0]);
-    const headMatch = html.match(/<head[\s\S]*?<\/head>/);
-    if (headMatch) {
-      const head = headMatch[0];
-      while ((m = linkRegex.exec(head)) !== null) {
-        if (m[1].includes('/assets/') && !m[1].includes('fonts.googleapis')) tags.push(m[0]);
+
+    function extract(section: string) {
+      const linkRe = /<link[^>]*href="([^"]+)"[^>]*>/g;
+      const scriptRe = /<script[^>]*src="([^"]+)"[^>]*>(?:<\/script>)?/g;
+      let m;
+      while ((m = linkRe.exec(section)) !== null) {
+        if (m[1].includes('/assets/') && !m[1].includes('fonts.googleapis') && !srcSeen.has(m[1])) {
+          srcSeen.add(m[1]);
+          tags.push(m[0]);
+        }
       }
-      while ((m = scriptRegex.exec(head)) !== null) tags.push(m[0]);
-      while ((m = moduleRegex.exec(head)) !== null) if (!tags.includes(m[0])) tags.push(m[0]);
+      while ((m = scriptRe.exec(section)) !== null) {
+        if (!srcSeen.has(m[1])) {
+          srcSeen.add(m[1]);
+          tags.push(m[0]);
+        }
+      }
     }
+
+    const headMatch = html.match(/<head[\s\S]*?<\/head>/);
+    if (headMatch) extract(headMatch[0]);
+    const bodyMatch = html.match(/<body[\s\S]*?<\/body>/);
+    if (bodyMatch) extract(bodyMatch[0]);
+
     cachedAssets = tags.join('\n    ');
     cacheTime = Date.now();
     return cachedAssets;

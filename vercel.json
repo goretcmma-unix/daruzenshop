@@ -42,7 +42,19 @@
       "destination": "/api/yandex-feed"
     },
     {
-      "source": "/:lang(ru|tr|en|ar)/product/:id",
+      "source": "/ru/product/:id",
+      "destination": "/api/product/:id"
+    },
+    {
+      "source": "/tr/product/:id",
+      "destination": "/api/product/:id"
+    },
+    {
+      "source": "/en/product/:id",
+      "destination": "/api/product/:id"
+    },
+    {
+      "source": "/ar/product/:id",
       "destination": "/api/product/:id"
     },
     {

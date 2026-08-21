@@ -16,10 +16,10 @@ const CATEGORY_LABELS: Record<Lang, Record<string, string>> = {
 };
 
 const META_DESC_TEMPLATES: Record<Lang, (name: string, catLabel: string, firstSentence: string) => string> = {
-  ru: (name, cat, s) => `${name}. ${s}. Купить ${cat.toLowerCase()} из Турции с доставкой. Daruzen — оригинал по лучшей цене.`,
-  tr: (name, cat, s) => `${name}. ${s}. Türkiye'den ${cat.toLowerCase()} satın al. Daruzen — en iyi fiyatla orijinal ürün.`,
-  en: (name, cat, s) => `${name}. ${s}. Buy ${cat.toLowerCase()} from Turkey with delivery. Daruzen — original at the best price.`,
-  ar: (name, cat, s) => `${name}. ${s}. اشترِ ${cat} من تركيا مع التوصيل. داروزن — أصلي بأفضل سعر.`,
+  ru: (name, cat, s) => `${name}. ${s} Купить ${cat.toLowerCase()} из Турции с доставкой по России. Daruzen — оригинал.`,
+  tr: (name, cat, s) => `${name}. ${s} Türkiye'den ${cat.toLowerCase()} satın al. Daruzen — en iyi fiyat.`,
+  en: (name, cat, s) => `${name}. ${s} Buy ${cat.toLowerCase()} from Turkey with delivery. Daruzen — original at the best price.`,
+  ar: (name, cat, s) => `${name}. ${s} اشترِ ${cat} من تركيا مع التوصيل. داروزن — أصلي بأفضل سعر.`,
 };
 
 const KEYWORDS_TEMPLATES: Record<Lang, (name: string, cat: string, firstSentence: string) => string> = {
@@ -146,6 +146,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   };
 
   const name = get('name') || id;
+  const cleanName = name.replace(/^Daruzen\s+/i, '');
   const desc = get('desc') || '';
   const catKey = (product.category_key as string) || 'supplements';
   const catLabel = CATEGORY_LABELS[lang][catKey] || CATEGORY_LABELS[lang].supplements;
@@ -157,7 +158,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   const price = lang === 'en' ? (basePrice * cur.rate).toFixed(2) : String(basePrice);
   const firstSentence = desc.split(/[.!؟]\s/)[0] || desc.slice(0, 120);
 
-  const cleanName = name.replace(/^Daruzen\s+/i, '');
   const title = `${cleanName} | Daruzen`;
   const description = META_DESC_TEMPLATES[lang](name, catLabel, firstSentence);
   const keywords = KEYWORDS_TEMPLATES[lang](name, catLabel, firstSentence);

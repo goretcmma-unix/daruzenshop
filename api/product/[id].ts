@@ -15,13 +15,6 @@ const CATEGORY_LABELS: Record<Lang, Record<string, string>> = {
   ar: { supplements: 'مكمل', vitamins: 'فيتامين', minerals: 'معادن', beauty: 'مكمل جمال', herbs: 'مكمل عشبي' },
 };
 
-const TITLE_SUFFIX: Record<Lang, string> = {
-  ru: 'Купить | Daruzen',
-  tr: 'Satın Al | Daruzen',
-  en: 'Buy Now | Daruzen',
-  ar: 'شراء | داروزن',
-};
-
 const META_DESC_TEMPLATES: Record<Lang, (name: string, catLabel: string, firstSentence: string) => string> = {
   ru: (name, cat, s) => `${name}. ${s}. Купить ${cat.toLowerCase()} из Турции с доставкой. Daruzen — оригинал по лучшей цене.`,
   tr: (name, cat, s) => `${name}. ${s}. Türkiye'den ${cat.toLowerCase()} satın al. Daruzen — en iyi fiyatla orijinal ürün.`,
@@ -50,13 +43,6 @@ const CURRENCY: Record<Lang, { code: string; rate: number; symbol: string }> = {
   ar: { code: 'TRY', rate: 1, symbol: '₺' },
 };
 
-const HOMEPAGE_TITLE: Record<Lang, string> = {
-  ru: 'Daruzen — Официальный сайт витаминов и БАДов Турции',
-  tr: 'Daruzen — Türkiye Vitamin ve Takviye Ürünleri Resmi Sitesi',
-  en: 'Daruzen — Official Site of Turkish Vitamins and Supplements',
-  ar: 'Daruzen — الموقع الرسمي للفيتامينات والمكملات الغذائية من تركيا',
-};
-
 function detectLang(acceptLanguage: string | undefined): Lang {
   if (!acceptLanguage) return 'ru';
   const prefs = acceptLanguage
@@ -71,6 +57,12 @@ function detectLang(acceptLanguage: string | undefined): Lang {
     if (ALL_LANGS.includes(p.lang as Lang)) return p.lang as Lang;
   }
   return 'ru';
+}
+
+function isBot(ua: string | undefined): boolean {
+  if (!ua) return false;
+  const lower = ua.toLowerCase();
+  return /googlebot|bingbot|yandex|facebookexternalhit|twitterbot|linkedinbot|slackbot|discordbot|applebot|whatsapp|telegrambot|ai\.yandex|duckduckbot|baidu|sogou|petalbot/i.test(lower);
 }
 
 let cachedAssets: string | null = null;
@@ -119,16 +111,20 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   const id = req.query.id as string;
   if (!id) return res.status(400).send('Missing product id');
 
-  let lang: Lang = 'ru';
+  const ua = req.headers['user-agent'];
+  const bot = isBot(ua);
 
-  const matchedPath = req.headers['x-matched-path'] as string | undefined;
-  const pathMatch = matchedPath?.match(/\/(ru|tr|en|ar)\/product\//);
-  if (pathMatch && ALL_LANGS.includes(pathMatch[1] as Lang)) {
-    lang = pathMatch[1] as Lang;
-  } else if (ALL_LANGS.includes(req.query.lang as Lang)) {
+  let lang: Lang = 'ru';
+  if (ALL_LANGS.includes(req.query.lang as Lang)) {
     lang = req.query.lang as Lang;
   } else {
-    lang = detectLang(req.headers['accept-language']);
+    const matchedPath = req.headers['x-matched-path'] as string | undefined;
+    const pathMatch = matchedPath?.match(/\/(ru|tr|en|ar)\/product\//);
+    if (pathMatch && ALL_LANGS.includes(pathMatch[1] as Lang)) {
+      lang = pathMatch[1] as Lang;
+    } else {
+      lang = detectLang(req.headers['accept-language']);
+    }
   }
 
   let product: Record<string, unknown> | null = null;
@@ -166,13 +162,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   const description = META_DESC_TEMPLATES[lang](name, catLabel, firstSentence);
   const keywords = KEYWORDS_TEMPLATES[lang](name, catLabel, firstSentence);
 
-  const canonicalLang = `${SITE}/${lang}/product/${id}`;
-  const canonical = canonicalLang;
+  const canonical = `${SITE}/${lang}/product/${id}`;
 
   const hreflangLinks = ALL_LANGS.map(
     (l) => `<link rel="alternate" hreflang="${l}" href="${SITE}/${l}/product/${id}" />`
   ).join('\n    ');
-  const xDefaultLink = `<link rel="alternate" hreflang="x-default" href="${canonicalLang}" />`;
+  const xDefaultLink = `<link rel="alternate" hreflang="x-default" href="${canonical}" />`;
 
   const jsonLd = {
     '@context': 'https://schema.org',
@@ -200,7 +195,17 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     },
   };
 
-  const assets = await getAssets();
+  if (!bot) {
+    try {
+      const resp = await fetch(SITE, { redirect: 'follow' });
+      const spaHtml = await resp.text();
+      res.setHeader('Content-Type', 'text/html; charset=utf-8');
+      res.setHeader('Cache-Control', 'public, max-age=0, s-maxage=0');
+      return res.status(200).send(spaHtml);
+    } catch {
+      return res.redirect(302, '/');
+    }
+  }
 
   const html = `<!doctype html>
 <html lang="${lang}">
@@ -232,26 +237,17 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     <link rel="icon" type="image/png" sizes="48x48" href="/favicon-48.png" />
     <link rel="apple-touch-icon" sizes="192x192" href="/favicon-192.png" />
     <meta name="theme-color" content="#cf9b41" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Cairo:wght@400;500;600;700;800&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
-    <link rel="manifest" href="/manifest.json" />
     <script type="application/ld+json">${JSON.stringify(jsonLd)}</script>
     <script type="application/ld+json">{"@context":"https://schema.org","@type":"Organization","name":"Daruzen","url":"${SITE}","logo":"${SITE}/images/dr.svg.png"}</script>
-    <script>history.scrollRestoration='manual'</script>
-    ${assets}
   </head>
   <body>
-    <div id="root"></div>
-    <noscript>
-      <div style="max-width:800px;margin:0 auto;padding:40px 20px;font-family:sans-serif">
-        <h1>${esc(name)}</h1>
-        <p>${esc(desc)}</p>
-        <p><strong>${lang === 'ru' ? 'Цена' : lang === 'tr' ? 'Fiyat' : lang === 'ar' ? 'السعر' : 'Price'}:</strong> ${price} ${cur.symbol}</p>
-        <p><img src="${imageUrl}" alt="${esc(name)}" width="600" /></p>
-        <p><a href="${esc(canonical)}">${lang === 'ru' ? 'Открыть на сайте Daruzen' : lang === 'tr' ? 'Daruzen sitesinde aç' : lang === 'ar' ? 'فتح على موقع داروزن' : 'Open on Daruzen website'}</a></p>
-      </div>
-    </noscript>
+    <div style="max-width:800px;margin:0 auto;padding:40px 20px;font-family:sans-serif">
+      <h1>${esc(name)}</h1>
+      <p>${esc(desc)}</p>
+      <p><strong>${lang === 'ru' ? 'Цена' : lang === 'tr' ? 'Fiyat' : lang === 'ar' ? 'السعر' : 'Price'}:</strong> ${price} ${cur.symbol}</p>
+      <img src="${imageUrl}" alt="${esc(name)}" width="600" />
+      <p><a href="${esc(canonical)}">${lang === 'ru' ? 'Открыть на сайте Daruzen' : lang === 'tr' ? 'Daruzen sitesinde aç' : lang === 'ar' ? 'فتح على موقع داروزن' : 'Open on Daruzen website'}</a></p>
+    </div>
   </body>
 </html>`;
 

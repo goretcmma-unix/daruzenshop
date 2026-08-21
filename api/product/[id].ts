@@ -110,6 +110,21 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   const id = req.query.id as string;
   if (!id) return res.status(400).send('Missing product id');
 
+  const ua = (req.headers['user-agent'] || '').toLowerCase();
+  const isBot = /googlebot|bingbot|yandex|facebookexternalhit|twitterbot|linkedinbot|slackbot|discordbot|applebot|whatsapp|telegrambot|ai\.yandex|curl|wget|python|go-http/i.test(ua);
+
+  if (!isBot) {
+    try {
+      const resp = await fetch(SITE, { redirect: 'follow' });
+      const html = await resp.text();
+      res.setHeader('Content-Type', 'text/html; charset=utf-8');
+      res.setHeader('Cache-Control', 'public, max-age=0, s-maxage=0');
+      return res.status(200).send(html);
+    } catch {
+      return res.redirect(302, '/');
+    }
+  }
+
   let lang: Lang = 'ru';
 
   const matchedPath = req.headers['x-matched-path'] as string | undefined;

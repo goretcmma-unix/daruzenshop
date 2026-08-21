@@ -141,7 +141,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (!product) return res.status(404).send('Product not found');
 
   const get = (field: string): string => {
-    const val = product![`${field}_${lang}`] ?? product![`name_ru`] ?? '';
+    const val = product![`${field}_${lang}`] ?? product![`${field}_ru`] ?? '';
     return typeof val === 'string' ? val : '';
   };
 
@@ -169,7 +169,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   ).join('\n    ');
   const xDefaultLink = `<link rel="alternate" hreflang="x-default" href="${canonical}" />`;
 
-  const jsonLd = {
+  const jsonLd: Record<string, unknown> = {
     '@context': 'https://schema.org',
     '@type': 'Product',
     name,
@@ -180,11 +180,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     brand: { '@type': 'Brand', name: 'Daruzen' },
     category: catLabel,
     url: canonical,
-    aggregateRating: {
-      '@type': 'AggregateRating',
-      ratingValue: '4.8',
-      reviewCount: '12',
-    },
     offers: {
       '@type': 'Offer',
       price,
@@ -195,12 +190,22 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     },
   };
 
+  const ratingVal = product.rating_value != null ? Number(product.rating_value) : null;
+  const reviewCount = product.review_count != null ? Number(product.review_count) : null;
+  if (ratingVal && reviewCount && reviewCount > 0) {
+    jsonLd.aggregateRating = {
+      '@type': 'AggregateRating',
+      ratingValue: String(ratingVal),
+      reviewCount: String(reviewCount),
+    };
+  }
+
   if (!bot) {
     try {
       const resp = await fetch(SITE, { redirect: 'follow' });
       const spaHtml = await resp.text();
       res.setHeader('Content-Type', 'text/html; charset=utf-8');
-      res.setHeader('Cache-Control', 'public, max-age=0, s-maxage=0');
+      res.setHeader('Cache-Control', 'private, no-cache, no-store, must-revalidate');
       return res.status(200).send(spaHtml);
     } catch {
       return res.redirect(302, '/');
@@ -224,8 +229,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     <meta property="og:title" content="${esc(title)}" />
     <meta property="og:description" content="${esc(description)}" />
     <meta property="og:image" content="${imageUrl}" />
+    <meta property="og:image:type" content="${imageUrl.endsWith('.png') ? 'image/png' : imageUrl.endsWith('.jpg') || imageUrl.endsWith('.jpeg') ? 'image/jpeg' : 'image/webp'}" />
     <meta property="og:image:width" content="600" />
-    <meta property="og:image:height" content="600" />
+    <meta property="og:image:height" content="800" />
+    <meta property="og:image:alt" content="${esc(name)}" />
     <meta property="og:site_name" content="Daruzen" />
     <meta property="og:locale" content="${LOCALE_MAP[lang]}" />
     ${ALL_LANGS.filter((l) => l !== lang).map((l) => `<meta property="og:locale:alternate" content="${LOCALE_MAP[l]}" />`).join('\n    ')}
@@ -252,7 +259,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 </html>`;
 
   res.setHeader('Content-Type', 'text/html; charset=utf-8');
-  res.setHeader('Cache-Control', 'public, max-age=3600, s-maxage=3600');
+  res.setHeader('Cache-Control', 'public, s-maxage=0, max-age=300');
+  res.setHeader('Vary', 'User-Agent');
   res.status(200).send(html);
 }
 

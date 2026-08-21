@@ -58,7 +58,7 @@
       "destination": "/api/product/:id"
     },
     {
-      "source": "/((?!sitemap\\.xml|robots\\.txt|yandex-feed\\.yml).*)",
+      "source": "/((?!sitemap\\.xml|robots\\.txt|yandex-feed\\.yml|api/).*)",
       "destination": "/index.html"
     }
   ]

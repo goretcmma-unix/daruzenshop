@@ -43,19 +43,19 @@
     },
     {
       "source": "/ru/product/:id",
-      "destination": "/api/product/:id"
+      "destination": "/api/product/:id?lang=ru"
     },
     {
       "source": "/tr/product/:id",
-      "destination": "/api/product/:id"
+      "destination": "/api/product/:id?lang=tr"
     },
     {
       "source": "/en/product/:id",
-      "destination": "/api/product/:id"
+      "destination": "/api/product/:id?lang=en"
     },
     {
       "source": "/ar/product/:id",
-      "destination": "/api/product/:id"
+      "destination": "/api/product/:id?lang=ar"
     },
     {
       "source": "/((?!sitemap\\.xml|robots\\.txt|yandex-feed\\.yml|api/).*)",

@@ -36,12 +36,16 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (supabaseUrl && supabaseKey) {
     try {
       const supabase = createClient(supabaseUrl, supabaseKey);
-      const { data } = await supabase
+      const { data, error } = await supabase
         .from('products')
-        .select('id')
-        .order('created_at', { ascending: false });
+        .select('id');
+      if (error) {
+        console.error('Sitemap Supabase error:', error.message);
+      }
       if (data) productIds = data.map((r: { id: string }) => r.id);
-    } catch {}
+    } catch (e) {
+      console.error('Sitemap fetch error:', e);
+    }
   }
 
   const today = new Date().toISOString().slice(0, 10);

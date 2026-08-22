@@ -7,22 +7,22 @@ export const SEO_QUERIES: Record<Lang, {
 }> = {
   ru: {
     title: 'Daruzen — Витамины и БАДы из Турции',
-    description: 'Интернет-магазин турецких витаминов и БАДов Daruzen. БАДы для похудения, иммунитета, суставов, печени, сердца, мозга, нервной системы. Омега-3, магний, цинк, железо, хром, гинкго билоба. Оригинальные турецкие БАДы от Orzax, Bioxin, Solgar. Доставка по России.',
+    description: 'Интернет-магазин витаминов и БАДов Daruzen из Турции. Омега-3, магний, цинк, железо, витамин D3. Оригинальные добавки с доставкой по России.',
     keywords: 'витамины из Турции, купить витамины, БАДы Турция, БАДы для похудения, БАДы для женщин, БАДы для мужчин, БАДы для суставов, БАДы для печени, БАДы для иммунитета, БАДы для сердца, БАДы для мозга и памяти, БАДы для нервной системы, БАДы для волос, БАДы для глаз, БАДы для энергии, БАДы для сна, БАДы для кожи, БАДы для детей, БАДы для спортсменов, БАДы для потенции, БАДы для сосудов, БАДы для кишечника, БАДы для желудка, БАДы для почек, БАДы для щитовидной железы, БАДы для холестерина, БАДы для сахара, БАДы для крови, БАДы для роста волос, БАДы для ногтей, БАДы для метаболизма, БАДы для набора массы, БАДы для снижения веса, БАДы для аппетита, БАДы для климакса, БАДы для беременных, БАДы для настроения, лучшие БАДы, рейтинг БАДов, омега-3, магний, цинк, железо, витамин D3, витамин C, витамин E, биотин, селен, хром, гинкго билоба, Orzax витамины, Bioxin БАДы, Solgar комплексы, Daruzen витамины, турецкие добавки, натуральные витамины, витамины для женщин, витамины для мужчин, магний глицинат, магний цитрат, железо липосомальное, омега-3 премиум, витамин D3 с K2',
   },
   tr: {
     title: 'Daruzen — Türk Vitaminleri ve Takviyeleri',
-    description: 'Daruzen online mağazası — Türk vitaminleri ve takviyeleri. Bağışıklık, enerji, saç, eklem vitaminleri. Omega-3, magnezyum, çinko, demir, D3, C, E vitamini. Türkiye orijinal takviyeleri Orzax, Bioxin, Solgar.',
+    description: 'Daruzen online mağazası — Türk vitaminleri ve takviyeleri. Omega-3, magnezyum, D3 vitamini. Türkiye orijinal takviyeleri Orzax, Bioxin, Solgar.',
     keywords: 'türkiye vitaminleri, vitamin al, takviye türkiye, bağışıklık vitamini, stres vitamini, enerji vitamini, saç vitamini, uyku vitamini, eklem vitamini, çocuk vitaminleri, omega-3, magnezyum, çinko, demir, D vitamini, C vitamini, E vitamini, biotin, potasyum, iyot, selenyum, B vitaminleri, Orzax vitamin, Bioxin takviye, Solgar kompleks, Daruzen vitamin, Nature\'s Bounty, Vitrum, Supradyn, Orgavit, türk takviyeleri, doğal vitamin, kadın vitamin, erkek vitamin, magnezyum glisinat, magnezyum sitrat, lipozomal demir, omega-3 premium, D3 K2 vitamini',
   },
   en: {
     title: 'Daruzen — Turkish Vitamins & Supplements',
-    description: 'Daruzen online store — Turkish vitamins and supplements. Immunity, energy, hair, joint vitamins. Omega-3, magnesium, zinc, iron, vitamin D3, C, E. Original Turkish supplements from Orzax, Bioxin, Solgar. Worldwide delivery.',
+    description: 'Daruzen online store — Turkish vitamins and supplements. Omega-3, magnesium, zinc, vitamin D3. Original supplements from Orzax, Bioxin, Solgar.',
     keywords: 'turkish vitamins, buy vitamins, supplements turkey, immunity vitamins, stress vitamins, energy vitamins, hair vitamins, sleep vitamins, joint vitamins, children vitamins, omega-3, magnesium, zinc, iron, vitamin D3, vitamin C, vitamin E, biotin, potassium, iodine, selenium, B vitamins, Orzax vitamins, Bioxin supplements, Solgar complexes, Daruzen vitamins, turkish supplements, natural vitamins, women vitamins, men vitamins, magnesium glycinate, magnesium citrate, liposomal iron, omega-3 premium, vitamin D3 with K2',
   },
   ar: {
     title: 'داروزن — فيتامينات ومكملات غذائية تركية',
-    description: 'متجر داروزن الإلكتروني — فيتامينات ومكملات غذائية تركية. فيتامينات للمناعة والطاقة والشعر والمفاصل. أوميغا 3، مغنيسيوم، زنك، حديد، فيتامين D3، C، E. منتجات تركية أصلية من أورزكس وبايوكسين وسولجار.',
+    description: 'داروزن — فيتامينات ومكملات غذائية تركية أصلية. أوميغا 3، مغنيسيوم، زنك، فيتامين D3. أورزكس، بايوكسين، سولجار.',
     keywords: 'فيتامينات تركية, شراء فيتامينات, مكملات تركية, فيتامينات المناعة, فيتامينات التوتر, فيتامينات الطاقة, فيتامينات الشعر, فيتامينات النوم, فيتامينات المفاصل, فيتامينات الأطفال, أوميغا 3, مغنيسيوم, زنك, حديد, فيتامين D3, فيتامين C, فيتامين E, بيوتين, بوتاسيوم, يود, سيلينيوم, فيتامينات B, أورزكس فيتامين, بايوكسين مكملات, سولجار معقدات, داروزن فيتامين, مكملات تركية, فيتامينات طبيعية, فيتامينات نسائية, فيتامينات رجالية, مغنيسيوم جليسينات, مغنيسيوم سيترات, حديد ليبوسومالي, أوميغا 3 بريميوم, فيتامين D3 مع K2',
   },
 };

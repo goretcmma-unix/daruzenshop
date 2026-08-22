@@ -43,6 +43,93 @@ const CURRENCY: Record<Lang, { code: string; rate: number; symbol: string }> = {
   ar: { code: 'TRY', rate: 1, symbol: '₺' },
 };
 
+const SEO_TITLES: Record<string, Record<Lang, string>> = {
+  'prod-1': {
+    ru: 'Витамин D3, Цинк, Масло чёрного тмина — BSO Gummy | Daruzen',
+    tr: 'D3 Vitamini, Çinko, Siyah Kimyon Yağı — BSO Jöle | Daruzen',
+    en: 'Vitamin D3, Zinc, Black Seed Oil — BSO Gummies | Daruzen',
+    ar: 'فيتامين D3، زنك، زيت الحبة السوداء — BSO جummies | Daruzen',
+  },
+  'prod-2': {
+    ru: 'Омега 3 — EPA 600 мг, DHA 400 мг, Рыбий жир | Daruzen',
+    tr: 'Omega 3 — EPA 600 mg, DHA 400 mg, Balık Yağı | Daruzen',
+    en: 'Omega 3 — EPA 600 mg, DHA 400 mg, Fish Oil | Daruzen',
+    ar: 'أوميغا 3 — EPA 600 ملغ، DHA 400 ملغ، زيت السمك | Daruzen',
+  },
+  'prod-3': {
+    ru: 'Витамин B12, Витамин B9, Яблочный уксус — ACV | Daruzen',
+    tr: 'B12 Vitamini, B9 Vitamini, Elma Sirkesi — ACV | Daruzen',
+    en: 'Vitamin B12, Vitamin B9, Apple Cider Vinegar — ACV | Daruzen',
+    ar: 'فيتامين B12، فيتامين B9، خل التفاح — ACV | Daruzen',
+  },
+  'prod-4': {
+    ru: 'Магний + Витамин B6 — Комплекс 4 форм | Daruzen',
+    tr: 'Magnezyum + B6 Vitamini — 4 Form Kompleks | Daruzen',
+    en: 'Magnesium + Vitamin B6 — 4 Form Complex | Daruzen',
+    ar: 'مغنيسيوم + فيتامين B6 — مجمّع 4 أشكال | Daruzen',
+  },
+  'prod-5': {
+    ru: 'Антистресс — Витамины для нервной системы, 11 трав | Daruzen',
+    tr: 'Anti-Stres — Sinir Sistemi Vitamini, 11 Bitki | Daruzen',
+    en: 'Anti-Stress — Nerve Vitamins, 11 Herbs | Daruzen',
+    ar: 'مضاد للإجهاد — فيتامينات الأعصاب، 11 أعشاب | Daruzen',
+  },
+  'prod-6': {
+    ru: 'Витамин Цинк + Селен + Медь — Комплекс | Daruzen',
+    tr: 'Çinko Vitamini + Selenyum + Bakır Kompleks | Daruzen',
+    en: 'Zinc Vitamin + Selenium + Copper Complex | Daruzen',
+    ar: 'فيتامين الزنك + سيلينيوم + نحاس مجمّع | Daruzen',
+  },
+  'prod-7': {
+    ru: 'Артишок + Расторопша + Одуванчик — Витамин для печени | Daruzen',
+    tr: 'Enginar + Devedikeni + Karahindiba — Karaciğer Vitamini | Daruzen',
+    en: 'Artichoke + Milk Thistle + Dandelion — Liver Vitamin | Daruzen',
+    ar: 'أرتيشوك + رستورشا + بابونج — فيتامين الكبد | Daruzen',
+  },
+  'prod-8': {
+    ru: 'Витамин B6, B12, NADH, Глутатион, CoQ10 — Антиоксидант | Daruzen',
+    tr: 'B6, B12 Vitamini, NADH, Glutatyon, CoQ10 — Antioksidan | Daruzen',
+    en: 'Vitamin B6, B12, NADH, Glutathione, CoQ10 — Antioxidant | Daruzen',
+    ar: 'فيتامين B6، B12، NADH، غلوتاثيون، CoQ10 — مضاد أكسدة | Daruzen',
+  },
+  'prod-9': {
+    ru: 'Хром + Гимнема — Витамин для сахара в крови | Daruzen',
+    tr: 'Krom + Gimneya — Şeker Vitamini | Daruzen',
+    en: 'Chromium + Gymnema — Blood Sugar Vitamin | Daruzen',
+    ar: 'كروم + غينيما — فيتامين السكر في الدم | Daruzen',
+  },
+  'prod-10': {
+    ru: 'Гинкго Билоба + Женьшень + Цитиколин — Витамин для мозга | Daruzen',
+    tr: 'Ginkgo Biloba + Ginseng + Sitikolin — Beyin Vitamini | Daruzen',
+    en: 'Ginkgo Biloba + Ginseng + Citicoline — Brain Vitamin | Daruzen',
+    ar: 'غنكو بيلوبا + جنسنج + ستيكولين — فيتامين الدماغ | Daruzen',
+  },
+  'prod-11': {
+    ru: 'Витамин C, D3, Лютейн, Омега-3, Цинк, Куркумин — Мульти | Daruzen',
+    tr: 'C, D3 Vitamini, Lutein, Omega-3, Çinko, Kürkümin — Multi | Daruzen',
+    en: 'Vitamin C, D3, Lutein, Omega-3, Zinc, Curcumin — Multi | Daruzen',
+    ar: 'فيتامين C، D3، لوتين، أوميغا 3، زنك، كركمين — مالتى | Daruzen',
+  },
+  'prod-12': {
+    ru: 'Мультивитамин C, E, A, B12 — Жевательные мармеладки | Daruzen',
+    tr: 'Multivitamin C, E, A, B12 — Çiğneme Jölesi | Daruzen',
+    en: 'Multivitamin C, E, A, B12 — Chewing Gummies | Daruzen',
+    ar: 'مالتي فيتامين C، E، A، B12 — أقراص مضغ | Daruzen',
+  },
+  'prod-13': {
+    ru: 'Фолиевая кислота + Цинк + Q10 — Женский витамин | Daruzen',
+    tr: 'Folik Asit + Çinko + Q10 — Kadın Vitamini | Daruzen',
+    en: 'Folic Acid + Zinc + Q10 — Women\'s Vitamin | Daruzen',
+    ar: 'حمض فوليك + زنك + Q10 — فيتامين نسائي | Daruzen',
+  },
+  'prod-14': {
+    ru: 'Железо Бисглицинат + Витамин C — Витамин для крови | Daruzen',
+    tr: 'Demir Bisglisinat + C Vitamini — Kan Vitamini | Daruzen',
+    en: 'Iron Bisglycinate + Vitamin C — Blood Vitamin | Daruzen',
+    ar: 'حديد بيسغليسينات + فيتامين C — فيتامين الدم | Daruzen',
+  },
+};
+
 function detectLang(acceptLanguage: string | undefined): Lang {
   if (!acceptLanguage) return 'ru';
   const prefs = acceptLanguage
@@ -159,7 +246,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   const price = converted.toFixed(2);
   const firstSentence = desc.split(/[.!؟]\s/)[0] || desc.slice(0, 120);
 
-  const title = `${cleanName} | Daruzen`;
+  const title = (SEO_TITLES[id] && SEO_TITLES[id][lang]) || `${cleanName} | Daruzen`;
   const rawDesc = META_DESC_TEMPLATES[lang](name, catLabel, firstSentence);
   const description = rawDesc.length > 155 ? rawDesc.slice(0, 152).replace(/[,;]\s*$/, '') + '...' : rawDesc;
   const keywords = KEYWORDS_TEMPLATES[lang](name, catLabel, firstSentence);

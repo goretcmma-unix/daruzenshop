@@ -13,6 +13,7 @@ export interface Product {
   notes?: Record<Lang, string>;
   createdAt?: number;
   isNew?: boolean;
+  seoTitle?: Record<Lang, string>;
   inStock?: boolean;
 }
 
@@ -85,6 +86,12 @@ export const products: Product[] = [
     categoryKey: 'supplements',
     price: 900,
     image: '/images/bso.webp',
+    seoTitle: {
+      ru: 'Витамин D3, Цинк, Масло чёрного тмина — BSO Gummy | Daruzen',
+      tr: 'D3 Vitamini, Çinko, Siyah Kimyon Yağı — BSO Jöle | Daruzen',
+      en: 'Vitamin D3, Zinc, Black Seed Oil — BSO Gummies | Daruzen',
+      ar: 'فيتامين D3، زنك، زيت الحبة السوداء — BSO جummies | Daruzen',
+    },
     descriptions: {
       ru: 'Daruzen BSO Gummy (60 жевательных пастилок) — комплекс с маслом черного тмина (BSO), витамином D3, тимохиноном и цинком для поддержки иммунитета. Способствует укреплению защитных сил организма, общему оздоровлению и повышению жизненного тонуса в удобной форме жевательных мармеладок.',
       tr: 'Siyah kimyon yağı, D3 vitamini ve çinko içeren çiğneme jölesi. Bağışıklığı, kemik ve cilt sağlığını destekler; D vitamini ve çinko eksikliğinin giderilmesine lezzetli bir şekilde yardımcı olur.',
@@ -175,6 +182,12 @@ export const products: Product[] = [
     categoryKey: 'vitamins',
     price: 1200,
     image: '/images/omg.webp',
+    seoTitle: {
+      ru: 'Омега 3 — EPA 600 мг, DHA 400 мг, Рыбий жир | Daruzen',
+      tr: 'Omega 3 — EPA 600 mg, DHA 400 mg, Balık Yağı | Daruzen',
+      en: 'Omega 3 — EPA 600 mg, DHA 400 mg, Fish Oil | Daruzen',
+      ar: 'أوميغا 3 — EPA 600 ملغ، DHA 400 ملغ، زيت السمك | Daruzen',
+    },
     descriptions: {
       ru: 'Высококачественный источник омега-3 жирных кислот (EPA — 600 мг, DHA — 400 мг), полученных из норвежской рыбы. Способствует поддержанию здоровья сердца, мозга и зрения, укреплению иммунной системы, улучшению памяти и концентрации, а также помогает поддерживать общий тонус и хорошее самочувствие.',
       tr: 'İki kapsülde 1000 mg Omega-3 (600 mg EPA, 400 mg DHA) içeren yüksek saflıkta balık yağı. Kalp, beyin ve göz sağlığını destekler, trigliserit seviyesinin normal kalmasına yardımcı olur.',
@@ -233,6 +246,12 @@ export const products: Product[] = [
     categoryKey: 'supplements',
     price: 750,
     image: '/images/acv.webp',
+    seoTitle: {
+      ru: 'Витамин B12, Витамин B9, Яблочный уксус — ACV | Daruzen',
+      tr: 'B12 Vitamini, B9 Vitamini, Elma Sirkesi — ACV | Daruzen',
+      en: 'Vitamin B12, Vitamin B9, Apple Cider Vinegar — ACV | Daruzen',
+      ar: 'فيتامين B12، فيتامين B9، خل التفاح — ACV | Daruzen',
+    },
     descriptions: {
       ru: 'Daruzen ACV Gummy (60 жевательных пастилок) — комплекс с яблочным уксусом, фолиевой кислотой, витамином B12 и экстрактом граната для детоксикации и контроля веса. Способствует улучшению пищеварения, обмена веществ, повышению энергии и общему оздоровлению организма.',
       tr: 'Elma sirkesi, pancar, nar ekstresi ve B9-B12 vitaminleri içeren çiğneme jölesi. Metabolizmayı, sindirimi ve vücudun doğal detoks süreçlerini destekler.',
@@ -291,6 +310,12 @@ export const products: Product[] = [
     categoryKey: 'minerals',
     price: 980,
     image: '/images/magnez.webp',
+    seoTitle: {
+      ru: 'Магний + Витамин B6 — Комплекс 4 форм | Daruzen',
+      tr: 'Magnezyum + B6 Vitamini — 4 Form Kompleks | Daruzen',
+      en: 'Magnesium + Vitamin B6 — 4 Form Complex | Daruzen',
+      ar: 'مغنيسيوم + فيتامين B6 — مجمّع 4 أشكال | Daruzen',
+    },
     descriptions: {
       ru: 'Магний Complex 4 + Витамин B6 — сочетает четыре высокоусвояемые формы магния для поддержки нервной системы, мышц и сердца. Способствует снижению усталости, улучшению качества сна, уменьшению мышечных спазмов и поддержанию эмоционального баланса.',
       tr: 'Dört kolay emilen magnezyum formu (asetiltaurat, bisglisinat, malat ve sitrat) ve B6 vitamini. Kas ve sinir sisteminin normal işleyişini destekler, rahatlamaya yardımcı olur ve uyku kalitesini artırır.',
@@ -361,6 +386,12 @@ export const products: Product[] = [
     categoryKey: 'supplements',
     price: 1100,
     image: '/images/dnl__.webp',
+    seoTitle: {
+      ru: 'Антистресс — Витамины для нервной системы, 11 трав | Daruzen',
+      tr: 'Anti-Stres — Sinir Sistemi Vitamini, 11 Bitki | Daruzen',
+      en: 'Anti-Stress — Nerve Vitamins, 11 Herbs | Daruzen',
+      ar: 'مضاد للإجهاد — فيتامينات الأعصاب، 11 أعشاب | Daruzen',
+    },
     descriptions: {
       ru: 'Комплекс растительных экстрактов (включая лаванду, базилик, боярышник и др.) помогает организму справляться с повседневным стрессом и нервным напряжением. Способствует расслаблению, улучшению эмоционального состояния и поддержанию общего тонуса нервной системы.',
       tr: 'Alıç, kereviz, kedi pençesi, fesleğen, lavanta, hibiskus ve diğerleri olmak üzere 11 bitkisel bileşenden oluşan kompleks. Sinir gerginliğini azaltmaya yardımcı olur, duygusal dengeyi ve sakin uykuyu destekler.',
@@ -447,6 +478,12 @@ export const products: Product[] = [
     categoryKey: 'minerals',
     price: 550,
     image: '/images/zincpng.webp',
+    seoTitle: {
+      ru: 'Витамин Цинк + Селен + Медь — Комплекс | Daruzen',
+      tr: 'Çinko Vitamini + Selenyum + Bakır Kompleks | Daruzen',
+      en: 'Zinc Vitamin + Selenium + Copper Complex | Daruzen',
+      ar: 'فيتامين الزنك + سيلينيوم + نحاس مجمّع | Daruzen',
+    },
     descriptions: {
       ru: 'Цинк + Медь + Селен — комплекс для поддержки иммунной системы, антиоксидантной защиты и общего здоровья организма. Способствует поддержанию здоровья кожи, волос и ногтей, а также нормальной работе щитовидной железы и репродуктивной функции.',
       tr: 'Çinko, bakır ve selenyum kompleksi. Çinko bağışıklığı, cilt, saç ve tırnak sağlığını destekler; selenyum ve bakır hücreleri oksidatif strese karşı korur.',
@@ -483,6 +520,12 @@ export const products: Product[] = [
     categoryKey: 'supplements',
     price: 1050,
     image: '/images/enginar__.webp',
+    seoTitle: {
+      ru: 'Артишок + Расторопша + Одуванчик — Витамин для печени | Daruzen',
+      tr: 'Enginar + Devedikeni + Karahindiba — Karaciğer Vitamini | Daruzen',
+      en: 'Artichoke + Milk Thistle + Dandelion — Liver Vitamin | Daruzen',
+      ar: 'أرتيشوك + رستورشا + بابونج — فيتامين الكبد | Daruzen',
+    },
     descriptions: {
       ru: 'ENGINAR — натуральный комплекс с экстрактами артишока, расторопши и одуванчика для ежедневной поддержки печени и пищеварительной системы. Способствует нормальному оттоку желчи, поддерживает естественные процессы очищения организма и помогает сохранить здоровье печени. Содержит 60 капсул и подходит для регулярного применения в рамках сбалансированного рациона.',
       tr: 'Enginar, devedikeni ve karahindiba ekstrelerinden oluşan doğal kompleks. Karaciğer fonksiyonunu, safra atılımını ve sindirimi destekler, vücudun yumuşak detoksuna katkı sağlar.',
@@ -537,6 +580,12 @@ export const products: Product[] = [
     categoryKey: 'beauty',
     price: 1750,
     image: '/images/nadh_gummy.webp',
+    seoTitle: {
+      ru: 'Витамин B6, B12, NADH, Глутатион, CoQ10 — Антиоксидант | Daruzen',
+      tr: 'B6, B12 Vitamini, NADH, Glutatyon, CoQ10 — Antioksidan | Daruzen',
+      en: 'Vitamin B6, B12, NADH, Glutathione, CoQ10 — Antioxidant | Daruzen',
+      ar: 'فيتامين B6، B12، NADH، غلوتاثيون، CoQ10 — مضاد أكسدة | Daruzen',
+    },
     descriptions: {
       ru: 'Daruzen NADH Gummy (60 жевательных пастилок) — мощный антивозрастной комплекс в форме жевательных мармеладок с ежевичным вкусом. Содержит NADH, коэнзим Q10, глутатион и ресвератрол для повышения энергии, улучшения работы мозга и поддержки клеточного здоровья.',
       tr: 'Glutatyon, resveratrol, koenzim Q10 ve NADH ile B6-B12 vitaminlerinden oluşan güçlü antioksidan kompleks. Hücreleri serbest radikallere karşı korur, enerjiyi ve gençliği destekler.',
@@ -603,6 +652,12 @@ export const products: Product[] = [
     categoryKey: 'herbs',
     price: 1400,
     image: '/images/gimne.webp',
+    seoTitle: {
+      ru: 'Хром + Гимнема — Витамин для сахара в крови | Daruzen',
+      tr: 'Krom + Gimneya — Şeker Vitamini | Daruzen',
+      en: 'Chromium + Gymnema — Blood Sugar Vitamin | Daruzen',
+      ar: 'كروم + غينيما — فيتامين السكر في الدم | Daruzen',
+    },
     descriptions: {
       ru: 'Комплекс экстракта джимнемы (500 мг) и хрома разработан для снижения тяги к сладкому и контроля уровня сахара в крови. Способствует нормализации обмена веществ, снижению аппетита и эффективному контролю веса при похудении.',
       tr: 'Krom içeren gymnema ekstresi. Kan şekerinin normal seviyede kalmasına yardımcı olur, karbonhidrat metabolizmasına katkı sağlar ve tatlı isteğini azaltır.',
@@ -653,6 +708,12 @@ export const products: Product[] = [
     categoryKey: 'herbs',
     price: 1150,
     image: '/images/ginko_ginseng.webp',
+    seoTitle: {
+      ru: 'Гинкго Билоба + Женьшень + Цитиколин — Витамин для мозга | Daruzen',
+      tr: 'Ginkgo Biloba + Ginseng + Sitikolin — Beyin Vitamini | Daruzen',
+      en: 'Ginkgo Biloba + Ginseng + Citicoline — Brain Vitamin | Daruzen',
+      ar: 'غنكو بيلوبا + جنسنج + ستيكولين — فيتامين الدماغ | Daruzen',
+    },
     descriptions: {
       ru: 'Гинкго билоба, женьшень и цитиколин — комплекс для поддержки памяти, концентрации внимания и когнитивных функций. Способствует улучшению мозгового кровообращения, повышению умственной работоспособности, энергии и снижению умственной усталости.',
       tr: 'Ginkgo biloba, Kore ginsengi ve sitikolin içeren sıvı kompleks. Hafızayı, konsantrasyonu ve beyin dolaşımını geliştirir, zihinsel performansı destekler.',
@@ -683,6 +744,12 @@ export const products: Product[] = [
     categoryKey: 'vitamins',
     price: 830,
     image: '/images/optimacomplex.webp',
+    seoTitle: {
+      ru: 'Витамин C, D3, Лютейн, Омега-3, Цинк, Куркумин — Мульти | Daruzen',
+      tr: 'C, D3 Vitamini, Lutein, Omega-3, Çinko, Kürkümin — Multi | Daruzen',
+      en: 'Vitamin C, D3, Lutein, Omega-3, Zinc, Curcumin — Multi | Daruzen',
+      ar: 'فيتامين C، D3، لوتين، أوميغا 3، زنك، كركمين — مالتى | Daruzen',
+    },
     descriptions: {
       ru: 'Сбалансированный комплекс с лютеином, зеаксантином, омега-3, антиоксидантами и витаминами создан специально для поддержки остроты зрения и защиты сетчатки. Способствует снижению усталости глаз при нагрузках и сохранению здоровья зрительной системы.',
       tr: 'Balık yağı Omega-3, kurkumin, koenzim Q10, C vitamini, çinko, lutein, astaksantin ve diğer aktif bileşenleri içeren çok bileşenli formül. Kalp, görme, eklem ve bağışıklık için kapsamlı destek.',
@@ -781,6 +848,12 @@ export const products: Product[] = [
     categoryKey: 'vitamins',
     price: 1450,
     image: '/images/multigummy.webp',
+    seoTitle: {
+      ru: 'Мультивитамин C, E, A, B12 — Жевательные мармеладки | Daruzen',
+      tr: 'Multivitamin C, E, A, B12 — Çiğneme Jölesi | Daruzen',
+      en: 'Multivitamin C, E, A, B12 — Chewing Gummies | Daruzen',
+      ar: 'مالتي فيتامين C، E، A، B12 — أقراص مضغ | Daruzen',
+    },
     descriptions: {
       ru: 'Daruzen MultiGummy (60 жевательных пастилок) — сбалансированный витаминный комплекс в форме жевательных мармеладок (со вкусом микса фруктов) для ежедневной поддержки организма. Содержит основные витамины C, E, B12 и A для укрепления иммунитета, повышения жизненного тонуса и общего здоровья взрослых.',
       tr: 'C, E, A ve B12 vitaminleri içeren çoklu vitamin çiğneme jölesi. Bağışıklığı, enerjiyi ve cilt sağlığını gün boyu destekler. Vitamin ihtiyacını karşılamanın lezzetli yolu.',
@@ -839,6 +912,12 @@ export const products: Product[] = [
     categoryKey: 'herbs',
     price: 700,
     image: '/images/chasteberry.webp',
+    seoTitle: {
+      ru: 'Фолиевая кислота + Цинк + Q10 — Женский витамин | Daruzen',
+      tr: 'Folik Asit + Çinko + Q10 — Kadın Vitamini | Daruzen',
+      en: 'Folic Acid + Zinc + Q10 — Women\'s Vitamin | Daruzen',
+      ar: 'حمض فوليك + زنك + Q10 — فيتامين نسائي | Daruzen',
+    },
     createdAt: 1754496000,
     isNew: true,
     descriptions: {
@@ -915,6 +994,12 @@ export const products: Product[] = [
     categoryKey: 'supplements',
     price: 1680,
     image: '/images/ironbis_soft.webp',
+    seoTitle: {
+      ru: 'Железо Бисглицинат + Витамин C — Витамин для крови | Daruzen',
+      tr: 'Demir Bisglisinat + C Vitamini — Kan Vitamini | Daruzen',
+      en: 'Iron Bisglycinate + Vitamin C — Blood Vitamin | Daruzen',
+      ar: 'حديد بيسغليسينات + فيتامين C — فيتامين الدم | Daruzen',
+    },
     createdAt: 1754582400,
     isNew: true,
     descriptions: {
@@ -1030,6 +1115,7 @@ export interface LocalizedProduct {
   note?: string;
   createdAt?: number;
   isNew?: boolean;
+  seoTitle?: string;
   inStock?: boolean;
 }
 
@@ -1046,6 +1132,7 @@ export const localizeProducts = (lang: Lang, source: Product[] = products): Loca
     note: p.notes ? (p.notes[lang] || p.notes.ru) : undefined,
     createdAt: p.createdAt,
     isNew: p.isNew,
+    seoTitle: p.seoTitle ? (p.seoTitle[lang] || p.seoTitle.ru) : undefined,
     inStock: getInStock(p),
   }));
 

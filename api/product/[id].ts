@@ -155,7 +155,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     : SITE + '/images/og-image.png';
   const basePrice = Number(product.price) || 0;
   const cur = CURRENCY[lang];
-  const price = lang === 'en' ? (basePrice * cur.rate).toFixed(2) : String(basePrice);
+  const converted = basePrice * cur.rate;
+  const price = cur.rate === 1 ? String(basePrice) : converted.toFixed(2);
   const firstSentence = desc.split(/[.!؟]\s/)[0] || desc.slice(0, 120);
 
   const title = `${cleanName} | Daruzen`;
@@ -168,6 +169,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     (l) => `<link rel="alternate" hreflang="${l}" href="${SITE}/${l}/product/${id}" />`
   ).join('\n    ');
   const xDefaultLink = `<link rel="alternate" hreflang="x-default" href="${canonical}" />`;
+
+  const stockSpec = (product.specs as Record<string, unknown>)?._stock;
+  const inStock = stockSpec !== '0' && (Array.isArray(stockSpec) ? stockSpec[0] !== '0' : true) && product.inStock !== false && product.in_stock !== false;
 
   const jsonLd: Record<string, unknown> = {
     '@context': 'https://schema.org',
@@ -184,7 +188,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       '@type': 'Offer',
       price,
       priceCurrency: cur.code,
-      availability: product.inStock === false ? 'https://schema.org/OutOfStock' : 'https://schema.org/InStock',
+      availability: inStock ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
       url: canonical,
       seller: { '@type': 'Organization', name: 'Daruzen' },
     },

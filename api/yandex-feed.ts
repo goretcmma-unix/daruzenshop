@@ -74,8 +74,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const catKey = p.category_key || p.categoryKey || 'supplements';
     const catInfo = CATEGORY_MAP[catKey] || CATEGORY_MAP.supplements;
     const imageUrl = p.image?.startsWith('http') ? p.image : SITE + p.image;
-    const price = p.price || 0;
-    const inStock = p.in_stock !== false && p.inStock !== false;
+    const basePrice = p.price || 0;
+    const price = Math.round(basePrice * 2.2);
+    const stockSpec = p.specs?._stock;
+    const inStock = stockSpec !== '0' && stockSpec?.[0] !== '0' && p.in_stock !== false && p.inStock !== false;
     const url = SITE + '/ru/product/' + p.id;
 
     xml += '<offer id="' + esc(p.id) + '" available="' + (inStock ? 'true' : 'false') + '">\n';

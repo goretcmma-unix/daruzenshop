@@ -1,4 +1,4 @@
-import type { VercelRequest, VercelResponse } from '@vercel/node';
+﻿import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { createClient } from '@supabase/supabase-js';
 
 const supabaseUrl = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL || '';
@@ -258,6 +258,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       <h1>${esc(name)}</h1>
       <p>${esc(desc)}</p>
       <p><strong>${lang === 'ru' ? 'Цена' : lang === 'tr' ? 'Fiyat' : lang === 'ar' ? 'السعر' : 'Price'}:</strong> ${price} ${cur.symbol}</p>
+      <p><strong>${lang === 'ru' ? 'Наличие' : lang === 'tr' ? 'Stok durumu' : lang === 'ar' ? 'التوفر' : 'Availability'}:</strong> ${inStock ? (lang === 'ru' ? 'В наличии' : lang === 'tr' ? 'Stokta' : lang === 'ar' ? 'متوفر' : 'In Stock') : (lang === 'ru' ? 'Нет в наличии' : lang === 'tr' ? 'Stokta yok' : lang === 'ar' ? 'غير متوفر' : 'Out of Stock')}</p>
       <img src="${imageUrl}" alt="${esc(name)}" width="600" />
       <p><a href="${esc(canonical)}">${lang === 'ru' ? 'Открыть на сайте Daruzen' : lang === 'tr' ? 'Daruzen sitesinde aç' : lang === 'ar' ? 'فتح على موقع داروزن' : 'Open on Daruzen website'}</a></p>
     </div>

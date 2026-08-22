@@ -156,7 +156,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   const basePrice = Number(product.price) || 0;
   const cur = CURRENCY[lang];
   const converted = basePrice * cur.rate;
-  const price = cur.rate === 1 ? String(basePrice) : converted.toFixed(2);
+  const price = converted.toFixed(2);
   const firstSentence = desc.split(/[.!؟]\s/)[0] || desc.slice(0, 120);
 
   const title = `${cleanName} | Daruzen`;
@@ -174,7 +174,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   const inStock = stockSpec !== '0' && (Array.isArray(stockSpec) ? stockSpec[0] !== '0' : true) && product.inStock !== false && product.in_stock !== false;
 
   const jsonLd: Record<string, unknown> = {
-    '@context': 'https://schema.org',
+    '@context': 'http://schema.org/',
     '@type': 'Product',
     name,
     description: desc,
@@ -188,7 +188,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       '@type': 'Offer',
       price,
       priceCurrency: cur.code,
-      availability: inStock ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
+      availability: inStock ? 'http://schema.org/InStock' : 'http://schema.org/OutOfStock',
       url: canonical,
       seller: { '@type': 'Organization', name: 'Daruzen' },
     },

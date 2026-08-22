@@ -1,0 +1,18 @@
+name: IndexNow - Notify Search Engines
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  indexnow:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Wait for Vercel deploy
+        run: sleep 180
+
+      - name: Submit all URLs to IndexNow
+        run: |
+          curl -s -X POST "https://drdaruzen.com/api/indexnow" \
+            -H "Content-Type: application/json" \
+            -d '{}'

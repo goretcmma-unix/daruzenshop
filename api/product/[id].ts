@@ -250,6 +250,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     <meta name="theme-color" content="#cf9b41" />
     <script type="application/ld+json">${JSON.stringify(jsonLd)}</script>
     <script type="application/ld+json">{"@context":"https://schema.org","@type":"Organization","name":"Daruzen","url":"${SITE}","logo":"${SITE}/images/dr.svg.png"}</script>
+    <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"${lang === 'ru' ? 'Главная' : lang === 'tr' ? 'Ana Sayfa' : lang === 'ar' ? 'الرئيسية' : 'Home'}","item":"${SITE}/${lang}"},{"@type":"ListItem","position":2,"name":"${lang === 'ru' ? 'Каталог' : lang === 'tr' ? 'Katalog' : lang === 'ar' ? 'الفهرس' : 'Catalog'}","item":"${SITE}/${lang}#catalog"},{"@type":"ListItem","position":3,"name":"${name}","item":"${canonical}"}]}</script>
   </head>
   <body>
     <div style="max-width:800px;margin:0 auto;padding:40px 20px;font-family:sans-serif">

@@ -638,21 +638,6 @@ const App: React.FC = () => {
               keywords={(SEO_QUERIES[lang] || SEO_QUERIES.en).keywords}
               canonical={`https://drdaruzen.com/${lang}`}
               ogImage="https://drdaruzen.com/images/og-image.png"
-              jsonLd={{
-                '@context': 'https://schema.org',
-                '@type': 'Organization',
-                name: 'Daruzen',
-          url: `https://drdaruzen.com/${lang}`,
-                logo: 'https://drdaruzen.com/images/dr.svg.png',
-                description: (SEO_QUERIES[lang] || SEO_QUERIES.en).description,
-                sameAs: [],
-                contactPoint: {
-                  '@type': 'ContactPoint',
-                  telephone: '+90-544-679-10-12',
-                  contactType: 'customer service',
-                  availableLanguage: ['Russian', 'Turkish', 'English', 'Arabic'],
-                },
-              }}
             />
             )}
 

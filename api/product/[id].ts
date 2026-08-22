@@ -160,7 +160,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   const firstSentence = desc.split(/[.!؟]\s/)[0] || desc.slice(0, 120);
 
   const title = `${cleanName} | Daruzen`;
-  const description = META_DESC_TEMPLATES[lang](name, catLabel, firstSentence);
+  const rawDesc = META_DESC_TEMPLATES[lang](name, catLabel, firstSentence);
+  const description = rawDesc.length > 155 ? rawDesc.slice(0, 152).replace(/[,;]\s*$/, '') + '...' : rawDesc;
   const keywords = KEYWORDS_TEMPLATES[lang](name, catLabel, firstSentence);
 
   const canonical = `${SITE}/${lang}/product/${id}`;

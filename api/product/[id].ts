@@ -152,6 +152,12 @@ function isBot(ua: string | undefined): boolean {
   return /googlebot|bingbot|yandex|facebookexternalhit|twitterbot|linkedinbot|slackbot|discordbot|applebot|whatsapp|telegrambot|ai\.yandex|duckduckbot|baidu|sogou|petalbot/i.test(lower);
 }
 
+function isYandexBot(ua: string | undefined): boolean {
+  if (!ua) return false;
+  const lower = ua.toLowerCase();
+  return /yandex|ai\.yandex/i.test(lower);
+}
+
 let cachedAssets: string | null = null;
 let cacheTime = 0;
 
@@ -202,7 +208,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   const bot = isBot(ua);
 
   let lang: Lang = 'ru';
-  if (ALL_LANGS.includes(req.query.lang as Lang)) {
+  if (isYandexBot(ua)) {
+    lang = 'ru';
+  } else if (ALL_LANGS.includes(req.query.lang as Lang)) {
     lang = req.query.lang as Lang;
   } else {
     const matchedPath = req.headers['x-matched-path'] as string | undefined;
@@ -253,10 +261,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   const canonical = `${SITE}/${lang}/product/${id}`;
 
-  const hreflangLinks = ALL_LANGS.map(
-    (l) => `<link rel="alternate" hreflang="${l}" href="${SITE}/${l}/product/${id}" />`
-  ).join('\n    ');
-  const xDefaultLink = `<link rel="alternate" hreflang="x-default" href="${canonical}" />`;
+  const hreflangLinks = `<link rel="alternate" hreflang="x-default" href="${SITE}/ru/product/${id}" />`;
 
   const stockSpec = (product.specs as Record<string, unknown>)?._stock;
   const inStock = stockSpec !== '0' && (Array.isArray(stockSpec) ? stockSpec[0] !== '0' : true) && product.inStock !== false && product.in_stock !== false;

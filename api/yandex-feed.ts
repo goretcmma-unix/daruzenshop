@@ -69,15 +69,16 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   xml += '<offers>\n';
 
   for (const p of products) {
-    const name = p.names?.ru || p.name_ru || p.names?.en || p.name_en || p.id;
-    const desc = p.descriptions?.ru || p.desc_ru || p.descriptions?.en || p.desc_en || '';
+    const name = p.names?.ru || p.name_ru || p.id;
+    if (!name) continue;
+    const desc = p.descriptions?.ru || p.desc_ru || '';
     const catKey = p.category_key || p.categoryKey || 'supplements';
     const catInfo = CATEGORY_MAP[catKey] || CATEGORY_MAP.supplements;
     const imageUrl = p.image?.startsWith('http') ? p.image : SITE + p.image;
-    const basePrice = p.price || 0;
-    const price = Math.round(basePrice * 2.2);
-    const stockSpec = p.specs?._stock;
-    const inStock = stockSpec !== '0' && stockSpec?.[0] !== '0' && p.in_stock !== false && p.inStock !== false;
+    const basePrice = Number(p.price) || 0;
+    const price = (basePrice * 2.2).toFixed(2);
+    const stockSpec = (p.specs as Record<string, unknown>)?._stock;
+    const inStock = stockSpec !== '0' && (Array.isArray(stockSpec) ? stockSpec[0] !== '0' : true) && p.inStock !== false && p.in_stock !== false;
     const url = SITE + '/ru/product/' + p.id;
 
     xml += '<offer id="' + esc(p.id) + '" available="' + (inStock ? 'true' : 'false') + '">\n';

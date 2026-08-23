@@ -30,7 +30,7 @@ const AboutPage: React.FC = () => {
         jsonLd={jsonLd}
       />
 
-      <section className="hero-section" style={{ minHeight: '40vh', display: 'flex', alignItems: 'center', paddingTop: '120px' }}>
+      <section style={{ minHeight: '40vh', display: 'flex', alignItems: 'center', paddingTop: '120px' }}>
         <div className="container" style={{ textAlign: 'center', maxWidth: '820px', margin: '0 auto' }}>
           <motion.h1
             className="hero-title"

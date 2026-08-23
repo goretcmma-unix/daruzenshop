@@ -79,6 +79,7 @@ const ALL_URLS = [
 async function submitToIndexNow(urls: string[]) {
   const engines = [
     'https://api.indexnow.org/indexnow',
+    'https://yandex.com/indexnow',
   ];
 
   const payload = JSON.stringify({

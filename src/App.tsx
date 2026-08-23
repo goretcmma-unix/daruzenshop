@@ -586,6 +586,10 @@ const App: React.FC = () => {
             <nav style={{ display: 'flex', flexDirection: 'column', gap: '12px', opacity: 0.6 }}>
               <a href="mailto:daruzenshop@outlook.com" style={{ color: 'inherit', textDecoration: 'none' }}>daruzenshop@outlook.com</a>
               <a href="tel:+905446791012" style={{ color: 'inherit', textDecoration: 'none' }}>+90 544 679 10 12</a>
+              <div style={{ display: 'flex', gap: '16px', marginTop: '12px' }}>
+                 <MessageCircle size={20} />
+                 <Send size={20} />
+              </div>
             </nav>
           </div>
         </div>

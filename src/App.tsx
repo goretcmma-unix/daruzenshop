@@ -565,38 +565,58 @@ const App: React.FC = () => {
   );
 
   const renderFooter = () => (
-    <footer style={{ background: 'rgba(62, 39, 35, 0.96)', color: 'white', padding: '80px 0 40px' }}>
-      <div className="container">
-        <div className="footer-grid">
-          <div style={{ gridColumn: 'span 2' }}>
-            <img src="/images/dr.svg.png" alt="Daruzen Logo" style={{ width: '80px', height: '80px', objectFit: 'contain', marginBottom: '24px', filter: 'brightness(0) invert(1)' }} />
-            <p style={{ opacity: 0.6, maxWidth: '300px', lineHeight: '1.8' }}>{t.footer.desc}</p>
+    <footer style={{ 
+        background: 'rgba(62, 39, 35, 0.96)', 
+        color: 'white', 
+        padding: '80px 0 40px'
+      }}>
+        <div className="container">
+          <div className="footer-grid">
+            <div style={{ gridColumn: 'span 2' }}>
+              <img 
+                src="/images/dr.svg.png" 
+                alt="Daruzen Logo" 
+                  style={{ 
+                    width: '80px', 
+                    height: '80px', 
+                    objectFit: 'contain', 
+                    marginBottom: '24px',
+                    filter: 'brightness(0) invert(1)'
+                  }} 
+              />
+              <p style={{ opacity: 0.6, maxWidth: '300px', lineHeight: '1.8' }}>
+                {t.footer.desc}
+              </p>
+            </div>
+            <div>
+              <h4 style={{ marginBottom: '24px', fontWeight: '700' }}>{t.footer.company}</h4>
+              <nav style={{ display: 'flex', flexDirection: 'column', gap: '12px', opacity: 0.6 }}>
+                 {[
+                   { label: t.footer.links[0], path: `/${lang}/about` },
+                   { label: t.footer.links[1], path: '#' },
+                   { label: t.footer.links[2], path: '#' },
+                   { label: t.footer.links[3], path: `/${lang}/contacts` },
+                 ].map(item => (
+                   <a key={item.label} href={item.path} style={{ color: 'inherit', textDecoration: 'none' }}>{item.label}</a>
+                 ))}
+              </nav>
+            </div>
+            <div>
+              <h4 style={{ marginBottom: '24px', fontWeight: '700' }}>{t.footer.connect}</h4>
+              <nav style={{ display: 'flex', flexDirection: 'column', gap: '12px', opacity: 0.6 }}>
+                <a href="mailto:daruzenshop@outlook.com" style={{ color: 'inherit', textDecoration: 'none' }}>daruzenshop@outlook.com</a>
+                <a href="tel:+905446791012" style={{ color: 'inherit', textDecoration: 'none' }}>+90 544 679 10 12</a>
+                <div style={{ display: 'flex', gap: '16px', marginTop: '12px' }}>
+                   <MessageCircle size={20} />
+                   <Send size={20} />
+                </div>
+              </nav>
+            </div>
           </div>
-          <div>
-            <h4 style={{ marginBottom: '24px', fontWeight: '700' }}>{t.footer.company}</h4>
-            <nav style={{ display: 'flex', flexDirection: 'column', gap: '12px', opacity: 0.6 }}>
-              <Link to={`/${lang}/about`}>{t.nav.about}</Link>
-<Link to={`/${lang}/`} onClick={(e) => { e.preventDefault(); navigate(`/${lang}/`); setTimeout(() => document.getElementById("catalog")?.scrollIntoView({behavior:"smooth"}), 100); }}>{t.nav.catalog}</Link>
-              <Link to={`/${lang}/contacts`}>{t.footer.links[2]}</Link>
-              <Link to={`/${lang}/contacts`}>{t.footer.links[3]}</Link>
-            </nav>
-          </div>
-          <div>
-            <h4 style={{ marginBottom: '24px', fontWeight: '700' }}>{t.footer.connect}</h4>
-            <nav style={{ display: 'flex', flexDirection: 'column', gap: '12px', opacity: 0.6 }}>
-              <a href="mailto:daruzenshop@outlook.com" style={{ color: 'inherit', textDecoration: 'none' }}>daruzenshop@outlook.com</a>
-              <a href="tel:+905446791012" style={{ color: 'inherit', textDecoration: 'none' }}>+90 544 679 10 12</a>
-              <div style={{ display: 'flex', gap: '16px', marginTop: '12px' }}>
-                 <MessageCircle size={20} />
-                 <Send size={20} />
-              </div>
-            </nav>
+          <div style={{ paddingTop: '40px', borderTop: '1px solid rgba(255,255,255,0.1)', textAlign: 'center', opacity: 0.4, fontSize: '14px' }}>
+            © {new Date().getFullYear()} DARUZEN. {t.footer.rights}
           </div>
         </div>
-        <div style={{ paddingTop: '40px', borderTop: '1px solid rgba(255,255,255,0.1)', textAlign: 'center', opacity: 0.4, fontSize: '14px' }}>
-          © {new Date().getFullYear()} DARUZEN. {t.footer.rights}
-        </div>
-      </div>
     </footer>
   );
 

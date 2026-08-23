@@ -1,4 +1,4 @@
-﻿{
+{
   "functions": {
     "api/sitemap.ts": {
       "maxDuration": 10
@@ -10,7 +10,7 @@
       "maxDuration": 10
     }
   },
-    "redirects": [
+  "redirects": [
     {
       "source": "/",
       "destination": "/ru",

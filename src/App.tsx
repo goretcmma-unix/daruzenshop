@@ -1939,10 +1939,11 @@ const App: React.FC = () => {
         })()}
       </AnimatePresence>
 {/* CSS for components not using inline styles */}
-      <AppStyles />
           </>
         } />
       </Routes>
+
+      <AppStyles />
 
       {/* ===== Global Overlays (work on all pages) ===== */}
       {/* Cart Drawer */}

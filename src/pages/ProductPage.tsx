@@ -112,10 +112,12 @@ const ProductPage: React.FC<ProductPageProps> = ({ product, onAddToCart, onBuyNo
     .filter((l) => l !== lang)
     .map((l) => LOCALE_MAP[l as LangCode]);
 
+  const displayTitle = product.seoTitle || `${product.name.replace(/^Daruzen\s+/i, '')} | Daruzen`;
+
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'Product',
-    name: product.name,
+    name: displayTitle.replace(/\s*\|\s*Daruzen\s*$/, ''),
     description: product.description,
     image: [product.image.startsWith('http') ? product.image : `${SITE}${product.image}`],
     sku: product.id,
@@ -147,7 +149,7 @@ const ProductPage: React.FC<ProductPageProps> = ({ product, onAddToCart, onBuyNo
       style={{ position: 'fixed', inset: 0, zIndex: 4000, pointerEvents: 'auto' }}
     >
       <SEOHead
-        title={`${product.name.replace(/^Daruzen\s+/i, '')} | Daruzen`}
+        title={displayTitle}
         description={product.description}
         keywords={(SEO_DATA[lang] || SEO_DATA.en).keywords(product.name, product.category)}
         canonical={canonicalLang}

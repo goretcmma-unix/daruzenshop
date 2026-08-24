@@ -261,15 +261,17 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   const canonical = `${SITE}/${lang}/product/${id}`;
 
-  const hreflangLinks = `<link rel="alternate" hreflang="x-default" href="${SITE}/ru/product/${id}" />`;
+  const hreflangTags = ALL_LANGS.map((l) => `<link rel="alternate" hreflang="${l}" href="${SITE}/${l}/product/${id}" />`).join('\n    ');
+  const hreflangXDefault = `<link rel="alternate" hreflang="x-default" href="${SITE}/en/product/${id}" />`;
 
   const stockSpec = (product.specs as Record<string, unknown>)?._stock;
   const inStock = stockSpec !== '0' && (Array.isArray(stockSpec) ? stockSpec[0] !== '0' : true) && product.inStock !== false && product.in_stock !== false;
 
+  const seoName = title.replace(/\s*\|\s*Daruzen\s*$/, '').trim();
   const jsonLd: Record<string, unknown> = {
-    '@context': 'http://schema.org/',
+    '@context': 'https://schema.org',
     '@type': 'Product',
-    name,
+    name: seoName,
     description: desc,
     image: [imageUrl],
     sku: id,
@@ -319,7 +321,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     <meta name="keywords" content="${esc(keywords)}" />
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
     <link rel="canonical" href="${esc(canonical)}" />
-    ${hreflangLinks}
+    ${hreflangTags}
+    ${hreflangXDefault}
     <meta property="og:type" content="product" />
     <meta property="og:url" content="${esc(canonical)}" />
     <meta property="og:title" content="${esc(title)}" />
@@ -328,7 +331,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     <meta property="og:image:type" content="${imageUrl.endsWith('.png') ? 'image/png' : imageUrl.endsWith('.jpg') || imageUrl.endsWith('.jpeg') ? 'image/jpeg' : 'image/webp'}" />
     <meta property="og:image:width" content="600" />
     <meta property="og:image:height" content="800" />
-    <meta property="og:image:alt" content="${esc(name)}" />
+    <meta property="og:image:alt" content="${esc(seoName)}" />
     <meta property="og:site_name" content="Daruzen" />
     <meta property="og:locale" content="${LOCALE_MAP[lang]}" />
     ${ALL_LANGS.filter((l) => l !== lang).map((l) => `<meta property="og:locale:alternate" content="${LOCALE_MAP[l]}" />`).join('\n    ')}
@@ -342,15 +345,15 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     <meta name="theme-color" content="#cf9b41" />
     <script type="application/ld+json">${JSON.stringify(jsonLd)}</script>
     <script type="application/ld+json">{"@context":"https://schema.org","@type":"Organization","name":"Daruzen","url":"${SITE}","logo":"${SITE}/images/dr.svg.png"}</script>
-    <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"${lang === 'ru' ? 'Главная' : lang === 'tr' ? 'Ana Sayfa' : lang === 'ar' ? 'الرئيسية' : 'Home'}","item":"${SITE}/${lang}"},{"@type":"ListItem","position":2,"name":"${lang === 'ru' ? 'Каталог' : lang === 'tr' ? 'Katalog' : lang === 'ar' ? 'الفهرس' : 'Catalog'}","item":"${SITE}/${lang}#catalog"},{"@type":"ListItem","position":3,"name":"${name}","item":"${canonical}"}]}</script>
+    <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"${lang === 'ru' ? 'Главная' : lang === 'tr' ? 'Ana Sayfa' : lang === 'ar' ? 'الرئيسية' : 'Home'}","item":"${SITE}/${lang}"},{"@type":"ListItem","position":2,"name":"${lang === 'ru' ? 'Каталог' : lang === 'tr' ? 'Katalog' : lang === 'ar' ? 'الفهرس' : 'Catalog'}","item":"${SITE}/${lang}#catalog"},{"@type":"ListItem","position":3,"name":"${esc(seoName)}","item":"${canonical}"}]}</script>
   </head>
   <body>
     <div style="max-width:800px;margin:0 auto;padding:40px 20px;font-family:sans-serif">
-      <h1>${esc(name)}</h1>
+      <h1>${esc(seoName)}</h1>
       <p>${esc(desc)}</p>
       <p><strong>${lang === 'ru' ? 'Цена' : lang === 'tr' ? 'Fiyat' : lang === 'ar' ? 'السعر' : 'Price'}:</strong> ${price} ${cur.symbol}</p>
       <p><strong>${lang === 'ru' ? 'Наличие' : lang === 'tr' ? 'Stok durumu' : lang === 'ar' ? 'التوفر' : 'Availability'}:</strong> ${inStock ? (lang === 'ru' ? 'В наличии' : lang === 'tr' ? 'Stokta' : lang === 'ar' ? 'متوفر' : 'In Stock') : (lang === 'ru' ? 'Нет в наличии' : lang === 'tr' ? 'Stokta yok' : lang === 'ar' ? 'غير متوفر' : 'Out of Stock')}</p>
-      <img src="${imageUrl}" alt="${esc(name)}" width="600" />
+      <img src="${imageUrl}" alt="${esc(seoName)}" width="600" />
       <p><a href="${esc(canonical)}">${lang === 'ru' ? 'Открыть на сайте Daruzen' : lang === 'tr' ? 'Daruzen sitesinde aç' : lang === 'ar' ? 'فتح على موقع داروزن' : 'Open on Daruzen website'}</a></p>
     </div>
   </body>

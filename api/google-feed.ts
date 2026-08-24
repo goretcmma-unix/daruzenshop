@@ -5,14 +5,6 @@ const supabaseUrl = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL ||
 const supabaseKey = process.env.SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY || '';
 const SITE = 'https://drdaruzen.com';
 
-const CATEGORY_MAP: Record<string, { id: string; name: string }> = {
-  supplements: { id: '1', name: 'БАД и добавки' },
-  vitamins: { id: '2', name: 'Витамины' },
-  minerals: { id: '3', name: 'Минералы' },
-  beauty: { id: '4', name: 'Красота и здоровье' },
-  herbs: { id: '5', name: 'Лекарственные травы' },
-};
-
 const SEO_NAMES: Record<string, string> = {
   'prod-1': 'Витамин D3, Цинк, Масло чёрного тмина — BSO Gummy',
   'prod-2': 'Омега 3 — EPA 600 мг, DHA 400 мг, Рыбий жир',
@@ -61,84 +53,58 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   if (products.length === 0) {
-    res.status(200).send('<?xml version="1.0" encoding="UTF-8"?>\n<yml_catalog date="' + formatDate(new Date()) + '"><shop><offers></offers></shop></yml_catalog>');
+    res.status(200).send('<?xml version="1.0" encoding="UTF-8"?>\n<rss version="2.0" xmlns:g="http://base.google.com/ns/1.0"><channel></channel></rss>');
     return;
   }
 
-  const categories = Object.values(CATEGORY_MAP);
-
   let xml = '<?xml version="1.0" encoding="UTF-8"?>\n';
-  xml += '<yml_catalog date="' + formatDate(new Date()) + '">\n';
-  xml += '<shop>\n';
-  xml += '<name>Daruzen</name>\n';
-  xml += '<company>Daruzen</company>\n';
-  xml += '<url>' + SITE + '</url>\n';
-  xml += '<currencies>\n';
-  xml += '<currency id="RUB" rate="1"/>\n';
-  xml += '</currencies>\n';
-
-  xml += '<categories>\n';
-  for (const cat of categories) {
-    xml += '<category id="' + cat.id + '">' + esc(cat.name) + '</category>\n';
-  }
-  xml += '</categories>\n';
-
-  xml += '<offers>\n';
+  xml += '<rss version="2.0" xmlns:g="http://base.google.com/ns/1.0">\n';
+  xml += '<channel>\n';
+  xml += '<title>Daruzen — Витамины и БАДы из Турции</title>\n';
+  xml += '<link>' + SITE + '</link>\n';
+  xml += '<description>Daruzen — натуральные витамины, минералы и БАДы из Турции. Оригинальные добавки с доставкой.</description>\n';
 
   for (const p of products) {
-    const name = p.names?.ru || p.name_ru || p.id;
-    if (!name) continue;
-    const seoName = SEO_NAMES[p.id] || name;
+    const seoName = SEO_NAMES[p.id] || p.names?.ru || p.name_ru || p.id;
+    if (!seoName) continue;
     const desc = p.descriptions?.ru || p.desc_ru || '';
-    const catKey = p.category_key || p.categoryKey || 'supplements';
-    const catInfo = CATEGORY_MAP[catKey] || CATEGORY_MAP.supplements;
     const imageUrl = p.image?.startsWith('http') ? p.image : SITE + p.image;
     const basePrice = Number(p.price) || 0;
-    const price = (basePrice * 2.2).toFixed(2);
+    const priceRUB = (basePrice * 2.2).toFixed(2);
     const stockSpec = (p.specs as Record<string, unknown>)?._stock;
     const inStock = stockSpec !== '0' && (Array.isArray(stockSpec) ? stockSpec[0] !== '0' : true) && p.inStock !== false && p.in_stock !== false;
     const url = SITE + '/ru/product/' + p.id;
+    const catKey = p.category_key || p.categoryKey || 'supplements';
+    const categoryMap: Record<string, string> = {
+      supplements: 'Здоровье > БАДы и добавки',
+      vitamins: 'Здоровье > Витамины',
+      minerals: 'Здоровье > Минералы',
+      beauty: 'Здоровье > Красота и здоровье',
+      herbs: 'Здоровье > Лекарственные травы',
+    };
+    const category = categoryMap[catKey] || categoryMap.supplements;
 
-    xml += '<offer id="' + esc(p.id) + '" available="' + (inStock ? 'true' : 'false') + '">\n';
-    xml += '<url>' + esc(url) + '</url>\n';
-    xml += '<name>' + esc(seoName) + '</name>\n';
-    xml += '<price>' + price + '</price>\n';
-    xml += '<currencyId>RUB</currencyId>\n';
-    xml += '<categoryId>' + catInfo.id + '</categoryId>\n';
-    xml += '<picture>' + esc(imageUrl) + '</picture>\n';
-    xml += '<description>' + esc(desc) + '</description>\n';
-    xml += '<vendor>Daruzen</vendor>\n';
-    xml += '<vendorCode>' + esc(p.id) + '</vendorCode>\n';
-    xml += '<model>' + esc(seoName) + '</model>\n';
-    xml += '<delivery>true</delivery>\n';
-    xml += '<local_delivery_cost>0</local_delivery_cost>\n';
-    xml += '<condition>new</condition>\n';
-
-    if (p.isNew) {
-      xml += '<param name="Новинка">Да</param>\n';
-    }
-
-    const weightSpec = (p.specs as Record<string, unknown>)?._weight;
-    if (weightSpec) {
-      xml += '<param name="Вес">' + esc(String(weightSpec)) + '</param>\n';
-    }
-
-    const volumeSpec = (p.specs as Record<string, unknown>)?._volume;
-    if (volumeSpec) {
-      xml += '<param name="Объём">' + esc(String(volumeSpec)) + '</param>\n';
-    }
-
-    const countSpec = (p.specs as Record<string, unknown>)?._count;
-    if (countSpec) {
-      xml += '<param name="Количество в упаковке">' + esc(String(countSpec)) + '</param>\n';
-    }
-
-    xml += '</offer>\n';
+    xml += '<item>\n';
+    xml += '<g:id>' + esc(p.id) + '</g:id>\n';
+    xml += '<g:title>' + esc(seoName) + '</g:title>\n';
+    xml += '<g:description>' + esc(desc) + '</g:description>\n';
+    xml += '<g:link>' + esc(url) + '</g:link>\n';
+    xml += '<g:image_link>' + esc(imageUrl) + '</g:image_link>\n';
+    xml += '<g:availability>' + (inStock ? 'in_stock' : 'out_of_stock') + '</g:availability>\n';
+    xml += '<g:price>' + priceRUB + ' RUB</g:price>\n';
+    xml += '<g:brand>Daruzen</g:brand>\n';
+    xml += '<g:condition>new</g:condition>\n';
+    xml += '<g:google_product_category>' + esc(category) + '</g:google_product_category>\n';
+    xml += '<g:shipping>\n';
+    xml += '<g:country>RU</g:country>\n';
+    xml += '<g:service>standard</g:service>\n';
+    xml += '<g:price>0 RUB</g:price>\n';
+    xml += '</g:shipping>\n';
+    xml += '</item>\n';
   }
 
-  xml += '</offers>\n';
-  xml += '</shop>\n';
-  xml += '</yml_catalog>';
+  xml += '</channel>\n';
+  xml += '</rss>';
 
   res.status(200).send(xml);
 }

@@ -8,6 +8,9 @@
     },
     "api/yandex-feed.ts": {
       "maxDuration": 10
+    },
+    "api/google-feed.ts": {
+      "maxDuration": 10
     }
   },
   "redirects": [
@@ -55,6 +58,10 @@
     {
       "source": "/yandex-feed.yml",
       "destination": "/api/yandex-feed"
+    },
+    {
+      "source": "/google-feed.xml",
+      "destination": "/api/google-feed"
     },
     {
       "source": "/ru/product/:id",

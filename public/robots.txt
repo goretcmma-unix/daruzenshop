@@ -1,12 +1,14 @@
 User-agent: *
 Allow: /
 Allow: /yandex-feed.yml
+Allow: /google-feed.xml
 Allow: /sitemap.xml
 Disallow: /admin
 Disallow: /api/
 
 Sitemap: https://drdaruzen.com/sitemap.xml
 # Yandex-feed: https://drdaruzen.com/yandex-feed.yml
+# Google Merchant feed: https://drdaruzen.com/google-feed.xml
 
 # Daruzen - Official Health Store
 # https://drdaruzen.com

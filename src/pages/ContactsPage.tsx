@@ -5,7 +5,7 @@ import { useLang } from '../i18n';
 import { SEOHead } from '../seo/SEOHead';
 
 const ContactsPage: React.FC = () => {
-  const { t } = useLang();
+  const { lang, t } = useLang();
   const [contactForm, setContactForm] = useState({ name: '', email: '', message: '' });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
@@ -21,12 +21,19 @@ const ContactsPage: React.FC = () => {
     }, 1500);
   };
 
+  const hreflangs = [
+    { lang: 'ru', href: 'https://drdaruzen.com/ru/contacts' },
+    { lang: 'tr', href: 'https://drdaruzen.com/tr/contacts' },
+    { lang: 'en', href: 'https://drdaruzen.com/en/contacts' },
+    { lang: 'ar', href: 'https://drdaruzen.com/ar/contacts' },
+  ];
+
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'ContactPage',
     name: 'Контакты Daruzen — Свяжитесь с нами',
     description: 'Контакты бренда Daruzen: телефон, email, офис в Турции. Закажите витамины и добавки.',
-    url: 'https://drdaruzen.com/contacts',
+    url: `https://drdaruzen.com/${lang}/contacts`,
   };
 
   return (
@@ -35,7 +42,8 @@ const ContactsPage: React.FC = () => {
         title="Контакты Daruzen — Телефон, Email, Офис в Турции | drdaruzen.com"
         description="Свяжитесь с Daruzen: +90 544 679 10 12, daruzenshop@outlook.com. Офис в Стамбуле, Турция. Закажите витамины и добавки через WhatsApp или Telegram."
         keywords="Daruzen контакты, дарузен телефон, daruzen email, заказать витамины, турецкие витамины, витамины из Турции, БАД Турция, турецкие добавки"
-        canonical="https://drdaruzen.com/contacts"
+        canonical={`https://drdaruzen.com/${lang}/contacts`}
+        hreflang={hreflangs}
         jsonLd={jsonLd}
       />
 

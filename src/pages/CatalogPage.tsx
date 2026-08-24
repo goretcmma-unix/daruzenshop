@@ -46,19 +46,26 @@ const CatalogPage: React.FC = () => {
     '@type': 'CollectionPage',
     name: 'Каталог витаминов и добавок Daruzen',
     description: 'Полный каталог премиальных витаминов, минералов и БАД от Daruzen. Натуральные добавки для здоровья из Турции.',
-    url: 'https://drdaruzen.com/catalog',
+    url: `https://drdaruzen.com/${lang}/catalog`,
     mainEntity: {
       '@type': 'ItemList',
       numberOfItems: filteredProducts.length,
       itemListElement: filteredProducts.slice(0, 20).map((p, i) => ({
         '@type': 'ListItem',
         position: i + 1,
-        url: `https://drdaruzen.com/product/${p.id}`,
+        url: `https://drdaruzen.com/${lang}/product/${p.id}`,
         name: p.name,
         image: `https://drdaruzen.com${p.image}`,
       })),
     },
   };
+
+  const hreflangs = [
+    { lang: 'ru', href: 'https://drdaruzen.com/ru/catalog' },
+    { lang: 'tr', href: 'https://drdaruzen.com/tr/catalog' },
+    { lang: 'en', href: 'https://drdaruzen.com/en/catalog' },
+    { lang: 'ar', href: 'https://drdaruzen.com/ar/catalog' },
+  ];
 
   return (
     <>
@@ -66,7 +73,8 @@ const CatalogPage: React.FC = () => {
         title="Каталог витаминов и добавок Daruzen — Витамины, минералы, БАД | drdaruzen.com"
         description="Каталог премиальных витаминов, минералов и добавок Daruzen. BSO мармеладки, Омега-3, магний, мультивитамины и другие натуральные добавки из Турции."
         keywords="Daruzen каталог, витамины, турецкие витамины, витамины из Турции, добавки, БАД, БАДы из Турции, дарузен, омега 3, магний, мультивитамины, минералы, натуральные добавки, турецкие добавки"
-        canonical="https://drdaruzen.com/catalog"
+        canonical={`https://drdaruzen.com/${lang}/catalog`}
+        hreflang={hreflangs}
         jsonLd={jsonLd}
       />
 

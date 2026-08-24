@@ -17,8 +17,18 @@
       "permanent": false
     },
     {
+      "source": "/about",
+      "destination": "/ru/about",
+      "permanent": false
+    },
+    {
+      "source": "/contacts",
+      "destination": "/ru/contacts",
+      "permanent": false
+    },
+    {
       "source": "/catalog",
-      "destination": "/",
+      "destination": "/ru/catalog",
       "permanent": false
     },
     {

@@ -669,6 +669,12 @@ const App: React.FC = () => {
               keywords={(SEO_QUERIES[lang] || SEO_QUERIES.en).keywords}
               canonical={`https://drdaruzen.com/${lang}`}
               ogImage="https://drdaruzen.com/images/og-image.png"
+              hreflang={[
+                { lang: 'ru', href: 'https://drdaruzen.com/ru' },
+                { lang: 'tr', href: 'https://drdaruzen.com/tr' },
+                { lang: 'en', href: 'https://drdaruzen.com/en' },
+                { lang: 'ar', href: 'https://drdaruzen.com/ar' },
+              ]}
             />
             )}
 

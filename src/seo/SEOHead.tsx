@@ -8,6 +8,7 @@ interface SEOProps {
   ogImage?: string;
   ogType?: string;
   jsonLd?: Record<string, unknown>;
+  hreflang?: { lang: string; href: string }[];
 }
 
 export const SEOHead: React.FC<SEOProps> = ({
@@ -18,6 +19,7 @@ export const SEOHead: React.FC<SEOProps> = ({
   ogImage = 'https://drdaruzen.com/images/og-image.png',
   ogType = 'website',
   jsonLd,
+  hreflang,
 }) => {
   return (
     <Helmet>
@@ -35,6 +37,9 @@ export const SEOHead: React.FC<SEOProps> = ({
       <meta name="twitter:title" content={title} />
       <meta name="twitter:description" content={description} />
       <meta name="twitter:image" content={ogImage} />
+      {hreflang?.map(h => (
+        <link key={h.lang} rel="alternate" hreflang={h.lang} href={h.href} />
+      ))}
       {jsonLd && (
         <script type="application/ld+json">{JSON.stringify(jsonLd)}</script>
       )}

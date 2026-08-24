@@ -58,14 +58,21 @@ const AboutFeatureCard = ({ Icon, title, pct, desc, delay }: { Icon: any; title:
 };
 
 const AboutPage: React.FC = () => {
-  const { t } = useLang();
+  const { lang, t } = useLang();
+
+  const hreflangs = [
+    { lang: 'ru', href: 'https://drdaruzen.com/ru/about' },
+    { lang: 'tr', href: 'https://drdaruzen.com/tr/about' },
+    { lang: 'en', href: 'https://drdaruzen.com/en/about' },
+    { lang: 'ar', href: 'https://drdaruzen.com/ar/about' },
+  ];
 
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'AboutPage',
     name: 'О бренде Daruzen — Премиальные витамины и добавки из Турции',
     description: t.about.desc,
-    url: 'https://drdaruzen.com/about',
+    url: `https://drdaruzen.com/${lang}/about`,
     mainEntity: {
       '@type': 'Organization',
       name: 'Daruzen',
@@ -79,7 +86,8 @@ const AboutPage: React.FC = () => {
         title="О бренде Daruzen — Качество, безопасность, эффективность | drdaruzen.com"
         description="Daruzen — премиальный бренд витаминов и добавок из Турции. Узнайте о нашей философии, миссии и.commitment к качеству. БАД для здоровья, иммунитета и красоты."
         keywords="Daruzen, о бренде, дарузен, турецкие витамины, витамины из Турции, витамины Турция, БАД, БАДы из Турции, пищевые добавки, качество, натуральные добавки, иммунитет, турецкие добавки"
-        canonical="https://drdaruzen.com/about"
+        canonical={`https://drdaruzen.com/${lang}/about`}
+        hreflang={hreflangs}
         jsonLd={jsonLd}
       />
 

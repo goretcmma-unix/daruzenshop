@@ -320,7 +320,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
     <link rel="canonical" href="${esc(canonical)}" />
     ${hreflangLinks}
-    ${xDefaultLink}
     <meta property="og:type" content="product" />
     <meta property="og:url" content="${esc(canonical)}" />
     <meta property="og:title" content="${esc(title)}" />

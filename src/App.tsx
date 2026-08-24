@@ -37,9 +37,9 @@ import QtyButton from './components/QtyButton';
 import AdminPanel from './components/AdminPanel';
 import RecoveryPage from './components/RecoveryPage';
 
-import AboutPage from './pages/AboutPage';
-import CatalogPage from './pages/CatalogPage';
-import ContactsPage from './pages/ContactsPage';
+// import AboutPage from './pages/AboutPage';
+// import CatalogPage from './pages/CatalogPage';
+// import ContactsPage from './pages/ContactsPage';
 import ProductPage from './pages/ProductPage';
 import { NormalizedImg } from './components/NormalizedImg';
 import { FadeInImage } from './components/FadeInImage';
@@ -104,20 +104,24 @@ const App: React.FC = () => {
     setActiveMobileTab('product');
   }, [selectedProduct]);
 
-  useEffect(() => {
-    if (!window.location.hash) {
-      window.scrollTo({ top: 0, behavior: 'instant' });
-    }
-  }, [location.pathname]);
-
-  useEffect(() => {
+  useLayoutEffect(() => {
     const hash = window.location.hash.replace('#', '');
-    if (hash) {
-      const timer = setTimeout(() => {
-        const el = document.getElementById(hash);
-        if (el) el.scrollIntoView({ behavior: 'smooth' });
-      }, 300);
-      return () => clearTimeout(timer);
+    const subpage = location.pathname.match(/\/[^/]+\/(about|contacts|catalog)/)?.[1];
+    const target = hash || subpage;
+
+    if (target) {
+      const el = document.getElementById(target);
+      if (el) {
+        window.scrollTo({ top: el.offsetTop - 80, behavior: 'instant' });
+      } else {
+        const timer = setTimeout(() => {
+          const el2 = document.getElementById(target);
+          if (el2) window.scrollTo({ top: el2.offsetTop - 80, behavior: 'instant' });
+        }, 100);
+        return () => clearTimeout(timer);
+      }
+    } else if (location.pathname === `/${lang}` || location.pathname === '/') {
+      window.scrollTo({ top: 0, behavior: 'instant' });
     }
   }, [location.pathname, location.hash]);
 
@@ -375,10 +379,11 @@ const App: React.FC = () => {
     if (isMobileMenuOpen) setIsMobileMenuOpen(false);
     setActiveSection(targetId);
 
-    const isMainPage = location.pathname === `/${lang}` || location.pathname === '/';
-    if (!isMainPage) {
-      navigate(`/${lang}#${targetId}`);
-      return;
+    const newPath = `/${lang}`;
+    const newHash = targetId === 'top' ? '' : `#${targetId}`;
+    const newUrl = newPath + newHash;
+    if (location.pathname + location.hash !== newUrl) {
+      window.history.pushState({}, '', newUrl);
     }
 
     navClickRef.current = true;
@@ -459,119 +464,6 @@ const App: React.FC = () => {
     return <AdminPanel />;
   }
 
-  const renderHeader = () => (
-    <header className={`header ${scrolled ? 'scrolled' : ''}`}>
-      <div className="container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%', maxWidth: 'none', paddingLeft: '40px', paddingRight: '40px' }}>
-        <div className="header-left-group" style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <button className="md-hidden burger-btn" onClick={() => setIsMobileMenuOpen(true)} aria-label="Menu">
-            <svg viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="var(--primary)" strokeWidth="2.4" strokeLinecap="round" style={{ display: 'block' }}>
-              <line className="b-line b-line-top" x1="3.5" y1="6" x2="20.5" y2="6" />
-              <line className="b-line b-line-mid" x1="3.5" y1="12" x2="20.5" y2="12" />
-              <line className="b-line b-line-bot" x1="3.5" y1="18" x2="20.5" y2="18" />
-            </svg>
-          </button>
-          <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer', textDecoration: 'none' }}>
-            <img src="/images/dr.svg.png" alt="Daruzen Logo" className="header-logo" fetchPriority="high" />
-          </Link>
-        </div>
-        <nav className="desktop-nav" style={{ display: 'flex', gap: '35px', position: 'absolute', left: '50%', transform: 'translateX(-50%)' }}>
-          <a href="#" className={`nav-link${location.pathname === `/${lang}` || location.pathname === '/' ? ' active' : ''}`} onClick={(e) => handleNavClick(e, 'top')}>{t.nav.home}</a>
-          <a href="#catalog" className={`nav-link${location.pathname === '/catalog' ? ' active' : ''}`} onClick={(e) => handleNavClick(e, 'catalog')}>{t.nav.catalog}</a>
-          <a href="#about" className={`nav-link${location.pathname === '/about' || location.pathname === `/${lang}/about` ? ' active' : ''}`} onClick={(e) => handleNavClick(e, 'about')}>{t.nav.about}</a>
-          <a href="#contacts" className={`nav-link${location.pathname === '/contacts' || location.pathname === `/${lang}/contacts` ? ' active' : ''}`} onClick={(e) => handleNavClick(e, 'contacts')}>{t.nav.contacts}</a>
-        </nav>
-        <div className="header-right-group" style={{ display: 'flex', alignItems: 'center', gap: '6px', justifyContent: 'flex-end' }}>
-          <button onClick={() => setIsCartOpen(true)} className="header-cart-btn" style={{ position: 'relative', background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '6px', width: '36px', height: '36px' }}>
-            <ShoppingCart size={20} color="var(--primary)" />
-            <AnimatePresence mode="wait">
-              {cart.length > 0 && (
-                <motion.span key={totalItemsCount} initial={{ scale: 0.5, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.5, opacity: 0 }} className="cart-badge" style={{ position: 'absolute', top: '-2px', right: '-4px', background: 'var(--accent-light)', color: 'var(--primary-dark)', fontSize: '10px', fontWeight: '900', padding: '1px 6px', borderRadius: '100px', boxShadow: '0 2px 6px rgba(237, 196, 77, 0.5)', whiteSpace: 'nowrap', lineHeight: '1.2' }}>
-                  {totalItemsCount}
-                </motion.span>
-              )}
-            </AnimatePresence>
-          </button>
-          <button onClick={() => setIsSearchOpen(true)} style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '6px', width: '36px', height: '36px', color: 'var(--primary)' }}>
-            <Search size={20} />
-          </button>
-          <div style={{ position: 'relative', display: 'inline-block', lineHeight: 0 }}>
-              <div
-                onClick={() => setIsLangOpen(o => !o)}
-                title={LANGS.find(l => l.code === lang)?.label}
-                style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '36px', height: '36px', cursor: 'pointer', borderRadius: '50%', transition: 'background 0.2s', background: isLangOpen ? 'rgba(0,0,0,0.06)' : 'transparent' }}
-              >
-                <div style={{ width: '22px', height: '22px', borderRadius: '50%', overflow: 'hidden' }}>
-                  <img src={LANGS.find(l => l.code === lang)?.flag} alt={lang} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
-                </div>
-              </div>
-              <AnimatePresence>
-                {isLangOpen && (
-                  <>
-                    <motion.div
-                      key="lang-backdrop"
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
-                      onClick={() => setIsLangOpen(false)}
-                      style={{ position: 'fixed', inset: 0, zIndex: 1190 }}
-                    />
-                    <motion.div
-                      key="lang-dropdown"
-                      initial={{ opacity: 0, y: -8, scale: 0.96 }}
-                      animate={{ opacity: 1, y: 0, scale: 1 }}
-                      exit={{ opacity: 0, y: -8, scale: 0.96 }}
-                      transition={{ duration: 0.18, ease: 'easeOut' }}
-                      className="lang-dropdown"
-                      style={{
-                        position: 'absolute',
-                        top: 'calc(100% + 8px)',
-                        insetInlineEnd: 0,
-                        background: '#fff',
-                        borderRadius: '14px',
-                        boxShadow: '0 12px 30px rgba(0,0,0,0.14)',
-                        padding: '6px',
-                        display: 'flex',
-                        flexDirection: 'column',
-                        gap: '4px',
-                        zIndex: 1200,
-                        minWidth: '150px',
-                      }}
-                    >
-                      {LANGS.map(l => (
-                        <motion.div
-                          key={l.code}
-                          onClick={() => { setLang(l.code); setIsLangOpen(false); }}
-                          whileHover={{ background: 'rgba(0,0,0,0.06)' }}
-                          transition={{ duration: 0.15 }}
-                          style={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: '10px',
-                            background: lang === l.code ? 'rgba(0,0,0,0.06)' : 'none',
-                            borderRadius: '10px',
-                            cursor: 'pointer',
-                            padding: '8px 12px',
-                            fontSize: '14px',
-                            color: 'var(--primary-dark)',
-                            textAlign: 'left',
-                          }}
-                        >
-                          <div style={{ width: '22px', height: '22px', borderRadius: '50%', overflow: 'hidden', flexShrink: 0 }}>
-                            <img src={l.flag} alt={l.code} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
-                          </div>
-                          <span>{l.label}</span>
-                        </motion.div>
-                      ))}
-                    </motion.div>
-                  </>
-                )}
-              </AnimatePresence>
-            </div>
-        </div>
-      </div>
-    </header>
-  );
-
   const renderFooter = () => (
     <footer style={{ 
         background: 'rgba(62, 39, 35, 0.96)', 
@@ -630,55 +522,55 @@ const App: React.FC = () => {
 
   return (
     <div className="app-shell">
-        <div key={location.pathname} className="page-transition">
         <Routes>
-        <Route path="/:lang/about" element={
-          <>
-            {renderHeader()}
-            <AboutPage />
-            {renderFooter()}
-          </>
-        } />
-        <Route path="/:lang/contacts" element={
-          <>
-            {renderHeader()}
-            <ContactsPage />
-            {renderFooter()}
-          </>
-        } />
-        <Route path="/about" element={
-          <>
-            {renderHeader()}
-            <AboutPage />
-            {renderFooter()}
-          </>
-        } />
-        <Route path="/contacts" element={
-          <>
-            {renderHeader()}
-            <ContactsPage />
-            {renderFooter()}
-          </>
-        } />
         <Route path="*" element={
           <>
 
         {/* SEO: meta tags for all search engines (skip on product pages — ProductPage handles its own SEOHead) */}
-            {!isProductPage(location.pathname) && (
-            <SEOHead
-              title={(SEO_QUERIES[lang] || SEO_QUERIES.en).title}
-              description={(SEO_QUERIES[lang] || SEO_QUERIES.en).description}
-              keywords={(SEO_QUERIES[lang] || SEO_QUERIES.en).keywords}
-              canonical={`https://drdaruzen.com/${lang}`}
-              ogImage="https://drdaruzen.com/images/og-image.png"
-              hreflang={[
-                { lang: 'ru', href: 'https://drdaruzen.com/ru' },
-                { lang: 'tr', href: 'https://drdaruzen.com/tr' },
-                { lang: 'en', href: 'https://drdaruzen.com/en' },
-                { lang: 'ar', href: 'https://drdaruzen.com/ar' },
-              ]}
-            />
-            )}
+            {!isProductPage(location.pathname) && (() => {
+              const subpage = location.pathname.match(/\/[^/]+\/(about|contacts|catalog)/)?.[1];
+              let seoTitle = (SEO_QUERIES[lang] || SEO_QUERIES.en).title;
+              let seoDesc = (SEO_QUERIES[lang] || SEO_QUERIES.en).description;
+              let seoKeywords = (SEO_QUERIES[lang] || SEO_QUERIES.en).keywords;
+              let seoCanonical = `https://drdaruzen.com/${lang}`;
+              let seoPath = '';
+
+              if (subpage === 'about') {
+                seoTitle = 'О бренде Daruzen — Качество, безопасность, эффективность | drdaruzen.com';
+                seoDesc = 'Daruzen — премиальный бренд витаминов и добавок из Турции. Узнайте о нашей философии, миссии и commitment к качеству.';
+                seoKeywords = 'Daruzen, о бренде, дарузен, турецкие витамины, БАД';
+                seoCanonical = `https://drdaruzen.com/${lang}/about`;
+                seoPath = '/about';
+              } else if (subpage === 'contacts') {
+                seoTitle = 'Контакты Daruzen — Телефон, Email, Офис в Турции | drdaruzen.com';
+                seoDesc = 'Свяжитесь с Daruzen: +90 544 679 10 12, daruzenshop@outlook.com. Офис в Стамбуле, Турция.';
+                seoKeywords = 'Daruzen контакты, дарузен телефон, daruzen email';
+                seoCanonical = `https://drdaruzen.com/${lang}/contacts`;
+                seoPath = '/contacts';
+              } else if (subpage === 'catalog') {
+                seoTitle = 'Каталог витаминов и добавок Daruzen — Витамины, минералы, БАД | drdaruzen.com';
+                seoDesc = 'Каталог премиальных витаминов, минералов и добавок Daruzen. BSO мармеладки, Омега-3, магний и другие натуральные добавки из Турции.';
+                seoKeywords = 'Daruzen каталог, витамины, турецкие витамины, БАД';
+                seoCanonical = `https://drdaruzen.com/${lang}/catalog`;
+                seoPath = '/catalog';
+              }
+
+              return (
+                <SEOHead
+                  title={seoTitle}
+                  description={seoDesc}
+                  keywords={seoKeywords}
+                  canonical={seoCanonical}
+                  ogImage="https://drdaruzen.com/images/og-image.png"
+                  hreflang={[
+                    { lang: 'ru', href: `https://drdaruzen.com/ru${seoPath}` },
+                    { lang: 'tr', href: `https://drdaruzen.com/tr${seoPath}` },
+                    { lang: 'en', href: `https://drdaruzen.com/en${seoPath}` },
+                    { lang: 'ar', href: `https://drdaruzen.com/ar${seoPath}` },
+                  ]}
+                />
+              );
+            })()}
 
         
         {/* JSON-LD ItemList for rich search results (products with images) */}

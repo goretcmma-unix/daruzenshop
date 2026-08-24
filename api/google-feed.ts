@@ -76,11 +76,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const url = SITE + '/ru/product/' + p.id;
     const catKey = p.category_key || p.categoryKey || 'supplements';
     const categoryMap: Record<string, string> = {
-      supplements: 'Здоровье > БАДы и добавки',
-      vitamins: 'Здоровье > Витамины',
-      minerals: 'Здоровье > Минералы',
-      beauty: 'Здоровье > Красота и здоровье',
-      herbs: 'Здоровье > Лекарственные травы',
+      supplements: 'Health & Beauty > Health Care > Dietary Supplements & Vitamins',
+      vitamins: 'Health & Beauty > Health Care > Dietary Supplements & Vitamins',
+      minerals: 'Health & Beauty > Health Care > Dietary Supplements & Vitamins',
+      beauty: 'Health & Beauty > Personal Care',
+      herbs: 'Health & Beauty > Health Care > Herbal & Homeopathic Remedies',
     };
     const category = categoryMap[catKey] || categoryMap.supplements;
 
@@ -95,6 +95,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     xml += '<g:brand>Daruzen</g:brand>\n';
     xml += '<g:condition>new</g:condition>\n';
     xml += '<g:google_product_category>' + esc(category) + '</g:google_product_category>\n';
+    xml += '<g:product_type>' + esc(category) + '</g:product_type>\n';
+    xml += '<g:identifier_exists>false</g:identifier_exists>\n';
     xml += '<g:shipping>\n';
     xml += '<g:country>RU</g:country>\n';
     xml += '<g:service>standard</g:service>\n';

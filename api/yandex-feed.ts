@@ -92,9 +92,27 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     xml += '<vendor>Daruzen</vendor>\n';
     xml += '<vendorCode>' + esc(p.id) + '</vendorCode>\n';
     xml += '<model>' + esc(name) + '</model>\n';
+    xml += '<delivery>true</delivery>\n';
+    xml += '<local_delivery_cost>0</local_delivery_cost>\n';
+    xml += '<condition>new</condition>\n';
 
     if (p.isNew) {
       xml += '<param name="Новинка">Да</param>\n';
+    }
+
+    const weightSpec = (p.specs as Record<string, unknown>)?._weight;
+    if (weightSpec) {
+      xml += '<param name="Вес">' + esc(String(weightSpec)) + '</param>\n';
+    }
+
+    const volumeSpec = (p.specs as Record<string, unknown>)?._volume;
+    if (volumeSpec) {
+      xml += '<param name="Объём">' + esc(String(volumeSpec)) + '</param>\n';
+    }
+
+    const countSpec = (p.specs as Record<string, unknown>)?._count;
+    if (countSpec) {
+      xml += '<param name="Количество в упаковке">' + esc(String(countSpec)) + '</param>\n';
     }
 
     xml += '</offer>\n';

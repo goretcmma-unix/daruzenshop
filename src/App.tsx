@@ -1845,11 +1845,8 @@ const App: React.FC = () => {
           return <ProductPage key={productId} product={lp} onAddToCart={(p, q) => addToCart(p, q)} onBuyNow={(p, q) => buyNow(p, q)} />;
         })()}
       </AnimatePresence>
-{/* CSS for components not using inline styles */}
-          </>
-        } />
+
       </Routes>
-      </div>
 
       <AppStyles />
 

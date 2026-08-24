@@ -249,9 +249,14 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     ? (product.image.startsWith('http') ? product.image : SITE + product.image)
     : SITE + '/images/og-image.png';
   const basePrice = Number(product.price) || 0;
-  const cur = CURRENCY[lang];
-  const converted = basePrice * cur.rate;
-  const price = converted.toFixed(2);
+
+  const feedPriceRUB = (basePrice * 2.2).toFixed(2);
+  const stockSpec = (product.specs as Record<string, unknown>)?._stock;
+  const feedInStock = stockSpec !== '0' && (Array.isArray(stockSpec) ? stockSpec[0] !== '0' : true) && product.inStock !== false && product.in_stock !== false;
+
+  const price = bot ? feedPriceRUB : (basePrice * CURRENCY[lang].rate).toFixed(2);
+  const cur = bot ? CURRENCY.ru : CURRENCY[lang];
+  const inStock = feedInStock;
   const firstSentence = desc.split(/[.!؟]\s/)[0] || desc.slice(0, 120);
 
   const title = (SEO_TITLES[id] && SEO_TITLES[id][lang]) || `${cleanName} | Daruzen`;
@@ -263,9 +268,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   const hreflangTags = ALL_LANGS.map((l) => `<link rel="alternate" hreflang="${l}" href="${SITE}/${l}/product/${id}" />`).join('\n    ');
   const hreflangXDefault = `<link rel="alternate" hreflang="x-default" href="${SITE}/en/product/${id}" />`;
-
-  const stockSpec = (product.specs as Record<string, unknown>)?._stock;
-  const inStock = stockSpec !== '0' && (Array.isArray(stockSpec) ? stockSpec[0] !== '0' : true) && product.inStock !== false && product.in_stock !== false;
 
   const seoName = title.replace(/\s*\|\s*Daruzen\s*$/, '').trim();
   const jsonLd: Record<string, unknown> = {

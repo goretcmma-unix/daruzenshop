@@ -70,7 +70,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const desc = p.descriptions?.ru || p.desc_ru || '';
     const imageUrl = p.image?.startsWith('http') ? p.image : SITE + p.image;
     const basePrice = Number(p.price) || 0;
-    const priceRUB = (basePrice * 2.2).toFixed(2);
+    const priceUSD = (basePrice * 0.025).toFixed(2);
     const stockSpec = (p.specs as Record<string, unknown>)?._stock;
     const inStock = stockSpec !== '0' && (Array.isArray(stockSpec) ? stockSpec[0] !== '0' : true) && p.inStock !== false && p.in_stock !== false;
     const url = SITE + '/ru/product/' + p.id;
@@ -91,16 +91,16 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     xml += '<g:link>' + esc(url) + '</g:link>\n';
     xml += '<g:image_link>' + esc(imageUrl) + '</g:image_link>\n';
     xml += '<g:availability>' + (inStock ? 'in_stock' : 'out_of_stock') + '</g:availability>\n';
-    xml += '<g:price>' + priceRUB + ' RUB</g:price>\n';
+    xml += '<g:price>' + priceUSD + ' USD</g:price>\n';
     xml += '<g:brand>Daruzen</g:brand>\n';
     xml += '<g:condition>new</g:condition>\n';
     xml += '<g:google_product_category>' + esc(category) + '</g:google_product_category>\n';
     xml += '<g:product_type>' + esc(category) + '</g:product_type>\n';
     xml += '<g:identifier_exists>false</g:identifier_exists>\n';
     xml += '<g:shipping>\n';
-    xml += '<g:country>RU</g:country>\n';
+    xml += '<g:country>TR</g:country>\n';
     xml += '<g:service>standard</g:service>\n';
-    xml += '<g:price>0 RUB</g:price>\n';
+    xml += '<g:price>0 USD</g:price>\n';
     xml += '</g:shipping>\n';
     xml += '</item>\n';
   }

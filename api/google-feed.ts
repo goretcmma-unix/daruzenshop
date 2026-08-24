@@ -60,7 +60,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   let xml = '<?xml version="1.0" encoding="UTF-8"?>\n';
   xml += '<rss version="2.0" xmlns:g="http://base.google.com/ns/1.0">\n';
   xml += '<channel>\n';
-  xml += '<title>Daruzen — Vitamins & Supplements from Turkey</title>\n';
+  xml += '<title>Daruzen — Vitamins &amp; Supplements from Turkey</title>\n';
   xml += '<link>' + SITE + '</link>\n';
   xml += '<description>Daruzen — natural vitamins, minerals and supplements from Turkey.</description>\n';
 

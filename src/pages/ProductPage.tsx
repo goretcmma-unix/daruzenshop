@@ -132,8 +132,8 @@ const ProductPage: React.FC<ProductPageProps> = ({ product, onAddToCart, onBuyNo
     offers: {
       '@type': 'Offer',
       url: canonicalLang,
-      priceCurrency: lang === 'en' ? 'USD' : lang === 'ru' ? 'RUB' : 'TRY',
-      price: lang === 'en' ? (product.price * 0.025).toFixed(2) : product.price,
+      priceCurrency: 'RUB',
+      price: (product.price * 2.2).toFixed(2),
       availability: product.inStock === false ? 'https://schema.org/OutOfStock' : 'https://schema.org/InStock',
       seller: { '@type': 'Organization', name: 'Daruzen', url: SITE },
     },

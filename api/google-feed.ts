@@ -95,7 +95,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
       xml += '<item>\n';
       xml += '<g:id>' + esc(p.id + '-' + lang) + '</g:id>\n';
-      xml += '<g:content_language>' + lang + '</g:content_language>\n';
       xml += '<g:title>' + esc(seoName) + '</g:title>\n';
       xml += '<g:description>' + esc(desc) + '</g:description>\n';
       xml += '<g:link>' + esc(url) + '</g:link>\n';

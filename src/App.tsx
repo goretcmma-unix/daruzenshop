@@ -105,6 +105,10 @@ const App: React.FC = () => {
   }, [selectedProduct]);
 
   useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'instant' });
+  }, [location.pathname]);
+
+  useEffect(() => {
     const hash = window.location.hash.replace('#', '');
     if (hash) {
       const timer = setTimeout(() => {
@@ -113,7 +117,7 @@ const App: React.FC = () => {
       }, 300);
       return () => clearTimeout(timer);
     }
-  }, []);
+  }, [location.pathname, location.hash]);
 
   useEffect(() => {
     const track = modalTabsTrackRef.current;
@@ -366,17 +370,19 @@ const App: React.FC = () => {
 
   const handleNavClick = (e: React.MouseEvent<HTMLElement> | null, targetId: string) => {
     if (e) e.preventDefault();
+    if (isMobileMenuOpen) setIsMobileMenuOpen(false);
+
+    const isMainPage = location.pathname === `/${lang}` || location.pathname === '/';
+    if (!isMainPage) {
+      navigate(`/${lang}#${targetId}`);
+      return;
+    }
+
     navClickRef.current = true;
     setTimeout(() => { navClickRef.current = false; }, 800);
     setActiveSection(targetId);
-    
-    if (isMobileMenuOpen) {
-      setIsMobileMenuOpen(false);
-    }
-
     const element = targetId === 'top' ? null : document.getElementById(targetId);
     const targetY = element ? element.offsetTop - 80 : 0;
-    
     window.scrollTo({ top: targetY, behavior: 'smooth' });
   };
 
@@ -467,10 +473,10 @@ const App: React.FC = () => {
           </Link>
         </div>
         <nav className="desktop-nav" style={{ display: 'flex', gap: '35px', position: 'absolute', left: '50%', transform: 'translateX(-50%)' }}>
-          <Link to="/" className={`nav-link${location.pathname === '/' ? ' active' : ''}`}>{t.nav.home}</Link>
-          <Link to="/#catalog" onClick={(e) => { e.preventDefault(); navigate("/"); setTimeout(() => document.getElementById("catalog")?.scrollIntoView({behavior:"smooth"}), 100); }} className={`nav-link${location.pathname === '/catalog' ? ' active' : ''}`}>{t.nav.catalog}</Link>
-          <Link to="/about" className={`nav-link${location.pathname === '/about' ? ' active' : ''}`}>{t.nav.about}</Link>
-          <Link to="/contacts" className={`nav-link${location.pathname === '/contacts' ? ' active' : ''}`}>{t.nav.contacts}</Link>
+          <a href="#" className={`nav-link${location.pathname === `/${lang}` || location.pathname === '/' ? ' active' : ''}`} onClick={(e) => handleNavClick(e, 'top')}>{t.nav.home}</a>
+          <a href="#catalog" className={`nav-link${location.pathname === '/catalog' ? ' active' : ''}`} onClick={(e) => handleNavClick(e, 'catalog')}>{t.nav.catalog}</a>
+          <a href="#about" className={`nav-link${location.pathname === '/about' || location.pathname === `/${lang}/about` ? ' active' : ''}`} onClick={(e) => handleNavClick(e, 'about')}>{t.nav.about}</a>
+          <a href="#contacts" className={`nav-link${location.pathname === '/contacts' || location.pathname === `/${lang}/contacts` ? ' active' : ''}`} onClick={(e) => handleNavClick(e, 'contacts')}>{t.nav.contacts}</a>
         </nav>
         <div className="header-right-group" style={{ display: 'flex', alignItems: 'center', gap: '6px', justifyContent: 'flex-end' }}>
           <button onClick={() => setIsCartOpen(true)} className="header-cart-btn" style={{ position: 'relative', background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '6px', width: '36px', height: '36px' }}>
@@ -622,6 +628,7 @@ const App: React.FC = () => {
 
   return (
     <div className="app-shell">
+        <div key={location.pathname} className="page-transition">
         <Routes>
         <Route path="/:lang/about" element={
           <>
@@ -1942,6 +1949,7 @@ const App: React.FC = () => {
           </>
         } />
       </Routes>
+      </div>
 
       <AppStyles />
 

@@ -652,6 +652,14 @@ html[lang="ar"] .hero-section::after {
     .mobile-menu-link {
       cursor: pointer;
     }
+
+    @keyframes pageIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .page-transition {
+      animation: pageIn 0.25s ease-out;
+    }
   `}
 </style>
 );

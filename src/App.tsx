@@ -105,7 +105,9 @@ const App: React.FC = () => {
   }, [selectedProduct]);
 
   useEffect(() => {
-    window.scrollTo({ top: 0, behavior: 'instant' });
+    if (!window.location.hash) {
+      window.scrollTo({ top: 0, behavior: 'instant' });
+    }
   }, [location.pathname]);
 
   useEffect(() => {
@@ -371,6 +373,7 @@ const App: React.FC = () => {
   const handleNavClick = (e: React.MouseEvent<HTMLElement> | null, targetId: string) => {
     if (e) e.preventDefault();
     if (isMobileMenuOpen) setIsMobileMenuOpen(false);
+    setActiveSection(targetId);
 
     const isMainPage = location.pathname === `/${lang}` || location.pathname === '/';
     if (!isMainPage) {
@@ -380,7 +383,6 @@ const App: React.FC = () => {
 
     navClickRef.current = true;
     setTimeout(() => { navClickRef.current = false; }, 800);
-    setActiveSection(targetId);
     const element = targetId === 'top' ? null : document.getElementById(targetId);
     const targetY = element ? element.offsetTop - 80 : 0;
     window.scrollTo({ top: targetY, behavior: 'smooth' });

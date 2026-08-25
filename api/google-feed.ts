@@ -74,7 +74,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     for (const p of products) {
       const seoName = SEO_NAMES[p.id]?.[lang] || SEO_NAMES[p.id]?.en || p.id;
       if (!seoName) continue;
-      const desc = p.descriptions?.[lang] || p.descriptions?.en || '';
+      const desc = (typeof p[`desc_${lang}`] === 'string' ? p[`desc_${lang}`] : '') || (typeof p.desc_en === 'string' ? p.desc_en : '') || '';
       const imageUrl = p.image?.startsWith('http') ? p.image : SITE + p.image;
       const basePrice = Number(p.price) || 0;
       const priceVal = (basePrice * RATE_MAP[lang]).toFixed(2);

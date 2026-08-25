@@ -16,7 +16,7 @@ const SEO_NAMES: Record<string, Record<string, string>> = {
   'prod-8': { ru: 'CoQ10 NADH Gummy — B6, B12, Глутатион', tr: 'CoQ10 NADH Gummy — B6, B12, Glutatyon', en: 'CoQ10 NADH Gummy — B6, B12, Glutathione', ar: 'كوجيميو NADH جيمي — ب6، ب12، غلوتاثيون' },
   'prod-9': { ru: 'Chromium Gummy — Хром, Гимнема', tr: 'Chromium Gummy — Krom, Gymnema', en: 'Chromium Gummy — Chromium, Gymnema', ar: 'كروم جيمي — كروم، جيمنيما' },
   'prod-10': { ru: 'Ginkgo Ginseng Gummy — Гинкго, Женьшень', tr: 'Ginkgo Ginseng Gummy — Ginkgo, Ginseng', en: 'Ginkgo Ginseng Gummy — Ginkgo Biloba, Ginseng', ar: 'جنكجو جنسنج جيمي — جنكجو بيلوبا، جنسنج' },
-  'prod-11': { ru: 'Multi Gummy — C, D3, Лютейн, Омега-3, Цинк', tr: 'Multi Gummy — C, D3, Lutein, Omega-3, Çinko', en: 'Multi Gummy — C, D3, Lutein, Omega-3, Zinc', ar: 'מולטי جيمي — سي، د3، لوتين، أوميغا 3، زنك' },
+  'prod-11': { ru: 'Optima Kompleks — C, D3, Лютейн, Омега-3, Цинк', tr: 'Optima Kompleks — C, D3, Lutein, Omega-3, Çinko', en: 'Optima Kompleks — C, D3, Lutein, Omega-3, Zinc', ar: 'מולטי جيمي — سي، د3، لوتين، أوميغا 3، زنك' },
   'prod-12': { ru: 'Multivitamin Gummy — C, E, A, B12', tr: 'Multivitamin Gummy — C, E, A, B12', en: 'Multivitamin Gummy — C, E, A, B12', ar: 'ملتي فيتامين جيمي — سي، إي، أ، ب12' },
   'prod-13': { ru: 'Folic Acid Gummy — Фолиевая кислота, Цинк, Q10', tr: 'Folic Acid Gummy — Folik Asit, Çinko, Q10', en: 'Folic Acid Gummy — Folic Acid, Zinc, Q10', ar: 'حمض فوليك جيمي — حمض فوليك، زنك، Q10' },
   'prod-14': { ru: 'Iron Gummy — Железо, Витамин C', tr: 'Iron Gummy — Demir, C Vitamini', en: 'Iron Gummy — Iron, Vitamin C', ar: 'حديد جيمي — حديد، فيتامين سي' },

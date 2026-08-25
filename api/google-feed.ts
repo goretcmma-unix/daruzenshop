@@ -6,20 +6,20 @@ const supabaseKey = process.env.SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_A
 const SITE = 'https://drdaruzen.com';
 
 const SEO_NAMES: Record<string, Record<string, string>> = {
-  'prod-1': { ru: 'Витамин D3, Цинк, Масло чёрного тмина — BSO Gummy', tr: 'D3 Vitamini, Çinko, Kara Mela Yağı — BSO Gummy', en: 'Vitamin D3, Zinc, Black Seed Oil — BSO Gummy', ar: 'فيتامين د3، زيت الحبة السوداء — BSO جيمي' },
-  'prod-2': { ru: 'Омега 3 — EPA 600 мг, DHA 400 мг, Рыбий жир', tr: 'Omega 3 — EPA 600 mg, DHA 400 mg, Balık Yağı', en: 'Omega 3 — EPA 600 mg, DHA 400 mg, Fish Oil', ar: 'أوميغا 3 — EPA 600 ملغ، DHA 400 ملغ، زيت السمك' },
-  'prod-3': { ru: 'Витамин B12, Витамин B9, Яблочный уксус — ACV', tr: 'B12 Vitamini, B9 Vitamini, Elma Sirkesi — ACV', en: 'Vitamin B12, Vitamin B9, Apple Cider Vinegar — ACV', ar: 'فيتامين ب12، فيتامين ب9، خل التفاح — ACV' },
-  'prod-4': { ru: 'Магний + Витамин B6 — Комплекс 4 форм', tr: 'Magnezyum + B6 Vitamini — 4 Form Kompleks', en: 'Magnesium + Vitamin B6 — 4 Form Complex', ar: 'مغنيسيوم + فيتامين ب6 — كومبلكس 4 أشكال' },
-  'prod-5': { ru: 'Комплекс 11 трав — Валериана, Пассифлора, Мелисса', tr: '11 Bitki Kompleksi — Valerian, Passionflower, Melisa', en: '11 Herb Complex — Valerian, Passionflower, Lemon Balm', ar: 'مجمع 11 عشبة — فاليريانا، باشنفلور، ليمون بالما' },
-  'prod-6': { ru: 'Витамин Цинк + Селен + Медь — Комплекс', tr: 'Çinko + Selenyum + Bakır — Kompleks', en: 'Zinc + Selenium + Copper — Complex', ar: 'زنك + سيلينيوم + نحاس — كومبلكس' },
-  'prod-7': { ru: 'Артишок + Расторопша + Одуванчик — Травяной комплекс', tr: 'Enginar + Deve Dikeni + Radika — Bitkisel Kompleks', en: 'Artichoke + Milk Thistle + Dandelion — Herbal Complex', ar: 'خرشوف + شوكة القديس + الهندباء — مجمع عشبي' },
-  'prod-8': { ru: 'Витамин B6, B12, NADH, Глутатион, CoQ10 — Комплекс', tr: 'B6, B12 Vitamini, NADH, Glutatyon, CoQ10 — Kompleks', en: 'Vitamin B6, B12, NADH, Glutathione, CoQ10 — Complex', ar: 'فيتامين ب6، ب12، إناديه، غلوتاثيون، كوكيو10 — مجمع' },
-  'prod-9': { ru: 'Хром + Гимнема — Травяной комплекс', tr: 'Krom + Gymnema — Bitkisel Kompleks', en: 'Chromium + Gymnema — Herbal Complex', ar: 'كروم + جيمنيما — مجمع عشبي' },
-  'prod-10': { ru: 'Гинкго Билоба + Женьшень + Цитиколин — Травяной комплекс', tr: 'Ginkgo Biloba + Ginseng + Sitikolin — Bitkisel Kompleks', en: 'Ginkgo Biloba + Ginseng + Citicoline — Herbal Complex', ar: 'جنكго بيلوبا + جنسنج + سيتيكولين — مجمع عشبي' },
-  'prod-11': { ru: 'Витамин C, D3, Лютейн, Омега-3, Цинк, Куркумин — Мульти', tr: 'C, D3, Lutein, Omega-3, Çinko, Kürkumin Vitamini — Multi', en: 'Vitamin C, D3, Lutein, Omega-3, Zinc, Curcumin — Multi', ar: 'فيتامين سي، د3، لوتين، أوميغا 3، زنك، كركيكومين — ملتي' },
-  'prod-12': { ru: 'Мультивитамин C, E, A, B12 — Жевательные мармеладки', tr: 'Multivitamin C, E, A, B12 — Çiğneme Jel Şekerleri', en: 'Multivitamin C, E, A, B12 — Gummy Vitamins', ar: 'ملتي فيتامين سي، إي، أ، ب12 — فيتامينات مضغ' },
-  'prod-13': { ru: 'Фолиевая кислота + Цинк + Q10 — Комплекс', tr: 'Folik Asit + Çinko + Q10 — Kompleks', en: 'Folic Acid + Zinc + Q10 — Complex', ar: 'حمض الفوليك + زنك + كو Q10 — مجمع' },
-  'prod-14': { ru: 'Железо Бисглицинат + Витамин C — Комплекс', tr: 'Bisglisinat Demir + C Vitamini — Kompleks', en: 'Iron Bisglycinate + Vitamin C — Complex', ar: 'حديد البيسغلايسينات + فيتامين سي — مجمع' },
+  'prod-1': { ru: 'BSO Gummy — Витамин D3, Цинк', tr: 'BSO Gummy — D3 Vitamini, Çinko', en: 'BSO Gummy — Vitamin D3, Zinc', ar: 'BSO جيمي — فيتامين د3، زنك' },
+  'prod-2': { ru: 'Omega 3 Gummy — EPA 600 мг, DHA 400 мг', tr: 'Omega 3 Gummy — EPA 600 mg, DHA 400 mg', en: 'Omega 3 Gummy — EPA 600 mg, DHA 400 mg', ar: 'أوميغا 3 جيمي — EPA 600 ملغ، DHA 400 ملغ' },
+  'prod-3': { ru: 'ACV Gummy — B12, B9, Яблочный уксус', tr: 'ACV Gummy — B12, B9, Elma Sirkesi', en: 'ACV Gummy — B12, B9, Apple Cider Vinegar', ar: 'ACV جيمي — ب12، ب9، خل التفاح' },
+  'prod-4': { ru: 'Magnesium B6 Gummy — 4 формы магния', tr: 'Magnesium B6 Gummy — 4 Form Magnezyum', en: 'Magnesium B6 Gummy — 4 Form Magnesium', ar: 'مغنيسيوم B6 جيمي — 4 أشكال مغنيسيوم' },
+  'prod-5': { ru: 'Herb Gummy — 11 растительных экстрактов', tr: 'Herb Gummy — 11 Bitki Özü', en: 'Herb Gummy — 11 Herbal Extracts', ar: 'هيرب جيمي — 11 مستخلص عشبي' },
+  'prod-6': { ru: 'Zinc Selenium Gummy — Цинк, Селен, Медь', tr: 'Zinc Selenium Gummy — Çinko, Selenyum, Bakır', en: 'Zinc Selenium Gummy — Zinc, Selenium, Copper', ar: 'زنك سيلينيوم جيمي — زنك، سيلينيوم، نحاس' },
+  'prod-7': { ru: 'Artichoke Gummy — Артишок, Расторопша', tr: 'Artichoke Gummy — Enginar, Deve Dikeni', en: 'Artichoke Gummy — Artichoke, Milk Thistle', ar: 'أرتيشوك جيمي — خرشوف، شوكة القديس' },
+  'prod-8': { ru: 'CoQ10 NADH Gummy — B6, B12, Глутатион', tr: 'CoQ10 NADH Gummy — B6, B12, Glutatyon', en: 'CoQ10 NADH Gummy — B6, B12, Glutathione', ar: 'كوجيميو NADH جيمي — ب6، ب12، غلوتاثيون' },
+  'prod-9': { ru: 'Chromium Gummy — Хром, Гимнема', tr: 'Chromium Gummy — Krom, Gymnema', en: 'Chromium Gummy — Chromium, Gymnema', ar: 'كروم جيمي — كروم، جيمنيما' },
+  'prod-10': { ru: 'Ginkgo Ginseng Gummy — Гинкго, Женьшень', tr: 'Ginkgo Ginseng Gummy — Ginkgo, Ginseng', en: 'Ginkgo Ginseng Gummy — Ginkgo Biloba, Ginseng', ar: 'جنكجو جنسنج جيمي — جنكجو بيلوبا، جنسنج' },
+  'prod-11': { ru: 'Multi Gummy — C, D3, Лютейн, Омега-3, Цинк', tr: 'Multi Gummy — C, D3, Lutein, Omega-3, Çinko', en: 'Multi Gummy — C, D3, Lutein, Omega-3, Zinc', ar: 'מולטי جيمي — سي، د3، لوتين، أوميغا 3، زنك' },
+  'prod-12': { ru: 'Multivitamin Gummy — C, E, A, B12', tr: 'Multivitamin Gummy — C, E, A, B12', en: 'Multivitamin Gummy — C, E, A, B12', ar: 'ملتي فيتامين جيمي — سي، إي، أ، ب12' },
+  'prod-13': { ru: 'Folic Acid Gummy — Фолиевая кислота, Цинк, Q10', tr: 'Folic Acid Gummy — Folik Asit, Çinko, Q10', en: 'Folic Acid Gummy — Folic Acid, Zinc, Q10', ar: 'حمض فوليك جيمي — حمض فوليك، زنك، Q10' },
+  'prod-14': { ru: 'Iron Gummy — Железо, Витамин C', tr: 'Iron Gummy — Demir, C Vitamini', en: 'Iron Gummy — Iron, Vitamin C', ar: 'حديد جيمي — حديد، فيتامين سي' },
 };
 
 function esc(s: string): string {

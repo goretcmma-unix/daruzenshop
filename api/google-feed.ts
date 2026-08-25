@@ -10,16 +10,16 @@ const SEO_NAMES: Record<string, Record<string, string>> = {
   'prod-2': { ru: 'Омега 3 — EPA 600 мг, DHA 400 мг, Рыбий жир', tr: 'Omega 3 — EPA 600 mg, DHA 400 mg, Balık Yağı', en: 'Omega 3 — EPA 600 mg, DHA 400 mg, Fish Oil', ar: 'أوميغا 3 — EPA 600 ملغ، DHA 400 ملغ، زيت السمك' },
   'prod-3': { ru: 'Витамин B12, Витамин B9, Яблочный уксус — ACV', tr: 'B12 Vitamini, B9 Vitamini, Elma Sirkesi — ACV', en: 'Vitamin B12, Vitamin B9, Apple Cider Vinegar — ACV', ar: 'فيتامين ب12، فيتامين ب9، خل التفاح — ACV' },
   'prod-4': { ru: 'Магний + Витамин B6 — Комплекс 4 форм', tr: 'Magnezyum + B6 Vitamini — 4 Form Kompleks', en: 'Magnesium + Vitamin B6 — 4 Form Complex', ar: 'مغنيسيوم + فيتامين ب6 — كومبلكس 4 أشكال' },
-  'prod-5': { ru: 'Антистресс — Витамины для нервной системы, 11 трав', tr: 'Anti-Stres — Sinir Sistemi için Vitaminler, 11 Bitki', en: 'Anti-Stress — Vitamins for Nervous System, 11 Herbs', ar: 'مضاد للتوتر — فيتامينات للجهاز العصبي، 11 عشبة' },
+  'prod-5': { ru: 'Комплекс 11 трав — Валериана, Пассифлора, Мелисса', tr: '11 Bitki Kompleksi — Valerian, Passionflower, Melisa', en: '11 Herb Complex — Valerian, Passionflower, Lemon Balm', ar: 'مجمع 11 عشبة — فاليريانا، باشنفلور، ليمون بالما' },
   'prod-6': { ru: 'Витамин Цинк + Селен + Медь — Комплекс', tr: 'Çinko + Selenyum + Bakır — Kompleks', en: 'Zinc + Selenium + Copper — Complex', ar: 'زنك + سيلينيوم + نحاس — كومبلكس' },
-  'prod-7': { ru: 'Артишок + Расторопша + Одуванчик — Витамين для печени', tr: 'Enginar + Deve Dikeni + Radika — Karaciğer Vitamini', en: 'Artichoke + Milk Thistle + Dandelion — Liver Vitamin', ar: 'خرشوف + شوكة القديس + الهندباء — فيتامين الكبد' },
-  'prod-8': { ru: 'Витамин B6, B12, NADH, Глутатион, CoQ10 — Антиоксидант', tr: 'B6, B12, NADH, Glutatyon, CoQ10 Vitamini — Antioksidan', en: 'Vitamin B6, B12, NADH, Glutathione, CoQ10 — Antioxidant', ar: 'فيتامين ب6، ب12، إناديه، غلوتاثيون، كوคيو10 — مضاد أكسدة' },
-  'prod-9': { ru: 'Хром + Гимнема — Витамин для сахара в крови', tr: 'Krom + Gymnema — Kan Şekeri Vitamini', en: 'Chromium + Gymnema — Blood Sugar Vitamin', ar: 'كروم + جيمنيما — فيتامين سكر الدم' },
-  'prod-10': { ru: 'Гинкго Билоба + Женьшень + Цитиколин — Витамин для мозга', tr: 'Ginkgo Biloba + Ginseng + Sitikolin — Beyin Vitamini', en: 'Ginkgo Biloba + Ginseng + Citicoline — Brain Vitamin', ar: 'جنكго بيلوبا + جنسنج + سيتيكولين — فيتامين الدماغ' },
+  'prod-7': { ru: 'Артишок + Расторопша + Одуванчик — Травяной комплекс', tr: 'Enginar + Deve Dikeni + Radika — Bitkisel Kompleks', en: 'Artichoke + Milk Thistle + Dandelion — Herbal Complex', ar: 'خرشوف + شوكة القديس + الهندباء — مجمع عشبي' },
+  'prod-8': { ru: 'Витамин B6, B12, NADH, Глутатион, CoQ10 — Комплекс', tr: 'B6, B12 Vitamini, NADH, Glutatyon, CoQ10 — Kompleks', en: 'Vitamin B6, B12, NADH, Glutathione, CoQ10 — Complex', ar: 'فيتامين ب6، ب12، إناديه، غلوتاثيون، كوكيو10 — مجمع' },
+  'prod-9': { ru: 'Хром + Гимнема — Травяной комплекс', tr: 'Krom + Gymnema — Bitkisel Kompleks', en: 'Chromium + Gymnema — Herbal Complex', ar: 'كروم + جيمنيما — مجمع عشبي' },
+  'prod-10': { ru: 'Гинкго Билоба + Женьшень + Цитиколин — Травяной комплекс', tr: 'Ginkgo Biloba + Ginseng + Sitikolin — Bitkisel Kompleks', en: 'Ginkgo Biloba + Ginseng + Citicoline — Herbal Complex', ar: 'جنكго بيلوبا + جنسنج + سيتيكولين — مجمع عشبي' },
   'prod-11': { ru: 'Витамин C, D3, Лютейн, Омега-3, Цинк, Куркумин — Мульти', tr: 'C, D3, Lutein, Omega-3, Çinko, Kürkumin Vitamini — Multi', en: 'Vitamin C, D3, Lutein, Omega-3, Zinc, Curcumin — Multi', ar: 'فيتامين سي، د3، لوتين، أوميغا 3، زنك، كركيكومين — ملتي' },
   'prod-12': { ru: 'Мультивитамин C, E, A, B12 — Жевательные мармеладки', tr: 'Multivitamin C, E, A, B12 — Çiğneme Jel Şekerleri', en: 'Multivitamin C, E, A, B12 — Gummy Vitamins', ar: 'ملتي فيتامين سي، إي، أ، ب12 — فيتامينات مضغ' },
-  'prod-13': { ru: 'Фолиевая кислота + Цинк + Q10 — Женский витамин', tr: 'Folik Asit + Çinko + Q10 — Kadın Vitamini', en: 'Folic Acid + Zinc + Q10 — Women\'s Vitamin', ar: 'حمض الفوليك + زنك + كو Q10 — فيتامين المرأة' },
-  'prod-14': { ru: 'Железо Бисглицинат + Витамин C — Витамин для крови', tr: 'Bisglisinat Demir + C Vitamini — Kan Vitamini', en: 'Iron Bisglycinate + Vitamin C — Blood Vitamin', ar: 'حديد البيسغلايسينات + فيتامين سي — فيتامين الدم' },
+  'prod-13': { ru: 'Фолиевая кислота + Цинк + Q10 — Комплекс', tr: 'Folik Asit + Çinko + Q10 — Kompleks', en: 'Folic Acid + Zinc + Q10 — Complex', ar: 'حمض الفوليك + زنك + كو Q10 — مجمع' },
+  'prod-14': { ru: 'Железо Бисглицинат + Витамин C — Комплекс', tr: 'Bisglisinat Demir + C Vitamini — Kompleks', en: 'Iron Bisglycinate + Vitamin C — Complex', ar: 'حديد البيسغلايسينات + فيتامين سي — مجمع' },
 };
 
 function esc(s: string): string {

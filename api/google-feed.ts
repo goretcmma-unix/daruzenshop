@@ -22,51 +22,6 @@ const SEO_NAMES: Record<string, Record<string, string>> = {
   'prod-14': { ru: 'Железо Бисглицинат + Витамин C — Комплекс', tr: 'Bisglisinat Demir + C Vitamini — Kompleks', en: 'Iron Bisglycinate + Vitamin C — Complex', ar: 'حديد بيسغليسينات + فيتامين C — مجمع' },
 };
 
-function esc(s: string): string {
-  return s
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&apos;');
-}
-
-function formatDate(d: Date): string {
-  return d.toISOString().replace('T', ' ').slice(0, 19);
-}
-
-export default async function handler(req: VercelRequest, res: VercelResponse) {
-  res.setHeader('Content-Type', 'application/xml; charset=utf-8');
-  res.setHeader('Cache-Control', 'public, max-age=3600, s-maxage=3600');
-
-  let products: any[] = [];
-
-  if (supabaseUrl && supabaseKey) {
-    try {
-      const supabase = createClient(supabaseUrl, supabaseKey);
-      const { data, error } = await supabase
-        .from('products')
-        .select('*')
-        .order('sort_order', { ascending: false });
-      if (data && !error) products = data;
-    } catch {}
-  }
-
-  if (products.length === 0) {
-    res.status(200).send('<?xml version="1.0" encoding="UTF-8"?>\n<rss version="2.0" xmlns:g="http://base.google.com/ns/1.0"><channel></channel></rss>');
-    return;
-  }
-
-  let xml = '<?xml version="1.0" encoding="UTF-8"?>\n';
-  xml += '<rss version="2.0" xmlns:g="http://base.google.com/ns/1.0">\n';
-  xml += '<channel>\n';
-  xml += '<title>Daruzen — Vitamins &amp; Supplements from Turkey</title>\n';
-  xml += '<link>' + SITE + '</link>\n';
-  xml += '<description>Daruzen — natural vitamins, minerals and supplements from Turkey.</description>\n';
-
-  const LANGS = ['ru', 'tr', 'en', 'ar'] as const;
-  const COUNTRY_MAP: Record<string, string> = { ru: 'RU', tr: 'TR', en: 'US', ar: 'SA' };
-
 const SAFE_DESCRIPTIONS: Record<string, Record<string, string>> = {
   'prod-1': {
     ru: 'Жевательные пастилки с маслом чёрного тмина, витамином D3 и цинком. Дополнение к ежедневному рациону в удобном вкусном формате.',
@@ -153,6 +108,51 @@ const SAFE_DESCRIPTIONS: Record<string, Record<string, string>> = {
     ar: 'حديد بيسغليسينات وفيتامين سي في صيغة أقراص المضغ. مكمل يومي لمن يهتم بتغذيته.',
   },
 };
+
+function esc(s: string): string {
+  return s
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&apos;');
+}
+
+function formatDate(d: Date): string {
+  return d.toISOString().replace('T', ' ').slice(0, 19);
+}
+
+export default async function handler(req: VercelRequest, res: VercelResponse) {
+  res.setHeader('Content-Type', 'application/xml; charset=utf-8');
+  res.setHeader('Cache-Control', 'public, max-age=3600, s-maxage=3600');
+
+  let products: any[] = [];
+
+  if (supabaseUrl && supabaseKey) {
+    try {
+      const supabase = createClient(supabaseUrl, supabaseKey);
+      const { data, error } = await supabase
+        .from('products')
+        .select('*')
+        .order('sort_order', { ascending: false });
+      if (data && !error) products = data;
+    } catch {}
+  }
+
+  if (products.length === 0) {
+    res.status(200).send('<?xml version="1.0" encoding="UTF-8"?>\n<rss version="2.0" xmlns:g="http://base.google.com/ns/1.0"><channel></channel></rss>');
+    return;
+  }
+
+  let xml = '<?xml version="1.0" encoding="UTF-8"?>\n';
+  xml += '<rss version="2.0" xmlns:g="http://base.google.com/ns/1.0">\n';
+  xml += '<channel>\n';
+  xml += '<title>Daruzen — Vitamins &amp; Supplements from Turkey</title>\n';
+  xml += '<link>' + SITE + '</link>\n';
+  xml += '<description>Daruzen — natural vitamins, minerals and supplements from Turkey.</description>\n';
+
+  const LANGS = ['ru', 'tr', 'en', 'ar'] as const;
+  const COUNTRY_MAP: Record<string, string> = { ru: 'RU', tr: 'TR', en: 'US', ar: 'SA' };
 
   const CURRENCY_MAP: Record<string, string> = { ru: 'RUB', tr: 'TRY', en: 'USD', ar: 'TRY' };
   const RATE_MAP: Record<string, number> = { ru: 2.2, tr: 1, en: 0.025, ar: 1 };

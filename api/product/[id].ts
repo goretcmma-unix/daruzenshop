@@ -200,6 +200,26 @@ async function getAssets(): Promise<string> {
   }
 }
 
+
+function sanitizeForGoogle(text: string): string {
+  return text
+    .replace(/для печени|для мозга|для крови|для сахара|для глаз|для нерв|для иммунитет|для зрения|для похуд|для энергии|для сердца/gi, '')
+    .replace(/antioksidan|антиоксидант|antioxidant/gi, '')
+    .replace(/антивозрастн|anti-aging|antiaging/gi, '')
+    .replace(/детокс|очищен|очищение|очистк/gi, '')
+    .replace(/лечени|лечение|лечит|therapeutic|treatment/gi, '')
+    .replace(/профилактик|prevention/gi, '')
+    .replace(/повышени[ейю] иммунитет|укреплен.*иммунитет|immune boost/gi, '')
+    .replace(/снижени.*вес|похуден|weight loss|weight control/gi, '')
+    .replace(/контрол.*сахар|нормализац.*сахар|blood sugar/gi, '')
+    .replace(/восполн.*дефицит|deficiency/gi, '')
+    .replace(/анеми|anemia/gi, '')
+    .replace(/гемоглобин|hemoglobin/gi, '')
+    .replace(/,\s*$/g, '')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   const id = req.query.id as string;
   if (!id) return res.status(400).send('Missing product id');
@@ -260,7 +280,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   const firstSentence = desc.split(/[.!؟]\s/)[0] || desc.slice(0, 120);
 
   const title = (SEO_TITLES[id] && SEO_TITLES[id][lang]) || `${cleanName} | Daruzen`;
+  const botTitle = sanitizeForGoogle(title);
   const rawDesc = META_DESC_TEMPLATES[lang](name, catLabel, firstSentence);
+  const botDesc = sanitizeForGoogle(rawDesc.length > 155 ? rawDesc.slice(0, 152).replace(/[,;]\s*$/, '') + '...' : rawDesc);
   const description = rawDesc.length > 155 ? rawDesc.slice(0, 152).replace(/[,;]\s*$/, '') + '...' : rawDesc;
   const keywords = KEYWORDS_TEMPLATES[lang](name, catLabel, firstSentence);
 
@@ -274,7 +296,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     '@context': 'https://schema.org',
     '@type': 'Product',
     name: seoName,
-    description: desc,
+    description: sanitizeForGoogle(desc) || desc,
     image: [imageUrl],
     sku: id,
     mpn: id,
@@ -318,8 +340,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>${esc(title)}</title>
-    <meta name="description" content="${esc(description)}" />
+    <title>${esc(botTitle)}</title>
+    <meta name="description" content="${esc(botDesc)}" />
     <meta name="keywords" content="${esc(keywords)}" />
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
     <link rel="canonical" href="${esc(canonical)}" />

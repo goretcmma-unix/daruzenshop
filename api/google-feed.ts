@@ -13,7 +13,7 @@ const SEO_NAMES: Record<string, Record<string, string>> = {
 'prod-5': { ru: 'Травяной комплекс — 11 растительных экстрактов', tr: 'Bitkisel Kompleks — 11 Bitki Özü', en: 'Herbal Complex — 11 Plant Extracts', ar: 'مجمع عشبي — 11 مستخلص نباتي' },
 'prod-6': { ru: 'Цинк + Селен + Медь — Комплекс', tr: 'Çinko + Selenyum + Bakır — Kompleks', en: 'Zinc + Selenium + Copper — Complex', ar: 'زنك + سيلينيوم + نحاس — مجمع' },
 'prod-7': { ru: 'Травяной комплекс — Артишок и растительные экстракты', tr: 'Bitkisel Kompleks — Enginar ve Bitki Özleri', en: 'Herbal Complex — Artichoke & Plant Extracts', ar: 'مجمع عشبي — خرشوف ومستخلصات نباتية' },
-'prod-8': { ru: 'Энергетический комплекс', tr: 'Enerji Kompleksi', en: 'Active Lifestyle Complex', ar: 'مجمع الطاقة' },
+'prod-8': { ru: 'Энергетический комплекс', tr: 'Enerji Kompleksi', en: 'Coenzyme Q10 Gummies', ar: 'مجمع الطاقة' },
 'prod-9': { ru: 'Хром + Растительный комплекс', tr: 'Krom + Bitkisel Kompleks', en: 'Chromium + Herbal Complex', ar: 'كروم + مجمع عشبي' },
 'prod-10': { ru: 'Гинкго Билоба + Женьшень — Растительный комплекс', tr: 'Ginkgo Biloba + Ginseng — Bitkisel Kompleks', en: 'Ginkgo Biloba + Ginseng — Herbal Complex', ar: 'جنكغو بيلوبا + جنسنج — مجمع عشبي' },
 'prod-11': { ru: 'Optima Kompleks', tr: 'Optima Kompleks', en: 'Optima Kompleks', ar: 'أوبتيما كومبلكس' },

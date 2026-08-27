@@ -68,7 +68,7 @@ const SAFE_DESCRIPTIONS: Record<string, Record<string, string>> = {
   'prod-8': {
     ru: 'Жевательные пастилки с коэнзимом Q10, NADH и витаминами B6, B12. Формула для тех, кто ведёт активный образ жизни.',
     tr: 'Koenzim Q10, NADH ve B6-B12 vitaminleri içeren çiğneme jölesi. Aktif yaşam tarzı için formül.',
-    en: 'Chewing gummies with coenzyme Q10, NADH and vitamins B6, B12. A formula for those with an active lifestyle.',
+    en: 'Chewing gummies with coenzyme Q10 and B vitamins B6, B12. A formula for those with an active lifestyle.',
     ar: 'أقراص مضغ بالإنزيم المساعد Q10 وNADH وفيتاميني ب6 وب12. تركيبة لمن يعيش نمط حياة نشط.',
   },
   'prod-9': {

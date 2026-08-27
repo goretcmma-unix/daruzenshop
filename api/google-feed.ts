@@ -6,20 +6,20 @@ const supabaseKey = process.env.SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_A
 const SITE = 'https://drdaruzen.com';
 
 const SEO_NAMES: Record<string, Record<string, string>> = {
-  'prod-1': { ru: 'BSO Gummy — Масло чёрного тмина, D3, Цинк', tr: 'BSO Gummy — Siyah Kimyon Yağı, D3, Çinko', en: 'BSO Gummy — Black Seed Oil, D3, Zinc', ar: 'BSO جيمي — زيت الحبة السوداء، D3، زنك' },
-  'prod-2': { ru: 'Омега 3 — EPA 600 мг, DHA 400 мг', tr: 'Omega 3 — EPA 600 mg, DHA 400 mg', en: 'Omega 3 — EPA 600 mg, DHA 400 mg', ar: 'أوميغا 3 — EPA 600 ملغ، DHA 400 ملغ' },
-  'prod-3': { ru: 'ACV Gummy — Яблочный уксус, B12, B9', tr: 'ACV Gummy — Elma Sirkesi, B12, B9', en: 'ACV Gummy — Apple Cider Vinegar, B12, B9', ar: 'ACV جيمي — خل التفاح، B12، B9' },
-  'prod-4': { ru: 'Магний + Витамин B6 — 4 формы', tr: 'Magnezyum + B6 Vitamini — 4 Form', en: 'Magnesium + Vitamin B6 — 4 Forms', ar: 'مغنيسيوم + فيتامين B6 — 4 أشكال' },
-  'prod-5': { ru: 'Травяной комплекс — 11 растительных экстрактов', tr: 'Bitkisel Kompleks — 11 Bitki Özü', en: 'Herbal Complex — 11 Plant Extracts', ar: 'مجمع عشبي — 11 مستخلص نباتي' },
-  'prod-6': { ru: 'Цинк + Селен + Медь — Комплекс', tr: 'Çinko + Selenyum + Bakır — Kompleks', en: 'Zinc + Selenium + Copper — Complex', ar: 'زنك + سيلينيوم + نحاس — مجمع' },
-  'prod-7': { ru: 'Травяной комплекс — Артишок и растительные экстракты', tr: 'Bitkisel Kompleks — Enginar ve Bitki Özleri', en: 'Herbal Complex — Artichoke & Plant Extracts', ar: 'مجمع عشبي — خرشوف ومستخلصات نباتية' },
-  'prod-8': { ru: 'B6, B12, CoQ10 — Комплекс', tr: 'B6, B12, CoQ10 — Kompleks', en: 'B6, B12, CoQ10 — Complex', ar: 'B6، B12، CoQ10 — مجمع' },
-  'prod-9': { ru: 'Хром + Растительный комплекс', tr: 'Krom + Bitkisel Kompleks', en: 'Chromium + Herbal Complex', ar: 'كروم + مجمع عشبي' },
-  'prod-10': { ru: 'Гинкго Билоба + Женьшень — Растительный комплекс', tr: 'Ginkgo Biloba + Ginseng — Bitkisel Kompleks', en: 'Ginkgo Biloba + Ginseng — Herbal Complex', ar: 'جنكغو بيلوبا + جنسنج — مجمع عشبي' },
-  'prod-11': { ru: 'Optima Kompleks', tr: 'Optima Kompleks', en: 'Optima Kompleks', ar: 'أوبتيما كومبلكس' },
-  'prod-12': { ru: 'Мультивитамин — Жевательные мармеладки', tr: 'Multivitamin — Çiğneme Şekercikleri', en: 'Multivitamin — Gummy Vitamins', ar: 'ملتي فيتامين — فيتامينات مضغ' },
-  'prod-13': { ru: 'Folic Acid Gummy — Женский комплекс', tr: 'Folic Acid Gummy — Kadın Kompleksi', en: "Folic Acid Gummy — Women's Complex", ar: 'حمض فوليك جيمي — مجمع نسائي' },
-  'prod-14': { ru: 'Железо + Витамин C — Комплекс', tr: 'Demir + C Vitamini — Kompleks', en: 'Iron + Vitamin C — Complex', ar: 'حديد + فيتامين C — مجمع' },
+'prod-1': { ru: 'BSO Gummy — Масло чёрного тмина, D3, Цинк', tr: 'BSO Gummy — Siyah Kimyon Yağı, D3, Çinko', en: 'BSO Gummy — Black Seed Oil, D3, Zinc', ar: 'BSO جيمي — زيت الحبة السوداء، D3، زنك' },
+'prod-2': { ru: 'Омега 3 — EPA 600 мг, DHA 400 мг', tr: 'Omega 3 — EPA 600 mg, DHA 400 mg', en: 'Omega 3 — EPA 600 mg, DHA 400 mg', ar: 'أوميغا 3 — EPA 600 ملغ، DHA 400 ملغ' },
+'prod-3': { ru: 'ACV Gummy — Яблочный уксус, B12, B9', tr: 'ACV Gummy — Elma Sirkesi, B12, B9', en: 'ACV Gummy — Apple Cider Vinegar, B12, B9', ar: 'ACV جيمي — خل التفاح، B12، B9' },
+'prod-4': { ru: 'Магний + Витамин B6 — 4 формы', tr: 'Magnezyum + B6 Vitamini — 4 Form', en: 'Magnesium + Vitamin B6 — 4 Forms', ar: 'مغنيسيوم + فيتامين B6 — 4 أشكال' },
+'prod-5': { ru: 'Травяной комплекс — 11 растительных экстрактов', tr: 'Bitkisel Kompleks — 11 Bitki Özü', en: 'Herbal Complex — 11 Plant Extracts', ar: 'مجمع عشبي — 11 مستخلص نباتي' },
+'prod-6': { ru: 'Цинк + Селен + Медь — Комплекс', tr: 'Çinko + Selenyum + Bakır — Kompleks', en: 'Zinc + Selenium + Copper — Complex', ar: 'زنك + سيلينيوم + نحاس — مجمع' },
+'prod-7': { ru: 'Травяной комплекс — Артишок и растительные экстракты', tr: 'Bitkisel Kompleks — Enginar ve Bitki Özleri', en: 'Herbal Complex — Artichoke & Plant Extracts', ar: 'مجمع عشبي — خرشوف ومستخلصات نباتية' },
+'prod-8': { ru: 'Энергетический комплекс', tr: 'Enerji Kompleksi', en: 'Energy Complex', ar: 'مجمع الطاقة' },
+'prod-9': { ru: 'Хром + Растительный комплекс', tr: 'Krom + Bitkisel Kompleks', en: 'Chromium + Herbal Complex', ar: 'كروم + مجمع عشبي' },
+'prod-10': { ru: 'Гинкго Билоба + Женьшень — Растительный комплекс', tr: 'Ginkgo Biloba + Ginseng — Bitkisel Kompleks', en: 'Ginkgo Biloba + Ginseng — Herbal Complex', ar: 'جنكغو بيلوبا + جنسنج — مجمع عشبي' },
+'prod-11': { ru: 'Optima Kompleks', tr: 'Optima Kompleks', en: 'Optima Kompleks', ar: 'أوبتيما كومبلكس' },
+'prod-12': { ru: 'Мультивитамин — Жевательные мармеладки', tr: 'Multivitamin — Çiğneme Şekercikleri', en: 'Multivitamin — Gummy Vitamins', ar: 'ملتي فيتامين — فيتامينات مضغ' },
+'prod-13': { ru: 'Женский комплекс', tr: 'Kadın Kompleksi', en: "Women's Complex", ar: 'مجمع نسائي' },
+'prod-14': { ru: 'Железо + Витамин C — Комплекс', tr: 'Demir + C Vitamini — Kompleks', en: 'Iron + Vitamin C — Complex', ar: 'حديد + فيتامين C — مجمع' },
 };
 
 const SAFE_DESCRIPTIONS: Record<string, Record<string, string>> = {

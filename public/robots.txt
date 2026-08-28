@@ -1,10 +1,18 @@
 User-agent: *
 Allow: /
-Allow: /yandex-feed.yml
-Allow: /google-feed.xml
-Allow: /sitemap.xml
 Disallow: /admin
 Disallow: /api/
+
+User-agent: Yandex
+Allow: /
+Allow: /yandex-feed.yml
+Allow: /sitemap.xml
+Disallow: /tr
+Disallow: /tr/
+Disallow: /en
+Disallow: /en/
+Disallow: /ar
+Disallow: /ar/
 
 Sitemap: https://drdaruzen.com/sitemap.xml
 # Yandex-feed: https://drdaruzen.com/yandex-feed.yml

@@ -105,7 +105,7 @@ const SEO_TITLES: Record<string, Record<Lang, string>> = {
     ar: 'غنكو بيلوبا + جنسنج + ستيكولين — فيتامين الدماغ | Daruzen',
   },
   'prod-11': {
-    ru: 'Оптима Комплекс — Фитокомплекс, Витамин C, D3, Лютеин, Омега-3, Цинк, Куркумин | Daruzen',
+    ru: 'Оптима Комплекс — Витамин C, D3, Лютеин, Омега-3, Цинк, Куркумин | Daruzen',
     tr: 'C, D3 Vitamini, Lutein, Omega-3, Çinko, Kürkümin — Multi | Daruzen',
     en: 'Vitamin C, D3, Lutein, Omega-3, Zinc, Curcumin — Multi | Daruzen',
     ar: 'فيتامين C، D3، لوتين، أوميغا 3، زنك، كركمين — مالتى | Daruzen',

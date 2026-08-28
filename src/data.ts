@@ -745,7 +745,7 @@ export const products: Product[] = [
     price: 830,
     image: '/images/optimacomplex.webp',
     seoTitle: {
-      ru: 'Оптима Комплекс — Фитокомплекс, Витамин C, D3, Лютеин, Омега-3, Цинк, Куркумин',
+      ru: 'Оптима Комплекс — Витамин C, D3, Лютеин, Омега-3, Цинк, Куркумин',
       tr: 'C, D3 Vitamini, Lutein, Omega-3, Çinko, Kürkümin — Multi | Daruzen',
       en: 'Vitamin C, D3, Lutein, Omega-3, Zinc, Curcumin — Multi | Daruzen',
       ar: 'فيتامين C، D3، لوتين، أوميغا 3، زنك، كركمين — مالتى | Daruzen',

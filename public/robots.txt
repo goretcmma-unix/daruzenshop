@@ -1,10 +1,16 @@
 User-agent: *
 Allow: /
+Allow: /api/yandex-feed
+Allow: /api/google-feed
+Allow: /api/sitemap
+Allow: /api/indexnow
 Disallow: /admin
 Disallow: /api/
 
 User-agent: Yandex
 Allow: /
+Allow: /api/yandex-feed
+Allow: /api/sitemap
 Allow: /yandex-feed.yml
 Allow: /sitemap.xml
 Disallow: /tr

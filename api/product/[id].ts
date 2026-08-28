@@ -158,6 +158,12 @@ function isYandexBot(ua: string | undefined): boolean {
   return /yandex|ai\.yandex/i.test(lower);
 }
 
+function isGooglebot(ua: string | undefined): boolean {
+  if (!ua) return false;
+  const lower = ua.toLowerCase();
+  return /googlebot|google-inspectiontool/i.test(lower);
+}
+
 let cachedAssets: string | null = null;
 let cacheTime = 0;
 
@@ -280,11 +286,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   const firstSentence = desc.split(/[.!؟]\s/)[0] || desc.slice(0, 120);
 
   const title = (SEO_TITLES[id] && SEO_TITLES[id][lang]) || `${cleanName} | Daruzen`;
-  const botTitle = sanitizeForGoogle(title);
   const rawDesc = META_DESC_TEMPLATES[lang](name, catLabel, firstSentence);
-  const botDesc = sanitizeForGoogle(rawDesc.length > 155 ? rawDesc.slice(0, 152).replace(/[,;]\s*$/, '') + '...' : rawDesc);
   const description = rawDesc.length > 155 ? rawDesc.slice(0, 152).replace(/[,;]\s*$/, '') + '...' : rawDesc;
   const keywords = KEYWORDS_TEMPLATES[lang](name, catLabel, firstSentence);
+
+  const titleForBot = isGooglebot(ua) ? sanitizeForGoogle(title) : title;
+  const descForBot = isGooglebot(ua) ? sanitizeForGoogle(description) : description;
 
   const canonical = `${SITE}/${lang}/product/${id}`;
 
@@ -340,8 +347,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>${esc(botTitle)}</title>
-    <meta name="description" content="${esc(botDesc)}" />
+    <title>${esc(titleForBot)}</title>
+    <meta name="description" content="${esc(descForBot)}" />
     <meta name="keywords" content="${esc(keywords)}" />
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
     <link rel="canonical" href="${esc(canonical)}" />
@@ -363,11 +370,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     <meta name="twitter:title" content="${esc(title)}" />
     <meta name="twitter:description" content="${esc(description)}" />
     <meta name="twitter:image" content="${imageUrl}" />
-    <link rel="icon" type="image/x-icon" href="/favicon.ico?v=6" />
-    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png?v=6" />
-    <link rel="icon" type="image/png" sizes="48x48" href="/favicon-48.png?v=6" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg?v=6" sizes="any" />
-    <link rel="apple-touch-icon" sizes="180x180" href="/favicon-180.png?v=6" />
+    <link rel="icon" type="image/x-icon" href="/favicon.ico?v=7" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png?v=7" />
+    <link rel="icon" type="image/png" sizes="48x48" href="/favicon-48.png?v=7" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg?v=7" sizes="any" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/favicon-180.png?v=7" />
     <meta name="theme-color" content="#cf9b41" />
     <script type="application/ld+json">${JSON.stringify(jsonLd)}</script>
     <script type="application/ld+json">{"@context":"https://schema.org","@type":"Organization","name":"Daruzen","url":"${SITE}","logo":"${SITE}/images/dr.svg.png"}</script>

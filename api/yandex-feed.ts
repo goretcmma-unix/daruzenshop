@@ -111,8 +111,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     xml += '<vendorCode>' + esc(p.id) + '</vendorCode>\n';
     xml += '<model>' + esc(seoName) + '</model>\n';
     xml += '<delivery>true</delivery>\n';
-    xml += '<local_delivery_cost>0</local_delivery_cost>\n';
-    xml += '<condition type="new"/>\n';
+        xml += '<condition type="new"/>\n';
 
     if (p.isNew) {
       xml += '<param name="Новинка">Да</param>\n';

@@ -13,12 +13,7 @@ Allow: /api/yandex-feed
 Allow: /api/sitemap
 Allow: /yandex-feed.yml
 Allow: /sitemap.xml
-Disallow: /tr
-Disallow: /tr/
-Disallow: /en
-Disallow: /en/
-Disallow: /ar
-Disallow: /ar/
+Disallow: /admin
 
 Sitemap: https://drdaruzen.com/sitemap.xml
 # Yandex-feed: https://drdaruzen.com/yandex-feed.yml

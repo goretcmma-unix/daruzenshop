@@ -370,11 +370,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     <meta name="twitter:title" content="${esc(title)}" />
     <meta name="twitter:description" content="${esc(description)}" />
     <meta name="twitter:image" content="${imageUrl}" />
-    <link rel="icon" type="image/x-icon" href="/favicon.ico?v=7" />
-    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png?v=7" />
-    <link rel="icon" type="image/png" sizes="48x48" href="/favicon-48.png?v=7" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg?v=7" sizes="any" />
-    <link rel="apple-touch-icon" sizes="180x180" href="/favicon-180.png?v=7" />
+    <link rel="icon" type="image/x-icon" href="/favicon.ico?v=8" />
+    <link rel="icon" type="image/png" sizes="48x48" href="/favicon-48.png?v=8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg?v=8" sizes="any" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/favicon-180.png?v=8" />
     <meta name="theme-color" content="#cf9b41" />
     <script type="application/ld+json">${JSON.stringify(jsonLd)}</script>
     <script type="application/ld+json">{"@context":"https://schema.org","@type":"Organization","name":"Daruzen","url":"${SITE}","logo":"${SITE}/images/dr.svg.png"}</script>

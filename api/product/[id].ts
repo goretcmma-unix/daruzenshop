@@ -29,6 +29,93 @@ const KEYWORDS_TEMPLATES: Record<Lang, (name: string, cat: string, firstSentence
   ar: (name, cat, s) => `${name}, ${cat} من تركيا، شراء ${cat}، ${name} شراء، داروزن، فيتامينات تركية، ${s}`,
 };
 
+const COMPOSITION: Record<string, Record<Lang, string>> = {
+  'prod-1': {
+    ru: 'масло чёрного тмина, витамин D3, цинк, фосфат кальция',
+    tr: 'siyah kimyon yağı, D3 vitamini, çinko, kalsiyum fosfat',
+    en: 'black seed oil, vitamin D3, zinc, calcium phosphate',
+    ar: 'زيت الحبة السوداء، فيتامين D3، زنك، فوسفات الكالسيوم',
+  },
+  'prod-2': {
+    ru: 'рыбий жир, омега-3, EPA, DHA',
+    tr: 'balık yağı, omega 3, EPA, DHA',
+    en: 'fish oil, omega-3, EPA, DHA',
+    ar: 'زيت السمك، أوميغا 3، EPA، DHA',
+  },
+  'prod-3': {
+    ru: 'яблочный уксус, свекольный порошок, экстракт граната, фолиевая кислота B9, витамин B12',
+    tr: 'elma sirkesi, pancar tozu, nar ekstresi, folik asit B9, B12 vitamini',
+    en: 'apple cider vinegar, beetroot powder, pomegranate extract, folic acid B9, vitamin B12',
+    ar: 'خل التفاح، مسحوق الشمندر، مستخلص الرمان، حمض الفوليك B9، فيتامين B12',
+  },
+  'prod-4': {
+    ru: 'магний ацетилтаурат, магний бисглицинат, магний малат, магний цитрат, витамин B6',
+    tr: 'magnezyum asetiltaurat, magnezyum bisglisinat, magnezyum malat, magnezyum sitrat, B6 vitamini',
+    en: 'magnesium acetyltaurate, magnesium bisglycinate, magnesium malate, magnesium citrate, vitamin B6',
+    ar: 'مغنيسيوم أسيتيل تورات، مغنيسيوم بيسغليسينات، مغنيسيوم مالات، سترات المغنيسيوم، فيتامين B6',
+  },
+  'prod-5': {
+    ru: 'боярышник, сельдерей, кошачий коготь, базилик, чёрный перец, роза, гибискус, лаванда, корица, кардамон, акация',
+    tr: 'alıç, kereviz, kedi pençesi, fesleğen, karabiber, gül, bamya, lavanta, tarçın, kakule, arap zamkı',
+    en: 'hawthorn, celery, cat\'s claw, basil, black pepper, rose, hibiscus, lavender, cinnamon, cardamom, acacia',
+    ar: 'الزعرور، الكرفس، مخلب القط، الريحان، الفلفل الأسود، الورد، الكركديه، الخزامى، القرفة، الهيل، الأكاسيا',
+  },
+  'prod-6': {
+    ru: 'цинк, селен, медь',
+    tr: 'çinko, selenyum, bakır',
+    en: 'zinc, selenium, copper',
+    ar: 'زنك، سيلينيوم، نحاس',
+  },
+  'prod-7': {
+    ru: 'экстракт расторопши, экстракт артишока, экстракт одуванчика',
+    tr: 'devedikeni ekstresi, enginar ekstresi, karahindiba ekstresi',
+    en: 'milk thistle extract, artichoke extract, dandelion extract',
+    ar: 'مستخلص شوك الحليب، مستخلص الخرشوف، مستخلص الهندباء',
+  },
+  'prod-8': {
+    ru: 'NADH, глутатион, ресвератрол, коэнзим Q10, витамин B6, витамин B12',
+    tr: 'NADH, glutatyon, resveratrol, koenzim Q10, B6 vitamini, B12 vitamini',
+    en: 'NADH, glutathione, resveratrol, coenzyme Q10, vitamin B6, vitamin B12',
+    ar: 'NADH، غلوتاثيون، ريسفيراترول، الإنزيم المساعد Q10، فيتامين B6، فيتامين B12',
+  },
+  'prod-9': {
+    ru: 'хром, экстракт гимнемы',
+    tr: 'krom, gimneya ekstresi',
+    en: 'chromium, gymnema extract',
+    ar: 'كروم، مستخلص غينيما',
+  },
+  'prod-10': {
+    ru: 'гинкго билоба, женьшень, цитиколин',
+    tr: 'ginkgo biloba, ginseng, sitikolin',
+    en: 'ginkgo biloba, ginseng, citicoline',
+    ar: 'جنكغو بيلوبا، جنسنج، سيتيكولين',
+  },
+  'prod-11': {
+    ru: 'рыбий жир, омега-3, EPA, DHA, куркумин, коэнзим Q10, витамин C, цинк, лютеин, астаксантин, зеаксантин, медь, селен, витамин D3',
+    tr: 'balık yağı, omega 3, EPA, DHA, kurkumin, koenzim Q10, C vitamini, çinko, lutein, astaksantin, zeaksantin, bakır, selenyum, D3 vitamini',
+    en: 'fish oil, omega-3, EPA, DHA, curcumin, coenzyme Q10, vitamin C, zinc, lutein, astaxanthin, zeaxanthin, copper, selenium, vitamin D3',
+    ar: 'زيت السمك، أوميغا 3، EPA، DHA، كركمين، الإنزيم المساعد Q10، فيتامين C، زنك، لوتين، أستازانتين، زياكسانثين، نحاس، سيلينيوم، فيتامين D3',
+  },
+  'prod-12': {
+    ru: 'витамин C, витамин E, витамин A, витамин B12',
+    tr: 'C vitamini, E vitamini, A vitamini, B12 vitamini',
+    en: 'vitamin C, vitamin E, vitamin A, vitamin B12',
+    ar: 'فيتامين C، فيتامين E، فيتامين A، فيتامين B12',
+  },
+  'prod-13': {
+    ru: 'витекс священный, тысячелистник, коэнзим Q10, L-аргинин, женьшень, цинк, фолиевая кислота, селен',
+    tr: 'hayıt, civanperçemi, koenzim Q10, L-arjinin, ginseng, çinko, folik asit, selenyum',
+    en: 'chasteberry, yarrow, coenzyme Q10, L-arginine, ginseng, zinc, folic acid, selenium',
+    ar: 'تشاستيبيري، يارو، الإنزيم المساعد Q10، L-أرجينين، جنسنج، زنك، حمض الفوليك، سيلينيوم',
+  },
+  'prod-14': {
+    ru: 'железо бисглицинат, витамин C',
+    tr: 'demir bisglisinat, C vitamini',
+    en: 'iron bisglycinate, vitamin C',
+    ar: 'حديد بيسغليسينات، فيتامين C',
+  },
+};
+
 const LOCALE_MAP: Record<Lang, string> = {
   ru: 'ru_RU',
   tr: 'tr_TR',
@@ -288,7 +375,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   const title = (SEO_TITLES[id] && SEO_TITLES[id][lang]) || `${cleanName} | Daruzen`;
   const rawDesc = META_DESC_TEMPLATES[lang](name, catLabel, firstSentence);
   const description = rawDesc.length > 155 ? rawDesc.slice(0, 152).replace(/[,;]\s*$/, '') + '...' : rawDesc;
-  const keywords = KEYWORDS_TEMPLATES[lang](name, catLabel, firstSentence);
+  const compList = COMPOSITION[id]?.[lang] || COMPOSITION[id]?.en || '';
+  const keywords = `${KEYWORDS_TEMPLATES[lang](name, catLabel, firstSentence)}, ${compList}`;
 
   const titleForBot = isGooglebot(ua) ? sanitizeForGoogle(title) : title;
   const descForBot = isGooglebot(ua) ? sanitizeForGoogle(description) : description;
@@ -299,22 +387,28 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   const hreflangXDefault = `<link rel="alternate" hreflang="x-default" href="${SITE}/en/product/${id}" />`;
 
   const seoName = title.replace(/\s*\|\s*Daruzen\s*$/, '').trim();
+  const priceValidUntil = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
+  const fullDesc = `${seoName}. ${sanitizeForGoogle(desc) || desc} Состав: ${compList}.`.trim();
   const jsonLd: Record<string, unknown> = {
     '@context': 'https://schema.org',
     '@type': 'Product',
+    '@id': canonical + '#product',
     name: seoName,
-    description: sanitizeForGoogle(desc) || desc,
+    description: fullDesc,
     image: [imageUrl],
     sku: id,
     mpn: id,
     brand: { '@type': 'Brand', name: 'Daruzen' },
     category: catLabel,
     url: canonical,
+    mainEntityOfPage: { '@type': 'WebPage', '@id': canonical },
     offers: {
       '@type': 'Offer',
       price,
       priceCurrency: cur.code,
-      availability: inStock ? 'http://schema.org/InStock' : 'http://schema.org/OutOfStock',
+      priceValidUntil,
+      itemCondition: 'https://schema.org/NewCondition',
+      availability: inStock ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
       url: canonical,
       seller: { '@type': 'Organization', name: 'Daruzen' },
     },

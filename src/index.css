@@ -1773,17 +1773,17 @@ a:hover {
     position: absolute;
     top: 50%;
     left: auto;
-    right: -32px;
+    right: -20px;
     width: clamp(110px, 27vw, 165px);
     max-height: none;
     transform: translateY(-50%);
   }
   .modal-product-media__img {
-    margin-left: -8px;
+    margin-left: -4px;
   }
   [dir="rtl"] .modal-product-media__img {
     margin-left: 0;
-    margin-right: -8px;
+    margin-right: -4px;
   }
   .modal-product-media .modal-tab-close {
     left: 12px;

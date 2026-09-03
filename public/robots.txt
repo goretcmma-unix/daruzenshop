@@ -7,6 +7,13 @@ Allow: /api/indexnow
 Disallow: /admin
 Disallow: /api/
 
+User-agent: YandexMarketBot
+Disallow: /tr/
+Disallow: /en/
+Disallow: /ar/
+Allow: /
+Disallow: /admin
+
 User-agent: Yandex
 Allow: /
 Allow: /api/yandex-feed

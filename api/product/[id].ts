@@ -439,8 +439,17 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   const keywords = `${KEYWORDS_TEMPLATES[lang](name, catLabel, firstSentence)}, ${compList}, ${purposeList}`;
   const jsonLdDescription = `${displayName}. ${description || ''} ${compList ? 'Состав: ' + compList + '.' : ''}`.replace(/\s+/g, ' ').trim();
 
-  const titleForBot = title;
-  const descForBot = description;
+  const MAX_TITLE = 62;
+  let titleForBot = title;
+  if (titleForBot.length > MAX_TITLE) {
+    const idx = titleForBot.lastIndexOf(' — ', MAX_TITLE);
+    if (idx > 10) {
+      titleForBot = titleForBot.slice(0, idx) + ' | Daruzen';
+    } else {
+      titleForBot = titleForBot.slice(0, MAX_TITLE - 9).replace(/\s+\S*$/, '') + ' | Daruzen';
+    }
+  }
+  const descForBot = firstSentence || description;
 
   const canonical = `${SITE}/${lang}/product/${id}`;
 
@@ -539,6 +548,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     <div style="max-width:800px;margin:0 auto;padding:40px 20px;font-family:sans-serif">
       <h1>${esc(seoName)}</h1>
       <p>${esc(desc)}</p>
+      ${compList ? `<p><strong>${lang === 'ru' ? 'Состав' : lang === 'tr' ? 'Bileşenler' : lang === 'ar' ? 'المكونات' : 'Composition'}:</strong> ${esc(compList)}</p>` : ''}
       <p><strong>${lang === 'ru' ? 'Цена' : lang === 'tr' ? 'Fiyat' : lang === 'ar' ? 'السعر' : 'Price'}:</strong> ${price} ${cur.symbol}</p>
       <p><strong>${lang === 'ru' ? 'Наличие' : lang === 'tr' ? 'Stok durumu' : lang === 'ar' ? 'التوفر' : 'Availability'}:</strong> ${inStock ? (lang === 'ru' ? 'В наличии' : lang === 'tr' ? 'Stokta' : lang === 'ar' ? 'متوفر' : 'In Stock') : (lang === 'ru' ? 'Нет в наличии' : lang === 'tr' ? 'Stokta yok' : lang === 'ar' ? 'غير متوفر' : 'Out of Stock')}</p>
       <img src="${imageUrl}" alt="${esc(seoName)}" width="600" />

@@ -1264,10 +1264,8 @@ a:hover {
   height: 100%;
   flex: none;
   min-height: 0;
-  background: #ffffff;
-  overflow-x: hidden;
-  transition: none;
-  will-change: auto;
+  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform;
 }
 
 .modal-tabs-track .modal-tab-pane {
@@ -1280,7 +1278,6 @@ a:hover {
   overscroll-behavior: none;
   touch-action: pan-y;
   padding-inline-end: 4px;
-  background: #ffffff;
   animation: none !important;
   scrollbar-width: none;
 }

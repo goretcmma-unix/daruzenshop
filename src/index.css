@@ -1265,6 +1265,9 @@ a:hover {
   flex: none;
   min-height: 0;
   background: #ffffff;
+  overflow-x: hidden;
+  overflow-y: hidden;
+  touch-action: pan-y;
   transition: none;
   will-change: auto;
 }

@@ -86,22 +86,25 @@ export const fetchProducts = async (): Promise<Product[]> => {
     const backfilled = filteredDb.map(dbP => {
       const localP = products.find(p => p.id === dbP.id);
       if (!localP) return dbP;
-      // Локальные данные имеют приоритет, но сохраняем notes из базы если есть
+      // База данных — основной источник (цена, название, описание и т.д.),
+      // но补充 локальные specs если в базе их нет (для товаров из data.ts)
       const merged: Product = {
-        ...localP,
-        notes: localP.notes ?? dbP.notes,
+        ...dbP,
+        specs: { ...(localP.specs ?? {}), ...(dbP.specs ?? {}) },
+        notes: dbP.notes ?? localP.notes,
       };
-      // Наличие хранится в базе (specs._stock) — переносим его в локальный товар,
-      // чтобы тумблер «В наличии» сохранялся после перезагрузки
+      // Наличие хранится в базе (specs._stock) — переносим его
       const stockSpec = dbP.specs?.[STOCK_SPECS_KEY as Lang];
       if (stockSpec) {
-        merged.specs = { ...(localP.specs ?? {}), [STOCK_SPECS_KEY as Lang]: stockSpec };
+        merged.specs = { ...(merged.specs ?? {}), [STOCK_SPECS_KEY as Lang]: stockSpec };
       }
       return merged;
     });
-    // Локальные данные из data.ts имеют приоритет над базой
-    // (backfilled = локальный товар + примечания и наличие из базы)
-    const merged = dedupeProducts([...backfilled, ...products]);
+    // База данных — основной источник; локальные товары добавляются только
+    // если их нет в базе (новые товары, ещё не сохранённые админом).
+    const dbIds = new Set(backfilled.map(p => p.id));
+    const localOnly = products.filter(p => !dbIds.has(p.id));
+    const merged = dedupeProducts([...backfilled, ...localOnly]);
     return merged.sort((a, b) => (b.createdAt ?? 0) - (a.createdAt ?? 0) || (b.id < a.id ? -1 : b.id > a.id ? 1 : 0));
   } catch {
     return dedupeProducts(products);

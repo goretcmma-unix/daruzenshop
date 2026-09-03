@@ -13,23 +13,6 @@ const CATEGORY_MAP: Record<string, { id: string; name: string }> = {
   herbs: { id: '5', name: 'Лекарственные травы' },
 };
 
-const SEO_NAMES: Record<string, string> = {
-  'prod-1': 'BSO Жевательные мармеладки — Масло чёрного тмина, Витамин D3, Цинк',
-  'prod-2': 'Омега 3 Премиум — Рыбий жир EPA 600 мг, DHA 400 мг',
-  'prod-3': 'ACV Мармелад — Яблочный уксус, Витамин B12, Фолиевая кислота',
-  'prod-4': 'Магний Комплекс + Витамин B6 — 4 формы магния',
-  'prod-5': 'DNL — Антистресс фитокомплекс — 11 трав для нервной системы',
-  'prod-6': 'Цинк Комплекс — Цинк + Селен + Медь',
-  'prod-7': 'Enginar — Артишок, Расторопша, Одуванчик для печени',
-  'prod-8': 'Nadh Gummy — NADH, Глутатион, Коэнзим Q10, Витамин B6, B12',
-  'prod-9': 'Хром + Гимнема — Витамин для сахара в крови',
-  'prod-10': 'Комплекс с гинкго билоба, женьшенем и цитиколином — Витамин для мозга',
-  'prod-11': 'Оптима Комплекс — Витамин C, D3, Лютеин, Омега-3, Цинк, Куркумин',
-  'prod-12': 'MultiGummy Мультивитаминные жевательные мармеладки — Витамин C, E, A, B12',
-  'prod-13': 'Женский комплекс — Фолиевая кислота, Цинк, Q10, Женьшень',
-  'prod-14': 'Железо бисглицинат + Витамин C — для гемоглобина и крови',
-};
-
 function esc(s: string): string {
   return s
     .replace(/&/g, '&amp;')
@@ -45,7 +28,7 @@ function formatDate(d: Date): string {
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   res.setHeader('Content-Type', 'application/xml; charset=utf-8');
-  res.setHeader('Cache-Control', 'public, max-age=3600, s-maxage=3600');
+  res.setHeader('Cache-Control', 'public, max-age=300, s-maxage=300');
 
   let products: any[] = [];
 
@@ -86,9 +69,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   xml += '<offers>\n';
 
   for (const p of products) {
-    const name = p.names?.ru || p.name_ru || p.id;
+    const name = p.name_ru || p.names?.ru || p.id;
     if (!name) continue;
-    const seoName = SEO_NAMES[p.id] || name;
+    const seoName = name;
     const desc = p.descriptions?.ru || p.desc_ru || '';
     const catKey = p.category_key || p.categoryKey || 'supplements';
     const catInfo = CATEGORY_MAP[catKey] || CATEGORY_MAP.supplements;

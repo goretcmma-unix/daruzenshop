@@ -6,6 +6,9 @@
     "api/product/*.ts": {
       "maxDuration": 10
     },
+    "api/catalog/*.ts": {
+      "maxDuration": 10
+    },
     "api/yandex-feed.ts": {
       "maxDuration": 10
     },
@@ -62,6 +65,22 @@
     {
       "source": "/google-feed.xml",
       "destination": "/api/google-feed"
+    },
+    {
+      "source": "/ru/catalog/:slug",
+      "destination": "/api/catalog/:slug?lang=ru"
+    },
+    {
+      "source": "/tr/catalog/:slug",
+      "destination": "/api/catalog/:slug?lang=tr"
+    },
+    {
+      "source": "/en/catalog/:slug",
+      "destination": "/api/catalog/:slug?lang=en"
+    },
+    {
+      "source": "/ar/catalog/:slug",
+      "destination": "/api/catalog/:slug?lang=ar"
     },
     {
       "source": "/ru/product/:id",

@@ -179,6 +179,21 @@ const App: React.FC = () => {
     return () => { active = false; };
   }, []);
 
+  // Синхронизация раздела с URL каталога /{lang}/catalog/{slug} (для SEO и прямых переходов)
+  useEffect(() => {
+    const syncCategoryFromUrl = () => {
+      const m = location.pathname.match(/^\/(?:ru|tr|en|ar)\/catalog\/(supplements|vitamins|minerals|beauty|herbs)(?:\/|$)/);
+      if (m) {
+        setSelectedCategory(m[1] as CategoryKey);
+        setSearchQuery('');
+        setPage(0);
+      }
+    };
+    syncCategoryFromUrl();
+    window.addEventListener('popstate', syncCategoryFromUrl);
+    return () => window.removeEventListener('popstate', syncCategoryFromUrl);
+  }, [location.pathname]);
+
   useEffect(() => {
     if (!supabase) return;
     let active = true;
@@ -369,9 +384,18 @@ const App: React.FC = () => {
       setSelectedCategory(category);
       setSearchQuery('');
     });
-    
-    // Скролл запускаем сразу, но без задержек от рендера
-    scrollToCatalog();
+
+    // Прокрутка и синхронизация URL раздела (SEO: отдельная адресация каждой категории)
+    if (category === 'all') {
+      if (location.pathname !== `/${lang}` && location.pathname !== `/${lang}/catalog`) {
+        window.history.pushState({}, '', `/${lang}#catalog`);
+      }
+      scrollToCatalog();
+    } else {
+      const url = `/${lang}/catalog/${category}`;
+      if (location.pathname !== url) window.history.pushState({}, '', url);
+      scrollToCatalog();
+    }
   };
 
   const handleNavClick = (e: React.MouseEvent<HTMLElement> | null, targetId: string) => {
@@ -548,11 +572,41 @@ const App: React.FC = () => {
                 seoCanonical = `https://drdaruzen.com/${lang}/contacts`;
                 seoPath = '/contacts';
               } else if (subpage === 'catalog') {
-                seoTitle = 'Каталог витаминов и добавок Daruzen — Витамины, минералы, БАД | drdaruzen.com';
-                seoDesc = 'Каталог премиальных витаминов, минералов и добавок Daruzen. BSO мармеладки, Омега-3, магний и другие натуральные добавки из Турции.';
-                seoKeywords = 'Daruzen каталог, витамины, турецкие витамины, БАД';
-                seoCanonical = `https://drdaruzen.com/${lang}/catalog`;
-                seoPath = '/catalog';
+                const catSlug = location.pathname.match(/\/catalog\/(supplements|vitamins|minerals|beauty|herbs)(?:\/|$)/)?.[1];
+                if (catSlug) {
+                  const catSeo: Record<string, Record<string, string>> = {
+                    ru: {
+                      supplements: 'БАДы и добавки из Турции — купить оригинальные БАД | Daruzen',
+                      vitamins: 'Витамины из Турции — купить оригинальные витамины | Daruzen',
+                      minerals: 'Минералы — магний, цинк, железо из Турции | Daruzen',
+                      beauty: 'Добавки для красоты — волосы, кожа, ногти | Daruzen',
+                      herbs: 'Травяные БАДы и фитокомплексы из Турции | Daruzen',
+                    },
+                    tr: {
+                      supplements: 'Türkiye\'den Takviyeler | Daruzen', vitamins: 'Türkiye\'den Vitaminler | Daruzen',
+                      minerals: 'Mineraller — Magnezyum, Çinko, Demir | Daruzen', beauty: 'Güzellik Takviyeleri | Daruzen', herbs: 'Bitkisel Takviyeler | Daruzen',
+                    },
+                    en: {
+                      supplements: 'Supplements from Turkey | Daruzen', vitamins: 'Vitamins from Turkey | Daruzen',
+                      minerals: 'Minerals — Magnesium, Zinc, Iron | Daruzen', beauty: 'Beauty Supplements | Daruzen', herbs: 'Herbal Supplements | Daruzen',
+                    },
+                    ar: {
+                      supplements: 'مكملات من تركيا | داروزن', vitamins: 'فيتامينات من تركيا | داروزن',
+                      minerals: 'معادن — مغنيسيوم، زنك، حديد | داروزن', beauty: 'مكملات الجمال | داروزن', herbs: 'مكملات عشبية | داروزن',
+                    },
+                  };
+                  seoTitle = catSeo[lang]?.[catSlug] || seoTitle;
+                  seoCanonical = `https://drdaruzen.com/${lang}/catalog/${catSlug}`;
+                  seoPath = `/catalog/${catSlug}`;
+                  seoDesc = `${catSeo.ru[catSlug] || seoDesc}. Оригинальные турецкие БАДы с доставкой. Сертифицировано.`;
+                  seoKeywords = `купить ${catSlug}, из турции, дарузен, daruzen, турецкие добавки`;
+                } else {
+                  seoTitle = 'Каталог витаминов и добавок Daruzen — Витамины, минералы, БАД | drdaruzen.com';
+                  seoDesc = 'Каталог премиальных витаминов, минералов и добавок Daruzen. BSO мармеладки, Омега-3, магний и другие натуральные добавки из Турции.';
+                  seoKeywords = 'Daruzen каталог, витамины, турецкие витамины, БАД';
+                  seoCanonical = `https://drdaruzen.com/${lang}/catalog`;
+                  seoPath = '/catalog';
+                }
               }
 
               return (

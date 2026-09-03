@@ -15,13 +15,6 @@ const CATEGORY_LABELS: Record<Lang, Record<string, string>> = {
   ar: { supplements: 'مكمل', vitamins: 'فيتامين', minerals: 'معادن', beauty: 'مكمل جمال', herbs: 'مكمل عشبي' },
 };
 
-const META_DESC_TEMPLATES: Record<Lang, (name: string, catLabel: string, firstSentence: string) => string> = {
-  ru: (name, cat, s) => `${name}. ${s} Купить ${cat.toLowerCase()} из Турции с доставкой по России. Daruzen — оригинал.`,
-  tr: (name, cat, s) => `${name}. ${s} Türkiye'den ${cat.toLowerCase()} satın al. Daruzen — en iyi fiyat.`,
-  en: (name, cat, s) => `${name}. ${s} Buy ${cat.toLowerCase()} from Turkey with delivery. Daruzen — original at the best price.`,
-  ar: (name, cat, s) => `${name}. ${s} اشترِ ${cat} من تركيا مع التوصيل. داروزن — أصلي بأفضل سعر.`,
-};
-
 const KEYWORDS_TEMPLATES: Record<Lang, (name: string, cat: string, firstSentence: string) => string> = {
   ru: (name, cat, s) => `${name}, ${cat.toLowerCase()} из Турции, купить ${cat.toLowerCase()}, ${name} купить, турция витамины, дарузен, daruzen, ${s}`,
   tr: (name, cat, s) => `${name}, Türkiye ${cat.toLowerCase()}, ${cat.toLowerCase()} al, ${name} al, daruzen, türk vitaminleri, ${s}`,
@@ -239,17 +232,6 @@ function isBot(ua: string | undefined): boolean {
   return /googlebot|bingbot|yandex|facebookexternalhit|twitterbot|linkedinbot|slackbot|discordbot|applebot|whatsapp|telegrambot|ai\.yandex|duckduckbot|baidu|sogou|petalbot/i.test(lower);
 }
 
-function isYandexBot(ua: string | undefined): boolean {
-  if (!ua) return false;
-  const lower = ua.toLowerCase();
-  return /yandex|ai\.yandex/i.test(lower);
-}
-
-function isGooglebot(ua: string | undefined): boolean {
-  if (!ua) return false;
-  const lower = ua.toLowerCase();
-  return /googlebot|google-inspectiontool/i.test(lower);
-}
 
 let cachedAssets: string | null = null;
 let cacheTime = 0;
@@ -293,26 +275,6 @@ async function getAssets(): Promise<string> {
   }
 }
 
-
-function sanitizeForGoogle(text: string): string {
-  return text
-    .replace(/для печени|для мозга|для крови|для сахара|для глаз|для нерв|для иммунитет|для зрения|для похуд|для энергии|для сердца/gi, '')
-    .replace(/antioksidan|антиоксидант|antioxidant/gi, '')
-    .replace(/антивозрастн|anti-aging|antiaging/gi, '')
-    .replace(/детокс|очищен|очищение|очистк/gi, '')
-    .replace(/лечени|лечение|лечит|therapeutic|treatment/gi, '')
-    .replace(/профилактик|prevention/gi, '')
-    .replace(/повышени[ейю] иммунитет|укреплен.*иммунитет|immune boost/gi, '')
-    .replace(/снижени.*вес|похуден|weight loss|weight control/gi, '')
-    .replace(/контрол.*сахар|нормализац.*сахар|blood sugar/gi, '')
-    .replace(/восполн.*дефицит|deficiency/gi, '')
-    .replace(/анеми|anemia/gi, '')
-    .replace(/гемоглобин|hemoglobin/gi, '')
-    .replace(/,\s*$/g, '')
-    .replace(/\s+/g, ' ')
-    .trim();
-}
-
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   const id = req.query.id as string;
   if (!id) return res.status(400).send('Missing product id');
@@ -321,9 +283,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   const bot = isBot(ua);
 
   let lang: Lang = 'ru';
-  if (isYandexBot(ua)) {
-    lang = 'ru';
-  } else if (ALL_LANGS.includes(req.query.lang as Lang)) {
+  if (ALL_LANGS.includes(req.query.lang as Lang)) {
     lang = req.query.lang as Lang;
   } else {
     const matchedPath = req.headers['x-matched-path'] as string | undefined;
@@ -331,7 +291,13 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     if (pathMatch && ALL_LANGS.includes(pathMatch[1] as Lang)) {
       lang = pathMatch[1] as Lang;
     } else {
-      lang = detectLang(req.headers['accept-language']);
+      const urlPath = req.headers['x-now-route-matches'] || req.headers['x-vercel-route'] || '';
+      const urlMatch = String(urlPath).match(/\/(ru|tr|en|ar)\/product\//);
+      if (urlMatch && ALL_LANGS.includes(urlMatch[1] as Lang)) {
+        lang = urlMatch[1] as Lang;
+      } else {
+        lang = detectLang(req.headers['accept-language']);
+      }
     }
   }
 
@@ -355,6 +321,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   const name = get('name') || id;
   const cleanName = name.replace(/^Daruzen\s+/i, '');
+  const displayName = cleanName || id;
   const desc = get('desc') || '';
   const catKey = (product.category_key as string) || 'supplements';
   const catLabel = CATEGORY_LABELS[lang][catKey] || CATEGORY_LABELS[lang].supplements;
@@ -373,28 +340,28 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   const firstSentence = desc.split(/[.!؟]\s/)[0] || desc.slice(0, 120);
 
   const title = (SEO_TITLES[id] && SEO_TITLES[id][lang]) || `${cleanName} | Daruzen`;
-  const rawDesc = META_DESC_TEMPLATES[lang](name, catLabel, firstSentence);
-  const description = rawDesc.length > 155 ? rawDesc.slice(0, 152).replace(/[,;]\s*$/, '') + '...' : rawDesc;
+  const description = desc.replace(/\s+/g, ' ').trim();
   const compList = COMPOSITION[id]?.[lang] || COMPOSITION[id]?.en || '';
   const keywords = `${KEYWORDS_TEMPLATES[lang](name, catLabel, firstSentence)}, ${compList}`;
+  const jsonLdDescription = `${displayName}. ${description || ''} ${compList ? 'Состав: ' + compList + '.' : ''}`.replace(/\s+/g, ' ').trim();
 
-  const titleForBot = isGooglebot(ua) ? sanitizeForGoogle(title) : title;
-  const descForBot = isGooglebot(ua) ? sanitizeForGoogle(description) : description;
+  const titleForBot = title;
+  const descForBot = description;
 
   const canonical = `${SITE}/${lang}/product/${id}`;
 
   const hreflangTags = ALL_LANGS.map((l) => `<link rel="alternate" hreflang="${l}" href="${SITE}/${l}/product/${id}" />`).join('\n    ');
-  const hreflangXDefault = `<link rel="alternate" hreflang="x-default" href="${SITE}/en/product/${id}" />`;
+  const hreflangXDefault = `<link rel="alternate" hreflang="x-default" href="${SITE}/ru/product/${id}" />`;
 
-  const seoName = title.replace(/\s*\|\s*Daruzen\s*$/, '').trim();
+  const seoName = displayName || title.replace(/\s*\|\s*Daruzen\s*$/, '').trim();
   const priceValidUntil = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
-  const fullDesc = `${seoName}. ${sanitizeForGoogle(desc) || desc} Состав: ${compList}.`.trim();
   const jsonLd: Record<string, unknown> = {
     '@context': 'https://schema.org',
     '@type': 'Product',
     '@id': canonical + '#product',
     name: seoName,
-    description: fullDesc,
+    alternateName: title.replace(/\s*\|\s*Daruzen\s*$/, '').trim(),
+    description: jsonLdDescription,
     image: [imageUrl],
     sku: id,
     mpn: id,
@@ -402,6 +369,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     category: catLabel,
     url: canonical,
     mainEntityOfPage: { '@type': 'WebPage', '@id': canonical },
+    keywords: `${keywords}`,
     offers: {
       '@type': 'Offer',
       price,

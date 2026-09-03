@@ -1,5 +1,5 @@
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
-import { products, dedupeProducts, STOCK_SPECS_KEY, type Product, type Lang } from '../data';
+import { products, dedupeProducts, type Product, type Lang } from '../data';
 
 const url = import.meta.env.VITE_SUPABASE_URL;
 const anonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
@@ -73,39 +73,12 @@ export const fetchProducts = async (): Promise<Product[]> => {
       }
       return dedupeProducts(products);
     }
+    // База данных — единственный источник истины (как в топ-маркетплейсах).
+    // Никакого слияния с data.ts: показываем ровно то, что хранится в базе,
+    // в порядке sort_order. Локальные data.ts используются только как fallback
+    // при недоступности базы (обработчик выше).
     const dbRows = (data as ProductRow[]).map(rowToProduct);
-    // Локальные данные из data.ts имеют приоритет над базой.
-    // Показываем только товары которые есть в data.ts, плюс товары, добавленные
-    // админом с фото, встроенным в данные (base64) — такие грузятся локально и
-    // не зависят от внешнего хранилища. Устаревшие строки БД (старые /images/…
-    // или удалённые URL) остаются скрытыми.
-    const localIds = new Set(products.map(p => p.id));
-    const isAdminAdded = (dbP: Product): boolean =>
-      typeof dbP.image === 'string' && dbP.image.startsWith('data:image/');
-    const filteredDb = dbRows.filter(dbP => localIds.has(dbP.id) || isAdminAdded(dbP));
-    const backfilled = filteredDb.map(dbP => {
-      const localP = products.find(p => p.id === dbP.id);
-      if (!localP) return dbP;
-      // База данных — основной источник (цена, название, описание и т.д.),
-      // но补充 локальные specs если в базе их нет (для товаров из data.ts)
-      const merged: Product = {
-        ...dbP,
-        specs: { ...(localP.specs ?? {}), ...(dbP.specs ?? {}) },
-        notes: dbP.notes ?? localP.notes,
-      };
-      // Наличие хранится в базе (specs._stock) — переносим его
-      const stockSpec = dbP.specs?.[STOCK_SPECS_KEY as Lang];
-      if (stockSpec) {
-        merged.specs = { ...(merged.specs ?? {}), [STOCK_SPECS_KEY as Lang]: stockSpec };
-      }
-      return merged;
-    });
-    // База данных — основной источник; локальные товары добавляются только
-    // если их нет в базе (новые товары, ещё не сохранённые админом).
-    const dbIds = new Set(backfilled.map(p => p.id));
-    const localOnly = products.filter(p => !dbIds.has(p.id));
-    const merged = dedupeProducts([...backfilled, ...localOnly]);
-    return merged.sort((a, b) => (b.createdAt ?? 0) - (a.createdAt ?? 0) || (b.id < a.id ? -1 : b.id > a.id ? 1 : 0));
+    return dedupeProducts(dbRows);
   } catch {
     return dedupeProducts(products);
   }

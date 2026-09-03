@@ -7,6 +7,8 @@ const supabaseKey = process.env.SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_A
 const LANGS = ['ru', 'tr', 'en', 'ar'];
 const SITE = 'https://drdaruzen.com';
 
+const CATEGORY_SLUGS = ['supplements', 'vitamins', 'minerals', 'beauty', 'herbs'];
+
 function urlEntry(loc: string, lastmod: string, changefreq: string, priority: string, hreflangs: string): string {
   return [
     '    <url>',
@@ -59,6 +61,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     lines.push(urlEntry(SITE + '/' + l + '/', today, 'weekly', '1.0', hreflangBlock('/')));
     lines.push(urlEntry(SITE + '/' + l + '/about', today, 'monthly', '0.9', hreflangBlock('/about')));
     lines.push(urlEntry(SITE + '/' + l + '/contacts', today, 'monthly', '0.7', hreflangBlock('/contacts')));
+  }
+
+  for (const slug of CATEGORY_SLUGS) {
+    for (const l of LANGS) {
+      lines.push(urlEntry(SITE + '/' + l + '/catalog/' + slug, today, 'weekly', '0.9', hreflangBlock('/catalog/' + slug)));
+    }
   }
 
   for (const id of productIds) {

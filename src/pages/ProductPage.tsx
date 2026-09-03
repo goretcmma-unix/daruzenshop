@@ -114,11 +114,14 @@ const ProductPage: React.FC<ProductPageProps> = ({ product, onAddToCart, onBuyNo
 
   const displayTitle = product.seoTitle || `${product.name.replace(/^Daruzen\s+/i, '')} | Daruzen`;
 
+  const productKeywords = (SEO_DATA[lang] || SEO_DATA.ru).keywords(product.name, product.category);
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'Product',
-    name: displayTitle.replace(/\s*\|\s*Daruzen\s*$/, ''),
+    name: product.name.replace(/^Daruzen\s+/i, ''),
+    alternateName: product.seoTitle ? product.seoTitle.replace(/\s*\|\s*Daruzen\s*$/, '') : undefined,
     description: product.description,
+    keywords: productKeywords,
     image: [product.image.startsWith('http') ? product.image : `${SITE}${product.image}`],
     sku: product.id,
     mpn: product.id,

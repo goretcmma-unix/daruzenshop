@@ -440,14 +440,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   const jsonLdDescription = `${displayName}. ${description || ''} ${compList ? 'Состав: ' + compList + '.' : ''}`.replace(/\s+/g, ' ').trim();
 
   const MAX_TITLE = 62;
-  let titleForBot = title;
+  let titleForBot = displayName;
   if (titleForBot.length > MAX_TITLE) {
-    const idx = titleForBot.lastIndexOf(' — ', MAX_TITLE);
-    if (idx > 10) {
-      titleForBot = titleForBot.slice(0, idx) + ' | Daruzen';
-    } else {
-      titleForBot = titleForBot.slice(0, MAX_TITLE - 9).replace(/\s+\S*$/, '') + ' | Daruzen';
-    }
+    titleForBot = titleForBot.slice(0, MAX_TITLE - 3).replace(/\s+\S*$/, '') + '…';
   }
   const descForBot = firstSentence || description;
 

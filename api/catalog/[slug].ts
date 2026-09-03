@@ -143,45 +143,6 @@ function detectLang(acceptLanguage: string | undefined): Lang {
   return 'ru';
 }
 
-let cachedAssets: string | null = null;
-let cacheTime = 0;
-
-async function getAssets(): Promise<string> {
-  if (cachedAssets && Date.now() - cacheTime < 120000) return cachedAssets;
-  try {
-    const resp = await fetch(SITE, { redirect: 'follow' });
-    const html = await resp.text();
-    const srcSeen = new Set<string>();
-    const tags: string[] = [];
-    function extract(section: string) {
-      const linkRe = /<link[^>]*href="([^"]+)"[^>]*>/g;
-      const scriptRe = /<script[^>]*src="([^"]+)"[^>]*>(?:<\/script>)?/g;
-      let m;
-      while ((m = linkRe.exec(section)) !== null) {
-        if (m[1].includes('/assets/') && !m[1].includes('fonts.googleapis') && !srcSeen.has(m[1])) {
-          srcSeen.add(m[1]);
-          tags.push(m[0]);
-        }
-      }
-      while ((m = scriptRe.exec(section)) !== null) {
-        if (!srcSeen.has(m[1])) {
-          srcSeen.add(m[1]);
-          tags.push(m[0]);
-        }
-      }
-    }
-    const headMatch = html.match(/<head[\s\S]*?<\/head>/);
-    if (headMatch) extract(headMatch[0]);
-    const bodyMatch = html.match(/<body[\s\S]*?<\/body>/);
-    if (bodyMatch) extract(bodyMatch[0]);
-    cachedAssets = tags.join('\n    ');
-    cacheTime = Date.now();
-    return cachedAssets;
-  } catch {
-    return '';
-  }
-}
-
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   const slug = (req.query.slug as string) || '';
   const catKey = SLUG_TO_KEY[slug.toLowerCase()];
@@ -259,7 +220,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   if (!bot) {
     try {
-      const resp = await fetch(SITE, { redirect: 'follow' });
+      const resp = await fetch(SITE + '/index.html', { redirect: 'follow' });
       const spaHtml = await resp.text();
       res.setHeader('Content-Type', 'text/html; charset=utf-8');
       res.setHeader('Cache-Control', 'private, no-cache, no-store, must-revalidate');

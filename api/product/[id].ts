@@ -339,7 +339,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   const inStock = feedInStock;
   const firstSentence = desc.split(/[.!؟]\s/)[0] || desc.slice(0, 120);
 
-  const title = (SEO_TITLES[id] && SEO_TITLES[id][lang]) || `${cleanName} | Daruzen`;
+  const fallbackTitle = `${displayName} | Daruzen`;
+  let title = (SEO_TITLES[id] && SEO_TITLES[id][lang]) || fallbackTitle;
+  if (!title.toLowerCase().includes(displayName.toLowerCase())) {
+    title = `${displayName} — ${title.replace(/\s*\|\s*Daruzen\s*$/, '').trim()} | Daruzen`;
+  }
   const description = desc.replace(/\s+/g, ' ').trim();
   const compList = COMPOSITION[id]?.[lang] || COMPOSITION[id]?.en || '';
   const keywords = `${KEYWORDS_TEMPLATES[lang](name, catLabel, firstSentence)}, ${compList}`;
@@ -394,7 +398,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   if (!bot) {
     try {
-      const resp = await fetch(SITE, { redirect: 'follow' });
+      const resp = await fetch(SITE + '/index.html', { redirect: 'follow' });
       const spaHtml = await resp.text();
       res.setHeader('Content-Type', 'text/html; charset=utf-8');
       res.setHeader('Cache-Control', 'private, no-cache, no-store, must-revalidate');

@@ -490,18 +490,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     };
   }
 
-  if (!bot) {
-    try {
-      const resp = await fetch(SITE + '/index.html', { redirect: 'follow' });
-      const spaHtml = await resp.text();
-      res.setHeader('Content-Type', 'text/html; charset=utf-8');
-      res.setHeader('Cache-Control', 'private, no-cache, no-store, must-revalidate');
-      return res.status(200).send(spaHtml);
-    } catch {
-      return res.redirect(302, '/');
-    }
-  }
-
   const html = `<!doctype html>
 <html lang="${lang}">
   <head>

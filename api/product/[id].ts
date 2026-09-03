@@ -444,7 +444,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (titleForBot.length > MAX_TITLE) {
     titleForBot = titleForBot.slice(0, MAX_TITLE - 3).replace(/\s+\S*$/, '') + '…';
   }
-  const descForBot = firstSentence || description;
+  const descForBot = [firstSentence, purposeList, compList].filter(Boolean).join(' ') || description;
 
   const canonical = `${SITE}/${lang}/product/${id}`;
 
@@ -542,6 +542,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   <body>
     <div style="max-width:800px;margin:0 auto;padding:40px 20px;font-family:sans-serif">
       <h1>${esc(seoName)}</h1>
+      <p><strong>${lang === 'ru' ? 'Категория' : lang === 'tr' ? 'Kategori' : lang === 'ar' ? 'الفئة' : 'Category'}:</strong> ${esc(catLabel)}</p>
+      ${purposeList ? `<p><strong>${lang === 'ru' ? 'Назначение' : lang === 'tr' ? 'Kullanım amacı' : lang === 'ar' ? 'الغرض' : 'Purpose'}:</strong> ${esc(purposeList)}</p>` : ''}
       <p>${esc(desc)}</p>
       ${compList ? `<p><strong>${lang === 'ru' ? 'Состав' : lang === 'tr' ? 'Bileşenler' : lang === 'ar' ? 'المكونات' : 'Composition'}:</strong> ${esc(compList)}</p>` : ''}
       <p><strong>${lang === 'ru' ? 'Цена' : lang === 'tr' ? 'Fiyat' : lang === 'ar' ? 'السعر' : 'Price'}:</strong> ${price} ${cur.symbol}</p>

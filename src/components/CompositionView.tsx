@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useLayoutEffect, useRef, useMemo } from 'react';
+import React, { useState, useLayoutEffect, useRef, useMemo } from 'react';
 import { ChevronDown } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { parseCompositionLine } from '../data';
@@ -43,7 +43,6 @@ const CompRows: React.FC<{ block: CompTableBlock; t: ReturnType<typeof useLang>[
   const nameLabel = nonEmptyHeaders[0] || t.modal.substance;
   const valueLabels = nonEmptyHeaders.slice(1);
   const [openCol, setOpenCol] = useState<number | null>(0);
-  useEffect(() => { setOpenCol(0); }, [block]);
 
   const rootRef = useRef<HTMLDivElement>(null);
 
@@ -203,7 +202,6 @@ export const CompositionPanel: React.FC<{ specs?: string[]; t: ReturnType<typeof
   const sectioned = groups.filter(g => g.title).length > 1;
   const [openSection, setOpenSection] = useState(0);
   const [simpleOpen, setSimpleOpen] = useState(true);
-  useEffect(() => { setOpenSection(0); setSimpleOpen(true); }, [specLines]);
 
   if (sectioned) {
     return (

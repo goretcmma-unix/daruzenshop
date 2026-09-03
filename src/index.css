@@ -1145,16 +1145,28 @@ a:hover {
   }
 }
 
-/* Keep inactive panes rendered at full height on desktop so switching tabs does
-   not collapse/re-animate a tall pane (e.g. "Состав" / composition) - state and
-   content are preserved, the horizontal track/swipe remains for tab navigation. */
+/* Each tab gets its own modal height on tablets/desktop (the sheet self-expands):
+   collapse the inactive panes so the track height matches only the active tab.
+   The active pane fades in softly so switching tabs does not visibly throw the
+   neighbouring pane's content (e.g. the "Состав" bar) across the viewport. */
 @media (min-width: 769px) {
   .modal-layout[data-active-tab="product"] .modal-tab-pane:not(.is-active),
   .modal-layout[data-active-tab="composition"] .modal-tab-pane:not(.is-active),
   .modal-layout[data-active-tab="note"] .modal-tab-pane:not(.is-active) {
+    height: 0 !important;
+    min-height: 0 !important;
+    overflow: hidden !important;
     visibility: hidden;
     pointer-events: none;
   }
+  .modal-layout .modal-tab-pane.is-active {
+    animation: modalPaneFadeIn 0.25s ease both;
+  }
+}
+
+@keyframes modalPaneFadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
 

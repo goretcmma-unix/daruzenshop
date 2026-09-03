@@ -210,6 +210,95 @@ const SEO_TITLES: Record<string, Record<Lang, string>> = {
   },
 };
 
+// Фразы «от/для ...» — мягкие (без «лечит»/мед. диагнозов), чтобы товар выходил по запросу
+// «турецкий бад / витамин от/для ...» без упоминания бренда.
+const PURPOSE: Record<string, Record<Lang, string[]>> = {
+  'prod-1': {
+    ru: ['турецкий бад для иммунитета', 'турецкий витамин от простуды', 'бад с чёрным тмином для иммунитета', 'жевательные витамины для иммунитета'],
+    tr: ['bağışıklık için türk takviyesi', 'siyah kimyon yağı takviyesi'],
+    en: ['turkish supplement for immunity', 'black seed oil gummies immunity'],
+    ar: ['مكمل تركي للمناعة', 'زيت الحبة السوداء للمناعة'],
+  },
+  'prod-2': {
+    ru: ['турецкий бад омега 3 для сердца', 'рыбий жир для мозга', 'омега 3 для памяти', 'турецкий витамин для сердца и зрения'],
+    tr: ['kalp için türk omega 3', 'balık yağı beyin', 'omega 3 hafıza'],
+    en: ['turkish omega 3 for heart', 'fish oil for brain', 'omega 3 memory'],
+    ar: ['أوميغا 3 تركي للقلب', 'زيت السمك للدماغ', 'أوميغا 3 للذاكرة'],
+  },
+  'prod-3': {
+    ru: ['турецкий бад для похудения', 'яблочный уксус для контроля веса', 'бад для пищеварения', 'бад от вздутия живота'],
+    tr: ['kilo kontrolü için elma sirkesi', 'sindirim için türk takviyesi'],
+    en: ['turkish supplement for weight control', 'apple cider vinegar digestion'],
+    ar: ['خل التفاح للتحكم بالوزن', 'مكمل تركي للهضم'],
+  },
+  'prod-4': {
+    ru: ['турецкий магний от усталости', 'магний для сна', 'бад для нервной системы', 'магний b6 от стресса'],
+    tr: ['yorgunluk için türk magnezyum', 'uyku için magnezyum', 'sinir sistemi takviyesi'],
+    en: ['turkish magnesium for fatigue', 'magnesium for sleep', 'nerve support supplement'],
+    ar: ['مغنيسيوم تركي للتعب', 'مغنيسيوم للنوم', 'مكمل للجهاز العصبي'],
+  },
+  'prod-5': {
+    ru: ['турецкий бад от стресса', 'бад от нервов', 'успокаивающий фитокомплекс', 'средство от тревожности', 'травы для нервной системы'],
+    tr: ['stres için türk takviyesi', 'sakinleştirici bitki', 'sinir için bitki'],
+    en: ['turkish supplement for stress', 'calming herbal complex', 'nerve support herbs'],
+    ar: ['مكمل تركي للتوتر', 'أعشاب مهدئة', 'مكمل للأعصاب'],
+  },
+  'prod-6': {
+    ru: ['турецкий цинк для иммунитета', 'цинк селен для кожи', 'бад для волос и ногтей', 'цинк от акне'],
+    tr: ['bağışıklık için türk çinko', 'saç ve tırnak için çinko'],
+    en: ['turkish zinc for immunity', 'zinc for skin hair nails'],
+    ar: ['زنك تركي للمناعة', 'زنك للشعر والجلد'],
+  },
+  'prod-7': {
+    ru: ['турецкий бад для печени', 'расторопша для печени', 'артишок для пищеварения', 'бад от тяжести после еды'],
+    tr: ['karaciğer için türk takviyesi', 'devedikeni karaciğer'],
+    en: ['turkish supplement for liver', 'milk thistle liver', 'artichoke digestion'],
+    ar: ['مكمل تركي للكبد', 'شوك الحليب للكبد', 'أرتيشوك للهضم'],
+  },
+  'prod-8': {
+    ru: ['турецкий бад для энергии', 'nadh для энергии и мозга', 'бад для бодрости', 'коэнзим q10 для клеток'],
+    tr: ['enerji için türk takviyesi', 'nadh enerji', 'coq10 antioksidan'],
+    en: ['turkish supplement for energy', 'nadh energy brain', 'coq10 antioxidant'],
+    ar: ['مكمل تركي للطاقة', 'NADH للطاقة والدماغ', 'كيو 10 مضاد أكسدة'],
+  },
+  'prod-9': {
+    ru: ['турецкий бад от тяги к сладкому', 'хром для контроля веса', 'бад для снижения аппетита', 'бад для контроля сахара'],
+    tr: ['şeker isteği için türk takviyesi', 'krom kilo kontrolü'],
+    en: ['turkish supplement for sugar cravings', 'chromium weight control', 'gymnema appetite'],
+    ar: ['مكمل تركي لرغبة السكر', 'كروم للتحكم بالوزن'],
+  },
+  'prod-10': {
+    ru: ['турецкий бад для памяти', 'гинкго билоба для мозга', 'бад для концентрации внимания', 'бад от усталости мозга'],
+    tr: ['hafıza için türk takviyesi', 'ginkgo biloba beyin', 'konsantrasyon takviyesi'],
+    en: ['turkish supplement for memory', 'ginkgo biloba brain', 'focus supplement'],
+    ar: ['مكمل تركي للذاكرة', 'جنكغو بيلوبا للدماغ', 'مكمل للتركيز'],
+  },
+  'prod-11': {
+    ru: ['турецкий витамин для зрения', 'лютеин для глаз', 'витамины от усталости глаз', 'бад для сетчатки глаза'],
+    tr: ['göz için türk vitamini', 'lutein göz', 'göz yorgunluğu takviyesi'],
+    en: ['turkish vitamin for vision', 'lutein for eyes', 'eye fatigue supplement'],
+    ar: ['فيتامين تركي للرؤية', 'لوتين للعين', 'مكمل لإجهاد العين'],
+  },
+  'prod-12': {
+    ru: ['турецкий мультивитамин для иммунитета', 'жевательные витамины для энергии', 'мультивитамины для взрослых'],
+    tr: ['bağışıklık için türk multivitamin', 'enerji için çiğneme vitamini'],
+    en: ['turkish multivitamin for immunity', 'gummies for energy'],
+    ar: ['مالتي فيتامين تركي للمناعة', 'فيتامينات للمضغ للطاقة'],
+  },
+  'prod-13': {
+    ru: ['турецкий женский витаминный комплекс', 'бад для женского здоровья', 'витамины для гормонального баланса', 'бад от пмс'],
+    tr: ['kadınlar için türk vitamini', 'hormon dengesi takviyesi'],
+    en: ['turkish supplement for women', 'hormone balance vitamins'],
+    ar: ['مكمل تركي للنساء', 'فيتامينات لتوازن الهرمونات'],
+  },
+  'prod-14': {
+    ru: ['турецкий бад от усталости', 'железо для гемоглобина', 'витамин от слабости', 'железо с витамином с'],
+    tr: ['yorgunluk için türk demir', 'hemoglobin için demir'],
+    en: ['turkish iron for fatigue', 'iron for hemoglobin', 'iron with vitamin c'],
+    ar: ['حديد تركي للتعب', 'حديد للهيموغلوبين', 'حديد مع فيتامين سي'],
+  },
+};
+
 function detectLang(acceptLanguage: string | undefined): Lang {
   if (!acceptLanguage) return 'ru';
   const prefs = acceptLanguage
@@ -346,7 +435,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
   const description = desc.replace(/\s+/g, ' ').trim();
   const compList = COMPOSITION[id]?.[lang] || COMPOSITION[id]?.en || '';
-  const keywords = `${KEYWORDS_TEMPLATES[lang](name, catLabel, firstSentence)}, ${compList}`;
+  const purposeList = (PURPOSE[id]?.[lang] || PURPOSE[id]?.ru || []).join(', ');
+  const keywords = `${KEYWORDS_TEMPLATES[lang](name, catLabel, firstSentence)}, ${compList}, ${purposeList}`;
   const jsonLdDescription = `${displayName}. ${description || ''} ${compList ? 'Состав: ' + compList + '.' : ''}`.replace(/\s+/g, ' ').trim();
 
   const titleForBot = title;

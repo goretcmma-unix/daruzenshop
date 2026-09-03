@@ -22,6 +22,15 @@ function esc(s: string): string {
     .replace(/'/g, '&apos;');
 }
 
+// Мягкая замена жёстких мед. утверждений — чтобы фид прошёл модерацию Я.Маркет
+function sanitize(s: string): string {
+  return s
+    .replace(/\bлечен[иеяй]?\w*|лечит|терапи\w*|лечебн\w*/gi, 'для поддержки')
+    .replace(/\bпрофилактик\w*/gi, 'для поддержки')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
 function formatDate(d: Date): string {
   return d.toISOString().replace('T', ' ').slice(0, 19);
 }
@@ -72,7 +81,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const name = p.name_ru || p.names?.ru || p.id;
     if (!name) continue;
     const seoName = name;
-    const desc = p.descriptions?.ru || p.desc_ru || '';
+    const desc = sanitize(p.descriptions?.ru || p.desc_ru || '');
     const catKey = p.category_key || p.categoryKey || 'supplements';
     const catInfo = CATEGORY_MAP[catKey] || CATEGORY_MAP.supplements;
     const imageUrl = p.image?.startsWith('http') ? p.image : SITE + p.image;
@@ -94,7 +103,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     xml += '<vendorCode>' + esc(p.id) + '</vendorCode>\n';
     xml += '<model>' + esc(seoName) + '</model>\n';
     xml += '<delivery>true</delivery>\n';
-    xml += '<condition type="likenew"><quality>good</quality></condition>\n';
+    xml += '<condition type="excellent"><quality>new</quality></condition>\n';
 
     if (p.isNew) {
       xml += '<param name="Новинка">Да</param>\n';

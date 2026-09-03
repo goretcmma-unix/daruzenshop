@@ -6,6 +6,9 @@
     "api/home.ts": {
       "maxDuration": 10
     },
+    "api/page.ts": {
+      "maxDuration": 10
+    },
     "api/product/*.ts": {
       "maxDuration": 10
     },
@@ -88,6 +91,38 @@
     {
       "source": "/ar",
       "destination": "/api/home?lang=ar"
+    },
+    {
+      "source": "/ru/about",
+      "destination": "/api/page?page=about&lang=ru"
+    },
+    {
+      "source": "/tr/about",
+      "destination": "/api/page?page=about&lang=tr"
+    },
+    {
+      "source": "/en/about",
+      "destination": "/api/page?page=about&lang=en"
+    },
+    {
+      "source": "/ar/about",
+      "destination": "/api/page?page=about&lang=ar"
+    },
+    {
+      "source": "/ru/contacts",
+      "destination": "/api/page?page=contacts&lang=ru"
+    },
+    {
+      "source": "/tr/contacts",
+      "destination": "/api/page?page=contacts&lang=tr"
+    },
+    {
+      "source": "/en/contacts",
+      "destination": "/api/page?page=contacts&lang=en"
+    },
+    {
+      "source": "/ar/contacts",
+      "destination": "/api/page?page=contacts&lang=ar"
     },
     {
       "source": "/ru/catalog/:slug",

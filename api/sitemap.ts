@@ -59,7 +59,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     }
   }
 
-  const today = new Date().toISOString().slice(0, 10);
+  const today = '2026-09-04';
 
   const lines: string[] = [];
   lines.push('<?xml version="1.0" encoding="UTF-8"?>');

@@ -74,14 +74,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const inStock = stockSpec !== '0' && (Array.isArray(stockSpec) ? stockSpec[0] !== '0' : true) && p.inStock !== false && p.in_stock !== false;
     const url = SITE + '/ru/product/' + p.id;
     const catKey = p.category_key || p.categoryKey || 'supplements';
-    const categoryMap: Record<string, string> = {
-      supplements: 'Health & Beauty > Health Care > Dietary Supplements & Vitamins',
-      vitamins: 'Health & Beauty > Health Care > Dietary Supplements & Vitamins',
-      minerals: 'Health & Beauty > Health Care > Dietary Supplements & Vitamins',
-      beauty: 'Health & Beauty > Personal Care',
-      herbs: 'Health & Beauty > Health Care > Herbal & Homeopathic Remedies',
-    };
-    const category = categoryMap[catKey] || categoryMap.supplements;
+    const category = 'Health & Beauty > Health Care > Vitamins & Supplements';
 
     xml += '<item>\n';
     xml += '<g:id>' + esc(p.id) + '</g:id>\n';

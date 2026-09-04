@@ -34,26 +34,17 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   res.setHeader('Cache-Control', 'public, max-age=0, s-maxage=0, must-revalidate');
 
   let productIds: string[] = [];
-  let productMods: Record<string, string> = {};
 
   if (supabaseUrl && supabaseKey) {
     try {
       const supabase = createClient(supabaseUrl, supabaseKey);
       const { data, error } = await supabase
         .from('products')
-        .select('id, updated_at');
+        .select('id');
       if (error) {
         console.error('Sitemap Supabase error:', error.message);
       }
       if (data) productIds = data.map((r: { id: string }) => r.id);
-      if (data) {
-        for (const r of data as { id: string; updated_at?: string | number }[]) {
-          const d = new Date(r.updated_at as string);
-          if (!isNaN(d.getTime())) {
-            productMods[r.id] = d.toISOString().slice(0, 10);
-          }
-        }
-      }
     } catch (e) {
       console.error('Sitemap fetch error:', e);
     }
@@ -79,9 +70,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   for (const id of productIds) {
-    const mod = productMods[id] || today;
     for (const l of LANGS) {
-      lines.push(urlEntry(SITE + '/' + l + '/product/' + id, mod, 'weekly', '0.8', hreflangBlock('/product/' + id)));
+      lines.push(urlEntry(SITE + '/' + l + '/product/' + id, today, 'weekly', '0.8', hreflangBlock('/product/' + id)));
     }
   }
 

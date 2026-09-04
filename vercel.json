@@ -73,6 +73,18 @@
       "destination": "/api/google-feed"
     },
     {
+      "source": "/google-feed-tr.xml",
+      "destination": "/api/google-feed?lang=tr"
+    },
+    {
+      "source": "/google-feed-en.xml",
+      "destination": "/api/google-feed?lang=en"
+    },
+    {
+      "source": "/google-feed-ar.xml",
+      "destination": "/api/google-feed?lang=ar"
+    },
+    {
       "source": "/",
       "destination": "/api/home?lang=ru"
     },

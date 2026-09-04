@@ -87,7 +87,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     xml += '<g:brand>Daruzen</g:brand>\n';
     xml += '<g:mpn>' + esc(p.id) + '</g:mpn>\n';
     xml += '<g:condition>new</g:condition>\n';
-    xml += '<g:target_country>RU</g:target_country>\n';
     xml += '<g:google_product_category>' + esc(category) + '</g:google_product_category>\n';
     xml += '<g:product_type>' + esc(category) + '</g:product_type>\n';
     xml += '</item>\n';

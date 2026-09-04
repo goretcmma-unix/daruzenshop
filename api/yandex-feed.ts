@@ -103,7 +103,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     xml += '<vendorCode>' + esc(p.id) + '</vendorCode>\n';
     xml += '<model>' + esc(seoName) + '</model>\n';
     xml += '<delivery>true</delivery>\n';
-    xml += '<condition type="excellent"><quality>new</quality></condition>\n';
+    xml += '<condition type="likenew"><quality>perfect</quality></condition>\n';
 
     if (p.isNew) {
       xml += '<param name="Новинка">Да</param>\n';

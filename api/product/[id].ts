@@ -417,6 +417,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   const imageUrl = typeof product.image === 'string'
     ? (product.image.startsWith('http') ? product.image : SITE + product.image)
     : SITE + '/images/og-image.png';
+  // For search engines/rich snippets use a higher-resolution PNG (1200x1600) when available.
+  const imageBot = imageUrl && /\.webp$/i.test(imageUrl)
+    ? imageUrl.replace(/\.webp$/i, '-1200.png')
+    : imageUrl;
   const basePrice = Number(product.price) || 0;
 
   const feedPriceRUB = (basePrice * 2.2).toFixed(2);
@@ -460,7 +464,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     name: seoName,
     alternateName: title.replace(/\s*\|\s*Daruzen\s*$/, '').trim(),
     description: jsonLdDescription,
-    image: [imageUrl],
+    image: [imageBot],
     sku: id,
     mpn: id,
     brand: { '@type': 'Brand', name: 'Daruzen' },
@@ -518,10 +522,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     <meta property="og:url" content="${esc(canonical)}" />
     <meta property="og:title" content="${esc(title)}" />
     <meta property="og:description" content="${esc(description)}" />
-    <meta property="og:image" content="${imageUrl}" />
-    <meta property="og:image:type" content="${imageUrl.endsWith('.png') ? 'image/png' : imageUrl.endsWith('.jpg') || imageUrl.endsWith('.jpeg') ? 'image/jpeg' : 'image/webp'}" />
-    <meta property="og:image:width" content="600" />
-    <meta property="og:image:height" content="800" />
+    <meta property="og:image" content="${imageBot}" />
+    <meta property="og:image:type" content="${imageBot.endsWith('.png') ? 'image/png' : imageBot.endsWith('.jpg') || imageBot.endsWith('.jpeg') ? 'image/jpeg' : 'image/webp'}" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="1600" />
     <meta property="og:image:alt" content="${esc(seoName)}" />
     <meta property="og:site_name" content="Daruzen" />
     <meta property="og:locale" content="${LOCALE_MAP[lang]}" />
@@ -529,7 +533,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="${esc(title)}" />
     <meta name="twitter:description" content="${esc(description)}" />
-    <meta name="twitter:image" content="${imageUrl}" />
+    <meta name="twitter:image" content="${imageBot}" />
     <link rel="icon" type="image/x-icon" href="/favicon.ico?v=8" />
     <link rel="icon" type="image/png" sizes="48x48" href="/favicon-48.png?v=8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg?v=8" sizes="any" />

@@ -414,11 +414,15 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   const desc = get('desc') || '';
   const catKey = (product.category_key as string) || 'supplements';
   const catLabel = CATEGORY_LABELS[lang][catKey] || CATEGORY_LABELS[lang].supplements;
-  const imageUrl = typeof product.image === 'string'
+  const imageUrl = typeof product.image === 'string' && product.image && !product.image.startsWith('data:')
     ? (product.image.startsWith('http') ? product.image : SITE + product.image)
     : SITE + '/images/og-image.png';
   // For search engines/rich snippets use a higher-resolution PNG (1200x1600) when available.
-  const imageBot = imageUrl && /\.webp$/i.test(imageUrl)
+  // PNG-копия есть только у локальных картинок сайта и у новых фото из админки в
+  // Supabase Storage (пара file-1200.png) — иначе подставим битую ссылку и
+  // Google/Bing не покажут фото.
+  const hasPngPair = imageUrl.startsWith(SITE) || imageUrl.includes('/storage/v1/object/public/product_image/');
+  const imageBot = imageUrl && /\.webp$/i.test(imageUrl) && hasPngPair
     ? imageUrl.replace(/\.webp$/i, '-1200.png')
     : imageUrl;
   const basePrice = Number(product.price) || 0;
@@ -439,12 +443,24 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
   const description = desc.replace(/\s+/g, ' ').trim();
   const compList = COMPOSITION[id]?.[lang] || COMPOSITION[id]?.en || '';
-  const purposeList = (PURPOSE[id]?.[lang] || PURPOSE[id]?.ru || []).join(', ');
+  const purposeArr = (PURPOSE[id]?.[lang] || PURPOSE[id]?.ru || []);
+  const purposeList = purposeArr.join(', ');
+  // Полная таблица состава из базы (с дозировками) — чтобы поисковики индексировали
+  // все ингредиенты и их количества, а не только короткое перечисление.
+  const specCols = (product.specs as Record<string, unknown> | null) || {};
+  const rawSpecRows = (() => {
+    const rows = specCols[lang] ?? specCols.en ?? specCols.ru;
+    return Array.isArray(rows) ? rows.filter((r): r is string => typeof r === 'string') : [];
+  })();
+  const noteText = get('notes').replace(/\s+/g, ' ').trim();
   const keywords = `${KEYWORDS_TEMPLATES[lang](name, catLabel, firstSentence)}, ${compList}, ${purposeList}`;
   const jsonLdDescription = `${displayName}. ${description || ''} ${compList ? 'Состав: ' + compList + '.' : ''}`.replace(/\s+/g, ' ').trim();
 
-  const MAX_TITLE = 62;
-  let titleForBot = displayName;
+  const MAX_TITLE = 65;
+  // Уникальный информативный заголовок (название + состав/категория + бренд).
+  // Голое название товара без контекста Google часто переписывает в общий
+  // заголовок сайта — в выдаче остаётся только ссылка без описания товара.
+  let titleForBot = title;
   if (titleForBot.length > MAX_TITLE) {
     titleForBot = titleForBot.slice(0, MAX_TITLE - 3).replace(/\s+\S*$/, '') + '…';
   }
@@ -520,18 +536,20 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     ${hreflangXDefault}
     <meta property="og:type" content="product" />
     <meta property="og:url" content="${esc(canonical)}" />
-    <meta property="og:title" content="${esc(title)}" />
+    <meta property="og:title" content="${esc(titleForBot)}" />
     <meta property="og:description" content="${esc(description)}" />
     <meta property="og:image" content="${imageBot}" />
+    <meta property="og:image:secure_url" content="${imageBot}" />
     <meta property="og:image:type" content="${imageBot.endsWith('.png') ? 'image/png' : imageBot.endsWith('.jpg') || imageBot.endsWith('.jpeg') ? 'image/jpeg' : 'image/webp'}" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="1600" />
     <meta property="og:image:alt" content="${esc(seoName)}" />
+    <link rel="image_src" href="${imageBot}" />
     <meta property="og:site_name" content="Daruzen" />
     <meta property="og:locale" content="${LOCALE_MAP[lang]}" />
     ${ALL_LANGS.filter((l) => l !== lang).map((l) => `<meta property="og:locale:alternate" content="${LOCALE_MAP[l]}" />`).join('\n    ')}
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="${esc(title)}" />
+    <meta name="twitter:title" content="${esc(titleForBot)}" />
     <meta name="twitter:description" content="${esc(description)}" />
     <meta name="twitter:image" content="${imageBot}" />
     <link rel="icon" type="image/x-icon" href="/favicon.ico?v=8" />
@@ -547,9 +565,29 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     <div style="max-width:800px;margin:0 auto;padding:40px 20px;font-family:sans-serif">
       <h1>${esc(seoName)}</h1>
       <p><strong>${lang === 'ru' ? 'Категория' : lang === 'tr' ? 'Kategori' : lang === 'ar' ? 'الفئة' : 'Category'}:</strong> ${esc(catLabel)}</p>
-      ${purposeList ? `<p><strong>${lang === 'ru' ? 'Назначение' : lang === 'tr' ? 'Kullanım amacı' : lang === 'ar' ? 'الغرض' : 'Purpose'}:</strong> ${esc(purposeList)}</p>` : ''}
       <p>${esc(desc)}</p>
-      ${compList ? `<p><strong>${lang === 'ru' ? 'Состав' : lang === 'tr' ? 'Bileşenler' : lang === 'ar' ? 'المكونات' : 'Composition'}:</strong> ${esc(compList)}</p>` : ''}
+      ${purposeArr.length ? `
+      <h2>${lang === 'ru' ? 'Для чего подходит' : lang === 'tr' ? 'Ne için uygundur' : lang === 'ar' ? 'لما يصلح' : 'What it is suitable for'}</h2>
+      <ul>
+        ${purposeArr.map((p) => `        <li>${esc(p)}</li>`).join('\n')}
+      </ul>` : ''}
+      ${(() => {
+        const compLabel = lang === 'ru' ? 'Состав' : lang === 'tr' ? 'Bileşenler' : lang === 'ar' ? 'المكونات' : 'Composition';
+        if (rawSpecRows.length) {
+          return `
+      <h2>${compLabel}</h2>
+      ${renderSpecs(rawSpecRows)}`;
+        }
+        if (compList) {
+          return `
+      <h2>${compLabel}</h2>
+      <p>${esc(compList)}</p>`;
+        }
+        return '';
+      })()}
+      ${noteText ? `
+      <h2>${lang === 'ru' ? 'Инструкция и условия хранения' : lang === 'tr' ? 'Kullanım ve saklama koşulları' : lang === 'ar' ? 'الاستخدام وظروف التخزين' : 'Directions and storage'}</h2>
+      <p>${esc(noteText)}</p>` : ''}
       <p><strong>${lang === 'ru' ? 'Цена' : lang === 'tr' ? 'Fiyat' : lang === 'ar' ? 'السعر' : 'Price'}:</strong> ${price} ${cur.symbol}</p>
       <p><strong>${lang === 'ru' ? 'Наличие' : lang === 'tr' ? 'Stok durumu' : lang === 'ar' ? 'التوفر' : 'Availability'}:</strong> ${inStock ? (lang === 'ru' ? 'В наличии' : lang === 'tr' ? 'Stokta' : lang === 'ar' ? 'متوفر' : 'In Stock') : (lang === 'ru' ? 'Нет в наличии' : lang === 'tr' ? 'Stokta yok' : lang === 'ar' ? 'غير متوفر' : 'Out of Stock')}</p>
       <img src="${imageUrl}" alt="${esc(seoName)}" width="600" />
@@ -562,6 +600,36 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   res.setHeader('Cache-Control', 'public, s-maxage=0, max-age=300');
   res.setHeader('Vary', 'User-Agent');
   res.status(200).send(html);
+}
+
+// Превращает markdown-таблицу состава (строки вида '| Название | Количество | ... |')
+// в видимый HTML, чтобы каждый ингредиент стал текстом на странице (для SEO-поиска).
+function renderSpecs(rows: string[]): string {
+  const body: string[] = [];
+  let open = false;
+  const closeTable = () => { if (open) { body.push('</table>'); open = false; } };
+  const strip = (c: string) => c.trim().replace(/^[*_]+/, '').replace(/[*_]+$/, '').replace(/\s+/g, ' ');
+
+  for (const raw of rows) {
+    const line = raw.trim();
+    if (!line) continue;
+    if (line.startsWith('|')) {
+      const cells = line.replace(/^\|/, '').replace(/\|$/, '').split('|').map(strip);
+      const isSep = cells.every((c) => /^[-:]+$/.test(c.replace(/\*/g, '')));
+      if (isSep) continue;
+      if (!open) { body.push('<table>'); open = true; }
+      body.push('<tr>' + cells.map((c) => '<td>' + esc(c) + '</td>').join('') + '</tr>');
+    } else if (line.includes('|')) {
+      const cells = line.split('|').map(strip);
+      if (!open) { body.push('<table>'); open = true; }
+      body.push('<tr>' + cells.map((c) => '<td>' + esc(c) + '</td>').join('') + '</tr>');
+    } else {
+      closeTable();
+      body.push('<p>' + esc(strip(line)) + '</p>');
+    }
+  }
+  closeTable();
+  return body.join('\n');
 }
 
 function esc(s: string): string {

@@ -117,7 +117,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   const catOf = (key: string) => `${SITE}/${lang}/catalog/${key}`;
 
   const url = (p: any) => `${SITE}/${lang}/product/${p.id}`;
-  const image = (p: any) => (p.image?.startsWith('http') ? p.image : SITE + p.image);
+  const image = (p: any) => (!p.image || p.image.startsWith('data:') ? SITE + '/images/og-image.png' : (p.image.startsWith('http') ? p.image : SITE + p.image));
 
   const navLinks = ['supplements', 'vitamins', 'minerals', 'beauty', 'herbs']
     .map((k) => `<a href="${catOf(k)}" style="display:inline-block;margin:0 12px 8px 0">${esc(catLabel(k))}</a>`)

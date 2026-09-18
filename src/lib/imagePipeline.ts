@@ -79,3 +79,15 @@ export const cropToStandard = (img: HTMLImageElement): HTMLCanvasElement => {
   ctx.drawImage(tmp, left, top, cw, ch, (IMG_W - sw) / 2, (IMG_H - sh) / 2, sw, sh);
   return c;
 };
+
+// Создаёт 1200x1600 PNG из canvas 600x800 (для og:image / rich snippets / фидов).
+export const canvasToPng1200 = (src: HTMLCanvasElement): Promise<Blob | null> => {
+  const big = document.createElement('canvas');
+  big.width = 1200;
+  big.height = 1600;
+  const ctx = big.getContext('2d')!;
+  ctx.imageSmoothingEnabled = true;
+  ctx.imageSmoothingQuality = 'high';
+  ctx.drawImage(src, 0, 0, 1200, 1600);
+  return new Promise<Blob | null>((resolve) => big.toBlob((b) => resolve(b), 'image/png'));
+};

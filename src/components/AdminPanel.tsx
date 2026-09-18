@@ -9,7 +9,7 @@ import {
 import { motion, AnimatePresence } from 'framer-motion';
 import { supabase, fetchProducts, upsertProduct, deleteProduct } from '../lib/supabase';
 import { autoTranslateFromRu } from '../lib/translate';
-import { cropToStandard } from '../lib/imagePipeline';
+import { cropToStandard, canvasToPng1200 } from '../lib/imagePipeline';
 import { NormalizedImg } from './NormalizedImg';
 import { parseCompositionLine, dedupeProducts, isNewProduct, products, getInStock, setInStock, type Product, type CategoryKey } from '../data';
 
@@ -220,7 +220,7 @@ const AdminPanel: React.FC = () => {
   const [showHelp, setShowHelp] = useState(true);
 
   const steps = [
-    { id: 'photo', label: 'Фотография', icon: ImageIcon, hint: 'Покажите товар красиво — фото привлекает покупателя. Перетащите картинку прямо в это окно или нажмите на него. Фото обрабатывается и сохраняется прямо в данных товара — без внешнего хранилища.' },
+    { id: 'photo', label: 'Фотография', icon: ImageIcon, hint: 'Покажите товар красиво — фото привлекает покупателя. Перетащите картинку прямо в это окно или нажмите на него. Фото автоматически приведётся к единому виду 3:4 и сохранится в облачном хранилище — оно не потеряется и попадёт на сайт вместе с товаром.' },
     { id: 'name', label: 'Название', icon: Type, hint: 'Напишите название по-русски. Остальные языки (турецкий, английский, арабский) мы переведём автоматически — кнопка «Перевести» в конце.' },
     { id: 'price', label: 'Цена и категория', icon: Coins, hint: 'Выберите, к какому разделу относится товар, и укажите цену в турецких лирах (₺).' },
     { id: 'desc', label: 'Описание', icon: FileText, hint: 'Расскажите о товаре простыми словами: что это, зачем, как принимать. Это увидит покупатель.' },
@@ -363,6 +363,10 @@ const AdminPanel: React.FC = () => {
 
   const handleImageFile = (file: File | null) => {
     if (!draft || !file || !file.type.startsWith('image/')) return;
+    if (!supabase) {
+      setNotice('Хранилище не настроено — фото не загружено');
+      return;
+    }
     const localUrl = URL.createObjectURL(file);
     updateDraft(pr => ({ ...pr, image: localUrl }));
     setNotice('Обрабатываем фото…');
@@ -370,14 +374,29 @@ const AdminPanel: React.FC = () => {
     img.onload = async () => {
       try {
         const c = cropToStandard(img);
-        const dataUrl = c.toDataURL('image/webp', 0.95);
-        updateDraft(pr => ({ ...pr, image: dataUrl }));
-        setNotice('Фото встроено в данные товара ✓');
+        const webpBlob = await new Promise<Blob | null>(resolve => c.toBlob(b => resolve(b), 'image/webp', 0.95));
+        if (!webpBlob) throw new Error('не удалось создать WebP');
+        setNotice('Загружаем фото на сервер…');
+        const ts = Date.now();
+        const storage = supabase.storage.from('product_image');
+        const { error } = await storage.upload(`${draft.id}/${ts}.webp`, webpBlob, { contentType: 'image/webp' });
+        if (error) throw new Error('не удалось загрузить фото: ' + error.message);
+        // Пара PNG (1200x1600) — для og:image/sitemap/фидов Google и Яндекс.
+        const pngBlob = await canvasToPng1200(c);
+        if (pngBlob) {
+          const pngRes = await storage.upload(`${draft.id}/${ts}-1200.png`, pngBlob, { contentType: 'image/png' });
+          if (pngRes.error) console.warn('Не удалось загрузить PNG для поисковиков:', pngRes.error.message);
+        }
+        const publicUrl = storage.getPublicUrl(`${draft.id}/${ts}.webp`).data.publicUrl;
+        updateDraft(pr => ({ ...pr, image: publicUrl }));
+        setNotice('Фото загружено ✓');
         setTimeout(() => setNotice(''), 3000);
       } catch (e: unknown) {
+        updateDraft(pr => ({ ...pr, image: '' }));
         setNotice('Ошибка обработки фото: ' + String(e instanceof Error ? e.message : e));
+      } finally {
+        URL.revokeObjectURL(localUrl);
       }
-      URL.revokeObjectURL(localUrl);
     };
     img.onerror = () => {
       URL.revokeObjectURL(localUrl);
@@ -704,8 +723,7 @@ const AdminPanel: React.FC = () => {
                           </div>
                           <input id="img-input" type="file" accept="image/*" style={{ display: 'none' }} onChange={e => handleImageFile(e.target.files?.[0] ?? null)} />
                           <div style={{ marginTop: 20 }}>
-                            <div style={{ ...fieldLabel, fontSize: 13.5, color: '#a39483' }}>Ссылка на фото из интернета не будет показана на сайте — фото должно быть встроено через загрузку файла</div>
-                            <input style={field} value={draft.image} onChange={e => updateDraft(pr => ({ ...pr, image: e.target.value }))} placeholder="https://…" />
+                            <div style={{ ...fieldLabel, fontSize: 13.5, color: '#a39483' }}>Фото сохраняется в облачное хранилище и появится на сайте сразу после сохранения товара.</div>
                           </div>
                           {draft.image && (
                             <button onClick={() => updateDraft(pr => ({ ...pr, image: '' }))} style={{ marginTop: 12, padding: '10px 16px', borderRadius: 12, border: '1px solid #f0d6d6', background: '#fff', color: '#c0392b', fontWeight: 700, fontSize: 14, cursor: 'pointer' }}>Убрать фото</button>

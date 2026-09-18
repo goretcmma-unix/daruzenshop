@@ -31,6 +31,17 @@ function sanitizeClaim(text: string): string {
     .trim();
 }
 
+// Для главного изображения в фиде Google используем PNG (1200x1600) —
+// WebP в пайплайне Merchant Center ненадёжен, PNG индексируется стабильнее.
+// PNG-копия существует только для локальных webp сайта и для новых фото из
+// админки в Supabase Storage (пара file-1200.png) — внешние ссылки не трогаем.
+const imageLocation = (image: string): string => {
+  if (!image || image.startsWith('data:')) return SITE + '/images/og-image.png';
+  const abs = image.startsWith('http') ? image : SITE + image;
+  const hasPngPair = abs.startsWith(SITE) || abs.includes('/storage/v1/object/public/product_image/');
+  return /\.webp$/i.test(abs) && hasPngPair ? abs.replace(/\.webp$/i, '-1200.png') : abs;
+};
+
 function esc(s: string): string {
   return s
     .replace(/&/g, '&amp;')
@@ -77,7 +88,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     if (!name) continue;
     const rawDesc = getDesc(p, cfg.lang) || getDesc(p, 'en');
     const desc = sanitizeClaim(rawDesc);
-    const imageUrl = p.image?.startsWith('http') ? p.image : SITE + p.image;
+    const imageUrl = imageLocation(p.image || '');
     const basePrice = Number(p.price) || 0;
     const priceVal = (basePrice * cfg.rate).toFixed(2);
     const stockSpec = (p.specs as Record<string, unknown>)?._stock;

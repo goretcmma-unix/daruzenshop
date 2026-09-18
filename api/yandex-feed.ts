@@ -13,6 +13,17 @@ const CATEGORY_MAP: Record<string, { id: string; name: string }> = {
   herbs: { id: '5', name: 'Лекарственные травы' },
 };
 
+// Для фида Яндекса используем PNG (1200x1600) вместо WebP —
+// WebP в приёме фидов Я.Маркет/«Товаров» ненадёжен, PNG проходит стабильнее.
+// PNG-копия есть только у локальных webp сайта и у новых фото из админки в
+// Supabase Storage (пара file-1200.png) — внешние ссылки не трогаем.
+function imageLocation(image: string): string {
+  if (!image || image.startsWith('data:')) return SITE + '/images/og-image.png';
+  const abs = image.startsWith('http') ? image : SITE + image;
+  const hasPngPair = abs.startsWith(SITE) || abs.includes('/storage/v1/object/public/product_image/');
+  return /\.webp$/i.test(abs) && hasPngPair ? abs.replace(/\.webp$/i, '-1200.png') : abs;
+}
+
 function esc(s: string): string {
   return s
     .replace(/&/g, '&amp;')
@@ -84,7 +95,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const desc = sanitize(p.descriptions?.ru || p.desc_ru || '');
     const catKey = p.category_key || p.categoryKey || 'supplements';
     const catInfo = CATEGORY_MAP[catKey] || CATEGORY_MAP.supplements;
-    const imageUrl = p.image?.startsWith('http') ? p.image : SITE + p.image;
+    const imageUrl = imageLocation(p.image || '');
     const basePrice = Number(p.price) || 0;
     const price = (basePrice * 2.2).toFixed(2);
     const stockSpec = (p.specs as Record<string, unknown>)?._stock;
@@ -103,7 +114,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     xml += '<vendorCode>' + esc(p.id) + '</vendorCode>\n';
     xml += '<model>' + esc(seoName) + '</model>\n';
     xml += '<delivery>true</delivery>\n';
-    xml += '<condition type="likenew"><quality>perfect</quality></condition>\n';
+    xml += '<condition type="new"/>\n';
 
     if (p.isNew) {
       xml += '<param name="Новинка">Да</param>\n';

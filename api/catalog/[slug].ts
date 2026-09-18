@@ -189,7 +189,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   const hreflangXDefault = `<link rel="alternate" hreflang="x-default" href="${SITE}/ru/catalog/${slug}" />`;
 
   const url = (p: any) => `${SITE}/${lang}/product/${p.id}`;
-  const image = (p: any) => (p.image?.startsWith('http') ? p.image : SITE + p.image);
+  const image = (p: any) => (!p.image || p.image.startsWith('data:') ? SITE + '/images/og-image.png' : (p.image.startsWith('http') ? p.image : SITE + p.image));
 
   const itemList = products
     .map((p, i) => {

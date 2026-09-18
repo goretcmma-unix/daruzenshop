@@ -114,6 +114,13 @@ const ProductPage: React.FC<ProductPageProps> = ({ product, onAddToCart, onBuyNo
 
   const displayTitle = product.seoTitle || `${product.name.replace(/^Daruzen\s+/i, '')} | Daruzen`;
 
+  const rawImage = product.image || '';
+  const productImage = rawImage.startsWith('http') ? rawImage : rawImage ? `${SITE}${rawImage}` : `${SITE}/images/og-image.png`;
+  const isSiteOrStorage = productImage.startsWith(SITE) || productImage.includes('/storage/v1/object/public/product_image/');
+  const ogImage = /\.webp$/i.test(productImage) && isSiteOrStorage
+    ? productImage.replace(/\.webp$/i, '-1200.png')
+    : productImage;
+
   const productKeywords = (SEO_DATA[lang] || SEO_DATA.ru).keywords(product.name, product.category);
   const jsonLd = {
     '@context': 'https://schema.org',
@@ -122,16 +129,11 @@ const ProductPage: React.FC<ProductPageProps> = ({ product, onAddToCart, onBuyNo
     alternateName: product.seoTitle ? product.seoTitle.replace(/\s*\|\s*Daruzen\s*$/, '') : undefined,
     description: product.description,
     keywords: productKeywords,
-    image: [product.image.startsWith('http') ? product.image : `${SITE}${product.image}`],
+    image: [ogImage],
     sku: product.id,
     mpn: product.id,
     url: canonicalLang,
     brand: { '@type': 'Brand', name: 'Daruzen' },
-    aggregateRating: {
-      '@type': 'AggregateRating',
-      ratingValue: '4.8',
-      reviewCount: '12',
-    },
     offers: {
       '@type': 'Offer',
       url: canonicalLang,
@@ -156,7 +158,7 @@ const ProductPage: React.FC<ProductPageProps> = ({ product, onAddToCart, onBuyNo
         description={product.description}
         keywords={(SEO_DATA[lang] || SEO_DATA.en).keywords(product.name, product.category)}
         canonical={canonicalLang}
-        ogImage={product.image.startsWith("http") ? product.image : `${SITE}${product.image}`}
+        ogImage={ogImage}
         ogType="product"
         jsonLd={jsonLd}
         lang={lang}

@@ -1,4 +1,6 @@
 {
+  "cleanUrls": true,
+  "trailingSlash": false,
   "functions": {
     "api/sitemap.ts": {
       "maxDuration": 10
@@ -26,7 +28,12 @@
     {
       "source": "/",
       "destination": "/ru",
-      "permanent": false
+      "permanent": true
+    },
+    {
+      "source": "/index.html",
+      "destination": "/ru",
+      "permanent": true
     },
     {
       "source": "/about",

@@ -171,5 +171,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   res.setHeader('Content-Type', 'text/html; charset=utf-8');
   res.setHeader('Cache-Control', 'public, s-maxage=0, max-age=300');
   res.setHeader('Vary', 'User-Agent');
+  res.setHeader('Link', `<${canonical}>; rel="canonical"`);
   res.status(200).send(html);
 }

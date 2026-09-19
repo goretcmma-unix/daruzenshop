@@ -29,7 +29,7 @@ import { motion, AnimatePresence, useScroll, useTransform, useInView, useAnimati
 import { categoryKeys, products, getCategoryLabel, localizeProducts, dedupeProducts, isNewProduct, type LocalizedProduct, type CategoryKey, type Product } from './data';
 import { useLang, LANGS, formatPrice } from './i18n';
 import { SEOHead } from './seo/SEOHead';
-import { SEO_QUERIES, SEO_CATEGORIES } from './seo/seoContent';
+import { SEO_QUERIES, SEO_CATEGORIES, SEO_PAGES, SEO_CATALOG_CATEGORIES } from './seo/seoContent';
 import { fetchProducts, supabase } from './lib/supabase';
 
 import AppStyles from './AppStyles';
@@ -553,59 +553,31 @@ const App: React.FC = () => {
         {/* SEO: meta tags for all search engines (skip on product pages — ProductPage handles its own SEOHead) */}
             {!isProductPage(location.pathname) && (() => {
               const subpage = location.pathname.match(/\/[^/]+\/(about|contacts|catalog)/)?.[1];
-              let seoTitle = (SEO_QUERIES[lang] || SEO_QUERIES.en).title;
-              let seoDesc = (SEO_QUERIES[lang] || SEO_QUERIES.en).description;
-              let seoKeywords = (SEO_QUERIES[lang] || SEO_QUERIES.en).keywords;
+              const seoDefault = SEO_QUERIES[lang] || SEO_QUERIES.en;
+              let seoTitle = seoDefault.title;
+              let seoDesc = seoDefault.description;
+              let seoKeywords = seoDefault.keywords;
               let seoCanonical = `https://drdaruzen.com/${lang}`;
               let seoPath = '';
 
-              if (subpage === 'about') {
-                seoTitle = 'О бренде Daruzen — Качество, безопасность, эффективность | drdaruzen.com';
-                seoDesc = 'Daruzen — премиальный бренд витаминов и добавок из Турции. Узнайте о нашей философии, миссии и commitment к качеству.';
-                seoKeywords = 'Daruzen, о бренде, дарузен, турецкие витамины, БАД';
-                seoCanonical = `https://drdaruzen.com/${lang}/about`;
-                seoPath = '/about';
-              } else if (subpage === 'contacts') {
-                seoTitle = 'Контакты Daruzen — Телефон, Email, Офис в Турции | drdaruzen.com';
-                seoDesc = 'Свяжитесь с Daruzen: +90 544 679 10 12, daruzenshop@outlook.com. Офис в Стамбуле, Турция.';
-                seoKeywords = 'Daruzen контакты, дарузен телефон, daruzen email';
-                seoCanonical = `https://drdaruzen.com/${lang}/contacts`;
-                seoPath = '/contacts';
-              } else if (subpage === 'catalog') {
+              if (subpage === 'about' || subpage === 'contacts' || subpage === 'catalog') {
+                const pageMeta = SEO_PAGES[subpage][lang] || SEO_PAGES[subpage].en;
+                seoTitle = pageMeta.title;
+                seoDesc = pageMeta.description;
+                seoKeywords = pageMeta.keywords;
+                seoCanonical = `https://drdaruzen.com/${lang}/${subpage}`;
+                seoPath = `/${subpage}`;
+              }
+
+              if (subpage === 'catalog') {
                 const catSlug = location.pathname.match(/\/catalog\/(supplements|vitamins|minerals|beauty|herbs)(?:\/|$)/)?.[1];
                 if (catSlug) {
-                  const catSeo: Record<string, Record<string, string>> = {
-                    ru: {
-                      supplements: 'БАДы и добавки из Турции — купить оригинальные БАД | Daruzen',
-                      vitamins: 'Витамины из Турции — купить оригинальные витамины | Daruzen',
-                      minerals: 'Минералы — магний, цинк, железо из Турции | Daruzen',
-                      beauty: 'Добавки для красоты — волосы, кожа, ногти | Daruzen',
-                      herbs: 'Травяные БАДы и фитокомплексы из Турции | Daruzen',
-                    },
-                    tr: {
-                      supplements: 'Türkiye\'den Takviyeler | Daruzen', vitamins: 'Türkiye\'den Vitaminler | Daruzen',
-                      minerals: 'Mineraller — Magnezyum, Çinko, Demir | Daruzen', beauty: 'Güzellik Takviyeleri | Daruzen', herbs: 'Bitkisel Takviyeler | Daruzen',
-                    },
-                    en: {
-                      supplements: 'Supplements from Turkey | Daruzen', vitamins: 'Vitamins from Turkey | Daruzen',
-                      minerals: 'Minerals — Magnesium, Zinc, Iron | Daruzen', beauty: 'Beauty Supplements | Daruzen', herbs: 'Herbal Supplements | Daruzen',
-                    },
-                    ar: {
-                      supplements: 'مكملات من تركيا | داروزن', vitamins: 'فيتامينات من تركيا | داروزن',
-                      minerals: 'معادن — مغنيسيوم، زنك، حديد | داروزن', beauty: 'مكملات الجمال | داروزن', herbs: 'مكملات عشبية | داروزن',
-                    },
-                  };
-                  seoTitle = catSeo[lang]?.[catSlug] || seoTitle;
+                  const catMeta = SEO_CATALOG_CATEGORIES[catSlug]?.[lang] || SEO_CATALOG_CATEGORIES[catSlug]?.en;
+                  seoTitle = catMeta?.title || seoTitle;
+                  seoDesc = catMeta?.description || seoDesc;
+                  seoKeywords = catMeta?.keywords || seoKeywords;
                   seoCanonical = `https://drdaruzen.com/${lang}/catalog/${catSlug}`;
                   seoPath = `/catalog/${catSlug}`;
-                  seoDesc = `${catSeo.ru[catSlug] || seoDesc}. Оригинальные турецкие БАДы с доставкой. Сертифицировано.`;
-                  seoKeywords = `купить ${catSlug}, из турции, дарузен, daruzen, турецкие добавки`;
-                } else {
-                  seoTitle = 'Каталог витаминов и добавок Daruzen — Витамины, минералы, БАД | drdaruzen.com';
-                  seoDesc = 'Каталог премиальных витаминов, минералов и добавок Daruzen. BSO мармеладки, Омега-3, магний и другие натуральные добавки из Турции.';
-                  seoKeywords = 'Daruzen каталог, витамины, турецкие витамины, БАД';
-                  seoCanonical = `https://drdaruzen.com/${lang}/catalog`;
-                  seoPath = '/catalog';
                 }
               }
 

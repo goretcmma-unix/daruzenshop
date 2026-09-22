@@ -500,14 +500,46 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     },
   };
 
-  const ratingVal = product.rating_value != null ? Number(product.rating_value) : null;
-  const reviewCount = product.review_count != null ? Number(product.review_count) : null;
+  // Рейтинги и отзывы — только реальные (политика Google). Источник — jsonb
+  // "reviews": средний балл и счётчик считаются автоматически; ручные
+  // rating_value/review_count — запасной вариант без текстов отзывов.
+  const revArr = Array.isArray(product.reviews) ? product.reviews.filter((r: any) => r && typeof r === 'object') : [];
+  let ratingVal: number | null = null;
+  let reviewCount: number | null = null;
+  let reviews = revArr;
+  if (revArr.length) {
+    let sum = 0;
+    for (const r of revArr) sum += r.rating != null ? Number(r.rating) : 5;
+    ratingVal = Math.round((sum / revArr.length) * 10) / 10;
+    reviewCount = revArr.length;
+  } else {
+    ratingVal = product.rating_value != null ? Number(product.rating_value) : null;
+    reviewCount = product.review_count != null ? Number(product.review_count) : null;
+    if (!ratingVal || !reviewCount || reviewCount <= 0) {
+      ratingVal = null;
+      reviewCount = null;
+    }
+  }
   if (ratingVal && reviewCount && reviewCount > 0) {
     jsonLd.aggregateRating = {
       '@type': 'AggregateRating',
       ratingValue: String(ratingVal),
       reviewCount: String(reviewCount),
     };
+  }
+  if (reviews.length) {
+    jsonLd.review = reviews.slice(0, 5).map((r) => {
+      const rating = r.rating != null ? Number(r.rating) : (ratingVal || 5);
+      const author = typeof r.author === 'string' && r.author ? r.author : 'Покупатель';
+      const body = typeof r.text === 'string' ? r.text : '';
+      const item: Record<string, unknown> = {
+        '@type': 'Review',
+        author: { '@type': 'Person', name: author },
+        reviewRating: { '@type': 'Rating', ratingValue: String(rating), bestRating: '5' },
+      };
+      if (body) item.reviewBody = body;
+      return item;
+    });
   }
 
   if (!bot) {

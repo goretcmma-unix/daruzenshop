@@ -51,6 +51,21 @@ function esc(s: string): string {
     .replace(/'/g, '&apos;');
 }
 
+// Рейтинги и отзывы — только реальные (политика Google). Источник — jsonb "reviews",
+// при его наличии средний балл и счётчик считаются автоматически. Ручные
+// rating_value/review_count — запасной вариант без текстов отзывов.
+const ratingOf = (p: any): { reviews: any[]; ratingValue: string; reviewCount: number } => {
+  const arr = Array.isArray(p.reviews) ? p.reviews.filter((r: any) => r && typeof r === 'object') : [];
+  if (arr.length) {
+    let sum = 0;
+    for (const r of arr) sum += r.rating != null ? Number(r.rating) : 5;
+    return { reviews: arr, ratingValue: (Math.round((sum / arr.length) * 10) / 10).toFixed(1), reviewCount: arr.length };
+  }
+  const rv = p.rating_value != null ? Number(p.rating_value) : null;
+  const rc = p.review_count != null ? Number(p.review_count) : null;
+  return rv && rc && rc > 0 ? { reviews: [], ratingValue: rv.toFixed(1), reviewCount: rc } : { reviews: [], ratingValue: '', reviewCount: 0 };
+};
+
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   const langKey = (String(req.query.lang || 'ru')).toLowerCase();
   const cfg = LANGS[langKey] || LANGS.ru;
@@ -106,6 +121,25 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     xml += '<g:price>' + priceVal + ' ' + cfg.cur + '</g:price>\n';
     xml += '<g:brand>Daruzen</g:brand>\n';
     xml += '<g:mpn>' + esc(p.id) + '</g:mpn>\n';
+    const { reviews, ratingValue, reviewCount } = ratingOf(p);
+    if (ratingValue && reviewCount > 0) {
+      xml += '<g:rating_value>' + esc(ratingValue) + '</g:rating_value>\n';
+      xml += '<g:review_count>' + reviewCount + '</g:review_count>\n';
+    }
+    for (const rv of reviews.slice(0, 5)) {
+      const reviewer = typeof rv.author === 'string' && rv.author ? rv.author : 'Покупатель';
+      const rating = rv.rating != null ? Number(rv.rating) : 5;
+      const content = typeof rv.text === 'string' ? rv.text : '';
+      const ts = rv.date ? String(rv.date) : new Date().toISOString();
+      xml += '<g:review>\n';
+      xml += '<g:reviewer>' + esc(reviewer) + '</g:reviewer>\n';
+      xml += '<g:review_timestamp>' + esc(ts) + '</g:review_timestamp>\n';
+      xml += '<g:rating_value>' + esc(String(rating)) + '</g:rating_value>\n';
+      xml += '<g:rating_min>1</g:rating_min>\n';
+      xml += '<g:rating_max>5</g:rating_max>\n';
+      if (content) xml += '<g:content>' + esc(content) + '</g:content>\n';
+      xml += '</g:review>\n';
+    }
     xml += '<g:condition>new</g:condition>\n';
     xml += '<g:google_product_category>' + esc(category) + '</g:google_product_category>\n';
     xml += '<g:product_type>' + esc(category) + '</g:product_type>\n';

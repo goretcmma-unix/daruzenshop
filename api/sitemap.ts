@@ -52,10 +52,11 @@ function productUrlEntry(loc: string, lastmod: string, changefreq: string, prior
 }
 
 function hreflangBlock(path: string): string {
+  const clean = path === '/' ? '' : path;
   const lines = LANGS.map(function (hl) {
-    return '      <xhtml:link rel="alternate" hreflang="' + hl + '" href="' + SITE + '/' + hl + path + '" />';
+    return '      <xhtml:link rel="alternate" hreflang="' + hl + '" href="' + SITE + '/' + hl + clean + '" />';
   });
-  lines.push('      <xhtml:link rel="alternate" hreflang="x-default" href="' + SITE + '/en' + path + '" />');
+  lines.push('      <xhtml:link rel="alternate" hreflang="x-default" href="' + SITE + '/en' + clean + '" />');
   return lines.join('\n');
 }
 
@@ -87,7 +88,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     }
   }
 
-  const today = '2026-09-04';
+  const today = new Date().toISOString().slice(0, 10);
 
   const lines: string[] = [];
   lines.push('<?xml version="1.0" encoding="UTF-8"?>');
@@ -96,7 +97,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   lines.push('        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">');
 
   for (const l of LANGS) {
-    lines.push(urlEntry(SITE + '/' + l + '/', today, 'weekly', '1.0', hreflangBlock('/')));
+    lines.push(urlEntry(SITE + '/' + l, today, 'weekly', '1.0', hreflangBlock('/')));
     lines.push(urlEntry(SITE + '/' + l + '/about', today, 'monthly', '0.9', hreflangBlock('/about')));
     lines.push(urlEntry(SITE + '/' + l + '/contacts', today, 'monthly', '0.7', hreflangBlock('/contacts')));
   }

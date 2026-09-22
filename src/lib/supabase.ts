@@ -73,11 +73,16 @@ export const fetchProducts = async (): Promise<Product[]> => {
       }
       return dedupeProducts(products);
     }
-    // База данных — единственный источник истины (как в топ-маркетплейсах).
-    // Никакого слияния с data.ts: показываем ровно то, что хранится в базе,
-    // в порядке sort_order. Локальные data.ts используются только как fallback
-    // при недоступности базы (обработчик выше).
-    const dbRows = (data as ProductRow[]).map(rowToProduct);
+    // Плашка «Новое» — мерчандайзинг: задаётся локально в data.ts (isNew: true
+    // у prod-13/Женский комплекс и prod-14/Железо) и накладывается поверх данных
+    // из базы. В БД нет колонки is_new, а sort_order у этих товаров старый,
+    // поэтому после подгрузки из Supabase плашка терялась.
+    const isNewById = new Map(products.filter((p) => p.isNew).map((p) => [p.id, true]));
+    const dbRows = (data as ProductRow[]).map((r) => {
+      const base = rowToProduct(r);
+      if (isNewById.has(base.id)) base.isNew = true;
+      return base;
+    });
     return dedupeProducts(dbRows);
   } catch {
     return dedupeProducts(products);

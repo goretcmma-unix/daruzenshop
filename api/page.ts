@@ -1,4 +1,5 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
+import { getSpaHtml } from './_spa';
 
 const SITE = 'https://drdaruzen.com';
 
@@ -60,13 +61,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   if (!bot) {
     try {
-      const resp = await fetch(SITE + '/index.html', { redirect: 'follow' });
-      const spaHtml = await resp.text();
+      const spaHtml = await getSpaHtml();
       res.setHeader('Content-Type', 'text/html; charset=utf-8');
       res.setHeader('Cache-Control', 'private, no-cache, no-store, must-revalidate');
       return res.status(200).send(spaHtml);
     } catch {
-      return res.redirect(302, '/');
+      return res.status(503).send('Service temporarily unavailable');
     }
   }
 

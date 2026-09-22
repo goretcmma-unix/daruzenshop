@@ -1,5 +1,4 @@
 {
-  "cleanUrls": true,
   "trailingSlash": false,
   "functions": {
     "api/sitemap.ts": {
@@ -27,11 +26,6 @@
   "redirects": [
     {
       "source": "/",
-      "destination": "/ru",
-      "permanent": true
-    },
-    {
-      "source": "/index.html",
       "destination": "/ru",
       "permanent": true
     },

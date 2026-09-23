@@ -23,6 +23,7 @@ Allow: /sitemap.xml
 Disallow: /admin
 
 Sitemap: https://drdaruzen.com/sitemap.xml
+Host: https://drdaruzen.com
 # Yandex-feed: https://drdaruzen.com/yandex-feed.yml
 # Google Merchant feed: https://drdaruzen.com/google-feed.xml
 

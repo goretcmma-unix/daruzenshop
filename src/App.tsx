@@ -35,6 +35,7 @@ import { fetchProducts, supabase } from './lib/supabase';
 import AppStyles from './AppStyles';
 import QtyButton from './components/QtyButton';
 import AdminPanel from './components/AdminPanel';
+import AdminLocked from './components/AdminLocked';
 import RecoveryPage from './components/RecoveryPage';
 
 // import AboutPage from './pages/AboutPage';
@@ -485,7 +486,8 @@ const App: React.FC = () => {
   }
 
   if (typeof window !== 'undefined' && window.location.pathname.startsWith('/admin')) {
-    return <AdminPanel />;
+    const adminLocked = import.meta.env.VITE_ADMIN_LOCKED !== '0';
+    return adminLocked ? <AdminLocked /> : <AdminPanel />;
   }
 
   const renderFooter = () => (

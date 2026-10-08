@@ -487,13 +487,11 @@ const App: React.FC = () => {
 
   if (typeof window !== 'undefined' && window.location.pathname.startsWith('/admin')) {
     const adminLocked = import.meta.env.VITE_ADMIN_LOCKED !== '0';
-    return adminLocked
-      ? <LockedScreen subtitle="Админ-панель временно отключена. После оплаты доступ будет открыт." />
-      : <AdminPanel />;
+    return adminLocked ? <LockedScreen /> : <AdminPanel />;
   }
 
   if (import.meta.env.VITE_SITE_LOCKED !== '0') {
-    return <LockedScreen subtitle="Сайт временно отключён. После оплаты доступ будет открыт." />;
+    return <LockedScreen />;
   }
 
   const renderFooter = () => (

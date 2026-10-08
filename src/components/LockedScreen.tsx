@@ -1,6 +1,6 @@
 import React from 'react';
 
-const LockedScreen: React.FC<{ subtitle?: string }> = ({ subtitle = 'Сервис временно отключён. После оплаты доступ будет открыт.' }) => (
+const LockedScreen: React.FC = () => (
   <div style={{
     position: 'fixed',
     inset: 0,
@@ -32,7 +32,7 @@ const LockedScreen: React.FC<{ subtitle?: string }> = ({ subtitle = 'Серви�
       lineHeight: 1.6,
       color: 'rgba(255, 255, 255, 0.55)',
     }}>
-      {subtitle}
+      И будьте верны своим обещаниям, ибо за обещания вас призовут к ответу (17:34)
     </p>
   </div>
 );

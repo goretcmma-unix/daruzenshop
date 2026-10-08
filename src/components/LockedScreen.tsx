@@ -1,6 +1,6 @@
 import React from 'react';
 
-const AdminLocked: React.FC = () => (
+const LockedScreen: React.FC<{ subtitle?: string }> = ({ subtitle = 'Сервис временно отключён. После оплаты доступ будет открыт.' }) => (
   <div style={{
     position: 'fixed',
     inset: 0,
@@ -32,9 +32,9 @@ const AdminLocked: React.FC = () => (
       lineHeight: 1.6,
       color: 'rgba(255, 255, 255, 0.55)',
     }}>
-      Админ-панель временно отключена. После оплаты доступ будет открыт.
+      {subtitle}
     </p>
   </div>
 );
 
-export default AdminLocked;
+export default LockedScreen;

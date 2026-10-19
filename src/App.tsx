@@ -490,7 +490,9 @@ const App: React.FC = () => {
     return adminLocked ? <LockedScreen /> : <AdminPanel />;
   }
 
-  if (import.meta.env.VITE_SITE_LOCKED !== '0') {
+  // Заглушка сайта — только по явному включению (VITE_SITE_LOCKED=1).
+  // По умолчанию сайт открыт; админка блокируется отдельно (VITE_ADMIN_LOCKED).
+  if (import.meta.env.VITE_SITE_LOCKED === '1') {
     return <LockedScreen />;
   }
 

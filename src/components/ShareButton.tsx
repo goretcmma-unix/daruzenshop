@@ -8,6 +8,7 @@ interface ShareButtonProps {
   text?: string;
   url: string;
   iconOnly?: boolean;
+  className?: string;
 }
 
 /**
@@ -16,7 +17,7 @@ interface ShareButtonProps {
  * the product URL to the clipboard on desktop / when navigator.share
  * is unavailable, with a brief toast confirmation.
  */
-const ShareButton: React.FC<ShareButtonProps> = ({ title, text, url, iconOnly = false }) => {
+const ShareButton: React.FC<ShareButtonProps> = ({ title, text, url, iconOnly = false, className }) => {
   const { t } = useLang();
   const [copied, setCopied] = useState(false);
 
@@ -55,6 +56,7 @@ const ShareButton: React.FC<ShareButtonProps> = ({ title, text, url, iconOnly = 
         whileTap={{ scale: 0.96 }}
         onClick={handleShare}
         aria-label={t.share.button}
+        className={className}
         style={iconOnly ? {
           position: 'absolute',
           top: '16px',

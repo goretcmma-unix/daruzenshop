@@ -473,6 +473,7 @@ a:hover {
   padding: clamp(28px, 4vw, 52px);
   height: auto !important;
   max-height: 90vh !important;
+  position: relative;
 }
 
 .modal-image-col {
@@ -1383,6 +1384,16 @@ a:hover {
   .modal-layout[data-active-tab="composition"] .modal-tab-buy,
   .modal-layout[data-active-tab="note"] .modal-tab-buy {
     display: none !important;
+  }
+
+  /* On mobile the image column is hidden; keep the ShareButton visible.
+     Move it to the top-left (opposite the close button which sits top-right)
+     so it never overlaps. */
+  .modal-share-btn {
+    left: 16px !important;
+    right: auto !important;
+    inset-inline-start: auto !important;
+    inset-inline-end: auto !important;
   }
 }
 

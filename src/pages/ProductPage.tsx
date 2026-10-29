@@ -229,13 +229,13 @@ const ProductPage: React.FC<ProductPageProps> = ({ product, onAddToCart, onBuyNo
                   }}>
                   <X size={16} color="var(--text-muted)" />
                 </motion.button>
+                <ShareButton
+                  iconOnly
+                  title={product.name}
+                  text={product.description}
+                  url={`${SITE}/${lang}/product/${product.id}`}
+                />
               </motion.div>
-              <ShareButton
-                iconOnly
-                title={product.name}
-                text={product.description}
-                url={`${SITE}/${lang}/product/${product.id}`}
-              />
             </motion.div>
 
             <div className="modal-info-wrapper">

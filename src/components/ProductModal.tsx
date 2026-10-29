@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { X, ShoppingCart, Plus, Minus } from 'lucide-react';
 import { useLang, formatPrice } from './i18n';
@@ -82,13 +82,13 @@ const ProductModal: React.FC<Props> = (props) => {
                     }}>
                     <X size={16} color="var(--text-muted)" />
                    </motion.button>
-                 </motion.div>
                   <ShareButton
                     iconOnly
                     title={selectedProduct.name}
                     text={selectedProduct.description}
                     url={`https://drdaruzen.com/${lang}/product/${selectedProduct.id}`}
                   />
+                 </motion.div>
                  <div className="modal-info-wrapper">
                    <div className="modal-scroll-area">
                      <span className="modal-category" style={{ color: 'var(--accent)', fontWeight: '800', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.15em', marginBottom: '12px' }}>{selectedProduct.category}</span>
@@ -100,8 +100,8 @@ const ProductModal: React.FC<Props> = (props) => {
                          <table className="modal-comp-table" style={{ width: '100%', tableLayout: 'fixed', marginBottom: '16px' }}>
                            <thead>
                              <tr>
-                               <th style={{ width: '55%', textAlign: 'left', padding: '10px 18px', borderBottom: 'none', fontSize: '11px', fontWeight: '800', color: '#000', letterSpacing: '0.18em', textTransform: 'uppercase' }}>Активное вещество</th>
-                               <th style={{ width: '45%', textAlign: 'right', padding: '10px 18px', borderBottom: 'none', fontSize: '11px', fontWeight: '800', color: '#000', letterSpacing: '0.18em', textTransform: 'uppercase' }}>Дозировка</th>
+                               <th style={{ width: '55%', textAlign: 'left', padding: '10px 18px', borderBottom: 'none', fontSize: '11px', fontWeight: '800', color: '#000', letterSpacing: '0.18em', textTransform: 'uppercase' }}>РђРєС‚РёРІРЅРѕРµ РІРµС‰РµСЃС‚РІРѕ</th>
+                               <th style={{ width: '45%', textAlign: 'right', padding: '10px 18px', borderBottom: 'none', fontSize: '11px', fontWeight: '800', color: '#000', letterSpacing: '0.18em', textTransform: 'uppercase' }}>Р”РѕР·РёСЂРѕРІРєР°</th>
                              </tr>
                            </thead>
                            <tbody>

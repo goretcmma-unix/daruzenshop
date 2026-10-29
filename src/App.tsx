@@ -1557,13 +1557,13 @@ const App: React.FC = () => {
                     }}>
                     <X size={16} color="var(--text-muted)" />
                   </motion.button>
+                  <ShareButton
+                    iconOnly
+                    title={selectedProduct.name}
+                    text={selectedProduct.description}
+                    url={`https://drdaruzen.com/${lang}/product/${selectedProduct.id}`}
+                  />
                 </motion.div>
-                <ShareButton
-                  iconOnly
-                  title={selectedProduct.name}
-                  text={selectedProduct.description}
-                  url={`https://drdaruzen.com/${lang}/product/${selectedProduct.id}`}
-                />
               </motion.div>
               <div className="modal-info-wrapper">
                 <motion.span 

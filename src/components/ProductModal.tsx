@@ -83,19 +83,17 @@ const ProductModal: React.FC<Props> = (props) => {
                     <X size={16} color="var(--text-muted)" />
                    </motion.button>
                  </motion.div>
+                  <ShareButton
+                    iconOnly
+                    title={selectedProduct.name}
+                    text={selectedProduct.description}
+                    url={`https://drdaruzen.com/${lang}/product/${selectedProduct.id}`}
+                  />
                  <div className="modal-info-wrapper">
                    <div className="modal-scroll-area">
                      <span className="modal-category" style={{ color: 'var(--accent)', fontWeight: '800', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.15em', marginBottom: '12px' }}>{selectedProduct.category}</span>
                      <h2 className="modal-title" style={{ fontWeight: '700', marginBottom: '12px', lineHeight: '1.1', color: 'var(--primary-dark)', letterSpacing: '-0.03em' }}>{selectedProduct.name}</h2>
                       <div className="modal-price" style={{ fontWeight: '700', marginBottom: '16px', color: 'var(--primary)' }}>{formatPrice(selectedProduct.price, lang)}</div>
-
-                      <motion.div style={{ marginBottom: '16px' }}>
-                        <ShareButton
-                          title={selectedProduct.name}
-                          text={selectedProduct.description}
-                          url={`https://drdaruzen.com/${lang}/product/${selectedProduct.id}`}
-                        />
-                      </motion.div>
                      <p className="modal-desc" style={{ color: 'var(--text-muted)', lineHeight: '1.6', marginBottom: '16px', opacity: 0.9 }}>{selectedProduct.description}</p>
                      
                       {selectedProduct.specs && selectedProduct.specs.length > 0 && (

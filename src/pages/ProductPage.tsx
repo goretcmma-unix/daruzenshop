@@ -230,6 +230,12 @@ const ProductPage: React.FC<ProductPageProps> = ({ product, onAddToCart, onBuyNo
                   <X size={16} color="var(--text-muted)" />
                 </motion.button>
               </motion.div>
+              <ShareButton
+                iconOnly
+                title={product.name}
+                text={product.description}
+                url={`${SITE}/${lang}/product/${product.id}`}
+              />
             </motion.div>
 
             <div className="modal-info-wrapper">
@@ -259,19 +265,6 @@ const ProductPage: React.FC<ProductPageProps> = ({ product, onAddToCart, onBuyNo
                 style={{ fontWeight: '700', marginBottom: '32px', color: 'var(--primary)' }}
               >
                 {formatPrice(product.price, lang)}
-              </motion.div>
-
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.3, delay: 0.25 }}
-                style={{ marginBottom: '24px' }}
-              >
-                <ShareButton
-                  title={product.name}
-                  text={product.description}
-                  url={`${SITE}/${lang}/product/${product.id}`}
-                />
               </motion.div>
 
               {/* Mobile tab bar */}

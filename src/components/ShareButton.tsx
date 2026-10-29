@@ -7,6 +7,7 @@ interface ShareButtonProps {
   title: string;
   text?: string;
   url: string;
+  iconOnly?: boolean;
 }
 
 /**
@@ -15,7 +16,7 @@ interface ShareButtonProps {
  * the product URL to the clipboard on desktop / when navigator.share
  * is unavailable, with a brief toast confirmation.
  */
-const ShareButton: React.FC<ShareButtonProps> = ({ title, text, url }) => {
+const ShareButton: React.FC<ShareButtonProps> = ({ title, text, url, iconOnly = false }) => {
   const { t } = useLang();
   const [copied, setCopied] = useState(false);
 
@@ -54,7 +55,24 @@ const ShareButton: React.FC<ShareButtonProps> = ({ title, text, url }) => {
         whileTap={{ scale: 0.96 }}
         onClick={handleShare}
         aria-label={t.share.button}
-        style={{
+        style={iconOnly ? {
+          position: 'absolute',
+          top: '16px',
+          insetInlineEnd: '16px',
+          background: 'rgba(255, 255, 255, 0.7)',
+          border: 'none',
+          borderRadius: '50%',
+          width: '36px',
+          height: '36px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
+          cursor: 'pointer',
+          zIndex: 10,
+          transition: 'all 0.2s ease',
+          color: 'var(--primary-dark)',
+        } : {
           display: 'inline-flex',
           alignItems: 'center',
           gap: '6px',
@@ -70,7 +88,7 @@ const ShareButton: React.FC<ShareButtonProps> = ({ title, text, url }) => {
         }}
       >
         <Share2 size={16} />
-        {t.share.button}
+        {!iconOnly && t.share.button}
       </motion.button>
 
       <AnimatePresence>

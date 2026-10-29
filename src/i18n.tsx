@@ -129,6 +129,10 @@ const ui = {
       noteInfo: 'Примечание',
       noteScrollHint: 'Свайп вниз',
     },
+    share: {
+      button: 'Поделиться',
+      copied: 'Ссылка скопирована!',
+    },
     footer: {
       desc: 'Натуральные биодобавки и витамины из лучших ингредиентов. Качество, проверенное временем.',
       company: 'Компания',
@@ -258,6 +262,10 @@ const ui = {
       noteWarning: 'Önemli',
       noteInfo: 'Not',
       noteScrollHint: 'Aşağı kaydırın',
+    },
+    share: {
+      button: 'Paylaş',
+      copied: 'Bağlantı kopyalandı!',
     },
     footer: {
       desc: 'En iyi içeriklerden doğal takviyeler ve vitaminler. Zamanın sınadığı kalite.',
@@ -389,6 +397,10 @@ const ui = {
       noteInfo: 'Note',
       noteScrollHint: 'Swipe down',
     },
+    share: {
+      button: 'Share',
+      copied: 'Link copied!',
+    },
     footer: {
       desc: 'Natural supplements and vitamins made from the finest ingredients. Quality tested by time.',
       company: 'Company',
@@ -518,6 +530,10 @@ const ui = {
       noteWarning: 'مهم',
       noteInfo: 'ملاحظة',
       noteScrollHint: 'اسحب لأسفل',
+    },
+    share: {
+      button: 'شارك',
+      copied: 'تم نسخ الرابط!',
     },
     footer: {
       desc: 'مكملات غذائية طبيعية وفيتامينات مصنوعة من أفضل المكونات. جودة اختبرها الزمن.',

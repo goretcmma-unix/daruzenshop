@@ -28,6 +28,7 @@ import {
 import { motion, AnimatePresence, useScroll, useTransform, useInView, useAnimationControls } from 'framer-motion';
 import { categoryKeys, products, getCategoryLabel, localizeProducts, dedupeProducts, isNewProduct, type LocalizedProduct, type CategoryKey, type Product } from './data';
 import { useLang, LANGS, formatPrice } from './i18n';
+import ShareButton from './components/ShareButton';
 import { SEOHead } from './seo/SEOHead';
 import { SEO_QUERIES, SEO_CATEGORIES, SEO_PAGES, SEO_CATALOG_CATEGORIES } from './seo/seoContent';
 import { fetchProducts, supabase } from './lib/supabase';
@@ -1586,7 +1587,20 @@ const App: React.FC = () => {
                 >
                   {formatPrice(selectedProduct.price, lang)}
                 </motion.div>
-                
+
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.3, delay: 0.25 }}
+                  style={{ marginBottom: '24px' }}
+                >
+                  <ShareButton
+                    title={selectedProduct.name}
+                    text={selectedProduct.description}
+                    url={`https://drdaruzen.com/${lang}/product/${selectedProduct.id}`}
+                  />
+                </motion.div>
+
                 {/* Mobile tab bar */}
                 <div className="modal-mobile-tabs">
                   <button type="button" className={`modal-mobile-tab${activeMobileTab === 'product' ? ' active' : ''}`} onClick={() => switchTab('product')}>

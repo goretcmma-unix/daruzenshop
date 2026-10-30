@@ -78,7 +78,7 @@ const ProductModal: React.FC<Props> = (props) => {
                     whileTap={{ scale: 0.95 }}
                     onClick={() => { setSelectedProduct(null); setModalQuantity(1); }} 
                     style={{ 
-                      position: 'absolute', top: '16px', left: '16px', 
+                      position: 'absolute', top: '13px', insetInlineStart: '13px', 
                       background: 'rgba(255, 255, 255, 0.7)',
                       border: 'none', borderRadius: '50%', 
                       width: '36px', height: '36px',

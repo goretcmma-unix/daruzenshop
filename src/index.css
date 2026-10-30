@@ -1352,10 +1352,27 @@ a:hover {
 @media (max-width: 768px) {
   /* When Product, Composition or Note tab is active � hide photo and buy buttons,
      the content takes the full screen and scrolls like the Note tab */
+  /* Hide only the photo image content, keep .modal-photo visible as a
+     compact strip so the ShareButton (inside .modal-photo) stays accessible
+     on mobile. */
+  .modal-layout[data-active-tab="product"] .modal-image-col .modal-photo .modal-image,
+  .modal-layout[data-active-tab="composition"] .modal-image-col .modal-photo .modal-image,
+  .modal-layout[data-active-tab="note"] .modal-image-col .modal-photo .modal-image,
+  .modal-layout[data-active-tab="product"] .modal-image-col .modal-photo .modal-product-media__cert-label,
+  .modal-layout[data-active-tab="composition"] .modal-image-col .modal-photo .modal-product-media__cert-label,
+  .modal-layout[data-active-tab="note"] .modal-image-col .modal-photo .modal-product-media__cert-label {
+    display: none !important;
+  }
+
+  /* Keep .modal-photo visible on mobile as a compact strip */
   .modal-layout[data-active-tab="product"] .modal-image-col .modal-photo,
   .modal-layout[data-active-tab="composition"] .modal-image-col .modal-photo,
   .modal-layout[data-active-tab="note"] .modal-image-col .modal-photo {
-    display: none !important;
+    display: block !important;
+    width: 100% !important;
+    height: 56px !important;
+    min-height: 56px !important;
+    padding: 0 !important;
   }
 
   /* Keep the image wrapper visible on mobile as a compact strip so the
@@ -1364,6 +1381,7 @@ a:hover {
   .modal-layout[data-active-tab="product"] .modal-image-wrapper,
   .modal-layout[data-active-tab="composition"] .modal-image-wrapper,
   .modal-layout[data-active-tab="note"] .modal-image-wrapper {
+    display: block !important;
     height: 56px !important;
     min-height: 56px !important;
     padding: 0 !important;
@@ -1892,10 +1910,9 @@ a:hover {
 }
 
 @media (max-width: 768px) {
-  .modal-layout[data-active-tab="product"] .modal-image-wrapper {
-    display: none !important;
-  }
-
+  /* modal-image-wrapper stays visible (compact strip rule above) so the
+     ShareButton inside .modal-photo stays accessible */
+  
   .modal-layout[data-active-tab="product"] .modal-info-wrapper > .modal-category,
   .modal-layout[data-active-tab="product"] .modal-info-wrapper > .modal-title,
   .modal-layout[data-active-tab="product"] .modal-info-wrapper > .modal-price {

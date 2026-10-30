@@ -1540,6 +1540,12 @@ const App: React.FC = () => {
                     style={{ filter: selectedProduct.inStock === false ? 'grayscale(1)' : 'none' }}
                   />
                   <img src="/images/label_certificates.webp" alt="Certificates" className="modal-product-media__cert-label" />
+                  <ShareButton
+                    iconOnly
+                    title={selectedProduct.name}
+                    text={selectedProduct.description}
+                    url={`https://drdaruzen.com/${lang}/product/${selectedProduct.id}`}
+                  />
                   </div>
                   <motion.button 
                     whileHover={{ scale: 1.1, background: 'rgba(255, 255, 255, 0.9)', boxShadow: '0 8px 20px rgba(0,0,0,0.1)' }}
@@ -1557,12 +1563,6 @@ const App: React.FC = () => {
                     }}>
                     <X size={16} color="var(--text-muted)" />
                   </motion.button>
-                <ShareButton
-                  iconOnly
-                  title={selectedProduct.name}
-                  text={selectedProduct.description}
-                  url={`https://drdaruzen.com/${lang}/product/${selectedProduct.id}`}
-                />
                 </motion.div>
               </motion.div>
 

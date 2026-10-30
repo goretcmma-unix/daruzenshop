@@ -1362,8 +1362,7 @@ a:hover {
    is offset by .modal-layout's padding). */
 .modal-share-desktop {
   top: calc(clamp(28px, 4vw, 52px) + 16px) !important;
-  inset-inline-end: 53px !important;
-  transform: translateY(-20%) !important;
+  inset-inline-end: 66px !important;
 }
 
 @media (max-width: 768px) {

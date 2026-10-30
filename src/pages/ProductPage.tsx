@@ -9,6 +9,7 @@ import { fetchProducts } from '../lib/supabase';
 import { SEOHead } from '../seo/SEOHead';
 import { FadeInImage } from '../components/FadeInImage';
 import { CompositionPanel } from '../components/CompositionView';
+import { wrapTitleAfterTwoWords } from '../utils/wrapTitle';
 import QtyButton from '../components/QtyButton';
 
 const SITE = 'https://drdaruzen.com';
@@ -225,7 +226,7 @@ const ProductPage: React.FC<ProductPageProps> = ({ product, onAddToCart, onBuyNo
                   whileTap={{ scale: 0.95 }}
                   onClick={goBack}
                   style={{
-                    position: 'absolute', top: '16px', insetInlineStart: '13px', transform: 'translateY(-20%)',
+                    position: 'absolute', top: '16px', insetInlineStart: '16px',
                     background: 'rgba(255, 255, 255, 0.7)',
                     border: 'none', borderRadius: '50%',
                     width: '36px', height: '36px',
@@ -256,7 +257,7 @@ const ProductPage: React.FC<ProductPageProps> = ({ product, onAddToCart, onBuyNo
                 transition={{ duration: 0.3, delay: 0.15 }}
                 style={{ fontWeight: '700', marginBottom: '16px', lineHeight: '1.15', color: 'var(--primary-dark)', letterSpacing: '-0.03em' }}
               >
-                {product.name}
+                {wrapTitleAfterTwoWords(product.name)}
               </motion.h2>
               <motion.div
                 className="modal-price"

@@ -1,7 +1,8 @@
 ﻿import React from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { X, ShoppingCart, Plus, Minus } from 'lucide-react';
-import { useLang, formatPrice } from './i18n';
+import { useLang, formatPrice } from '../i18n';
+import { wrapTitleAfterTwoWords } from '../utils/wrapTitle';
 import ShareButton from './ShareButton';
 import { parseCompositionLine } from './data';
 import type { LocalizedProduct } from './data';
@@ -78,7 +79,7 @@ const ProductModal: React.FC<Props> = (props) => {
                     whileTap={{ scale: 0.95 }}
                     onClick={() => { setSelectedProduct(null); setModalQuantity(1); }} 
                     style={{ 
-                      position: 'absolute', top: '16px', insetInlineStart: '13px', transform: 'translateY(-20%)', 
+                      position: 'absolute', top: '16px', insetInlineStart: '16px', 
                       background: 'rgba(255, 255, 255, 0.7)',
                       border: 'none', borderRadius: '50%', 
                       width: '36px', height: '36px',
@@ -93,7 +94,7 @@ const ProductModal: React.FC<Props> = (props) => {
                  <div className="modal-info-wrapper">
                    <div className="modal-scroll-area">
                      <span className="modal-category" style={{ color: 'var(--accent)', fontWeight: '800', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.15em', marginBottom: '12px' }}>{selectedProduct.category}</span>
-                     <h2 className="modal-title" style={{ fontWeight: '700', marginBottom: '12px', lineHeight: '1.1', color: 'var(--primary-dark)', letterSpacing: '-0.03em' }}>{selectedProduct.name}</h2>
+                     <h2 className="modal-title" style={{ fontWeight: '700', marginBottom: '12px', lineHeight: '1.1', color: 'var(--primary-dark)', letterSpacing: '-0.03em' }}>{wrapTitleAfterTwoWords(selectedProduct.name)}</h2>
                       <div className="modal-price" style={{ fontWeight: '700', marginBottom: '16px', color: 'var(--primary)' }}>{formatPrice(selectedProduct.price, lang)}</div>
                      <p className="modal-desc" style={{ color: 'var(--text-muted)', lineHeight: '1.6', marginBottom: '16px', opacity: 0.9 }}>{selectedProduct.description}</p>
                      

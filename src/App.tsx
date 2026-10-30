@@ -1622,6 +1622,13 @@ const App: React.FC = () => {
                         <FadeInImage src={selectedProduct.image} className="modal-product-media__img" alt={selectedProduct.name} decoding="async" />
                         <img src="/images/label_certificates.webp" alt="Certificates" className="modal-product-media__cert-label" />
                       </div>
+                    <ShareButton
+                      iconOnly
+                      title={selectedProduct.name}
+                      text={selectedProduct.description}
+                      url={`https://drdaruzen.com/${lang}/product/${selectedProduct.id}`}
+                    />
+
                       <motion.button whileHover={{ scale: 1.1, background: 'rgba(255, 255, 255, 0.95)', boxShadow: '0 8px 20px rgba(0,0,0,0.1)' }} whileTap={{ scale: 0.95 }} onClick={() => { setSelectedProduct(null); setModalQuantity(1); }} className="modal-tab-close" aria-label="Close">
                         <X size={16} color="var(--text-muted)" />
                       </motion.button>

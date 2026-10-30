@@ -1352,39 +1352,22 @@ a:hover {
 @media (max-width: 768px) {
   /* When Product, Composition or Note tab is active � hide photo and buy buttons,
      the content takes the full screen and scrolls like the Note tab */
-  /* Hide only the photo image content, keep .modal-photo visible as a
-     compact strip so the ShareButton (inside .modal-photo) stays accessible
-     on mobile. */
+  /* Hide the entire desktop modal image+info section on mobile.
+     The mobile tab layout (.modal-tabs-viewport) below provides its
+     own product photo, close button, and share button. */
   .modal-layout[data-active-tab="product"] .modal-image-col .modal-photo .modal-image,
   .modal-layout[data-active-tab="composition"] .modal-image-col .modal-photo .modal-image,
   .modal-layout[data-active-tab="note"] .modal-image-col .modal-photo .modal-image,
   .modal-layout[data-active-tab="product"] .modal-image-col .modal-photo .modal-product-media__cert-label,
   .modal-layout[data-active-tab="composition"] .modal-image-col .modal-photo .modal-product-media__cert-label,
-  .modal-layout[data-active-tab="note"] .modal-image-col .modal-photo .modal-product-media__cert-label {
-    display: none !important;
-  }
-
-  /* Keep .modal-photo visible on mobile as a compact strip */
+  .modal-layout[data-active-tab="note"] .modal-image-col .modal-photo .modal-product-media__cert-label,
   .modal-layout[data-active-tab="product"] .modal-image-col .modal-photo,
   .modal-layout[data-active-tab="composition"] .modal-image-col .modal-photo,
-  .modal-layout[data-active-tab="note"] .modal-image-col .modal-photo {
-    display: block !important;
-    width: 100% !important;
-    height: 56px !important;
-    min-height: 56px !important;
-    padding: 0 !important;
-  }
-
-  /* Keep the image wrapper visible on mobile as a compact strip so the
-     close button (top-left) and ShareButton (top-right) stay accessible
-     inside the photo window. */
+  .modal-layout[data-active-tab="note"] .modal-image-col .modal-photo,
   .modal-layout[data-active-tab="product"] .modal-image-wrapper,
   .modal-layout[data-active-tab="composition"] .modal-image-wrapper,
   .modal-layout[data-active-tab="note"] .modal-image-wrapper {
-    display: block !important;
-    height: 56px !important;
-    min-height: 56px !important;
-    padding: 0 !important;
+    display: none !important;
   }
 
   .modal-layout[data-active-tab="product"] .modal-buy-under,
@@ -1910,8 +1893,9 @@ a:hover {
 }
 
 @media (max-width: 768px) {
-  /* modal-image-wrapper stays visible (compact strip rule above) so the
-     ShareButton inside .modal-photo stays accessible */
+  /* Desktop modal image/info section is hidden (display:none) above.
+     The mobile tab layout takes over with its own image, close button,
+     and share button inside .modal-product-media. */
   
   .modal-layout[data-active-tab="product"] .modal-info-wrapper > .modal-category,
   .modal-layout[data-active-tab="product"] .modal-info-wrapper > .modal-title,

@@ -294,6 +294,13 @@ const ProductPage: React.FC<ProductPageProps> = ({ product, onAddToCart, onBuyNo
                         <FadeInImage src={product.image} className="modal-product-media__img" alt={product.name} decoding="async" />
                         <img src="/images/label_certificates.webp" alt="Certificates" className="modal-product-media__cert-label" />
                       </div>
+                    <ShareButton
+                      iconOnly
+                      title={product.name}
+                      text={product.description}
+                      url={`${SITE}/${lang}/product/${product.id}`}
+                    />
+
                       <motion.button whileHover={{ scale: 1.1, background: 'rgba(255, 255, 255, 0.95)', boxShadow: '0 8px 20px rgba(0,0,0,0.1)' }} whileTap={{ scale: 0.95 }} onClick={goBack} className="modal-tab-close" aria-label="Close">
                         <X size={16} color="var(--text-muted)" />
                       </motion.button>

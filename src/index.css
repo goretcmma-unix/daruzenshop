@@ -1352,10 +1352,21 @@ a:hover {
 @media (max-width: 768px) {
   /* When Product, Composition or Note tab is active � hide photo and buy buttons,
      the content takes the full screen and scrolls like the Note tab */
-  .modal-layout[data-active-tab="product"] .modal-image-col,
-  .modal-layout[data-active-tab="composition"] .modal-image-col,
-  .modal-layout[data-active-tab="note"] .modal-image-col {
+  .modal-layout[data-active-tab="product"] .modal-image-col .modal-photo,
+  .modal-layout[data-active-tab="composition"] .modal-image-col .modal-photo,
+  .modal-layout[data-active-tab="note"] .modal-image-col .modal-photo {
     display: none !important;
+  }
+
+  /* Keep the image wrapper visible on mobile as a compact strip so the
+     close button (top-left) and ShareButton (top-right) stay accessible
+     inside the photo window. */
+  .modal-layout[data-active-tab="product"] .modal-image-wrapper,
+  .modal-layout[data-active-tab="composition"] .modal-image-wrapper,
+  .modal-layout[data-active-tab="note"] .modal-image-wrapper {
+    height: 56px !important;
+    min-height: 56px !important;
+    padding: 0 !important;
   }
 
   .modal-layout[data-active-tab="product"] .modal-buy-under,
@@ -1384,16 +1395,6 @@ a:hover {
   .modal-layout[data-active-tab="composition"] .modal-tab-buy,
   .modal-layout[data-active-tab="note"] .modal-tab-buy {
     display: none !important;
-  }
-
-  /* On mobile the image column is hidden; keep the ShareButton visible.
-     Move it to the top-left (opposite the close button which sits top-right)
-     so it never overlaps. */
-  .modal-share-btn {
-    left: 16px !important;
-    right: auto !important;
-    inset-inline-start: auto !important;
-    inset-inline-end: auto !important;
   }
 }
 

@@ -1361,8 +1361,9 @@ a:hover {
    button, which sits at top:16px inside .modal-image-wrapper (which
    is offset by .modal-layout's padding). */
 .modal-share-desktop {
-  top: calc(clamp(28px, 4vw, 52px) + 13px) !important;
+  top: calc(clamp(28px, 4vw, 52px) + 16px) !important;
   inset-inline-end: 53px !important;
+  transform: translateY(-20%) !important;
 }
 
 @media (max-width: 768px) {

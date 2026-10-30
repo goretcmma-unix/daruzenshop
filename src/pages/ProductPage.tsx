@@ -225,7 +225,7 @@ const ProductPage: React.FC<ProductPageProps> = ({ product, onAddToCart, onBuyNo
                   whileTap={{ scale: 0.95 }}
                   onClick={goBack}
                   style={{
-                    position: 'absolute', top: '13px', insetInlineStart: '13px',
+                    position: 'absolute', top: '16px', insetInlineStart: '13px', transform: 'translateY(-20%)',
                     background: 'rgba(255, 255, 255, 0.7)',
                     border: 'none', borderRadius: '50%',
                     width: '36px', height: '36px',

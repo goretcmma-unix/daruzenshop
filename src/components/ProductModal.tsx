@@ -54,6 +54,13 @@ const ProductModal: React.FC<Props> = (props) => {
                 boxShadow: '0 25px 50px -12px rgba(0,0,0,0.25)'
               }}
             >
+              <ShareButton
+                iconOnly
+                className="modal-share-desktop"
+                title={selectedProduct.name}
+                text={selectedProduct.description}
+                url={`https://drdaruzen.com/${lang}/product/${selectedProduct.id}`}
+              />
               <motion.div 
                 className="modal-image-wrapper"
                 style={{ flex: '1.4', background: '#FFFFFF', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative' }}
@@ -82,12 +89,6 @@ const ProductModal: React.FC<Props> = (props) => {
                     }}>
                     <X size={16} color="var(--text-muted)" />
                    </motion.button>
-                  <ShareButton
-                    iconOnly
-                    title={selectedProduct.name}
-                    text={selectedProduct.description}
-                    url={`https://drdaruzen.com/${lang}/product/${selectedProduct.id}`}
-                  />
                  </motion.div>
                  <div className="modal-info-wrapper">
                    <div className="modal-scroll-area">

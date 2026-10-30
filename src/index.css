@@ -1349,8 +1349,23 @@ a:hover {
   }
 }
 
+/* Desktop share button is hidden on mobile — the mobile ShareButton
+   inside .modal-product-media takes over instead. */
 @media (max-width: 768px) {
-  /* When Product, Composition or Note tab is active � hide photo and buy buttons,
+  .modal-share-desktop {
+    display: none !important;
+  }
+}
+
+/* Align the desktop ShareButton at the same height as the close (X)
+   button, which sits at top:16px inside .modal-image-wrapper (which
+   is offset by .modal-layout's padding). */
+.modal-share-desktop {
+  top: calc(clamp(28px, 4vw, 52px) + 16px) !important;
+}
+
+@media (max-width: 768px) {
+  /* When Product, Composition or Note tab is active — hide photo and buy buttons,
      the content takes the full screen and scrolls like the Note tab */
   /* Hide the entire desktop modal image+info section on mobile.
      The mobile tab layout (.modal-tabs-viewport) below provides its

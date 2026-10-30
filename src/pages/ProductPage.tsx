@@ -197,6 +197,13 @@ const ProductPage: React.FC<ProductPageProps> = ({ product, onAddToCart, onBuyNo
             zIndex: 4001,
           }}
         >
+          <ShareButton
+            iconOnly
+            className="modal-share-desktop"
+            title={product.name}
+            text={product.description}
+            url={`${SITE}/${lang}/product/${product.id}`}
+          />
           <div className="modal-scroll-region">
             <motion.div className="modal-image-col">
               <motion.div
@@ -212,12 +219,6 @@ const ProductPage: React.FC<ProductPageProps> = ({ product, onAddToCart, onBuyNo
                     style={{ filter: product.inStock === false ? 'grayscale(1)' : 'none' }}
                   />
                   <img src="/images/label_certificates.webp" alt="Certificates" className="modal-product-media__cert-label" />
-                  <ShareButton
-                    iconOnly
-                    title={product.name}
-                    text={product.description}
-                    url={`${SITE}/${lang}/product/${product.id}`}
-                  />
                 </div>
                 <motion.button
                   whileHover={{ scale: 1.1, background: 'rgba(255, 255, 255, 0.9)', boxShadow: '0 8px 20px rgba(0,0,0,0.1)' }}

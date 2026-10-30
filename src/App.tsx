@@ -1522,6 +1522,13 @@ const App: React.FC = () => {
                 boxShadow: '0 25px 50px -12px rgba(0,0,0,0.25)'
               }}
             >
+              <ShareButton
+                iconOnly
+                className="modal-share-desktop"
+                title={selectedProduct.name}
+                text={selectedProduct.description}
+                url={`https://drdaruzen.com/${lang}/product/${selectedProduct.id}`}
+              />
               <div className="modal-scroll-region">
               <motion.div className="modal-image-col">
                 <motion.div 
@@ -1540,12 +1547,6 @@ const App: React.FC = () => {
                     style={{ filter: selectedProduct.inStock === false ? 'grayscale(1)' : 'none' }}
                   />
                   <img src="/images/label_certificates.webp" alt="Certificates" className="modal-product-media__cert-label" />
-                  <ShareButton
-                    iconOnly
-                    title={selectedProduct.name}
-                    text={selectedProduct.description}
-                    url={`https://drdaruzen.com/${lang}/product/${selectedProduct.id}`}
-                  />
                   </div>
                   <motion.button 
                     whileHover={{ scale: 1.1, background: 'rgba(255, 255, 255, 0.9)', boxShadow: '0 8px 20px rgba(0,0,0,0.1)' }}

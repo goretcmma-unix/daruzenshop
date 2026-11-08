@@ -174,9 +174,12 @@ const SmoothTypeInput: React.FC<{
   const [focused, setFocused] = useState(false);
   const [display, setDisplay] = useState(value);
   const [sel, setSel] = useState<{ start: number; end: number }>({ start: value.length, end: value.length });
+  const [caretX, setCaretX] = useState(0);
   const displayRef = useRef(value);
   const timerRef = useRef<number | null>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
+  const measureRef = useRef<HTMLSpanElement | null>(null);
+  const viewportRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     if (timerRef.current) { window.clearTimeout(timerRef.current); timerRef.current = null; }
@@ -187,57 +190,45 @@ const SmoothTypeInput: React.FC<{
       let next: string;
       if (target.startsWith(cur) && target.length > cur.length) next = target.slice(0, cur.length + 1);
       else if (cur.startsWith(target) && cur.length > target.length) next = cur.slice(0, -1);
-      else next = target; // replacement/paste
+      else next = target;
       displayRef.current = next;
       setDisplay(next);
       if (next !== target) timerRef.current = window.setTimeout(step, charDelay);
     };
     step();
-    // keep caret in sync when value changes (e.g. typing at end)
-    requestAnimationFrame(() => {
-      const el = inputRef.current;
-      if (el) setSel({ start: el.selectionStart ?? 0, end: el.selectionEnd ?? 0 });
-    });
+    requestAnimationFrame(syncSel);
     return () => { if (timerRef.current) window.clearTimeout(timerRef.current); };
   }, [value, charDelay]);
 
   const syncSel = () => {
     const el = inputRef.current;
     if (!el) return;
-    setSel({ start: el.selectionStart ?? 0, end: el.selectionEnd ?? 0 });
+    setSel({ start: el.selectionStart ?? value.length, end: el.selectionEnd ?? value.length });
   };
 
   const masked = type === 'password';
-  const shown = masked ? '•'.repeat(display.length) : display;
-  const isEmpty = display.length === 0;
+  const shownValue = masked ? '•'.repeat(value.length) : value;
+  const shownDisplay = masked ? '•'.repeat(display.length) : display;
+  const isEmpty = value.length === 0 && display.length === 0;
 
-  const clamp = (n: number) => Math.max(0, Math.min(n, display.length));
-  const cStart = clamp(sel.start);
-  const cEnd = clamp(sel.end);
-  const hasSel = cStart !== cEnd;
-  const caretPos = clamp(sel.end);
+  const caretPos = Math.max(0, Math.min(sel.end, shownDisplay.length));
+  const selStart = Math.max(0, Math.min(sel.start, shownDisplay.length));
+  const selEnd = Math.max(0, Math.min(sel.end, shownDisplay.length));
+  const hasSel = selStart !== selEnd;
+  const before = shownDisplay.slice(0, hasSel ? selStart : caretPos);
+  const mid = hasSel ? shownDisplay.slice(selStart, selEnd) : '';
+  const after = shownDisplay.slice(hasSel ? selEnd : caretPos);
+  const measurePos = Math.max(0, Math.min(sel.end, shownValue.length));
+  const measureText = shownValue.slice(0, measurePos);
 
-  const renderText = () => {
-    if (isEmpty && !focused) return <span style={{ color: '#a89a88' }}>{placeholder}</span>;
-    const before = shown.slice(0, hasSel ? cStart : caretPos);
-    const mid = hasSel ? shown.slice(cStart, cEnd) : '';
-    const after = shown.slice(hasSel ? cEnd : caretPos);
-    const caret = <span className="smooth-type-caret" style={{ width: 1.5, height: '1.15em', background: 'var(--text-main)', display: 'inline-block', borderRadius: 1, verticalAlign: 'text-bottom', flexShrink: 0, position: 'relative', zIndex: 1 }} />;
-    return (
-      <>
-        <span style={{ color: 'var(--text-main)' }}>{before}</span>
-        {hasSel ? (
-          <>
-            <span style={{ background: 'rgba(176, 138, 74, 0.22)', color: 'var(--text-main)', borderRadius: 2 }}>{mid}</span>
-            {focused && caret}
-          </>
-        ) : (
-          focused ? caret : null
-        )}
-        <span style={{ color: 'var(--text-main)' }}>{after}</span>
-      </>
-    );
-  };
+  useEffect(() => {
+    const m = measureRef.current;
+    if (!m) return;
+    const x = m.getBoundingClientRect().width;
+    const vp = viewportRef.current;
+    if (vp) vp.scrollLeft = Math.max(0, x - vp.clientWidth + 2);
+    setCaretX(x);
+  }, [measureText, focused]);
 
   return (
     <div style={{ position: 'relative', ...(style || {}) }}>
@@ -258,6 +249,7 @@ const SmoothTypeInput: React.FC<{
         style={{ ...field, width: '100%', color: 'transparent', caretColor: 'transparent', ...(style || {}) }}
       />
       <div
+        ref={viewportRef}
         aria-hidden
         style={{
           position: 'absolute', inset: 0,
@@ -267,7 +259,21 @@ const SmoothTypeInput: React.FC<{
           pointerEvents: 'none', whiteSpace: 'pre', overflow: 'hidden',
         }}
       >
-        {renderText()}
+        <span style={{ position: 'relative', display: 'inline-block', minWidth: '100%' }}>
+          {isEmpty && !focused ? (
+            <span style={{ color: '#a89a88' }}>{placeholder}</span>
+          ) : (
+            <>
+              <span ref={measureRef} style={{ position: 'absolute', visibility: 'hidden', pointerEvents: 'none', whiteSpace: 'pre' }}>{measureText}</span>
+              <span style={{ color: 'var(--text-main)' }}>{before}</span>
+              {hasSel ? <span style={{ background: 'rgba(176, 138, 74, 0.22)', color: 'var(--text-main)', borderRadius: 2 }}>{mid}</span> : null}
+              <span style={{ color: 'var(--text-main)' }}>{after}</span>
+              {focused && !hasSel && (
+                <span className="smooth-type-caret" style={{ position: 'absolute', left: caretX, top: '50%', transform: 'translateY(-50%)', width: 1.5, height: '1.15em', background: 'var(--text-main)', borderRadius: 1, zIndex: 1 }} />
+              )}
+            </>
+          )}
+        </span>
       </div>
     </div>
   );

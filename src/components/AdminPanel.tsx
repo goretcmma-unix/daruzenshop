@@ -193,6 +193,11 @@ const SmoothTypeInput: React.FC<{
       if (next !== target) timerRef.current = window.setTimeout(step, charDelay);
     };
     step();
+    // keep caret in sync when value changes (e.g. typing at end)
+    requestAnimationFrame(() => {
+      const el = inputRef.current;
+      if (el) setSel({ start: el.selectionStart ?? 0, end: el.selectionEnd ?? 0 });
+    });
     return () => { if (timerRef.current) window.clearTimeout(timerRef.current); };
   }, [value, charDelay]);
 
@@ -217,7 +222,7 @@ const SmoothTypeInput: React.FC<{
     const before = shown.slice(0, hasSel ? cStart : caretPos);
     const mid = hasSel ? shown.slice(cStart, cEnd) : '';
     const after = shown.slice(hasSel ? cEnd : caretPos);
-    const caret = <span className="smooth-type-caret" style={{ width: 1.5, height: '1.15em', background: 'var(--text-main)', display: 'inline-block', borderRadius: 1, verticalAlign: 'text-bottom', flexShrink: 0 }} />;
+    const caret = <span className="smooth-type-caret" style={{ width: 1.5, height: '1.15em', background: 'var(--text-main)', display: 'inline-block', borderRadius: 1, verticalAlign: 'text-bottom', flexShrink: 0, position: 'relative', zIndex: 1 }} />;
     return (
       <>
         <span style={{ color: 'var(--text-main)' }}>{before}</span>
@@ -241,7 +246,7 @@ const SmoothTypeInput: React.FC<{
         className="smooth-type-input"
         type={type}
         value={value}
-        onChange={e => { onValue(e.target.value); syncSel(); }}
+        onChange={e => { onValue(e.target.value); requestAnimationFrame(syncSel); }}
         onKeyDown={e => { if (e.key === 'Enter') onEnter?.(); requestAnimationFrame(syncSel); }}
         onKeyUp={syncSel}
         onSelect={syncSel}

@@ -549,7 +549,7 @@ const AdminPanel: React.FC = () => {
           style={{ width: '100%', maxWidth: 420, background: 'rgba(255,255,255,0.95)', backdropFilter: 'blur(12px)', padding: '40px', borderRadius: 28, boxShadow: '0 30px 80px rgba(99,67,49,0.16), 0 0 0 1px rgba(255,255,255,0.6)' }}
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 20, marginTop: -10 }}>
-            <img src="/images/dr.svg.png" alt="Daruzen" style={{ width: 52, height: 52, objectFit: 'contain', borderRadius: 14, filter: 'brightness(0) saturate(100%) invert(26%) sepia(13%) saturate(1185%) hue-rotate(331deg) brightness(94%) contrast(89%)' }} />
+            <img src="/images/dr.svg.png" alt="Daruzen" style={{ width: 76, height: 76, objectFit: 'contain', borderRadius: 18, filter: 'brightness(0) saturate(100%) invert(26%) sepia(13%) saturate(1185%) hue-rotate(331deg) brightness(94%) contrast(89%)' }} />
             <div>
               <div style={{ fontSize: 11, fontWeight: 800, letterSpacing: '0.14em', textTransform: 'uppercase', color: '#b08a4a' }}>Daruzen</div>
               <h2 style={{ margin: '2px 0 0', fontSize: 22, fontWeight: 700, color: 'var(--primary-dark)', letterSpacing: '-0.02em', lineHeight: 1.15 }}>Панель управления</h2>

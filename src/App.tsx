@@ -37,7 +37,6 @@ import { wrapTitleAfterTwoWords } from './utils/wrapTitle';
 import AppStyles from './AppStyles';
 import QtyButton from './components/QtyButton';
 import AdminPanel from './components/AdminPanel';
-import LockedScreen from './components/LockedScreen';
 import RecoveryPage from './components/RecoveryPage';
 
 // import AboutPage from './pages/AboutPage';
@@ -491,11 +490,6 @@ const App: React.FC = () => {
     return <AdminPanel />;
   }
 
-  // Заглушка сайта — только по явному включению (VITE_SITE_LOCKED=1).
-  // По умолчанию сайт открыт.
-  if (import.meta.env.VITE_SITE_LOCKED === '1') {
-    return <LockedScreen />;
-  }
 
   const renderFooter = () => (
     <footer style={{ 

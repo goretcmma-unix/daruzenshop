@@ -563,7 +563,8 @@ const AdminPanel: React.FC = () => {
           {authError && <p style={{ color: '#c0392b', fontSize: 14, margin: '10px 0 0' }}>{authError}</p>}
           <motion.button
             whileTap={{ scale: 0.985 }}
-            whileHover={{ y: -1 }}
+            whileHover={{ background: 'linear-gradient(180deg, #e8c77a 0%, #cf9b41 100%)', color: '#4a2f1c', boxShadow: '0 1px 0 rgba(255,255,255,0.35) inset, 0 10px 24px rgba(207,155,65,0.28)' }}
+            transition={{ duration: 0.18 }}
             onClick={login}
             style={{
               width: '100%', marginTop: 36, padding: '15px 18px', borderRadius: 14,

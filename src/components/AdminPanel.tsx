@@ -133,7 +133,6 @@ const field: React.CSSProperties = {
   fontFamily: 'inherit',
   color: 'var(--text-main)',
   outline: 'none',
-  transition: 'border-color .15s ease, box-shadow .15s ease',
 };
 
 const fieldLabel: React.CSSProperties = {
@@ -145,52 +144,126 @@ const fieldLabel: React.CSSProperties = {
 };
 
 /* ------------------------------------------------------------------ */
+/*  Анимация ввода                                                     */
+/* ------------------------------------------------------------------ */
+const SMOOTH_TYPE_CSS = `
+  @keyframes smooth-caret-blink {
+    0%, 45% { opacity: 1; }
+    50%, 95% { opacity: 0; }
+    100% { opacity: 1; }
+  }
+  .smooth-type-caret {
+    animation: smooth-caret-blink 1s step-end infinite;
+    will-change: opacity;
+  }
+`;
+
+const SmoothTypeInput: React.FC<{
+  value: string;
+  onValue: (v: string) => void;
+  onEnter?: () => void;
+  type?: string;
+  placeholder?: string;
+  autoComplete?: string;
+  autoFocus?: boolean;
+  style?: React.CSSProperties;
+  charDelay?: number;
+}> = ({ value, onValue, onEnter, type = 'text', placeholder, autoComplete, autoFocus, style, charDelay = 28 }) => {
+  const [focused, setFocused] = useState(false);
+  const [display, setDisplay] = useState(value);
+  const displayRef = useRef(value);
+  const timerRef = useRef<number | null>(null);
+  const inputRef = useRef<HTMLInputElement | null>(null);
+
+  useEffect(() => {
+    if (timerRef.current) { window.clearTimeout(timerRef.current); timerRef.current = null; }
+    const target = value;
+    const step = () => {
+      const cur = displayRef.current;
+      if (cur === target) return;
+      let next: string;
+      if (target.startsWith(cur) && target.length > cur.length) next = target.slice(0, cur.length + 1);
+      else if (cur.startsWith(target) && cur.length > target.length) next = cur.slice(0, -1);
+      else next = target; // replacement/paste
+      displayRef.current = next;
+      setDisplay(next);
+      if (next !== target) timerRef.current = window.setTimeout(step, charDelay);
+    };
+    step();
+    return () => { if (timerRef.current) window.clearTimeout(timerRef.current); };
+  }, [value, charDelay]);
+
+  const masked = type === 'password';
+  const shown = masked ? '•'.repeat(display.length) : display;
+  const isEmpty = display.length === 0;
+
+  return (
+    <div
+      style={{ position: 'relative', ...(style || {}) }}
+      onMouseDown={e => { e.preventDefault(); inputRef.current?.focus(); }}
+    >
+      <input
+        ref={inputRef}
+        type={type}
+        value={value}
+        onChange={e => onValue(e.target.value)}
+        onKeyDown={e => { if (e.key === 'Enter') onEnter?.(); }}
+        onFocus={() => setFocused(true)}
+        onBlur={() => setFocused(false)}
+        autoComplete={autoComplete}
+        autoFocus={autoFocus}
+        style={{ ...field, width: '100%', color: 'transparent', caretColor: 'transparent', ...(style || {}) }}
+      />
+      <div
+        aria-hidden
+        style={{
+          position: 'absolute', inset: 0,
+          display: 'flex', alignItems: 'center',
+          padding: field.padding as string,
+          fontSize: field.fontSize, fontFamily: field.fontFamily,
+          pointerEvents: 'none', whiteSpace: 'pre', overflow: 'hidden',
+        }}
+      >
+        {isEmpty && !focused ? (
+          <span style={{ color: '#a89a88' }}>{placeholder}</span>
+        ) : (
+          <>
+            <span style={{ color: 'var(--text-main)' }}>{shown}</span>
+            {focused && <span className="smooth-type-caret" style={{ width: 1.5, height: '1.15em', background: 'var(--text-main)', display: 'inline-block', marginLeft: 1, borderRadius: 1 }} />}
+          </>
+        )}
+      </div>
+    </div>
+  );
+};
+
+/* ------------------------------------------------------------------ */
 /*  Поле пароля                                                        */
 /* ------------------------------------------------------------------ */
 const PasswordField: React.FC<{
   valueRef: React.MutableRefObject<string>;
   onEnter: () => void;
-}> = ({ valueRef, onEnter }) => {
+  placeholder?: string;
+}> = ({ valueRef, onEnter, placeholder = 'Пароль' }) => {
   const [value, setValue] = useState('');
   const [show, setShow] = useState(false);
-  const [focused, setFocused] = useState(false);
   const setVal = (v: string) => { valueRef.current = v; setValue(v); };
   return (
-    <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
-      <div
-        tabIndex={0}
-        onFocus={() => setFocused(true)}
-        onBlur={() => setFocused(false)}
-        onKeyDown={(e) => {
-          if (e.key === 'Backspace') setVal(valueRef.current.slice(0, -1));
-          else if (e.key === 'Enter') onEnter();
-          else if (e.key.length === 1 && !e.ctrlKey && !e.metaKey && !e.altKey) setVal(valueRef.current + e.key);
-        }}
-        onPaste={(e) => {
-          e.preventDefault();
-          const text = e.clipboardData.getData('text');
-          if (text) setVal(valueRef.current + text);
-        }}
-        style={{
-          ...field,
-          display: 'flex',
-          alignItems: 'center',
-          cursor: 'text',
-          color: 'var(--text-main)',
-          paddingRight: 46,
-          borderColor: focused ? 'var(--accent)' : '#e7e2db',
-          boxShadow: focused ? '0 0 0 4px rgba(207,155,65,0.15)' : 'none',
-        }}
-      >
-        {show ? value : value.length > 0 ? '•'.repeat(value.length) : <span style={{ color: '#c2bab0' }}>••••••</span>}
-        {focused && <span style={{ marginLeft: 1 }}>|</span>}
-      </div>
+    <div style={{ position: 'relative' }}>
+      <SmoothTypeInput
+        type={show ? 'text' : 'password'}
+        value={value}
+        onValue={setVal}
+        onEnter={onEnter}
+        autoComplete="current-password"
+        placeholder={placeholder}
+        style={{ paddingRight: 46 }}
+      />
       <button
         type="button"
         onClick={() => setShow(s => !s)}
-        tabIndex={-1}
         aria-label={show ? 'Скрыть пароль' : 'Показать пароль'}
-        style={{ position: 'absolute', right: 14, background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)', display: 'flex', alignItems: 'center' }}
+        style={{ position: 'absolute', right: 14, top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', padding: 0, zIndex: 1 }}
       >
         {show ? <EyeOff size={18} /> : <Eye size={18} />}
       </button>
@@ -468,6 +541,7 @@ const AdminPanel: React.FC = () => {
   if (!session && !hadSession) {
     return (
       <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'Outfit, sans-serif', background: 'radial-gradient(1200px 600px at 80% -10%, rgba(207,155,65,0.12), transparent), radial-gradient(900px 500px at 10% 110%, rgba(99,67,49,0.10), transparent), linear-gradient(135deg,#fbfaf8,#f1ece6)' }}>
+        <style>{SMOOTH_TYPE_CSS}</style>
         <motion.div
           initial={{ opacity: 0, y: 16, scale: 0.98 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
@@ -478,7 +552,7 @@ const AdminPanel: React.FC = () => {
           <h2 style={{ margin: '0 0 4px', fontSize: 24, color: 'var(--primary-dark)' }}>Панель товаров Daruzen</h2>
           <p style={{ margin: '0 0 24px', color: 'var(--text-muted)', fontSize: 14 }}>Войдите, чтобы добавлять и редактировать товары магазина.</p>
           <div style={fieldLabel}>Ваш Email</div>
-          <input style={field} type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder={ADMIN_EMAIL_HINT} />
+          <SmoothTypeInput type="email" value={email} onValue={setEmail} onEnter={login} placeholder={ADMIN_EMAIL_HINT} autoComplete="email" />
           <div style={{ ...fieldLabel, marginTop: 18 }}>Пароль</div>
           <PasswordField valueRef={passwordRef} onEnter={login} />
           {authError && <p style={{ color: '#c0392b', fontSize: 14, margin: '10px 0 0' }}>{authError}</p>}

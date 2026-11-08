@@ -608,7 +608,6 @@ const AdminPanel: React.FC = () => {
             }}
           >
             Войти
-            <ArrowRight size={17} style={{ opacity: 0.9 }} />
           </motion.button>
         </motion.div>
       </div>

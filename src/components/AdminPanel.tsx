@@ -173,6 +173,7 @@ const SmoothTypeInput: React.FC<{
 }> = ({ value, onValue, onEnter, type = 'text', placeholder, autoComplete, autoFocus, style, charDelay = 28 }) => {
   const [focused, setFocused] = useState(false);
   const [display, setDisplay] = useState(value);
+  const [sel, setSel] = useState<{ start: number; end: number }>({ start: value.length, end: value.length });
   const displayRef = useRef(value);
   const timerRef = useRef<number | null>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
@@ -195,23 +196,57 @@ const SmoothTypeInput: React.FC<{
     return () => { if (timerRef.current) window.clearTimeout(timerRef.current); };
   }, [value, charDelay]);
 
+  const syncSel = () => {
+    const el = inputRef.current;
+    if (!el) return;
+    setSel({ start: el.selectionStart ?? 0, end: el.selectionEnd ?? 0 });
+  };
+
   const masked = type === 'password';
   const shown = masked ? '•'.repeat(display.length) : display;
   const isEmpty = display.length === 0;
 
+  const clamp = (n: number) => Math.max(0, Math.min(n, display.length));
+  const cStart = clamp(sel.start);
+  const cEnd = clamp(sel.end);
+  const hasSel = cStart !== cEnd;
+  const caretPos = clamp(sel.end);
+
+  const renderText = () => {
+    if (isEmpty && !focused) return <span style={{ color: '#a89a88' }}>{placeholder}</span>;
+    const before = shown.slice(0, hasSel ? cStart : caretPos);
+    const mid = hasSel ? shown.slice(cStart, cEnd) : '';
+    const after = shown.slice(hasSel ? cEnd : caretPos);
+    const caret = <span className="smooth-type-caret" style={{ width: 1.5, height: '1.15em', background: 'var(--text-main)', display: 'inline-block', borderRadius: 1, verticalAlign: 'text-bottom', flexShrink: 0 }} />;
+    return (
+      <>
+        <span style={{ color: 'var(--text-main)' }}>{before}</span>
+        {hasSel ? (
+          <>
+            <span style={{ background: 'rgba(176, 138, 74, 0.22)', color: 'var(--text-main)', borderRadius: 2 }}>{mid}</span>
+            {focused && caret}
+          </>
+        ) : (
+          focused ? caret : null
+        )}
+        <span style={{ color: 'var(--text-main)' }}>{after}</span>
+      </>
+    );
+  };
+
   return (
-    <div
-      style={{ position: 'relative', ...(style || {}) }}
-      onMouseDown={e => { e.preventDefault(); inputRef.current?.focus(); }}
-    >
+    <div style={{ position: 'relative', ...(style || {}) }}>
       <input
         ref={inputRef}
         className="smooth-type-input"
         type={type}
         value={value}
-        onChange={e => onValue(e.target.value)}
-        onKeyDown={e => { if (e.key === 'Enter') onEnter?.(); }}
-        onFocus={() => setFocused(true)}
+        onChange={e => { onValue(e.target.value); syncSel(); }}
+        onKeyDown={e => { if (e.key === 'Enter') onEnter?.(); requestAnimationFrame(syncSel); }}
+        onKeyUp={syncSel}
+        onSelect={syncSel}
+        onClick={syncSel}
+        onFocus={() => { setFocused(true); requestAnimationFrame(syncSel); }}
         onBlur={() => setFocused(false)}
         autoComplete={autoComplete}
         autoFocus={autoFocus}
@@ -227,14 +262,7 @@ const SmoothTypeInput: React.FC<{
           pointerEvents: 'none', whiteSpace: 'pre', overflow: 'hidden',
         }}
       >
-        {isEmpty && !focused ? (
-          <span style={{ color: '#a89a88' }}>{placeholder}</span>
-        ) : (
-          <>
-            <span style={{ color: 'var(--text-main)' }}>{shown}</span>
-            {focused && <span className="smooth-type-caret" style={{ width: 1.5, height: '1.15em', background: 'var(--text-main)', display: 'inline-block', marginLeft: 1, borderRadius: 1 }} />}
-          </>
-        )}
+        {renderText()}
       </div>
     </div>
   );

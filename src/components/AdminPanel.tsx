@@ -548,7 +548,7 @@ const AdminPanel: React.FC = () => {
           transition={{ duration: 0.4 }}
           style={{ width: '100%', maxWidth: 420, background: 'rgba(255,255,255,0.95)', backdropFilter: 'blur(12px)', padding: '40px', borderRadius: 28, boxShadow: '0 30px 80px rgba(99,67,49,0.16), 0 0 0 1px rgba(255,255,255,0.6)' }}
         >
-          <img src="/images/dr.svg.png" alt="Daruzen" style={{ width: 76, height: 76, objectFit: 'contain', borderRadius: 20, marginBottom: 16, filter: 'brightness(0) saturate(100%) invert(26%) sepia(13%) saturate(1185%) hue-rotate(331deg) brightness(94%) contrast(89%)' }} />
+          <img src="/images/dr.svg.png" alt="Daruzen" style={{ width: 76, height: 76, objectFit: 'contain', borderRadius: 20, marginBottom: 16, marginTop: -12, filter: 'brightness(0) saturate(100%) invert(26%) sepia(13%) saturate(1185%) hue-rotate(331deg) brightness(94%) contrast(89%)' }} />
           <h2 style={{ margin: '0 0 4px', fontSize: 24, color: 'var(--primary-dark)' }}>Панель товаров Daruzen</h2>
           <p style={{ margin: '0 0 24px', color: 'var(--text-muted)', fontSize: 14 }}>Войдите, чтобы добавлять и редактировать товары магазина.</p>
           <div style={fieldLabel}>Ваш Email</div>
@@ -559,7 +559,7 @@ const AdminPanel: React.FC = () => {
           <motion.button
             whileTap={{ scale: 0.97 }}
             onClick={login}
-            style={{ width: '100%', marginTop: 24, padding: 15, borderRadius: 16, border: 'none', background: 'linear-gradient(135deg, var(--primary), #7d5236)', color: '#fff', fontWeight: 800, fontSize: 17, cursor: 'pointer', boxShadow: '0 12px 30px rgba(99,67,49,0.35)' }}
+            style={{ width: '100%', marginTop: 36, padding: 15, borderRadius: 16, border: 'none', background: 'linear-gradient(135deg, var(--primary), #7d5236)', color: '#fff', fontWeight: 800, fontSize: 17, cursor: 'pointer', boxShadow: '0 12px 30px rgba(99,67,49,0.35)' }}
           >
             Войти
           </motion.button>

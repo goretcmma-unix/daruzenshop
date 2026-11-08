@@ -576,7 +576,7 @@ const AdminPanel: React.FC = () => {
               display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10,
             }}
           >
-            Войти в панель
+            Войти
             <ArrowRight size={17} style={{ opacity: 0.9 }} />
           </motion.button>
         </motion.div>

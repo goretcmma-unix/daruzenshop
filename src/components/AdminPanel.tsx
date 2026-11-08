@@ -156,6 +156,8 @@ const SMOOTH_TYPE_CSS = `
     animation: smooth-caret-blink 1s step-end infinite;
     will-change: opacity;
   }
+  .smooth-type-input::selection { background: rgba(176, 138, 74, 0.22); color: transparent; }
+  .smooth-type-input::-moz-selection { background: rgba(176, 138, 74, 0.22); color: transparent; }
 `;
 
 const SmoothTypeInput: React.FC<{
@@ -204,6 +206,7 @@ const SmoothTypeInput: React.FC<{
     >
       <input
         ref={inputRef}
+        className="smooth-type-input"
         type={type}
         value={value}
         onChange={e => onValue(e.target.value)}

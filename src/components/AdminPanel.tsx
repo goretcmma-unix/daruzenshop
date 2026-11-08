@@ -548,20 +548,35 @@ const AdminPanel: React.FC = () => {
           transition={{ duration: 0.4 }}
           style={{ width: '100%', maxWidth: 420, background: 'rgba(255,255,255,0.95)', backdropFilter: 'blur(12px)', padding: '40px', borderRadius: 28, boxShadow: '0 30px 80px rgba(99,67,49,0.16), 0 0 0 1px rgba(255,255,255,0.6)' }}
         >
-          <img src="/images/dr.svg.png" alt="Daruzen" style={{ width: 76, height: 76, objectFit: 'contain', borderRadius: 20, marginBottom: 16, marginTop: -12, filter: 'brightness(0) saturate(100%) invert(26%) sepia(13%) saturate(1185%) hue-rotate(331deg) brightness(94%) contrast(89%)' }} />
-          <h2 style={{ margin: '0 0 4px', fontSize: 24, color: 'var(--primary-dark)' }}>Панель товаров Daruzen</h2>
-          <p style={{ margin: '0 0 24px', color: 'var(--text-muted)', fontSize: 14 }}>Войдите, чтобы добавлять и редактировать товары магазина.</p>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 20, marginTop: -10 }}>
+            <img src="/images/dr.svg.png" alt="Daruzen" style={{ width: 52, height: 52, objectFit: 'contain', borderRadius: 14, filter: 'brightness(0) saturate(100%) invert(26%) sepia(13%) saturate(1185%) hue-rotate(331deg) brightness(94%) contrast(89%)' }} />
+            <div>
+              <div style={{ fontSize: 11, fontWeight: 800, letterSpacing: '0.14em', textTransform: 'uppercase', color: '#b08a4a' }}>Daruzen</div>
+              <h2 style={{ margin: '2px 0 0', fontSize: 22, fontWeight: 700, color: 'var(--primary-dark)', letterSpacing: '-0.02em', lineHeight: 1.15 }}>Панель управления</h2>
+            </div>
+          </div>
+          <p style={{ margin: '0 0 22px', color: '#8a7a68', fontSize: 14, lineHeight: 1.5 }}>Войдите, чтобы управлять товарами магазина.</p>
           <div style={fieldLabel}>Ваш Email</div>
           <SmoothTypeInput type="email" value={email} onValue={setEmail} onEnter={login} placeholder={ADMIN_EMAIL_HINT} autoComplete="email" />
           <div style={{ ...fieldLabel, marginTop: 18 }}>Пароль</div>
           <PasswordField valueRef={passwordRef} onEnter={login} />
           {authError && <p style={{ color: '#c0392b', fontSize: 14, margin: '10px 0 0' }}>{authError}</p>}
           <motion.button
-            whileTap={{ scale: 0.97 }}
+            whileTap={{ scale: 0.985 }}
+            whileHover={{ y: -1 }}
             onClick={login}
-            style={{ width: '100%', marginTop: 36, padding: 15, borderRadius: 16, border: 'none', background: 'linear-gradient(135deg, var(--primary), #7d5236)', color: '#fff', fontWeight: 800, fontSize: 17, cursor: 'pointer', boxShadow: '0 12px 30px rgba(99,67,49,0.35)' }}
+            style={{
+              width: '100%', marginTop: 36, padding: '15px 18px', borderRadius: 14,
+              border: '1px solid rgba(255,255,255,0.12)',
+              background: 'linear-gradient(180deg, #7a5034 0%, #5f3a24 100%)',
+              color: '#fff', fontWeight: 700, fontSize: 15.5, letterSpacing: '0.01em',
+              cursor: 'pointer',
+              boxShadow: '0 1px 0 rgba(255,255,255,0.08) inset, 0 10px 24px rgba(74,45,28,0.28)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10,
+            }}
           >
-            Войти
+            Войти в панель
+            <ArrowRight size={17} style={{ opacity: 0.9 }} />
           </motion.button>
         </motion.div>
       </div>
